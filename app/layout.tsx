@@ -1,18 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Provider } from "@/components/ui/provider";
+import Providers from "@/components/ui/providers";
 import { NavBar } from "@/components/common/nav-bar";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Urbannest",
@@ -21,18 +10,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`satoshi antialiased `}
-      >
-        <Provider >
+    <html lang="en" suppressHydrationWarning>
+      <body className="satoshi antialiased">
+        <Providers>
           <NavBar />
           <main className="mx-4 h-full">{children}</main>
-        </Provider>
+        </Providers>
       </body>
     </html>
   );

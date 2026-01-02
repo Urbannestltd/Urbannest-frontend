@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.NEXT_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 10_000,
 })
 
@@ -15,3 +15,13 @@ const http = {
 
 let isRefreshing = false
 let failedRequestsQueue: Array<() => void> = []
+
+export const setAuthTokenHeader = (accessToken: string) => {
+  axiosInstance.defaults.headers.common.Authorization = accessToken.startsWith(
+    "Bearer "
+  )
+    ? accessToken
+    : `Bearer ${accessToken}`
+}
+
+export default http
