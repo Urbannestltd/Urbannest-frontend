@@ -2,57 +2,29 @@
 import {
     Box,
     Button,
-    Field,
     Flex,
-    Grid,
     Heading,
     HStack,
-    Input,
-    InputGroup,
     Span,
     Text,
 } from "@chakra-ui/react"
 import GoogleIcon from "@/app/assets/google-icon.svg"
 import Image from "next/image"
-import { useForm } from "react-hook-form"
-import { loginFormData, loginSchema } from "@/schema"
-import {
-    LuEye,
-    LuEyeOff,
-    LuLock,
-    LuMail,
-    LuPhone,
-    LuUser,
-} from "react-icons/lu"
-import { useEffect, useState } from "react"
-import { setAuthTokenHeader } from "@/services/https"
-import { storeRefreshToken, storeUserToken } from "@/services/cookies"
-import useAuthStore from "@/store/auth"
-import {
-    clearStoredCredentials,
-    getStoredCredentials,
-    loginUser,
-    saveCredentials,
-} from "@/services/auth"
-import { useRouter } from "next/navigation"
-import { useMutation } from "@tanstack/react-query"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 import { SignUp } from "./sign-up"
 import { Login } from "./login"
 
 export default function SignIn() {
-
     const [isSignUp, setIsSignUp] = useState(false)
 
-
-
     return (
-        <Flex justify={"center"} p={2}>
+        <Flex align={'center'} justify={"center"} p={2} >
             <Flex
                 direction={"column"}
-                mt={4}
+                mt={10}
                 w={"468px"}
                 align={"center"}
+                justify={'center'}
                 h={"100%"}
                 bg={"white"}
             >

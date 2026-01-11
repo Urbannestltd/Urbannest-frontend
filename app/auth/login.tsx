@@ -51,9 +51,9 @@ export const Login = () => {
                 storeRefreshToken(response.data.refreshToken, variables.rememberMe)
                 setAuthTokenHeader(response.data.accessToken)
 
-                if (response.data.user.role === "admin") {
+                if (response.data.user.user.role === "admin") {
                     router.push("/admin/dashboard")
-                } else if (response.data.user.role === "tenant") {
+                } else if (response.data.user.user.role === "tenant") {
                     router.push("/tenant/dashboard")
                 }
                 return
@@ -81,7 +81,7 @@ export const Login = () => {
     return (
         <><form
             className="w-full"
-            onClick={handleSubmit((data) => mutation.mutate(data))}
+            onSubmit={handleSubmit((data) => mutation.mutate(data))}
         >
             <Grid
                 gapX={4}

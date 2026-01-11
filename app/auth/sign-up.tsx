@@ -1,6 +1,12 @@
 import { registerFormData, registerSchema } from "@/schema"
+import { loginUser, registerUser } from "@/services/auth"
+import { storeRefreshToken, storeUserToken } from "@/services/cookies"
+import { setAuthTokenHeader } from "@/services/https"
+import useAuthStore from "@/store/auth"
 import { Button, Field, Grid, Input, InputGroup } from "@chakra-ui/react"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import { set } from "lodash"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import {
@@ -19,17 +25,47 @@ export const SignUp = () => {
         setValue,
         formState: { errors },
     } = useForm<registerFormData>({
-        resolver: zodResolver(registerSchema),
         defaultValues: {
-            email: "",
-            password: "",
+            userPassword: "",
+            userFullName: "",
+            userPhone: "",
+            userRoleName: "tenant",
             rememberMe: true,
         },
     })
     const [showPassword, setShowPassword] = useState(false)
+    const {
+        loginUser: persistUser,
+    } = useAuthStore()
+    const router = useRouter()
 
+    const mutation = useMutation({
+        mutationFn: (data: registerFormData) => {
+            console.log(data);
+            return registerUser(data, 'teniolakalaro@gmail.com$$2b$10$qoDGAxB7/kLZADUGjYqp0O5LNn198d0VfeoAZtgRxBoKdmCV9.CxS')
+        },
+
+
+        onSuccess: async (_response, variables: registerFormData) => {
+            const loginRes = await loginUser({
+                email: 'teniolakalaro@gmail.com',
+                password: variables.userPassword
+            })
+
+            if (!loginRes.data?.accessToken || !loginRes.data?.user) return
+
+            persistUser(
+                loginRes.data.user,
+                loginRes.data.accessToken,
+                loginRes.data.refreshToken,
+                variables.rememberMe
+            )
+            setAuthTokenHeader(loginRes.data.accessToken)
+            router.push("/tenant/dashboard")
+        }
+    })
     return (
-        <form>
+        <form onSubmit={handleSubmit((data) => mutation.mutate(data))}>
             <Grid gapX={4} templateColumns={"repeat(2,1fr)"}>
                 <Field.Root my={4}>
                     <Field.Label className="satoshi-medium">Email Address</Field.Label>
@@ -38,9 +74,9 @@ export const SignUp = () => {
                         border={"1px solid #B2B2B2"}
                         startElement={<LuMail color="#B3B3B3" />}
                     >
-                        <Input {...register("email")} placeholder="Email" />
+                        <Input value={'teniolakalaro@gmail.com'} placeholder="Email" />
                     </InputGroup>
-                    <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
+                    <Field.ErrorText>{errors.root?.message}</Field.ErrorText>
                 </Field.Root>
                 <Field.Root my={4}>
                     <Field.Label className="satoshi-medium">Password</Field.Label>
@@ -63,12 +99,12 @@ export const SignUp = () => {
                         }
                     >
                         <Input
-                            {...register("password")}
+                            {...register("userPassword")}
                             type={showPassword ? "text" : "password"}
                             placeholder="Password"
                         />
                     </InputGroup>
-                    <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
+                    <Field.ErrorText>{errors.userPassword?.message}</Field.ErrorText>
                 </Field.Root>
                 <Field.Root my={4}>
                     <Field.Label className="satoshi-medium">Full Name</Field.Label>
@@ -77,9 +113,9 @@ export const SignUp = () => {
                         border={"1px solid #B2B2B2"}
                         startElement={<LuUser color="#B3B3B3" />}
                     >
-                        <Input {...register("fullName")} placeholder="Full Name" />
+                        <Input {...register("userFullName")} placeholder="Full Name" />
                     </InputGroup>
-                    <Field.ErrorText>{errors.fullName?.message}</Field.ErrorText>
+                    <Field.ErrorText>{errors.userFullName?.message}</Field.ErrorText>
                 </Field.Root>
                 <Field.Root my={4}>
                     <Field.Label className="satoshi-medium">Phone Number</Field.Label>
@@ -88,9 +124,9 @@ export const SignUp = () => {
                         border={"1px solid #B2B2B2"}
                         startElement={<LuPhone color="#B3B3B3" />}
                     >
-                        <Input {...register("phone")} placeholder="Phone Number" />
+                        <Input {...register("userPhone")} placeholder="Phone Number" />
                     </InputGroup>
-                    <Field.ErrorText>{errors.phone?.message}</Field.ErrorText>
+                    <Field.ErrorText>{errors.userPhone?.message}</Field.ErrorText>
                 </Field.Root>
             </Grid>
             <Button
@@ -100,6 +136,9 @@ export const SignUp = () => {
                 p={3}
                 h={"48px"}
                 border={"1px solid #767676"}
+                type="submit"
+                disabled={mutation.isPending}
+                loading={mutation.isPending}
             >
                 Continue
             </Button>

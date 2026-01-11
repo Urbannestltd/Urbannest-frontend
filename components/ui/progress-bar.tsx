@@ -1,0 +1,30 @@
+import { Progress as ChakraProgress } from "@chakra-ui/react"
+import * as React from "react"
+
+interface ProgressProps extends ChakraProgress.RootProps {
+    showValueText?: boolean
+    valueText?: React.ReactNode
+    label?: React.ReactNode
+    info?: React.ReactNode
+}
+
+export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
+    function Progress(props, ref) {
+        const { showValueText, valueText, label, info, ...rest } = props
+        return (
+            <ChakraProgress.Root shape={'rounded'} {...rest} ref={ref}>
+                {label && (
+                    <ChakraProgress.Label>
+                        {label}
+                    </ChakraProgress.Label>
+                )}
+                <ChakraProgress.Track rounded={'full'} stroke={'#FFFFFF'}>
+                    <ChakraProgress.Range rounded={'full'} {...{ css: { backgroundColor: '#CFAA67' } }} strokeLinecap={'round'} />
+                </ChakraProgress.Track>
+                {showValueText && (
+                    <ChakraProgress.ValueText>{valueText}</ChakraProgress.ValueText>
+                )}
+            </ChakraProgress.Root>
+        )
+    },
+)

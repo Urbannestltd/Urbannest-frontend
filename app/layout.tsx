@@ -17,8 +17,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="satoshi antialiased">
         <Providers>
-          <NavBar />
-          <main className="mx-4 h-full">{children}</main>
+          <main className=" h-full">{children}</main>
         </Providers>
       </body>
     </html>

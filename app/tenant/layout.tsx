@@ -1,17 +1,29 @@
-import { Metadata } from "next";
-import { RequireAuth } from "../auth/require-auth";
+import { Metadata } from "next"
+import { RequireAuth } from "../auth/require-auth"
+import { TenantSidebar } from "./sidebar"
+import { Tabs } from "@chakra-ui/react"
+import { UserNav } from "./user-nav"
 
 export const metadata: Metadata = {
-    title: 'Tour Builder Dashboard | Create Interactive Onboarding Tours',
-    description: 'Build, manage, and analyze interactive onboarding tours for your website',
-    keywords: 'onboarding, tours, user guide, tutorials, product tours',
-};
-
+    title: "Tenant Dashboard",
+    description: "Welcome to the Tenant Dashboard",
+    keywords: "tenant dashboard",
+}
 
 export default function DashboardLayout({
     children,
 }: {
-    children: React.ReactNode;
+    children: React.ReactNode
 }) {
-    return <><RequireAuth>{children}</RequireAuth></>;
+    return (
+        <div className="flex h-screen">
+            <div className="relative w-[290px]">
+                <TenantSidebar />
+            </div>
+            <main className="flex-1 p-8 ">
+                <UserNav />
+                {children}
+            </main>
+        </div>
+    ) //<><RequireAuth>{children}</RequireAuth></>;
 }

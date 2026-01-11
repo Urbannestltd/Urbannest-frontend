@@ -18,6 +18,7 @@ module.exports = {
         "border-light" : "#f1f1f1",
         "border-grey" : "#B2B2B2",
         "primary-gold-50" : "#FDFAF3",
+        "primary-gold-70" : "#FFF8EB",
         "primary-gold" : "#CFAA67",
         "button-primary" : "#2A3348",
         "button-hover":'#3F4A64',

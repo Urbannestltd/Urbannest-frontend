@@ -17,6 +17,7 @@ export interface AuthStore {
     persistToken: boolean
   ) => void
   logoutUser: () => void
+  registerUser: () => void
 }
 
 const useAuthStore = create<AuthStore>()(
@@ -33,6 +34,10 @@ const useAuthStore = create<AuthStore>()(
         clearAuthTokens()
         set({ user: null })
       },
+      registerUser: () => {
+        clearAuthTokens()
+        set({ user: null })
+      },
     }),
     {
       name: "auth-storage",
@@ -43,18 +48,18 @@ const useAuthStore = create<AuthStore>()(
 
 export const isTenant = () => {
   const user = useAuthStore.getState().user
-  return user?.role === "tenant"
+  return user?.user.role === "tenant"
 }
 
 export const isAdmin = () => {
   // typeof window !== 'undefined' && window.location.pathname.includes('/user');
   const user = useAuthStore.getState().user
-  return user?.role === "admin"
+  return user?.user.role === "admin"
 }
 
 export const isGuest = () => {
   const user = useAuthStore.getState().user
-  return user?.role === "guest"
+  return user?.user.role === "guest"
 }
 
 export default useAuthStore

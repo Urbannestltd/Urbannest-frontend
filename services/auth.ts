@@ -16,6 +16,19 @@ interface LoginResponse {
   refreshToken: string
   user: UserLoginResponse
 }
+interface SignUpPayload {
+  userPassword: string
+  userFullName: string
+  userPhone: string
+  userRoleName: "tenant" | "admin"
+  rememberMe?: boolean
+}
+
+interface RegisterResponse {
+  success: boolean
+  message: string
+  data: string
+}
 interface RefreshTokenResponse {
   accessToken: string
   refreshToken: string
@@ -40,6 +53,21 @@ export const loginUser = (payload: LoginPayload) => {
   return http.post<LoginResponse>(
     "/auth/login",
     _.omit(payload, ["rememberMe"])
+  )
+}
+
+export const registerUser = (payload: SignUpPayload, token: string) => {
+  return http.post<RegisterResponse>(
+    "/auth/register",
+    _.omit(payload, ["rememberMe"]),
+    {
+      params: {
+        token,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
   )
 }
 

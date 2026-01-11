@@ -11,12 +11,13 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z.object({
-    email: inputField("Email is required"),
-    password: inputField("Password is required"),
-    fullName: inputField("Full name is required"),
-    phone: inputField("Phone number is required"),
+    userPassword: inputField("Password is required"),
+    userFullName: inputField("Full name is required"),
+    userDisplayName: inputField("Display name is required").optional(),
+    userPhone: inputField("Phone number is required"),
+    userRoleName: z.enum(["tenant", "admin"]).default("tenant"),
     rememberMe: z.boolean().default(false),
 });
 
 export type loginFormData = z.input<typeof loginSchema>
-export type registerFormData = z.input<typeof registerSchema>
+export type registerFormData = z.infer<typeof registerSchema>
