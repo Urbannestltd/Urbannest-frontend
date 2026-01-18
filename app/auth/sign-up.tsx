@@ -17,6 +17,7 @@ import {
     LuPhone,
     LuUser,
 } from "react-icons/lu"
+import toast from "react-hot-toast"
 
 export const SignUp = () => {
     const {
@@ -55,6 +56,7 @@ export const SignUp = () => {
 
 
         onSuccess: async (_response, variables: registerFormData) => {
+            toast.success('Account created successfully')
             const loginRes = await loginUserApi({
                 email: 'teniolakalaro@gmail.com',
                 password: variables.userPassword
@@ -70,7 +72,10 @@ export const SignUp = () => {
             setAuthTokenHeader(loginRes.data.token)
 
             router.push("/tenant/dashboard")
-        }
+        },
+        onError: (error) => {
+            toast.error(`Error logging in please try again: ${error?.message}`)
+        },
     })
     return (
         <form onSubmit={handleSubmit((data) => mutation.mutate(data))}>
