@@ -1,14 +1,14 @@
 import { registerFormData, registerSchema } from "@/schema"
 import { loginUserApi, registerUser } from "@/services/auth"
-import { storeUserToken } from "@/services/cookies"
 import { setAuthTokenHeader } from "@/services/https"
 import useAuthStore from "@/store/auth"
 import { Button, Field, Grid, Input, InputGroup } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { set } from "lodash"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useSearchParams } from "next/navigation";
+
 import {
     LuEye,
     LuEyeOff,
@@ -34,6 +34,14 @@ export const SignUp = () => {
         },
     })
     const [showPassword, setShowPassword] = useState(false)
+
+    const searchParams = useSearchParams();
+    const token = searchParams.get("token") || "";
+    const [email, hash] = token.split("$$");
+
+
+
+
     const {
         loginUser,
     } = useAuthStore()
@@ -42,7 +50,7 @@ export const SignUp = () => {
     const mutation = useMutation({
         mutationFn: (data: registerFormData) => {
             console.log(data);
-            return registerUser(data, 'teniolakalaro@gmail.com$$2b$10$/Mg.yD69iUOMY1SMWBgF2uwSk2o8FlPcU16K.pgzUaHLfxI4RuwhO')
+            return registerUser(data, token || "")
         },
 
 
@@ -74,7 +82,7 @@ export const SignUp = () => {
                         border={"1px solid #B2B2B2"}
                         startElement={<LuMail color="#B3B3B3" />}
                     >
-                        <Input value={'teniolakalaro@gmail.com'} placeholder="Email" />
+                        <Input value={email} readOnly placeholder="Email" />
                     </InputGroup>
                     <Field.ErrorText>{errors.root?.message}</Field.ErrorText>
                 </Field.Root>
