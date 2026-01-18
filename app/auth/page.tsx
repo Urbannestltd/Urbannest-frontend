@@ -14,11 +14,11 @@ import { useState } from "react"
 import { SignUp } from "./sign-up"
 import { Login } from "./login"
 import { useSearchParams } from "next/navigation"
-import { set } from "lodash"
 
 export default function SignIn() {
     const [isSignUp, setIsSignUp] = useState(false)
-    const token = useSearchParams().get("token")
+    const searchParams = useSearchParams();
+    const token = searchParams.get("token") || "";
     if (token) {
         setIsSignUp(true)
     }
