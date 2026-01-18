@@ -4,12 +4,14 @@ import Image from "next/image"
 import Logo from '@/app/assets/urbannest-logo-white.png'
 import { sidebarLinks } from "@/utils/data";
 import { LuLogOut, LuSettings } from "react-icons/lu";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
+import useAuthStore from "@/store/auth";
 
 
 export const TenantSidebar = () => {
     const pathname = usePathname();
     const router = useRouter();
+    const { logoutUser } = useAuthStore()
 
     const getActiveTab = () => {
         if (pathname.includes('tenant/dashboard')) return 'dashboard'
@@ -21,11 +23,17 @@ export const TenantSidebar = () => {
 
     const activeTab = getActiveTab();
 
+    const handleLogout = () => {
+        logoutUser()
+        console.log('logged out')
+        router.push('/auth')
+    }
+
     return (
         <Tabs.Root orientation='vertical' position={'fixed'} defaultValue={activeTab} zIndex={'modal'} lazyMount unmountOnExit value={activeTab}>
             <Tabs.List className="flex flex-col justify-between" h={'100vh'} w={'280px'} color={'white'} p={'32px 24px'} pr={14} bg={'#141822'}>
                 <div>
-                    <Image src={Logo} className="w-[147.5px] mb-[54px]" alt="" />
+                    <Image src={Logo} onClick={() => router.push('/')} className="w-[147.5px] mb-[54px]" alt="" />
                     <Text className="satoshi-bold text-[10px] mb-4 tracking-[0.2em] mt-4 uppercase">Menu</Text>
                     {sidebarLinks.map((link) =>
                         <Tabs.Trigger w={'full'} value={link.value} className="" p={2} onClick={() => router.push(link.href)} key={link.href}>
@@ -38,7 +46,7 @@ export const TenantSidebar = () => {
                     <Tabs.Trigger w={'full'} value={'/settings'} className="flex items-center gap-2" p={2}>
                         <LuSettings /> Settings
                     </Tabs.Trigger>
-                    <Button className=" hover:bg-button-hover w-full flex justify-start pl-2">
+                    <Button onClick={handleLogout} className=" hover:bg-button-hover w-full flex justify-start pl-2">
                         <LuLogOut size={4} />Logout</Button>
                 </Box>
             </Tabs.List>

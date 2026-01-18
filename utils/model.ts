@@ -1,5 +1,6 @@
 export interface User {
-  email: string
+  id: string
+  email?: string
   password?: string
   name: string
   role: string
@@ -28,4 +29,12 @@ export interface userData {
     timeIn: string
     timeOut: string
   }[]
+}
+
+export interface notification {
+  title: string
+  message: string
+  date: string
+  type: "visitor" | "lease" | "payment"
+  status: "success" | "error" | "info"
 }

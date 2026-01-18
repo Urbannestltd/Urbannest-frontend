@@ -1,65 +1,85 @@
 import { create } from "zustand"
-import { persist } from "zustand/middleware"
-import { UserLoginResponse } from "../utils/model"
-import {
-  clearAuthTokens,
-  storeRefreshToken,
-  storeUserToken,
-} from "@/services/cookies"
+import { persist, createJSONStorage } from "zustand/middleware"
+import { User } from "../utils/model"
+import { clearAuthTokens, storeUserToken } from "@/services/cookies"
 
-export interface AuthStore {
-  user: UserLoginResponse | null
-  setUser: (user: UserLoginResponse) => void
-  loginUser: (
-    userData: UserLoginResponse,
-    accessToken: string,
-    refreshToken: string,
-    persistToken: boolean
-  ) => void
+interface AuthStore {
+  user: User | null
+  token: string | null
+  isHydrated: boolean
+
+  loginUser: (userData: User, token: string, persistToken: boolean) => void
   logoutUser: () => void
-  registerUser: () => void
+  setHydrated: () => void
 }
 
 const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       user: null,
-      setUser: (user) => set({ user }),
-      loginUser: (userData, accessToken, refreshToken, persistToken) => {
-        storeUserToken(accessToken, persistToken)
-        storeRefreshToken(refreshToken, persistToken)
-        set({ user: userData })
+      token: null,
+      isHydrated: false,
+
+      loginUser: (userData, token, persistToken) => {
+        console.log("🔐 loginUser called", { userData, persistToken })
+        storeUserToken(token, persistToken)
+        set({ user: userData, token })
+        console.log("✅ User set in store:", userData)
+
+        setTimeout(() => {
+          const stored = localStorage.getItem("auth-storage")
+          console.log("📦 localStorage content:", stored)
+        }, 100)
       },
+
       logoutUser: () => {
+        console.log("🚪 Logging out user")
         clearAuthTokens()
-        set({ user: null })
+        set({ user: null, token: null })
       },
-      registerUser: () => {
-        clearAuthTokens()
-        set({ user: null })
+
+      setHydrated: () => {
+        console.log("💧 Store hydrated")
+        set({ isHydrated: true })
       },
     }),
     {
       name: "auth-storage",
-      partialize: (state) => ({ user: state.user }),
+      storage: createJSONStorage(() => {
+        if (typeof window !== "undefined") {
+          return localStorage
+        }
+        return {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {},
+        }
+      }),
+      partialize: (state) => ({ user: state.user, token: state.token }),
+      onRehydrateStorage: () => {
+        console.log("🔄 Starting rehydration...")
+        return (state) => {
+          console.log("✅ Rehydration complete. User:", state?.user)
+          state?.setHydrated()
+        }
+      },
     }
   )
 )
 
 export const isTenant = () => {
   const user = useAuthStore.getState().user
-  return user?.user.role === "tenant"
+  return user?.role === "tenant"
 }
 
 export const isAdmin = () => {
-  // typeof window !== 'undefined' && window.location.pathname.includes('/user');
   const user = useAuthStore.getState().user
-  return user?.user.role === "admin"
+  return user?.role === "admin"
 }
 
 export const isGuest = () => {
   const user = useAuthStore.getState().user
-  return user?.user.role === "guest"
+  return user?.role === "guest"
 }
 
 export default useAuthStore

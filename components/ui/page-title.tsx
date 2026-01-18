@@ -5,6 +5,7 @@ interface PageTitleProps {
     titleColor?: string;
     subText?: string;
     fontSize?: string | number;
+    subFontSize?: string | number;
     fontWeight?: string | number;
     subTextColor?: string;
     spacing?: string | number;
@@ -17,6 +18,7 @@ export const PageTitle = ({
     title,
     titleColor = '#303030',
     subText,
+    subFontSize = 'md',
     fontSize = '25px',
     fontWeight = 'bold',
     subTextColor = '#303030',
@@ -31,7 +33,7 @@ export const PageTitle = ({
                 {title}
             </Heading>
             {subText && (
-                <Text fontSize='md' color={subTextColor}>
+                <Text fontSize={subFontSize} color={subTextColor}>
                     {subText}
                 </Text>
             )}

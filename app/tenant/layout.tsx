@@ -15,7 +15,7 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
-    return (
+    return (<RequireAuth>
         <div className="flex h-screen">
             <div className="relative w-[290px]">
                 <TenantSidebar />
@@ -24,6 +24,6 @@ export default function DashboardLayout({
                 <UserNav />
                 {children}
             </main>
-        </div>
-    ) //<><RequireAuth>{children}</RequireAuth></>;
+        </div></RequireAuth>
+    ) //<>{children}</RequireAuth></>;
 }

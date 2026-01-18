@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/components/ui/providers";
-import { NavBar } from "@/components/common/nav-bar";
+import { Toaster } from 'react-hot-toast'
 
 export const metadata: Metadata = {
   title: "Urbannest",
@@ -17,6 +17,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="satoshi antialiased">
         <Providers>
+          <Toaster />
           <main className=" h-full">{children}</main>
         </Providers>
       </body>

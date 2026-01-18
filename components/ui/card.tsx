@@ -1,5 +1,4 @@
-import { Box, Flex, Span, Text } from "@chakra-ui/react"
-import { da } from "zod/v4/locales"
+import { Flex, Span, Text } from "@chakra-ui/react"
 
 interface CardData {
     title: string

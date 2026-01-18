@@ -1,6 +1,5 @@
 import _ from "lodash"
-import { UserLoginResponse } from "@/utils/model"
-import { getRefreshToken } from "./cookies"
+import { User } from "@/utils/model"
 import http from "./https"
 import useAuthStore from "@/store/auth"
 import Swal from "sweetalert2"
@@ -12,10 +11,10 @@ interface LoginPayload {
 }
 
 interface LoginResponse {
-  accessToken: string
-  refreshToken: string
-  user: UserLoginResponse
+  token: string
+  user: User
 }
+
 interface SignUpPayload {
   userPassword: string
   userFullName: string
@@ -28,10 +27,6 @@ interface RegisterResponse {
   success: boolean
   message: string
   data: string
-}
-interface RefreshTokenResponse {
-  accessToken: string
-  refreshToken: string
 }
 
 const REMEMBER_ME_KEY = "remember_user"
@@ -49,7 +44,7 @@ export const clearStoredCredentials = () => {
   localStorage.removeItem(REMEMBER_ME_KEY)
 }
 
-export const loginUser = (payload: LoginPayload) => {
+export const loginUserApi = (payload: LoginPayload) => {
   return http.post<LoginResponse>(
     "/auth/login",
     _.omit(payload, ["rememberMe"])
@@ -71,15 +66,6 @@ export const registerUser = (payload: SignUpPayload, token: string) => {
   )
 }
 
-export const refreshToken = () => {
-  const refreshTokenValue = getRefreshToken()
-  if (!refreshTokenValue)
-    throw new Error("No refresh token available, please login again")
-  return http.get<RefreshTokenResponse>("/auth/refresh-token", {
-    params: { refreshToken: refreshTokenValue },
-  })
-}
-
 export const handleLogout = (navigate: (path: string) => void) => {
   Swal.fire({
     icon: "question",
@@ -96,7 +82,7 @@ export const handleLogout = (navigate: (path: string) => void) => {
     if (result.isConfirmed) {
       const { logoutUser } = useAuthStore.getState()
       logoutUser()
-      navigate("/auth/login")
+      navigate("/auth")
     }
   })
 }

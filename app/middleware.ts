@@ -26,9 +26,19 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/unauthorized", req.url))
   }
 
+  if (pathname.startsWith("/auth") || pathname === "/") {
+    if (role === "tenant") {
+      return NextResponse.redirect(new URL("/tenant/dashboard", req.url))
+    }
+    if (role === "admin") {
+      return NextResponse.redirect(new URL("/admin/dashboard", req.url))
+    }
+    return NextResponse.redirect(new URL("/auth", req.url))
+  }
+
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/tenant/:path*"],
+  matcher: ["/", "/admin/:path*", "/tenant/:path*"],
 }

@@ -1,6 +1,5 @@
 import { loginFormData, loginSchema } from "@/schema"
-import { clearStoredCredentials, getStoredCredentials, loginUser, saveCredentials } from "@/services/auth"
-import { storeRefreshToken, storeUserToken } from "@/services/cookies"
+import { clearStoredCredentials, getStoredCredentials, loginUserApi, saveCredentials } from "@/services/auth"
 import { setAuthTokenHeader } from "@/services/https"
 import useAuthStore from "@/store/auth"
 import { Button, Field, Grid, Input, InputGroup, Text } from "@chakra-ui/react"
@@ -9,6 +8,7 @@ import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import { LuEye, LuEyeOff, LuLock, LuMail } from "react-icons/lu"
 
 export const Login = () => {
@@ -26,39 +26,55 @@ export const Login = () => {
         }
     })
     const [showPassword, setShowPassword] = useState(false)
-
-    const { loginUser: persistUser } = useAuthStore()
-    const setUser = useAuthStore((state) => state.setUser)
-
+    const { loginUser } = useAuthStore()
     const router = useRouter()
 
     const mutation = useMutation({
         mutationFn: (data: loginFormData) => {
-            return loginUser(data)
+            return loginUserApi(data)
         },
 
-        onSuccess: (response, variables: loginFormData) => {
-            const remember = !!variables.rememberMe
-            if (response.data?.accessToken && response.data?.user) {
-                setUser(response.data.user)
-                persistUser(
+        onSuccess: async (response, variables: loginFormData) => {
+            toast.success('Logged in')
+            const remember = !!variables.rememberMe;
+
+            if (response.data?.token && response.data?.user) {
+                loginUser(
                     response.data.user,
-                    response.data.accessToken,
-                    response.data.refreshToken,
+                    response.data.token,
                     remember
                 )
-                storeUserToken(response.data.accessToken, variables.rememberMe)
-                storeRefreshToken(response.data.refreshToken, variables.rememberMe)
-                setAuthTokenHeader(response.data.accessToken)
+                setAuthTokenHeader(response.data.token)
 
-                if (response.data.user.user.role === "admin") {
-                    router.push("/admin/dashboard")
-                } else if (response.data.user.user.role === "tenant") {
-                    router.push("/tenant/dashboard")
+                await new Promise(resolve => setTimeout(resolve, 200))
+
+                const lsData = localStorage.getItem('auth-storage')
+                console.log("📦 localStorage:", lsData);
+
+                const storedUser = useAuthStore.getState().user
+                console.log("🔍 User in store:", storedUser);
+
+                if (!storedUser) {
+                    console.error("❌ User not in store!");
+                    return;
                 }
-                return
+
+                const role = response.data.user.role;
+                console.log("🎯 User role:", role);
+
+                if (role === "admin") {
+                    console.log("→ Redirecting to admin dashboard");
+                    router.replace("/admin/dashboard")
+                } else if (role === "tenant") {
+                    console.log("→ Redirecting to tenant dashboard");
+                    router.replace("/tenant/dashboard")
+                }
+                return;
+            } else {
+                console.error("❌ Missing token or user in response");
             }
 
+            // Handle remember me for credentials
             if (remember) {
                 if (variables.email && variables.password) {
                     saveCredentials(variables.email, variables.password)
@@ -69,7 +85,12 @@ export const Login = () => {
                 clearStoredCredentials()
             }
         },
+
+        onError: (error) => {
+            console.error("❌ Login error:", error);
+        }
     })
+
     useEffect(() => {
         const storedCredentials = getStoredCredentials()
         if (storedCredentials) {
@@ -140,6 +161,7 @@ export const Login = () => {
             </Grid>
             <Button
                 className="bg-button-primary hover:bg-button-hover text-white"
+                type="submit"
                 disabled={mutation.isPending}
                 loading={mutation.isPending}
                 my={8}

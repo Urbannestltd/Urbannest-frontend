@@ -1,18 +1,21 @@
+'use client'
 import { PageTitle } from "@/components/ui/page-title"
-import { Avatar, Flex, HStack } from "@chakra-ui/react"
-import { FaRegBell } from "react-icons/fa"
-import UserAvatar from "@/app/assets/images/user-avatar.png"
+import { Flex, HStack } from "@chakra-ui/react"
+import { Notifications } from "@/components/common/notifications"
+import useAuthStore from "@/store/auth"
+import { Avatar } from "@/components/ui/avatar"
 
 export const UserNav = () => {
+    const { user } = useAuthStore()
     return (
         <HStack justify={"space-between"}>
-            <PageTitle title="Hello, Amanda" subText="Welcome to your dashboard!" />
+            <PageTitle title={`Hello, ${user?.name}`} subText="Welcome to your dashboard!" />
             <Flex gap={4} align={"center"}>
-                <FaRegBell size={20} />
-                <Avatar.Root>
-                    <Avatar.Fallback name="Amanda" />
-                    <Avatar.Image src={UserAvatar.src} />
-                </Avatar.Root>
+                <Notifications />
+                <Avatar
+                    name={user?.name}
+                    size='xs'
+                />
             </Flex>
         </HStack>
     )

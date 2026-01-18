@@ -1,6 +1,6 @@
 import { registerFormData, registerSchema } from "@/schema"
-import { loginUser, registerUser } from "@/services/auth"
-import { storeRefreshToken, storeUserToken } from "@/services/cookies"
+import { loginUserApi, registerUser } from "@/services/auth"
+import { storeUserToken } from "@/services/cookies"
 import { setAuthTokenHeader } from "@/services/https"
 import useAuthStore from "@/store/auth"
 import { Button, Field, Grid, Input, InputGroup } from "@chakra-ui/react"
@@ -35,32 +35,32 @@ export const SignUp = () => {
     })
     const [showPassword, setShowPassword] = useState(false)
     const {
-        loginUser: persistUser,
+        loginUser,
     } = useAuthStore()
     const router = useRouter()
 
     const mutation = useMutation({
         mutationFn: (data: registerFormData) => {
             console.log(data);
-            return registerUser(data, 'teniolakalaro@gmail.com$$2b$10$qoDGAxB7/kLZADUGjYqp0O5LNn198d0VfeoAZtgRxBoKdmCV9.CxS')
+            return registerUser(data, 'teniolakalaro@gmail.com$$2b$10$/Mg.yD69iUOMY1SMWBgF2uwSk2o8FlPcU16K.pgzUaHLfxI4RuwhO')
         },
 
 
         onSuccess: async (_response, variables: registerFormData) => {
-            const loginRes = await loginUser({
+            const loginRes = await loginUserApi({
                 email: 'teniolakalaro@gmail.com',
                 password: variables.userPassword
             })
 
-            if (!loginRes.data?.accessToken || !loginRes.data?.user) return
+            if (!loginRes.data?.token || !loginRes.data?.user) return
 
-            persistUser(
+            loginUser(
                 loginRes.data.user,
-                loginRes.data.accessToken,
-                loginRes.data.refreshToken,
+                loginRes.data.token,
                 variables.rememberMe
             )
-            setAuthTokenHeader(loginRes.data.accessToken)
+            setAuthTokenHeader(loginRes.data.token)
+
             router.push("/tenant/dashboard")
         }
     })

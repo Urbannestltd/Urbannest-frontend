@@ -1,6 +1,6 @@
 "use client"
 import { PageTitle } from "@/components/ui/page-title"
-import { Box, Button, Flex, HStack, Tabs, Text } from "@chakra-ui/react"
+import { Box, Button, CloseButton, Dialog, Flex, HStack, Portal, Tabs, Text } from "@chakra-ui/react"
 import { useState } from "react"
 import { DashboardCard } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress-bar"
@@ -11,11 +11,18 @@ import { useColumns } from "./columns"
 import { DataTable } from "@/components/ui/data-table"
 import { VistorData } from "@/utils/data"
 import ellipsisbg from "@/app/assets/images/ellipse-bg.svg"
-import Image from "next/image"
+import { AddVisitorModal } from "../visitors/add-visitor-modal"
+import { AddVisitorGroupsModal } from "../visitors/add-visitor-groups"
 
 export default function TenantDashboard() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("7days")
     const columns = useColumns()
+    const [openModal, setOpenModal] = useState(false)
+    const [SwitchModal, setSwitchModal] = useState(false)
+    const setOpen = (open: boolean) => {
+        setSwitchModal(open)
+        console.log(open)
+    }
     return (
         <Box>
             <Box mt={7}>
@@ -30,8 +37,8 @@ export default function TenantDashboard() {
                             rounded={"full"}
                             fontSize={"12px"}
                             className={`${maintenanceFilter === item.value
-                                    ? "bg-[#F9EBD1]"
-                                    : "border border-[#757575]"
+                                ? "bg-[#F9EBD1]"
+                                : "border border-[#757575]"
                                 }`}
                         >
                             {item.label}
@@ -84,7 +91,7 @@ export default function TenantDashboard() {
                         </Tabs.List>
                         <Flex gap={2}>
                             <SearchInput />
-                            <MainButton size="sm" icon={<LuUser />} children="Add Vistor" />
+                            <MainButton size="sm" icon={<LuUser />} onClick={() => setOpenModal(true)} children="Add Vistor" />
                         </Flex>
                     </HStack>
                     <Tabs.Content value="walk-in">
@@ -107,6 +114,18 @@ export default function TenantDashboard() {
                     </Tabs.Content>
                 </Tabs.Root>
             </Box>
+            <Dialog.Root open={openModal} onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}>
+                <Portal>
+                    <Dialog.Backdrop />
+                    <Dialog.Positioner>
+                        <Dialog.Content mt={40}>
+                            <Dialog.CloseTrigger><CloseButton /></Dialog.CloseTrigger>
+                            {SwitchModal ? <AddVisitorGroupsModal Submit={() => setOpenModal(false)} /> : <AddVisitorModal Open={setOpen} Submit={() => setOpenModal(false)} />}
+
+                        </Dialog.Content>
+                    </Dialog.Positioner>
+                </Portal>
+            </Dialog.Root>
         </Box>
     )
 }
