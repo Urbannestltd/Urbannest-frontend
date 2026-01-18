@@ -14,10 +14,8 @@ import { useEffect, useState } from "react"
 import { SignUp } from "./sign-up"
 import { Login } from "./login"
 import { useSearchParams } from "next/navigation"
-import Logo from '@/app/assets/urbannest-logo.png'
-import { Suspense } from "react";
 
-function SignIn() {
+export default function SignIn() {
     const searchParams = useSearchParams();
     const [isSignUp, setIsSignUp] = useState(false);
 
@@ -75,28 +73,6 @@ function SignIn() {
                     <Span className="text-primary-gold">privacy policy</Span>
                 </Text>
             </Flex>
-        </Flex>
-    )
-}
-
-export default function Auth() {
-    return (
-        <Flex align={'center'} justify={"center"} p={2}>
-            <Suspense fallback={
-                <Flex
-                    direction={"column"}
-                    mt={10}
-                    w={"468px"}
-                    align={"center"}
-                    justify={'center'}
-                    h={"100%"}
-                    bg={"white"}
-                >
-                    <Image src={Logo} alt="loader" />
-                </Flex>
-            }>
-                <SignIn />
-            </Suspense>
         </Flex>
     )
 }

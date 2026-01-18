@@ -40,9 +40,6 @@ export const SignUp = () => {
     const token = searchParams.get("token") || "";
     const [email, hash] = token.split("$$");
 
-
-
-
     const {
         loginUser,
     } = useAuthStore()
@@ -58,7 +55,7 @@ export const SignUp = () => {
         onSuccess: async (_response, variables: registerFormData) => {
             toast.success('Account created successfully')
             const loginRes = await loginUserApi({
-                email: 'teniolakalaro@gmail.com',
+                email: email,
                 password: variables.userPassword
             })
 
