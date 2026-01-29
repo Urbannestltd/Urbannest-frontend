@@ -15,15 +15,19 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
-    return (<RequireAuth>
-        <div className="flex h-screen">
-            <div className="relative w-[290px]">
-                <TenantSidebar />
+    return (
+        <RequireAuth>
+            <div className="flex h-screen">
+                <div className="relative w-[380px]">
+                    <TenantSidebar />
+                </div>
+                <main className="flex w-full justify-center p-8 ">
+                    <div className=" w-full max-w-[1440px]">
+                        <UserNav />
+                        {children}
+                    </div>
+                </main>
             </div>
-            <main className="flex-1 p-8 ">
-                <UserNav />
-                {children}
-            </main>
-        </div></RequireAuth>
+        </RequireAuth>
     ) //<>{children}</RequireAuth></>;
 }

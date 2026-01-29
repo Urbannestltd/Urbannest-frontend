@@ -63,13 +63,13 @@ const useAuthStore = create<AuthStore>()(
           state?.setHydrated()
         }
       },
-    }
-  )
+    },
+  ),
 )
 
 export const isTenant = () => {
   const user = useAuthStore.getState().user
-  return user?.role === "tenant"
+  return user?.role === "tenant" || user?.role === "TENANT"
 }
 
 export const isAdmin = () => {
@@ -78,8 +78,10 @@ export const isAdmin = () => {
 }
 
 export const isGuest = () => {
+  /*
   const user = useAuthStore.getState().user
   return user?.role === "guest"
+*/
 }
 
 export default useAuthStore

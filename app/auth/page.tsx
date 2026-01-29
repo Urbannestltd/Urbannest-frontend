@@ -89,7 +89,7 @@ export default function Auth() {
                     w={"468px"}
                     align={"center"}
                     justify={'center'}
-                    h={'100vh'}
+                    h={'90vh'}
                     bg={"white"}
                 >
                     <Image src={Logo} alt="loader" />

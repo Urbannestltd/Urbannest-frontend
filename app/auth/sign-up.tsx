@@ -1,6 +1,5 @@
 import { registerFormData, registerSchema } from "@/schema"
 import { loginUserApi, registerUser } from "@/services/auth"
-import { setAuthTokenHeader } from "@/services/https"
 import useAuthStore from "@/store/auth"
 import { Button, Field, Grid, Input, InputGroup } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
@@ -66,7 +65,6 @@ export const SignUp = () => {
                 loginRes.data.token,
                 variables.rememberMe
             )
-            setAuthTokenHeader(loginRes.data.token)
 
             router.push("/tenant/dashboard")
         },

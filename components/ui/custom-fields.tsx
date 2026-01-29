@@ -46,6 +46,7 @@ type InputProps<T extends FieldValues> = BaseProps<T> & {
     value?: any;
     description?: string;
     labelWidth?: string | number;
+    setValue?: (value: any) => void
 };
 
 type TextareaProps<T extends FieldValues> = BaseProps<T> & {
@@ -183,7 +184,7 @@ export function CustomSelect<T extends FieldValues>({
             render={({ field, fieldState }) => {
                 const errorMsg = (fieldState.error?.message as string | undefined) ?? errorTextFallback;
 
-                const currentValue = field.value ?? value;
+                const currentValue = field.value ?? [value];
 
                 const valueForSelect = multiple
                     ? (currentValue ?? [])
@@ -204,13 +205,13 @@ export function CustomSelect<T extends FieldValues>({
                             collection={collection}
                             name={field.name}
                             value={valueForSelect}
-                            border={'1px solid #B2B2B2'}
+                            border={'1px solid #A0A0A0'}
                             rounded={'md'}
                             width={width}
                             disabled={disabled}
                             readOnly={readOnly}
                             color={'black'}
-                            bg={readOnly ? '#F9FAFB' : bg}
+                            bg={bg}
                             onInteractOutside={() => field.onBlur()}
                             onValueChange={(event) => {
                                 if (multiple) {
@@ -227,7 +228,7 @@ export function CustomSelect<T extends FieldValues>({
                                     {isLoading ? (
                                         <Text>Loading...</Text>
                                     ) : (
-                                        avatar ? <SelectValue /> : <Select.ValueText placeholder={placeholder} fontSize={'14px'} p={2} _placeholder={{ color: '#B3B3B3' }} color='black' />
+                                        avatar ? <SelectValue /> : <Select.ValueText textAlign={'center'} w={'full'} placeholder={placeholder} fontSize={'14px'} p={2} _placeholder={{ color: '#B3B3B3' }} color='black' />
                                     )}
                                 </Select.Trigger>
                                 <Select.IndicatorGroup>
@@ -277,7 +278,6 @@ export function CustomInput<T extends FieldValues>({
     control,
     label,
     placeholder,
-
     disabled,
     fieldProps,
     trimOnBlur,
@@ -288,23 +288,27 @@ export function CustomInput<T extends FieldValues>({
     width,
     readOnly,
     value,
+    setValue,
     orientation = 'vertical'
 }: InputProps<T>) {
     const { field, fieldState } = useController({ name, control });
     return (
         <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
-            <Box>
+            {label && <Box>
                 <Field.Label className='satoshi-medium'>
-                    {label}{required && '*'}
+                    {label}{label && required && '*'}
                 </Field.Label>
-            </Box>
+            </Box>}
             <Input
                 {...inputProps}
                 type={type}
                 name={field.name}
                 ref={field.ref}
                 value={field.value ?? value}
-                onChange={(e) => field.onChange(e.target.value)}
+                onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setValue && setValue?.(e.target.value)
+                }}
                 onBlur={(e) => {
                     if (trimOnBlur) {
                         const v = (e.target.value ?? '').trim();
@@ -347,7 +351,7 @@ export function CustomTextarea<T extends FieldValues>({
     width,
     description,
     readOnly,
-    orientation = 'horizontal'
+    orientation = 'vertical'
 }: TextareaProps<T>) {
     const { field, fieldState } = useController({ name, control });
     return (
@@ -384,9 +388,9 @@ export function CustomTextarea<T extends FieldValues>({
                     placeholder={placeholder}
                     readOnly={readOnly}
                     p={3}
-                    color={readOnly ? '#475467' : 'black'}
-                    bg={readOnly ? '#F9FAFB' : 'white'}
-                    border={'1px solid #D0D5DD'}
+                    color={'black'}
+                    bg={'white'}
+                    border={'1px solid #A0A0A0'}
                     rounded={'8px'}
                     minH={minH}
                     w={width}
@@ -564,10 +568,8 @@ export function CustomCheckbox<T extends FieldValues>({ name,
                         </Text>}
                     </Fieldset.Legend>
 
-                    <Fieldset.Content color={'#475467'}
-                        bg={'#F9FAFB'}
-                        border={'1px solid #D0D5DD'}
-                        rounded={'8px'} width={width} p={2}>
+                    <Fieldset.Content
+                        width={width} p={2}>
 
                         {options.map((option) => (
                             <>

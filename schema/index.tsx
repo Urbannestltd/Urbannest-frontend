@@ -26,7 +26,13 @@ export const addVisitorSchema = z.object({
     visitorType: selectArrayField("Visitor type is required"),
     accessType: selectArrayField("Access type is required"),
     timeExpected: inputField("Time expected is required"),
+    endDate: inputField("End date is required"),
     dateExpected: inputField("Date expected is required"),
+})
+
+export const VisitorListSchema = z.object({
+    name: inputField("Full name is required"),
+    phone: inputField("Phone number is required"),
 })
 
 export const addVisitorGroupsSchema = z.object({
@@ -36,12 +42,28 @@ export const addVisitorGroupsSchema = z.object({
     accessType: selectArrayField("Access type is required"),
     timeExpected: inputField("Time expected is required"),
     dateExpected: inputField("Date expected is required"),
-    visitorlist: z.array(z.string()).min(1, "Visitor list is required"),
+    endDate: inputField("End date is required"),
+    visitorlist: z.array(VisitorListSchema).min(1, "At least one visitor is required"),
 })
 
+export const MaintenanceRequestSchema = z.object({
+    title: inputField("Title is required"),
+    description: inputField("Description is required"),
+    type: selectArrayField("Type is required"),
+})
+
+export const UtilitiesSchema = z.object({
+    meterNumber: inputField("Meter number is required"),
+    amount: number("Amount is required"),
+    saveMeter: z.boolean(),
+})
 
 export type addVisitorFormData = z.infer<typeof addVisitorSchema>
 export type addVisitorGroupsFormData = z.infer<typeof addVisitorGroupsSchema>
+export type VisitorListFormData = z.infer<typeof VisitorListSchema>
+export type MaintenanceRequestFormData = z.infer<typeof MaintenanceRequestSchema>
+export type UtilitiesFormData = z.infer<typeof UtilitiesSchema>
+
 
 export type loginFormData = z.input<typeof loginSchema>
 export type registerFormData = z.infer<typeof registerSchema>

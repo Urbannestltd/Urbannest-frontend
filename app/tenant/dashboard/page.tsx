@@ -1,7 +1,7 @@
 "use client"
 import { PageTitle } from "@/components/ui/page-title"
 import { Box, Button, CloseButton, Dialog, Flex, HStack, Portal, Tabs, Text } from "@chakra-ui/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DashboardCard } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress-bar"
 import { MainButton } from "@/components/ui/button"
@@ -13,12 +13,26 @@ import { VistorData } from "@/utils/data"
 import ellipsisbg from "@/app/assets/images/ellipse-bg.svg"
 import { AddVisitorModal } from "../visitors/add-visitor-modal"
 import { AddVisitorGroupsModal } from "../visitors/add-visitor-groups"
+import { useLeaseStore } from "@/store/lease"
+import { formatDateDash, formatNumber } from "@/services/date"
+import { Modal } from "@/components/ui/dialog"
+import { useVistorsStore } from "@/store/visitors"
 
 export default function TenantDashboard() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("7days")
     const columns = useColumns()
     const [openModal, setOpenModal] = useState(false)
     const [SwitchModal, setSwitchModal] = useState(false)
+    const lease = useLeaseStore((state) => state.lease);
+    const fetchLease = useLeaseStore((state) => state.fetchLease);
+    const visitors = useVistorsStore((state) => state.visitors)
+    const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
+
+
+    useEffect(() => {
+        fetchLease()
+        fetchVisitors()
+    }, [])
     const setOpen = (open: boolean) => {
         setSwitchModal(open)
         console.log(open)
@@ -57,18 +71,18 @@ export default function TenantDashboard() {
                         zIndex={"initial"}
                         p={6}
                         color={"white"}
-                        w={"340px"}
+                        w={"45%"}
                         h={"116px"}
                         rounded={"8px"}
                         bgColor={"#2A3348"}
                     >
                         <Box className="z-50">
                             <Text mb={1} className="satoshi-bold text-2xl">
-                                ₦12,000,000
+                                {formatNumber(lease?.contract.rentAmount)}
                             </Text>
                             <HStack mb={2} justify={"space-between"} fontSize={"12px"}>
                                 <Text className="satoshi-bold">Rent Expiry Date:</Text>
-                                <Text>12-01-2026</Text>
+                                <Text>{formatDateDash(lease?.contract.endDate)}</Text>
                             </HStack>
                             <Progress value={80} size="lg" />
                         </Box>
@@ -87,11 +101,26 @@ export default function TenantDashboard() {
                             <Tabs.Trigger px={2} ml={3} value="scheduled">
                                 Scheduled Visitors
                             </Tabs.Trigger>
-                            <Tabs.Indicator shadow={"none"} fontWeight={"bold"} />
+                            <Tabs.Indicator bg={'transparent'} shadow={"none"} fontWeight={"bold"} />
                         </Tabs.List>
                         <Flex gap={2}>
                             <SearchInput />
-                            <MainButton size="sm" icon={<LuUser />} onClick={() => setOpenModal(true)} children="Add Vistor" />
+                            <Modal
+                                open={openModal}
+                                onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}
+                                modalContent={
+                                    SwitchModal ? (
+                                        <AddVisitorGroupsModal Submit={() => setOpenModal(false)} />
+                                    ) : (
+                                        <AddVisitorModal
+                                            Open={setOpen}
+                                            Submit={() => setOpenModal(false)}
+                                        />
+                                    )
+                                }
+                                triggerContent="Add Visitor"
+                                triggerIcon={<LuUser />}
+                            />
                         </Flex>
                     </HStack>
                     <Tabs.Content value="walk-in">
@@ -100,7 +129,7 @@ export default function TenantDashboard() {
                             my={1}
                             tableName="Walk-in Visitors"
                             columns={columns}
-                            data={VistorData.visitors}
+                            data={visitors}
                         />
                     </Tabs.Content>
                     <Tabs.Content value="scheduled">
@@ -114,18 +143,6 @@ export default function TenantDashboard() {
                     </Tabs.Content>
                 </Tabs.Root>
             </Box>
-            <Dialog.Root open={openModal} onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}>
-                <Portal>
-                    <Dialog.Backdrop />
-                    <Dialog.Positioner>
-                        <Dialog.Content mt={40}>
-                            <Dialog.CloseTrigger><CloseButton /></Dialog.CloseTrigger>
-                            {SwitchModal ? <AddVisitorGroupsModal Submit={() => setOpenModal(false)} /> : <AddVisitorModal Open={setOpen} Submit={() => setOpenModal(false)} />}
-
-                        </Dialog.Content>
-                    </Dialog.Positioner>
-                </Portal>
-            </Dialog.Root>
         </Box>
     )
 }

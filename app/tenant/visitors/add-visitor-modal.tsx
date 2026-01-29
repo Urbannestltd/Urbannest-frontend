@@ -9,6 +9,11 @@ import addVisitorIcon from '@/app/assets/icons/add-user-icon.svg'
 import Image from "next/image"
 import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
+import { useMutation } from "@tanstack/react-query"
+import { InviteVisitor, InviteVisitorPayload } from "@/services/visitors"
+import { formatDateToIso } from "@/services/date"
+import dayjs from "dayjs"
+import { useVistorsStore, Visitor } from "@/store/visitors"
 
 interface addVisitorProps {
     Submit: () => void
@@ -17,13 +22,60 @@ interface addVisitorProps {
 
 export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
 
-    const { control, reset, handleSubmit } = useForm<addVisitorFormData>()
+    const { control, reset, watch, handleSubmit, setValue } = useForm<addVisitorFormData>()
+    const addVisitor = useVistorsStore((state) => state.addVisitor)
+
+    const startDate = watch('dateExpected')
+
+    useEffect(() => {
+        if (!startDate) return
+
+        const nextDay = dayjs(startDate)
+            .add(1, "day")
+            .format("YYYY-MM-DD")
+
+        setValue('endDate', nextDay, {
+            shouldValidate: true,
+            shouldDirty: true,
+        })
+    }, [startDate, setValue])
+
+    const mutation = useMutation({
+        mutationFn: (data: InviteVisitorPayload) => InviteVisitor(data),
+        onSuccess: (response, variables: InviteVisitorPayload) => {
+            const newVisitor: Visitor = {
+                date: variables.startDate,
+                code: '',
+                type: "GUEST",
+                name: variables.visitor.name,
+                id: variables.visitor.name,
+                checkInTime: variables.startDate,
+                checkOutTime: variables.endDate,
+                status: 'ACTIVE',
+            }
+            addVisitor(newVisitor)
+            Submit?.()
+            reset()
+
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
 
 
     const handleAddVisitor = (data: addVisitorFormData) => {
-        console.log(data)
-        Submit?.()
-        toast.success('success')
+        const payload: InviteVisitorPayload = {
+            visitor: {
+                name: data.fullName,
+                phone: data.phoneNumber
+            },
+            frequency: data.accessType[0],
+            type: data.visitorType[0],
+            startDate: formatDateToIso(data.dateExpected),
+            endDate: formatDateToIso(data.endDate)
+        }
+        mutation.mutate(payload)
     }
 
     return (
@@ -53,15 +105,16 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
 
 const visitorType = createListCollection({
     items: [
-        { label: 'Guest', value: 'guest' },
-        { label: 'Delivery', value: 'delivery' },
-        { label: 'Service Provider', value: 'service-provider' },
+        { label: 'Guest', value: 'GUEST' },
+        { label: 'Delivery', value: 'DELIVERY' },
+        { label: 'Service Provider', value: 'SERVICE_PROVIDER' },
     ]
 })
 
 const accessType = createListCollection({
     items: [
-        { label: 'Walk-in', value: 'walkIn' },
-        { label: 'Scheduled', value: 'scheduled' },
+        { label: 'One Off', value: 'ONE_OFF' },
+        { label: 'Whole Day', value: 'WHOLE_DAY' },
+        { label: 'Recurring', value: 'RECURRING' },
     ]
 })

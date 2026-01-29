@@ -1,7 +1,8 @@
 import { loginFormData, loginSchema } from "@/schema"
 import { clearStoredCredentials, getStoredCredentials, loginUserApi, saveCredentials } from "@/services/auth"
-import { setAuthTokenHeader } from "@/services/https"
+
 import useAuthStore from "@/store/auth"
+import { useLeaseStore } from "@/store/lease"
 import { Button, Field, Grid, Input, InputGroup, Text } from "@chakra-ui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
@@ -27,6 +28,7 @@ export const Login = () => {
     })
     const [showPassword, setShowPassword] = useState(false)
     const { loginUser } = useAuthStore()
+    const { fetchLease } = useLeaseStore()
     const router = useRouter()
 
     const mutation = useMutation({
@@ -44,7 +46,6 @@ export const Login = () => {
                     response.data.token,
                     remember
                 )
-                setAuthTokenHeader(response.data.token)
 
                 await new Promise(resolve => setTimeout(resolve, 200))
 
@@ -62,11 +63,12 @@ export const Login = () => {
                 const role = response.data.user.role;
                 console.log("🎯 User role:", role);
 
-                if (role === "admin") {
+                if (role === "admin" || role === "ADMIN") {
                     console.log("→ Redirecting to admin dashboard");
                     router.replace("/admin/dashboard")
-                } else if (role === "tenant") {
+                } else if (role === "tenant" || role === "TENANT") {
                     console.log("→ Redirecting to tenant dashboard");
+                    fetchLease()
                     router.replace("/tenant/dashboard")
                 }
                 return;

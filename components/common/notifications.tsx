@@ -15,26 +15,12 @@ import { PageTitle } from "../ui/page-title"
 import { Divider } from "../ui/divider"
 import { notification } from "@/utils/model"
 import { notificationsinfo } from "@/utils/data"
+import { formatDate } from "@/services/date"
 
 interface CardProps {
     notifs: notification[]
 }
 
-const formatDate = (dateStr: string) => {
-    const [day, month, year] = dateStr.split("-")
-
-    const date = new Date(
-        Number(`20${year}`), // year → 2025
-        Number(month) - 1, // month index
-        Number(day)
-    )
-
-    return date.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-    })
-}
 
 const NotifcationsCard = ({ notifs }: CardProps) => {
     const iconTypes: Record<

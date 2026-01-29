@@ -1,9 +1,10 @@
+import { Visitor } from "@/store/visitors";
 import { Flex, Text } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuEllipsis, LuEllipsisVertical } from "react-icons/lu";
 import { text } from "stream/consumers";
 
-export const useColumns = (): ColumnDef<any, unknown>[] => {
+export const useColumns = (): ColumnDef<Visitor, unknown>[] => {
     const Status = [
         {
             value: 'checked-in',
@@ -21,14 +22,14 @@ export const useColumns = (): ColumnDef<any, unknown>[] => {
 
     return [
         {
-            accessorKey: "name",
+            accessorKey: 'name',
             header: "Visitor",
             cell: ({ row }) => row.getValue("name"),
         },
         {
-            accessorKey: "phone",
+            accessorKey: 'type',
             header: "Phone",
-            cell: ({ row }) => row.getValue("phone"),
+            cell: ({ row }) => row.getValue("type"),
         },
         {
             accessorKey: "status",
@@ -53,25 +54,25 @@ export const useColumns = (): ColumnDef<any, unknown>[] => {
 
         },
         {
-            accessorKey: 'access',
+            accessorKey: 'type',
             header: 'Access',
             cell: ({ row }) =>
-                <Text className="capitalize" children={row.getValue("access")} />
+                <Text className="capitalize" children={row.getValue('type')} />
         },
         {
-            accessorKey: 'timeIn',
+            accessorKey: 'checkInTime',
             header: 'Time In',
-            cell: ({ row }) => row.getValue("timeIn"),
+            cell: ({ row }) => row.getValue('checkInTime'),
         },
         {
-            accessorKey: 'timeOut',
+            accessorKey: 'checkOutTime',
             header: 'Time Out',
-            cell: ({ row }) => row.getValue("timeOut"),
+            cell: ({ row }) => row.getValue('checkOutTime'),
         },
         {
             accessorKey: 'action',
             header: 'Action',
-            cell: ({ row }) => (
+            cell: () => (
                 <LuEllipsisVertical cursor={'pointer'} />
             )
         }

@@ -1,3 +1,4 @@
+import useAuthStore from "@/store/auth"
 import axios from "axios"
 
 const axiosInstance = axios.create({
@@ -5,23 +6,27 @@ const axiosInstance = axios.create({
   timeout: 10_000,
 })
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = useAuthStore.getState().token
+
+    if (token) {
+      config.headers.Authorization = token.startsWith("Bearer ")
+        ? token
+        : `Bearer ${token}`
+    }
+
+    return config
+  },
+  (error) => Promise.reject(error),
+)
+
 const http = {
   post: axiosInstance.post,
   get: axiosInstance.get,
   patch: axiosInstance.patch,
   put: axiosInstance.put,
   delete: axiosInstance.delete,
-}
-
-let isRefreshing = false
-let failedRequestsQueue: Array<() => void> = []
-
-export const setAuthTokenHeader = (accessToken: string) => {
-  axiosInstance.defaults.headers.common.Authorization = accessToken.startsWith(
-    "Bearer "
-  )
-    ? accessToken
-    : `Bearer ${accessToken}`
 }
 
 export default http

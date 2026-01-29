@@ -1,27 +1,43 @@
-'use client'
-import { MainButton } from "@/components/ui/button";
-import { DashboardCard } from "@/components/ui/card";
-import { DataTable } from "@/components/ui/data-table";
-import { PageTitle } from "@/components/ui/page-title";
-import { SearchInput } from "@/components/ui/search-input";
-import { VistorData } from "@/utils/data";
-import { Box, Button, CloseButton, Dialog, Flex, HStack, Portal, Tabs } from "@chakra-ui/react";
-import { title } from "process";
-import { useState } from "react";
-import { CgUser, CgUserAdd } from "react-icons/cg";
-import { LuUser, LuUserPlus } from "react-icons/lu";
-import { useColumns } from "../dashboard/columns";
-import { AddVisitorModal } from "./add-visitor-modal";
-import { AddVisitorGroupsModal } from "./add-visitor-groups";
+"use client"
+import { MainButton } from "@/components/ui/button"
+import { DashboardCard } from "@/components/ui/card"
+import { DataTable } from "@/components/ui/data-table"
+import { PageTitle } from "@/components/ui/page-title"
+import { SearchInput } from "@/components/ui/search-input"
+import { VistorData } from "@/utils/data"
+import {
+    Box,
+    Button,
+    CloseButton,
+    Dialog,
+    Flex,
+    HStack,
+    Portal,
+    Tabs,
+} from "@chakra-ui/react"
+import { title } from "process"
+import { useEffect, useState } from "react"
+import { CgUser, CgUserAdd } from "react-icons/cg"
+import { LuUser, LuUserPlus } from "react-icons/lu"
+import { useColumns } from "../dashboard/columns"
+import { AddVisitorModal } from "./add-visitor-modal"
+import { AddVisitorGroupsModal } from "./add-visitor-groups"
+import { Modal } from "@/components/ui/dialog"
+import { useVistorsStore } from "@/store/visitors"
 
 export default function Visitors() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("today")
     const [openModal, setOpenModal] = useState(false)
     const columns = useColumns()
     const [SwitchModal, setSwitchModal] = useState(false)
+    const visitors = useVistorsStore((state) => state.visitors)
+    const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
+
+    useEffect(() => {
+        fetchVisitors()
+    })
     const setOpen = (open: boolean) => {
         setSwitchModal(open)
-        console.log(open)
     }
     return (
         <>
@@ -45,8 +61,23 @@ export default function Visitors() {
                 ))}
             </HStack>
             <DashboardCard data={visitorDashboard} />
-            <Flex mt={8} mb={10} justify={'end'}>
-                <MainButton className="place-self-end" icon={<LuUserPlus />} onClick={() => setOpenModal(true)} children="Add Visitor" />
+            <Flex mt={8} mb={10} justify={"end"}>
+                <Modal
+                    open={openModal}
+                    onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}
+                    modalContent={
+                        SwitchModal ? (
+                            <AddVisitorGroupsModal Submit={() => setOpenModal(false)} />
+                        ) : (
+                            <AddVisitorModal
+                                Open={setOpen}
+                                Submit={() => setOpenModal(false)}
+                            />
+                        )
+                    }
+                    triggerContent="Add Visitor"
+                    triggerIcon={<LuUserPlus />}
+                />
             </Flex>
             <Tabs.Root defaultValue={"walk-in"} variant={"line"}>
                 <HStack justify={"space-between"}>
@@ -57,7 +88,12 @@ export default function Visitors() {
                         <Tabs.Trigger px={2} ml={3} value="scheduled">
                             Scheduled Visitors
                         </Tabs.Trigger>
-                        <Tabs.Indicator shadow={"none"} borderBottom={'1px solid #2A3348'} bg='transparent' fontWeight={"bold"} />
+                        <Tabs.Indicator
+                            shadow={"none"}
+                            borderBottom={"1px solid #2A3348"}
+                            bg="transparent"
+                            fontWeight={"bold"}
+                        />
                     </Tabs.List>
                     <SearchInput />
                 </HStack>
@@ -67,7 +103,7 @@ export default function Visitors() {
                         my={1}
                         tableName="Walk-in Visitors"
                         columns={columns}
-                        data={VistorData.visitors}
+                        data={visitors}
                     />
                 </Tabs.Content>
                 <Tabs.Content value="scheduled">
@@ -80,17 +116,6 @@ export default function Visitors() {
                     />
                 </Tabs.Content>
             </Tabs.Root>
-            <Dialog.Root open={openModal} onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}>
-                <Portal>
-                    <Dialog.Backdrop />
-                    <Dialog.Positioner>
-                        <Dialog.Content mt={40}>
-                            <Dialog.CloseTrigger><CloseButton /></Dialog.CloseTrigger>
-                            {SwitchModal ? <AddVisitorGroupsModal Submit={() => setOpenModal(false)} /> : <AddVisitorModal Open={setOpen} Submit={() => setOpenModal(false)} />}
-                        </Dialog.Content>
-                    </Dialog.Positioner>
-                </Portal>
-            </Dialog.Root>
         </>
     )
 }
@@ -103,19 +128,19 @@ const visitorFilter = [
 
 const visitorDashboard = [
     {
-        title: 'Total Vistors',
-        data: '09'
+        title: "Total Vistors",
+        data: "09",
     },
     {
-        title: 'Total Scheduled',
-        data: '08'
+        title: "Total Scheduled",
+        data: "08",
     },
     {
-        title: 'Total Walk-ins',
-        data: '16'
+        title: "Total Walk-ins",
+        data: "16",
     },
     {
-        title: 'Total Cancels',
-        data: '13'
-    }
+        title: "Total Cancels",
+        data: "13",
+    },
 ]
