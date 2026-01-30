@@ -19,7 +19,7 @@ interface Message {
 
 export const MessageCard = ({ cardData, ticketId }: Message) => {
     const { control, reset, handleSubmit } = useForm<messageProps>()
-    const messages = useMaintenanceStore((state) => state.messages)
+
     const fetchMaintenanceMessages = useMaintenanceStore((state) => state.fetchMaintenanceMessages)
     const addMessages = useMaintenanceStore((state) => state.addMessage)
 
@@ -34,7 +34,7 @@ export const MessageCard = ({ cardData, ticketId }: Message) => {
                 ...response,
                 message: variables.payload.message
             }
-            addMessages(response)
+            addMessages(ticketId ?? '', newMessage)
             reset({
                 message: ''
             })

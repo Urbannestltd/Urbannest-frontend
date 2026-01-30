@@ -14,7 +14,10 @@ import { LuImage } from "react-icons/lu"
 
 export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) => {
     const { control, reset, handleSubmit } = useForm<MaintenanceRequestFormData>()
-    const messages = useMaintenanceStore((state) => state.messages)
+    const messages = useMaintenanceStore(
+        (state) => state.messagesByTicket[row?.id ?? '']
+    ) ?? []
+
     const fetchMaintenanceMessages = useMaintenanceStore((state) => state.fetchMaintenanceMessages)
 
     const mutation = useMutation({

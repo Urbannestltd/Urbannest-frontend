@@ -146,7 +146,7 @@ export function DataTable<TData, TValue>({
                 <Table>
                     <TableHeader className=' bg-[#F5F5F5] rounded-full'  >
                         {getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={tableName + ' ' + headerGroup.id}>
+                            <TableRow key={tableName + headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
                                     <TableHead key={header.id} className='!font-semibold  !text-[#475467]'>
                                         {!header.isPlaceholder &&

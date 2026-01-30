@@ -25,7 +25,7 @@ export default function Maintenance() {
                 <PageTitle title="Maintenance Requests" />
                 <Modal className="w-[1200px] h-fit" size="cover" modalContent={<TenantMaintenanceModal />} triggerVariant={'primary'} triggerContent={'Submit Request'} />
             </HStack>
-            <DataTable tableName="Maintenance Requests" data={maintenance} my={5} columns={columns} />
+            <DataTable tableName="Maintenance Requests" loading={useMaintenanceStore((state) => state.isLoading)} data={maintenance} my={5} columns={columns} />
         </>
     )
 }

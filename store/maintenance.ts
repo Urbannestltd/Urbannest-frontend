@@ -7,9 +7,13 @@ import { create } from "zustand"
 interface MaintenanceStore {
 	maintenance: MaintenaceResponse[]
 	isLoading: boolean
-	messages: MessageCardProps[]
-	setMessages: (messages: MessageCardProps[]) => void
-	addMessage: (message: MessageCardProps) => void
+	isLoadingMessages: boolean
+
+	messagesByTicket: Record<string, MessageCardProps[]>
+
+	setMessages: (ticketId: string, messages: MessageCardProps[]) => void
+	addMessage: (ticketId: string, message: MessageCardProps) => void
+
 	fetchMaintenance: () => Promise<void>
 	fetchMaintenanceMessages: (ticketId: string) => Promise<void>
 	clearMaintenance: () => void
@@ -19,8 +23,16 @@ export const useMaintenanceStore = create<MaintenanceStore>((set) => {
 	return {
 		maintenance: [],
 		isLoading: false,
-		messages: [],
-		setMessages: (messages) => set({ messages }),
+		isLoadingMessages: false,
+		messagesByTicket: {},
+		setMessages: (ticketId, messages) =>
+			set((state) => ({
+				messagesByTicket: {
+					...state.messagesByTicket,
+					[ticketId]: messages,
+				},
+			})),
+
 		fetchMaintenance: async () => {
 			set({ isLoading: true })
 			try {
@@ -33,20 +45,31 @@ export const useMaintenanceStore = create<MaintenanceStore>((set) => {
 			}
 		},
 		fetchMaintenanceMessages: async (ticketId: string) => {
-			set({ isLoading: true })
+			set({ isLoadingMessages: true })
 			try {
 				const response = await http.get(
 					endpoints.getAllMaintenanceRequestsMessages(ticketId),
 				)
-				set((state) => ({ messages: [...state.messages, response.data.data] }))
+				set((state) => ({
+					messagesByTicket: {
+						...state.messagesByTicket,
+						[ticketId]: response.data.data, // 🔑 overwrite per ticket
+					},
+				}))
 			} catch (e) {
 				console.error("❌ Failed to fetch maintenance messages", e)
 			} finally {
-				set({ isLoading: false })
+				set({ isLoadingMessages: false })
 			}
 		},
-		addMessage: (message) =>
-			set((state) => ({ messages: [...state.messages, message] })),
+		addMessage: (ticketId, message) =>
+			set((state) => ({
+				messagesByTicket: {
+					...state.messagesByTicket,
+					[ticketId]: [...(state.messagesByTicket[ticketId] || []), message],
+				},
+			})),
+
 		clearMaintenance: () => {
 			set({ maintenance: [] })
 		},

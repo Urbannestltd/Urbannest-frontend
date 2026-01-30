@@ -83,7 +83,7 @@ export default function Visitors() {
                 <HStack justify={"space-between"}>
                     <Tabs.List borderBottom={"1px solid #D9D9D9"}>
                         <Tabs.Trigger px={2} value="walk-in">
-                            Walk-In Visitors ({VistorData.visitors.length})
+                            Walk-In Visitors ({visitors.length})
                         </Tabs.Trigger>
                         <Tabs.Trigger px={2} ml={3} value="scheduled">
                             Scheduled Visitors
