@@ -64,7 +64,7 @@ export const purchaseElectricity = async (
 
 	try {
 		const response = await http.post(endpoints.purchaseUtilities, payload)
-		return response.data
+		return response.data.data
 	} catch (error) {
 		if (axios.isAxiosError(error)) {
 			throw new Error(

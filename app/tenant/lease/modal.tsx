@@ -20,7 +20,7 @@ export const UtilitiesModal = () => {
         mutationFn: purchaseElectricity,
         onSuccess: (response) => {
             localStorage.setItem("payment_reference", response.reference)
-            window.location.href = response.url
+            if (response.url) return window.location.href = response.url
         },
         onError: (error: any) => {
             toast.error(error.message);
