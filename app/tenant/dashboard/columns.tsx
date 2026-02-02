@@ -1,6 +1,6 @@
 import { Visitor } from "@/store/visitors";
 import { Flex, Menu, MenuItemGroup, Text } from "@chakra-ui/react";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { LuEllipsisVertical } from "react-icons/lu";
 
 export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] => {
@@ -68,7 +68,7 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] =>
             ? [{
                 accessorKey: 'expectedTime',
                 header: 'Expected',
-                cell: ({ row }) => row.getValue('expectedTime'),
+                cell: ({ row }: { row: Row<Visitor> }) => row.getValue('expectedTime'),
             }]
             : []),
         {
