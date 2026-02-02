@@ -1,6 +1,7 @@
 import { Dialog, DialogRootProps } from "@chakra-ui/react"
 import { ButtonSize, MainButton, type ButtonVariant } from "./button";
 import React from "react";
+import { LuX } from "react-icons/lu";
 
 type ModalProps = {
     className?: string;
@@ -40,6 +41,9 @@ export const Modal = ({
             <Dialog.Backdrop />
             <Dialog.Positioner>
                 <Dialog.Content className={`${base} ${className ?? ''}`}>
+                    <Dialog.CloseTrigger p={2}>
+                        <LuX size={20} />
+                    </Dialog.CloseTrigger>
                     {modalContent}
                 </Dialog.Content>
             </Dialog.Positioner>

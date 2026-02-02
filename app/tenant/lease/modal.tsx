@@ -9,7 +9,6 @@ import { MainButton } from "@/components/ui/button"
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { purchaseElectricity, UtilityPaymentPayload } from "@/services/utilities"
-import { util } from "zod"
 import toast from "react-hot-toast"
 
 export const UtilitiesModal = () => {

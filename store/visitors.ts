@@ -6,6 +6,7 @@ export interface Visitor {
 	status: "ACTIVE" | "INACTIVE"
 	checkOutTime: string
 	checkInTime: string
+	expectedTime?: string
 	date: string
 	code: string
 	type: "GUEST" | "DELIVERY" | "SERVICE_PROVIDER"

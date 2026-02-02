@@ -33,6 +33,7 @@ type CustomSelectProps<T extends FieldValues> = BaseProps<T> & {
     avatar?: boolean;
     value?: any;
     labelWidth?: string | number;
+    alignCenter?: boolean
 };
 
 type InputProps<T extends FieldValues> = BaseProps<T> & {
@@ -115,6 +116,7 @@ export function CustomSelect<T extends FieldValues>({
     triggerHeight = '40px',
     fieldProps,
     errorTextFallback,
+    alignCenter,
     description,
     readOnly,
     width,
@@ -228,7 +230,7 @@ export function CustomSelect<T extends FieldValues>({
                                     {isLoading ? (
                                         <Text>Loading...</Text>
                                     ) : (
-                                        avatar ? <SelectValue /> : <Select.ValueText textAlign={'center'} w={'full'} placeholder={placeholder} fontSize={'14px'} p={2} _placeholder={{ color: '#B3B3B3' }} color='black' />
+                                        avatar ? <SelectValue /> : <Select.ValueText textAlign={alignCenter ? 'center' : 'start'} w={'full'} placeholder={placeholder} fontSize={'14px'} p={2} _placeholder={{ color: '#B3B3B3' }} color='black' />
                                     )}
                                 </Select.Trigger>
                                 <Select.IndicatorGroup>

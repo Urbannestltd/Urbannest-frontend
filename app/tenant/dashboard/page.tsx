@@ -1,6 +1,6 @@
 "use client"
 import { PageTitle } from "@/components/ui/page-title"
-import { Box, Button, CloseButton, Dialog, Flex, HStack, Portal, Tabs, Text } from "@chakra-ui/react"
+import { Box, Button, Flex, HStack, Skeleton, SkeletonText, Tabs, Text } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { DashboardCard } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress-bar"
@@ -9,7 +9,6 @@ import { SearchInput } from "@/components/ui/search-input"
 import { LuUser } from "react-icons/lu"
 import { useColumns } from "./columns"
 import { DataTable } from "@/components/ui/data-table"
-import { VistorData } from "@/utils/data"
 import ellipsisbg from "@/app/assets/images/ellipse-bg.svg"
 import { AddVisitorModal } from "../visitors/add-visitor-modal"
 import { AddVisitorGroupsModal } from "../visitors/add-visitor-groups"
@@ -17,16 +16,21 @@ import { useLeaseStore } from "@/store/lease"
 import { formatDateDash, formatNumber } from "@/services/date"
 import { Modal } from "@/components/ui/dialog"
 import { useVistorsStore } from "@/store/visitors"
+import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
+import { TenantMaintenanceModal } from "../maintenance/modal"
 
 export default function TenantDashboard() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("7days")
-    const columns = useColumns()
+    const columns = useColumns(false)
+    const Scheduledcolumns = useColumns(true)
     const [openModal, setOpenModal] = useState(false)
     const [SwitchModal, setSwitchModal] = useState(false)
     const lease = useLeaseStore((state) => state.lease);
+    const loading = useLeaseStore((state) => state.isLoading);
     const fetchLease = useLeaseStore((state) => state.fetchLease);
     const visitors = useVistorsStore((state) => state.visitors)
     const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
+    const loadingVisitors = useVistorsStore((state) => state.isLoading)
 
 
     useEffect(() => {
@@ -77,18 +81,18 @@ export default function TenantDashboard() {
                         bgColor={"#2A3348"}
                     >
                         <Box className="z-50">
-                            <Text mb={1} className="satoshi-bold text-2xl">
+                            {loading ? <SkeletonText w={'200px'} noOfLines={1} mb={1} /> : <Text mb={1} className="satoshi-bold text-2xl">
                                 {formatNumber(lease?.contract.rentAmount)}
-                            </Text>
+                            </Text>}
                             <HStack mb={2} justify={"space-between"} fontSize={"12px"}>
                                 <Text className="satoshi-bold">Rent Expiry Date:</Text>
-                                <Text>{formatDateDash(lease?.contract.endDate)}</Text>
+                                {loading ? <SkeletonText w={'60px'} noOfLines={1} /> : <Text>{formatDateDash(lease?.contract.endDate)}</Text>}
                             </HStack>
                             <Progress value={80} size="lg" />
                         </Box>
                     </Box>
                 </Flex>
-                <MainButton>Submit Request</MainButton>
+                <Modal size={'xl'} triggerContent={'Submit Request'} modalContent={<TenantMaintenanceModal />} />
             </Box>
             <Box mt={10}>
                 <PageTitle mb={4} title="Visitor’s Today" />
@@ -128,6 +132,9 @@ export default function TenantDashboard() {
                             headerColor="#FFFFFF"
                             my={1}
                             tableName="Walk-in Visitors"
+                            loading={loadingVisitors}
+                            pagination={{ currentPage: 1, pageSize: 10, total: visitors.length, totalPages: Math.ceil(visitors.length / 10) }}
+                            emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
                             columns={columns}
                             data={visitors}
                         />
@@ -136,8 +143,11 @@ export default function TenantDashboard() {
                         <DataTable
                             headerColor="#FFFFFF"
                             my={1}
+
                             tableName="Scheduled Visitors"
-                            columns={columns}
+                            loading={loadingVisitors}
+                            emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
+                            columns={Scheduledcolumns}
                             data={[]}
                         />
                     </Tabs.Content>

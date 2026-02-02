@@ -56,8 +56,8 @@ export const MessageCard = ({ cardData, ticketId }: Message) => {
     }
 
     return (
-        <Flex direction={'column'} justify={'end'}>
-            <Flex direction={'column'} h={'400px'} maxH={'400px'} overflowY={'scroll'}>
+        <Flex direction={'column'} h={'full'} flexWrap={'wrap'} justify={'end'}>
+            <Flex direction={'column'} h={'full'} maxH={'500px'} overflowY={'scroll'}>
                 {cardData && cardData.map((item) => {
                     if (!item.sender || !item) return null
                     return (
@@ -73,7 +73,7 @@ export const MessageCard = ({ cardData, ticketId }: Message) => {
                         </Flex>)
                 })}
             </Flex>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
                 <InputGroup w={'full'} endElement={<MdSend onClick={handleSubmit(onSubmit)} color='#2A3348' size='20px' />} >
                     <CustomInput
                         name="message"

@@ -1,3 +1,4 @@
+import { AddImage } from "@/components/ui/add-image"
 import { MainButton } from "@/components/ui/button"
 import { CustomInput, CustomSelect, CustomTextarea } from "@/components/ui/custom-fields"
 import { Divider } from "@/components/ui/divider"
@@ -53,8 +54,8 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                 />
             </div>
             <Divider my={0} />
-            <Flex>
-                <form onSubmit={handleSubmit(onSubmit)} className="p-4 w-full">
+            <Flex h={'fit'} gap={8}>
+                <form onSubmit={handleSubmit(onSubmit)} className="p-4 h-full w-[90%]">
                     <div className="my-1">
                         {row ? (
                             <Box>
@@ -91,32 +92,20 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                     </Flex>
                     <Box my={6} w={'148px'}>
                         <Text className="satoshi-bold" mb={2.5} fontSize={"18px"}>Issue Type</Text>
-                        <CustomSelect triggerHeight="31px" value={row?.category} name='type' control={control} readOnly={row ? true : false} collection={Issue} placeholder="Issue Type" />
+                        <CustomSelect triggerHeight="31px" alignCenter value={row?.category} name='type' control={control} readOnly={row ? true : false} collection={Issue} placeholder="Issue Type" />
                     </Box>
                     <Box mt={6} mb={8} w={'full'}>
                         <Text className="satoshi-bold" mb={2.5} fontSize={"18px"}>Description</Text>
                         <CustomTextarea name='description' placeholder="Tell us more about the issue you’re experiencing" control={control} value={row?.description} readOnly={row ? true : false} />
-                        <Button
-                            fontSize={"14px"}
-                            fontWeight={"semibold"}
-                            bg={"#F5F5F5"}
-                            color={'#757575'}
-                            h={'29px'}
-                            px={4}
-                            mt={2}
-                            rounded={"3xl"}
-                            w={"117px"}
-                            className="satoshi"
-                        >
-                            <LuImage />Add Image
-                        </Button>
+                        <AddImage />
+
                     </Box>
                     <MainButton disabled={mutation.isPending} type="submit" children={row ? "Save" : "Submit"} />
                 </form>
-                <Box p={4} bg={'#FBFBFB'} border={'1px solid #EAEAEA'} w={'full'}>
+                <Flex direction={'column'} justify={'space-between'} p={4} bg={'#FBFBFB'} border={'1px solid #EAEAEA'} w={'70%'}>
                     <PageTitle title="Activity & Comments" fontSize={'18px'} />
                     <MessageCard ticketId={row?.id} cardData={row ? messages : undefined} />
-                </Box>
+                </Flex>
             </Flex>
         </Box>
     )

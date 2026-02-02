@@ -1,11 +1,16 @@
 import { Visitor } from "@/store/visitors";
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Menu, MenuItemGroup, Text } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
-import { LuEllipsis, LuEllipsisVertical } from "react-icons/lu";
-import { text } from "stream/consumers";
+import { LuEllipsisVertical } from "react-icons/lu";
 
-export const useColumns = (): ColumnDef<Visitor, unknown>[] => {
+export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] => {
     const Status = [
+        {
+            value: 'upcoming',
+            label: 'Upcoming',
+            bgColor: '#F5F5F5',
+            textColor: '#757575'
+        },
         {
             value: 'checked-in',
             label: 'Checked In',
@@ -59,6 +64,13 @@ export const useColumns = (): ColumnDef<Visitor, unknown>[] => {
             cell: ({ row }) =>
                 <Text className="capitalize" children={row.getValue('type')} />
         },
+        ...(scheduled
+            ? [{
+                accessorKey: 'expectedTime',
+                header: 'Expected',
+                cell: ({ row }) => row.getValue('expectedTime'),
+            }]
+            : []),
         {
             accessorKey: 'checkInTime',
             header: 'Time In',
@@ -73,7 +85,21 @@ export const useColumns = (): ColumnDef<Visitor, unknown>[] => {
             accessorKey: 'action',
             header: 'Action',
             cell: () => (
-                <LuEllipsisVertical cursor={'pointer'} />
+                <Menu.Root>
+                    <Menu.Trigger>
+                        <LuEllipsisVertical cursor={'pointer'} />
+                    </Menu.Trigger>
+                    <Menu.Positioner>
+                        <Menu.Content>
+                            <MenuItemGroup gap={3}>
+                                <Menu.Item mb={2} cursor={'pointer'} value="save-visitor" >Save as Visitor</Menu.Item>
+                                <Menu.Item my={2} cursor={'pointer'} value="view-details">View Details</Menu.Item>
+                                <Menu.Item my={2} cursor={'pointer'} value="revoke-access">Revoke Access</Menu.Item>
+                            </MenuItemGroup>
+                        </Menu.Content>
+                    </Menu.Positioner>
+                </Menu.Root>
+
             )
         }
     ]

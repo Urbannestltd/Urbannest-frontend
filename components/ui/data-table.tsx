@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
     type ColumnDef,
     flexRender,
@@ -9,9 +9,17 @@ import {
 import { cn } from '@/utils/lib';
 import { Table, TableBody, TableCell, TableEmpty, TableHead, TableHeader, TableRow } from './table';
 
-import { MdOutlineHourglassEmpty } from "react-icons/md";
 import { Paginator } from './paginator';
-import { Skeleton } from '@chakra-ui/react';
+import { Box, Skeleton } from '@chakra-ui/react';
+import Image from 'next/image';
+import { da } from 'zod/v4/locales';
+
+
+export type EmptyDetails = {
+    icon: string;
+    title: string;
+    description: string;
+}
 
 export type PaginationMeta = {
     total: number;
@@ -34,6 +42,7 @@ interface DataTableProps<TData, TValue> {
     onPage?: (page: number) => void;
     loading?: boolean;
     tableName?: string;
+    emptyDetails?: EmptyDetails
     stages?: stageProps<TData>[]
     showStages?: boolean
     headerColor?: string
@@ -50,89 +59,36 @@ export function DataTable<TData, TValue>({
     onPage,
     loading = false,
     tableName,
-    stages,
-    showStages = false,
+    emptyDetails,
     borderRadius,
     headerColor,
     px,
     my
 }: DataTableProps<TData, TValue>) {
 
-    const tableData = showStages && stages ? stages.flatMap(stage => stage.data) : (data ?? []);
+    const pageSize = pagination?.pageSize || 10;
+    const totalPages = Math.ceil((data?.length ?? 0) / pageSize);
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const {
-        getHeaderGroups,
-        getRowModel,
-        setPageIndex,
-    } = useReactTable({
+    const currentData = useMemo(() =>
+        data?.slice((currentPage - 1) * pageSize, currentPage * pageSize) ?? [],
+        [data, currentPage, pageSize]
+    );
+
+
+    const tableData = (currentData ?? []);
+
+    const table = useReactTable({
         data: tableData,
         columns,
-        initialState: {
-            ...(pagination !== undefined && {
-                pagination: {
-                    pageIndex: pagination?.currentPage - 1,
-                    pageSize: pagination?.pageSize,
-                },
-            }),
-        },
-        manualPagination: !!pagination,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        pageCount: pagination?.totalPages,
     });
 
-    useEffect(() => {
-        setPageIndex(pagination?.currentPage ? pagination.currentPage - 1 : 0);
-    }, [pagination?.currentPage, setPageIndex]);
 
-    const isDataEmpty = showStages
-        ? !stages || stages.every(stage => stage.data.length === 0)
-        : !data || data.length === 0
+    const isDataEmpty = !data || data.length === 0
 
     const skeletonData = new Array(5).fill(null);
 
-    const renderMultipleTableSections = (stageData: TData[], stageIndex: number) => {
-        if (stageData.length === 0) {
-            return (
-                <TableRow>
-                    <TableCell colSpan={columns.length} className='text-center py-4 text-[#6A6C88] italic"'>
-                        No data found for this stage
-                    </TableCell>
-                </TableRow>
-            )
-        }
-
-        return stageData.map((item, itemIndex) => {
-            const globalIndex = stageIndex * 1000 + itemIndex; // Create unique index
-            return (
-                <TableRow
-                    key={`stage-${stageIndex}-row-${itemIndex}`}
-                    onClick={() => onRowClick?.(item)}
-                    className={cn(
-
-                        itemIndex % 2 === 1 ? 'bg-[#F7F7F7]' : 'bg-white',
-                        'hover:bg-[#F7F7F7] cursor-pointer',
-                    )}
-                >
-                    {columns.map((column, colIndex) => (
-                        <TableCell key={`cell-${colIndex}`} color='#475467'>
-                            {flexRender(
-                                column.cell,
-                                {
-                                    row: { original: item, index: globalIndex } as any,
-                                    column: { id: column.id } as any,
-                                    cell: {} as any,
-                                    getValue: () => (item as any)[column.id as string],
-                                    renderValue: () => (item as any)[column.id as string],
-                                    table: {} as any,
-                                }
-                            )}
-                        </TableCell>
-                    ))}
-                </TableRow>
-            );
-        });
-    }
 
     return (
         <>
@@ -145,7 +101,7 @@ export function DataTable<TData, TValue>({
             >
                 <Table>
                     <TableHeader className=' bg-[#F5F5F5] rounded-full'  >
-                        {getHeaderGroups().map((headerGroup) => (
+                        {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={tableName + headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
                                     <TableHead key={header.id} className='!font-semibold  !text-[#475467]'>
@@ -174,39 +130,19 @@ export function DataTable<TData, TValue>({
                                     <TableEmpty colSpan={columns.length} className=''>
                                         <div className='flex flex-col items-center justify-center space-y-6'>
                                             <div className='flex items-center justify-center'>
-                                                <MdOutlineHourglassEmpty size={45} />
+                                                {emptyDetails?.icon ? <Image src={emptyDetails?.icon} alt="" /> : <Box rounded={'full'} className='bg-primary-gold' boxSize={'40px'} />}
                                             </div>
 
                                             <div className='flex flex-col items-center justify-center space-y-2'>
-                                                <h4 className='text-xl font-bold text-[#070A2C]'>No {tableName}</h4>
-
+                                                <h4 className='text-xl font-bold text-[#070A2C]'> {emptyDetails?.title || `No ${tableName} found`}</h4>
                                                 <p className='text-sm font-medium text-[#6A6C88]'>
-                                                    No {tableName} found at the moment
+                                                    {emptyDetails?.description || `No ${tableName} found`}
                                                 </p>
                                             </div>
                                         </div>
                                     </TableEmpty>
-                                ) : showStages && stages ? (
-                                    <>
-                                        {stages.map((stage, stageIndex) => (
-                                            <>
-                                                <TableRow key={`stage-header-${stageIndex}`} className="bg-[#F0F1F4]">
-                                                    <TableCell
-                                                        colSpan={columns.length}
-                                                        className="font-bold text-[#070A2C] py-3 px-4 text-base"
-                                                    >
-                                                        {stage.title}
-                                                    </TableCell>
-                                                </TableRow>
-
-                                                {renderMultipleTableSections(stage.data, stageIndex)}
-
-
-                                            </>
-                                        ))}
-                                    </>
                                 ) : (
-                                    getRowModel().rows.map((row) => (
+                                    table.getRowModel().rows.map((row) => (
                                         <TableRow
                                             key={row.id}
                                             onClick={() => onRowClick?.(row.original)}
@@ -227,14 +163,14 @@ export function DataTable<TData, TValue>({
                         )}
                     </TableBody>
                 </Table>
+                <div className="mt-3 px-4 sm:mt-6">
+                    <Paginator
+                        current={currentPage}
+                        total={totalPages}
+                        onChange={(page) => setCurrentPage(page)}
+                    />
 
-                {pagination ? (
-                    <div className="mt-3 px-4 sm:mt-6">
-                        <Paginator
-                        />
-                    </div>
-                ) : null}
-
+                </div>
             </div >
         </>
     );
