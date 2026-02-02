@@ -4,7 +4,6 @@ import { Box, Button, Flex, HStack, Skeleton, SkeletonText, Tabs, Text } from "@
 import { useEffect, useState } from "react"
 import { DashboardCard } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress-bar"
-import { MainButton } from "@/components/ui/button"
 import { SearchInput } from "@/components/ui/search-input"
 import { LuUser } from "react-icons/lu"
 import { useColumns } from "./columns"

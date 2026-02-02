@@ -1,34 +1,28 @@
 "use client"
-import { MainButton } from "@/components/ui/button"
 import { DashboardCard } from "@/components/ui/card"
 import { DataTable } from "@/components/ui/data-table"
 import { PageTitle } from "@/components/ui/page-title"
 import { SearchInput } from "@/components/ui/search-input"
-import { VistorData } from "@/utils/data"
 import {
-    Box,
     Button,
-    CloseButton,
-    Dialog,
     Flex,
     HStack,
-    Portal,
     Tabs,
 } from "@chakra-ui/react"
-import { title } from "process"
 import { useEffect, useState } from "react"
-import { CgUser, CgUserAdd } from "react-icons/cg"
-import { LuUser, LuUserPlus } from "react-icons/lu"
+import { LuUserPlus } from "react-icons/lu"
 import { useColumns } from "../dashboard/columns"
 import { AddVisitorModal } from "./add-visitor-modal"
 import { AddVisitorGroupsModal } from "./add-visitor-groups"
 import { Modal } from "@/components/ui/dialog"
 import { useVistorsStore } from "@/store/visitors"
+import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
 
 export default function Visitors() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("today")
     const [openModal, setOpenModal] = useState(false)
-    const columns = useColumns()
+    const columns = useColumns(false)
+    const scheduledColumns = useColumns(false)
     const [SwitchModal, setSwitchModal] = useState(false)
     const visitors = useVistorsStore((state) => state.visitors)
     const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
@@ -102,6 +96,8 @@ export default function Visitors() {
                         headerColor="#FFFFFF"
                         my={1}
                         tableName="Walk-in Visitors"
+                        emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
+
                         columns={columns}
                         data={visitors}
                     />
@@ -111,7 +107,9 @@ export default function Visitors() {
                         headerColor="#FFFFFF"
                         my={1}
                         tableName="Scheduled Visitors"
-                        columns={columns}
+                        emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
+
+                        columns={scheduledColumns}
                         data={[]}
                     />
                 </Tabs.Content>
