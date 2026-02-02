@@ -39,25 +39,10 @@ function SignIn() {
                 h={"100%"}
                 bg={"white"}
             >
-                <Heading fontSize={"32px"} className="satoshi-bold">
+                <Heading fontSize={"32px"} mb={8} className="satoshi-bold">
                     {isSignUp ? "Let’s Get Started" : "Welcome Back"}
                 </Heading>
-                <Button
-                    my={8}
-                    w={"full"}
-                    p={3}
-                    h={"48px"}
-                    className="satoshi-medium"
-                    border={"1px solid #767676"}
-                >
-                    <Image alt="google-icon" src={GoogleIcon} />
-                    Continue with Google
-                </Button>
-                <HStack mb={4} w={"full"}>
-                    <Box bg="#757575" w={"45%"} mr={2} h={"1px"} />
-                    <Text>Or</Text>
-                    <Box bg="#757575" w={"45%"} ml={2} h={"1px"} />
-                </HStack>
+
                 {isSignUp ? <SignUp /> : <Login />}
 
                 <Text className="satoshi-medium">

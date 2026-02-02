@@ -10,6 +10,7 @@ import Link from "next/link";
 import http from "@/services/https";
 import endpoints from "@/services/endpoint";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function ForgotPassword() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<{ email: string }>();
@@ -21,9 +22,10 @@ export default function ForgotPassword() {
             const res = await http.post(endpoints.forgotPassword, { email });
             console.log(res);
             setIsSucessful(true);
+            toast.success('Email Received')
             reset();
         } catch (error) {
-            console.log(error);
+            toast.error(error?.message)
         }
     };
     return (

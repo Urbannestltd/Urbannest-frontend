@@ -68,6 +68,7 @@ export const Login = () => {
                     router.replace("/admin/dashboard")
                 } else if (role === "tenant" || role === "TENANT") {
                     console.log("→ Redirecting to tenant dashboard");
+                    toast.success("Redirecting to tenant dashboard")
                     fetchLease()
                     router.replace("/tenant/dashboard")
                 }
@@ -75,8 +76,6 @@ export const Login = () => {
             } else {
                 console.error("❌ Missing token or user in response");
             }
-
-            // Handle remember me for credentials
             if (remember) {
                 if (variables.email && variables.password) {
                     saveCredentials(variables.email, variables.password)
