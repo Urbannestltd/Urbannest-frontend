@@ -1,23 +1,20 @@
 "use client";
-
-import { Box, Button, Center, Field, Flex, Heading, Input, InputGroup, Span, Text } from "@chakra-ui/react";
+import { Box, Button, Center, Field, Flex, Heading, Input, InputGroup, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import bgImage from '@/app/assets/images/forgot-password-bg.png'
 import KeyIcon from '@/app/assets/icons/keys-icon.svg'
-import { LuArrowLeft, LuCircleCheck, LuEye, LuEyeOff, LuLock, LuMail } from "react-icons/lu";
+import { LuArrowLeft, LuCircleCheck, LuEye, LuEyeOff, LuLock, } from "react-icons/lu";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import http from "@/services/https";
-import endpoints from "@/services/endpoint";
-import { useState } from "react";
-import { CustomInput } from "@/components/ui/custom-fields";
+import { Suspense, useState } from "react";
 import { MainButton } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { resetPassword, ResetPasswordPayload } from "@/services/auth";
 import toast from "react-hot-toast";
+import Logo from '@/app/assets/urbannest-logo.png'
 
-export default function ResetPassword() {
+export function ResetPasswordFunc() {
     const { control, register, handleSubmit, reset, formState: { errors } } = useForm<{ password: string }>();
     const [isSucessful, setIsSucessful] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
@@ -144,5 +141,27 @@ export default function ResetPassword() {
                 <Image alt="forgot-password" className="w-[50%] hidden md:block -top-7 h-[97%] absolute right-3" src={bgImage} />
             </Flex>
         </>
+    )
+}
+
+export default function ResetPassword() {
+    return (
+        <Flex align={'center'} justify={"center"} p={2}>
+            <Suspense fallback={
+                <Flex
+                    direction={"column"}
+                    mt={10}
+                    w={"468px"}
+                    align={"center"}
+                    justify={'center'}
+                    h={'90vh'}
+                    bg={"white"}
+                >
+                    <Image src={Logo} alt="loader" />
+                </Flex>
+            }>
+                <ResetPasswordFunc />
+            </Suspense>
+        </Flex>
     )
 }
