@@ -18,6 +18,9 @@ export interface InviteVisitorGroupPayload {
 		phone: string
 	}[]
 	type: string
+	unitId: string
+	groupName: string
+	frequency?: string
 	startDate: string
 	endDate: string
 }

@@ -29,17 +29,17 @@ function SignIn() {
     }, [searchParams]);
 
     return (
-        <Flex align={'center'} justify={"center"} p={2} >
+        <Flex align={'center'} h={'87vh'} justify={"center"} p={2} >
             <Flex
                 direction={"column"}
-                mt={10}
-                w={"468px"}
+
+                w={{ base: "100%", md: "468px" }}
                 align={"center"}
                 justify={'center'}
-                h={"100%"}
+                h={{ base: "auto", md: "100%" }}
                 bg={"white"}
             >
-                <Heading fontSize={"32px"} mb={8} className="satoshi-bold">
+                <Heading mt={{ base: 6 }} fontSize={{ base: "30px", md: "32px" }} mb={{ base: 4, md: 8 }} className="satoshi-bold">
                     {isSignUp ? "Let’s Get Started" : "Welcome Back"}
                 </Heading>
 
@@ -54,7 +54,7 @@ function SignIn() {
                         {isSignUp ? "Login" : "Sign Up"}
                     </Span>
                 </Text>
-                <Text w={"full"} my={10} textAlign={"center"}>
+                <Text w={"full"} my={{ base: 4, md: 10 }} textAlign={"center"}>
                     By clicking “continue” you agree to our{" "}
                     <Span className="text-primary-gold">terms of service</Span> and{" "}
                     <Span className="text-primary-gold">privacy policy</Span>

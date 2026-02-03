@@ -12,29 +12,44 @@ import endpoints from "@/services/endpoint";
 import { useState } from "react";
 import { CustomInput } from "@/components/ui/custom-fields";
 import { MainButton } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { resetPassword, ResetPasswordPayload } from "@/services/auth";
+import toast from "react-hot-toast";
 
 export default function ResetPassword() {
     const { control, register, handleSubmit, reset, formState: { errors } } = useForm<{ password: string }>();
     const [isSucessful, setIsSucessful] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
 
-    const onSubmit = async (data: any) => {
+    const searchParams = useSearchParams();
+    const token = searchParams.get("token") || "";
 
-        const { password } = data;
-        try {
-            const res = await http.post(endpoints.resetPassword, { password });
-            console.log(res);
-            setIsSucessful(true);
-            reset();
-        } catch (error) {
-            console.log(error);
+    const mutate = useMutation({
+        mutationFn: (data: ResetPasswordPayload) => resetPassword(data),
+
+        onSuccess: () => {
+            toast.success('Password Reset Successfully')
+        },
+
+        onError: (error) => {
+            toast.error(error?.message)
         }
+    })
+
+
+    const onSubmit = async (data: any) => {
+        const payload: ResetPasswordPayload = {
+            token: token,
+            newPassword: data.password
+        }
+        mutate.mutate(payload)
     };
     return (
         <>
-            <Flex justify={'space-between'} h={'88%'}>
-                <Flex h={'full'} direction={'column'} justify={'center'} align={'center'} className="w-[50%]">
-                    {isSucessful ? <Box w={"468px"}>
+            <Flex justify={{ base: 'center', md: 'space-between' }} p={3} h={'88%'}>
+                <Flex h={'full'} direction={'column'} justify={'center'} align={'center'} className="w-full md:w-[50%]">
+                    {isSucessful ? <Box w={{ base: 'full', md: "468px" }}>
                         <Center placeSelf={'center'} my={8} className="bg-[#EBFFEE] rounded-full size-[82px]">
                             <LuCircleCheck size={40} color={"#14AE5C"} />
                         </Center>
@@ -42,7 +57,7 @@ export default function ResetPassword() {
                         <Text textAlign={'center'} className="satoshi-medium">You can now sign in with your new password.</Text>
                         <Link href={'/auth'} className="flex justify-center items-center"><MainButton children='Continue' /></Link>
                     </Box>
-                        : <Box w={"468px"}>
+                        : <Box w={{ base: 'full', md: "468px" }}>
                             <Center placeSelf={'center'} my={8} className="bg-primary-gold-70 rounded-full size-[82px]">
                                 <Image alt="" src={KeyIcon} />
                             </Center>
@@ -126,7 +141,7 @@ export default function ResetPassword() {
                         </Box>}
 
                 </Flex>
-                <Image alt="forgot-password" className="w-[50%] -top-7 h-[97%] absolute right-3" src={bgImage} />
+                <Image alt="forgot-password" className="w-[50%] hidden md:block -top-7 h-[97%] absolute right-3" src={bgImage} />
             </Flex>
         </>
     )

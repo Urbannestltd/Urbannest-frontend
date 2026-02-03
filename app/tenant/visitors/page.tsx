@@ -16,20 +16,40 @@ import { AddVisitorModal } from "./add-visitor-modal"
 import { AddVisitorGroupsModal } from "./add-visitor-groups"
 import { Modal } from "@/components/ui/dialog"
 import { useVistorsStore } from "@/store/visitors"
-import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
+import { useLeaseStore } from "@/store/lease"
+import { VisitorTabs } from "./visitorTabs"
 
 export default function Visitors() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("today")
     const [openModal, setOpenModal] = useState(false)
-    const columns = useColumns(false)
-    const scheduledColumns = useColumns(false)
     const [SwitchModal, setSwitchModal] = useState(false)
     const visitors = useVistorsStore((state) => state.visitors)
     const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
+    const unitId = useLeaseStore((state) => state.lease?.property.unitId);
+    const fetchLease = useLeaseStore((state) => state.fetchLease);
 
     useEffect(() => {
         fetchVisitors()
+        fetchLease()
     })
+    const visitorDashboard = [
+        {
+            title: "Total Vistors",
+            data: visitors.length,
+        },
+        {
+            title: "Total Scheduled",
+            data: "08",
+        },
+        {
+            title: "Total Walk-ins",
+            data: "16",
+        },
+        {
+            title: "Total Cancels",
+            data: 0,
+        },
+    ]
     const setOpen = (open: boolean) => {
         setSwitchModal(open)
     }
@@ -61,7 +81,7 @@ export default function Visitors() {
                     onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}
                     modalContent={
                         SwitchModal ? (
-                            <AddVisitorGroupsModal Submit={() => setOpenModal(false)} />
+                            <AddVisitorGroupsModal unitid={unitId ?? ''} Submit={() => setOpenModal(false)} />
                         ) : (
                             <AddVisitorModal
                                 Open={setOpen}
@@ -73,47 +93,7 @@ export default function Visitors() {
                     triggerIcon={<LuUserPlus />}
                 />
             </Flex>
-            <Tabs.Root defaultValue={"walk-in"} variant={"line"}>
-                <HStack justify={"space-between"}>
-                    <Tabs.List borderBottom={"1px solid #D9D9D9"}>
-                        <Tabs.Trigger px={2} value="walk-in">
-                            Walk-In Visitors ({visitors.length})
-                        </Tabs.Trigger>
-                        <Tabs.Trigger px={2} ml={3} value="scheduled">
-                            Scheduled Visitors
-                        </Tabs.Trigger>
-                        <Tabs.Indicator
-                            shadow={"none"}
-                            borderBottom={"1px solid #2A3348"}
-                            bg="transparent"
-                            fontWeight={"bold"}
-                        />
-                    </Tabs.List>
-                    <SearchInput />
-                </HStack>
-                <Tabs.Content value="walk-in">
-                    <DataTable
-                        headerColor="#FFFFFF"
-                        my={1}
-                        tableName="Walk-in Visitors"
-                        emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
-
-                        columns={columns}
-                        data={visitors}
-                    />
-                </Tabs.Content>
-                <Tabs.Content value="scheduled">
-                    <DataTable
-                        headerColor="#FFFFFF"
-                        my={1}
-                        tableName="Scheduled Visitors"
-                        emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
-
-                        columns={scheduledColumns}
-                        data={[]}
-                    />
-                </Tabs.Content>
-            </Tabs.Root>
+            <VisitorTabs />
         </>
     )
 }
@@ -124,21 +104,4 @@ const visitorFilter = [
     { label: "Last Month", value: "last-month" },
 ]
 
-const visitorDashboard = [
-    {
-        title: "Total Vistors",
-        data: "09",
-    },
-    {
-        title: "Total Scheduled",
-        data: "08",
-    },
-    {
-        title: "Total Walk-ins",
-        data: "16",
-    },
-    {
-        title: "Total Cancels",
-        data: "13",
-    },
-]
+

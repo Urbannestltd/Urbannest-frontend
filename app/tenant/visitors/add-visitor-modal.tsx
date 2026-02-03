@@ -8,7 +8,7 @@ import { MainButton } from "@/components/ui/button"
 import addVisitorIcon from '@/app/assets/icons/add-user-icon.svg'
 import Image from "next/image"
 import toast from "react-hot-toast"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { InviteVisitor, InviteVisitorPayload } from "@/services/visitors"
 import { formatDateToIso } from "@/services/date"
@@ -46,12 +46,15 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
             const newVisitor: Visitor = {
                 date: variables.startDate,
                 code: '',
-                type: "GUEST",
-                name: variables.visitor.name,
+                type: variables.type,
+                isGroupInvite: false,
+                frequency: variables.frequency,
+                visitorPhone: variables.visitor.phone,
+                visitorName: variables.visitor.name,
                 id: variables.visitor.name,
                 checkInTime: variables.startDate,
                 checkOutTime: variables.endDate,
-                status: 'ACTIVE',
+                status: "UPCOMING",
             }
             addVisitor(newVisitor)
             Submit?.()
@@ -65,6 +68,8 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
 
 
     const handleAddVisitor = (data: addVisitorFormData) => {
+        const start = new Date(`${data.dateExpected}T${data.timeExpected}`)
+
         const payload: InviteVisitorPayload = {
             visitor: {
                 name: data.fullName,
@@ -72,7 +77,7 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
             },
             frequency: data.accessType[0],
             type: data.visitorType[0],
-            startDate: formatDateToIso(data.dateExpected),
+            startDate: start.toISOString(),
             endDate: formatDateToIso(data.endDate)
         }
         mutation.mutate(payload)

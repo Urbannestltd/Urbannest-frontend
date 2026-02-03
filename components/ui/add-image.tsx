@@ -1,9 +1,9 @@
 import { Button, FileUpload, Float, HStack, useFileUploadContext } from "@chakra-ui/react"
 import { LuImage, LuX } from "react-icons/lu"
 
-export const AddImage = () => {
+export const AddImage = ({ onFileChange }: { onFileChange: (file: File[] | null) => void }) => {
     return (
-        <FileUpload.Root maxFiles={5} accept={'image/*'}>
+        <FileUpload.Root onFileChange={(details) => onFileChange?.(details.acceptedFiles || null)} maxFiles={5} accept={'image/*'}>
             <FileUpload.HiddenInput />
             <HStack align={'end'}>
                 <FileUploadList />

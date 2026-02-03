@@ -3,14 +3,18 @@ import http from "@/services/https"
 import { create } from "zustand"
 
 export interface Visitor {
-	status: "ACTIVE" | "INACTIVE"
+	status: "UPCOMING" | "CHECKED_IN" | "CHECKED_OUT"
 	checkOutTime: string
 	checkInTime: string
 	expectedTime?: string
+	frequency: string | undefined
 	date: string
 	code: string
-	type: "GUEST" | "DELIVERY" | "SERVICE_PROVIDER"
-	name: string
+	type: "GUEST" | "DELIVERY" | "SERVICE_PROVIDER" | string
+	isGroupInvite: boolean
+	groupName?: string
+	visitorPhone: string
+	visitorName: string
 	id: string
 }
 

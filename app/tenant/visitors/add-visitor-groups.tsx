@@ -16,19 +16,18 @@ import dayjs from "dayjs"
 import { useMutation } from "@tanstack/react-query"
 import { useVistorsStore, Visitor } from "@/store/visitors"
 import { add } from "lodash"
+import { useLeaseStore } from "@/store/lease"
 
 interface addVisitorProps {
     Submit: () => void
+    unitid: string
 }
 
-export const AddVisitorGroupsModal = ({ Submit }: addVisitorProps) => {
-
+export const AddVisitorGroupsModal = ({ Submit, unitid }: addVisitorProps) => {
     const { control, reset, handleSubmit, watch, setValue, formState } = useForm<addVisitorGroupsFormData>()
     const visitors = watch('visitorlist') || []
     const contact = watch('contactNumber')
     const addVisitor = useVistorsStore((state) => state.addVisitor)
-
-
     const startDate = watch('dateExpected')
 
     useEffect(() => {
@@ -52,11 +51,14 @@ export const AddVisitorGroupsModal = ({ Submit }: addVisitorProps) => {
                 date: variables.startDate,
                 code: response.code,
                 type: "GUEST",
-                name: variables.visitors[0].name,
+                frequency: variables.frequency,
+                isGroupInvite: true,
+                visitorPhone: variables.visitors[0].phone,
+                visitorName: variables.visitors[0].name,
                 id: variables.visitors[0].name,
                 checkInTime: variables.startDate,
                 checkOutTime: variables.endDate,
-                status: 'ACTIVE',
+                status: 'UPCOMING',
             }
             addVisitor(newVisitor)
             Submit?.()
@@ -72,6 +74,8 @@ export const AddVisitorGroupsModal = ({ Submit }: addVisitorProps) => {
         const payload: InviteVisitorGroupPayload = {
             visitors: data.visitorlist,
             type: data.visitorType[0],
+            unitId: unitid,
+            groupName: data.groupName,
             startDate: formatDateToIso(data.dateExpected),
             endDate: formatDateToIso(data.endDate)
         }

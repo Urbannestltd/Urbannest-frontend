@@ -65,7 +65,7 @@ export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
                     <Flex alignItems={'center'} gap={2}>
                         <Image src={issue?.icon} className="size-[27px] mr-[6px] " alt="" />
                         <Box>
-                            <Text className="capitalize" children={maintenanceRequest.description} />
+                            <Text className="capitalize" children={maintenanceRequest.subject} />
                             <Text className="capitalize" children={issue?.label} />
                         </Box>
                     </Flex>)

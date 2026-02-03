@@ -1,6 +1,7 @@
 import { MessageCardProps } from "@/utils/model"
 import endpoints from "./endpoint"
 import http from "./https"
+import axios from "axios"
 
 export interface MaintenaceResponse {
 	messages: [
@@ -20,6 +21,7 @@ export interface MaintenaceResponse {
 	assignedToId: string
 	attachments: [string]
 	priority: string
+	subject: string
 	category: string
 	unitId: string
 	tenantId: string
@@ -34,7 +36,18 @@ export interface getMaintenancePayload {
 	category: string
 	description: string
 	priority: string
-	attachments?: string[]
+	attachments?: fileStorePayload
+}
+
+export interface editMaintenancePayload {
+	ticketId: string
+	payload: {
+		category: string
+		subject: string
+		description: string
+		priority: string
+		attachments?: fileStorePayload
+	}
 }
 
 export interface messageProps {
@@ -53,11 +66,90 @@ export interface getMaintenanceResponse {
 	data: MaintenaceResponse[]
 }
 
+export interface fileStorePayload {
+	folder: string
+	filename: string
+}
+
+export interface fileStoreResponse {
+	success: boolean
+	message: string
+	data: {
+		fullUrl: string
+		publicPath: string
+		uploadUrl: string
+	}
+}
+
+export const StoreFile = async (payload: fileStorePayload) => {
+	try {
+		const response = await http.post(endpoints.storeFile, payload)
+		return response.data as Promise<fileStoreResponse>
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			throw new Error(error.response?.data?.message || "File upload failed")
+		}
+		throw error
+	}
+}
+
 export const SubmitMaintanceRequest = async (
 	payload: getMaintenancePayload,
 ) => {
-	const response = await http.post(endpoints.createMaintenanceRequest, payload)
-	return response.data as Promise<MaintenaceResponse>
+	const attachments = payload.attachments ?? {
+		folder: "maintenance",
+		filename: "",
+	}
+	const fileUploaded = await StoreFile(attachments)
+
+	if (!fileUploaded.success) {
+		throw new Error("File upload failed")
+	}
+	try {
+		window.location.href = fileUploaded.data.uploadUrl
+
+		const response = await http.post(
+			endpoints.createMaintenanceRequest,
+			payload,
+		)
+		return response.data as Promise<MaintenaceResponse>
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			throw new Error(
+				error.response?.data?.message || "Electricity purchase failed",
+			)
+		}
+		throw error
+	}
+}
+
+export const EditMaintenanceRequest = async (
+	payload: editMaintenancePayload,
+) => {
+	const attachments = payload.payload.attachments ?? {
+		folder: "maintenance",
+		filename: "",
+	}
+	const fileUploaded = await StoreFile(attachments)
+
+	if (!fileUploaded.success) {
+		throw new Error("File upload failed")
+	}
+	try {
+		window.location.href = fileUploaded.data.uploadUrl
+		const response = await http.patch(
+			endpoints.editMaintenanceRequest(payload.ticketId),
+			payload.payload,
+		)
+		return response.data as Promise<MaintenaceResponse>
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			throw new Error(
+				error.response?.data?.message || "Electricity purchase failed",
+			)
+		}
+		throw error
+	}
 }
 
 export const sendMaintenanceMessage = async (payload: submitMessagePayload) => {

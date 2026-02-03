@@ -10,7 +10,7 @@ import endpoints from "@/services/endpoint";
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { payRent, PayRentPayload, verifyPayment } from "@/services/payment";
-import { formatDate, formatDateDash, formatNumber } from "@/services/date";
+import { diffInDays, formatDate, formatDateDash, formatDaysToYears, formatNumber } from "@/services/date";
 import { useEffect } from "react";
 import { Modal } from "@/components/ui/dialog";
 import { UtilitiesModal } from "./modal";
@@ -34,7 +34,7 @@ export default function Lease() {
 
     const LeaseDetails = {
         info: [
-            { label: 'Lease Length', value: lease?.contract.daysRemaining },
+            { label: 'Lease Length', value: diffInDays(lease?.contract.startDate, lease?.contract.endDate) },
             { label: 'Lease Start Date', value: formatDateDash(lease?.contract.startDate) },
             { label: 'Lease End Date', value: formatDateDash(lease?.contract.endDate) },
             { label: 'Service Charge', value: '₦2,000,000' },
@@ -95,9 +95,9 @@ export default function Lease() {
     return (
         <Box>
             <PageTitle mt={7} mb={5} title="Lease & Payments" />
-            <Flex justify={'space-between'} align={'center'} rounded={'8px'} p={4} className="bg-primary-gold-50">
+            <Flex direction={{ base: 'column', md: 'row' }} justify={'space-between'} align={'center'} rounded={'8px'} p={4} className="bg-primary-gold-50">
                 <HStack>
-                    <Image src={rentImage.src} mr={3} w={'165px'} h={'80px'} alt="rent" />
+                    <Image src={rentImage.src} mr={3} w={{ base: '100px', md: '165px' }} rounded={'8px'} h={{ base: '60px', md: '80px' }} alt="rent" />
 
                     {leaseLoading ?
                         <Box>
@@ -105,16 +105,16 @@ export default function Lease() {
                             <SkeletonText w={'400px'} noOfLines={1} h={'20px'} />
                         </Box> :
                         <Box>
-                            <Text className="satoshi-bold text-[24px]"> {lease?.property.unit}</Text>
+                            <Text className="satoshi-bold text-[20px] md:text-[24px]"> {lease?.property.unit}</Text>
                             <HStack>
                                 <Image alt="location-icon" src={locateIcon.src} />
-                                <Text className="satoshi-medium text-[14px] mt-0 ">{lease?.property.name}, {lease?.property.address}</Text>
+                                <Text className="satoshi-medium text-[12px] lg:text-[14px]  mt-0 ">{lease?.property.name}, {lease?.property.address}</Text>
                             </HStack>
                         </Box>}
                 </HStack>
-                <MainButton disabled={leaseLoading} onClick={PayMyRent} children="Pay Rent" />
+                <MainButton className="hidden md:inline" disabled={leaseLoading} onClick={PayMyRent} children="Pay Rent" />
             </Flex>
-            <Flex gapX={12} mt={12}>
+            <Flex direction={{ base: 'column-reverse', md: 'row' }} gapX={12} mt={12}>
                 <Box w={'full'}>
                     <PageTitle mt={2} title="Lease Information" />
                     {leaseLoading ? <Skeleton height={'300px'} mt={6} rounded={'8px'} /> :

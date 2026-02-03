@@ -73,9 +73,9 @@ export const SignUp = () => {
         },
     })
     return (
-        <form onSubmit={handleSubmit((data) => mutation.mutate(data))}>
-            <Grid gapX={4} templateColumns={"repeat(2,1fr)"}>
-                <Field.Root my={4}>
+        <form className="w-full" onSubmit={handleSubmit((data) => mutation.mutate(data))}>
+            <Grid w={'full'} gapX={{ base: 1, md: 4 }} templateColumns={{ base: "repeat(1,1fr)", md: "repeat(2,1fr)" }}>
+                <Field.Root my={{ base: 2, md: 4 }}>
                     <Field.Label className="satoshi-medium">Email Address</Field.Label>
                     <InputGroup
                         rounded={"6px"}
@@ -86,7 +86,7 @@ export const SignUp = () => {
                     </InputGroup>
                     <Field.ErrorText>{errors.root?.message}</Field.ErrorText>
                 </Field.Root>
-                <Field.Root my={4}>
+                <Field.Root my={{ base: 2, md: 4 }}>
                     <Field.Label className="satoshi-medium">Password</Field.Label>
                     <InputGroup
                         rounded={"6px"}
@@ -114,7 +114,7 @@ export const SignUp = () => {
                     </InputGroup>
                     <Field.ErrorText>{errors.userPassword?.message}</Field.ErrorText>
                 </Field.Root>
-                <Field.Root my={4}>
+                <Field.Root my={{ base: 2, md: 4 }}>
                     <Field.Label className="satoshi-medium">Full Name</Field.Label>
                     <InputGroup
                         rounded={"6px"}
@@ -125,7 +125,7 @@ export const SignUp = () => {
                     </InputGroup>
                     <Field.ErrorText>{errors.userFullName?.message}</Field.ErrorText>
                 </Field.Root>
-                <Field.Root my={4}>
+                <Field.Root my={{ base: 2, md: 4 }}>
                     <Field.Label className="satoshi-medium">Phone Number</Field.Label>
                     <InputGroup
                         rounded={"6px"}
@@ -139,7 +139,7 @@ export const SignUp = () => {
             </Grid>
             <Button
                 className="bg-button-primary hover:bg-button-hover text-white"
-                my={8}
+                my={{ base: 4, md: 8 }}
                 w={"full"}
                 p={3}
                 h={"48px"}

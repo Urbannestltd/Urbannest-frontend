@@ -104,7 +104,7 @@ export function DataTable<TData, TValue>({
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={tableName + headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className='!font-semibold  !text-[#475467]'>
+                                    <TableHead key={tableName + header.id} className='!font-semibold  !text-[#475467]'>
                                         {!header.isPlaceholder &&
                                             flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
@@ -152,7 +152,7 @@ export function DataTable<TData, TValue>({
                                             )}
                                         >
                                             {row.getVisibleCells().map((cell) => (
-                                                <TableCell key={cell.id} color='#475467'>
+                                                <TableCell key={tableName + cell.id} color='#475467'>
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
                                             ))}

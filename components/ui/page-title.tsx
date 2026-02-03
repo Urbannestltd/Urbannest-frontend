@@ -1,10 +1,10 @@
-import { Heading, Stack, Text } from '@chakra-ui/react';
+import { Heading, Stack, Text, TextProps } from '@chakra-ui/react';
 
 interface PageTitleProps {
     title: string;
     titleColor?: string;
     subText?: string;
-    fontSize?: string | number;
+    fontSize?: TextProps['fontSize'];
     subFontSize?: string | number;
     fontWeight?: string | number;
     subTextColor?: string;
@@ -19,7 +19,7 @@ export const PageTitle = ({
     titleColor = '#303030',
     subText,
     subFontSize = 'md',
-    fontSize = '25px',
+    fontSize = { base: '22px', lg: '25px' },
     fontWeight = 'bold',
     subTextColor = '#303030',
     spacing = 2,

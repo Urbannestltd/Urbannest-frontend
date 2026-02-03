@@ -1,3 +1,4 @@
+import { formatDate, formatDateDash, formatDateTime, formatDatetoTime } from "@/services/date";
 import { Visitor } from "@/store/visitors";
 import { Flex, Menu, MenuItemGroup, Text } from "@chakra-ui/react";
 import { ColumnDef, Row } from "@tanstack/react-table";
@@ -6,35 +7,50 @@ import { LuEllipsisVertical } from "react-icons/lu";
 export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] => {
     const Status = [
         {
-            value: 'upcoming',
+            value: 'UPCOMING',
             label: 'Upcoming',
             bgColor: '#F5F5F5',
             textColor: '#757575'
         },
         {
-            value: 'checked-in',
+            value: 'CHECKED_IN',
             label: 'Checked In',
             bgColor: '#D8E9F9',
             textColor: '#1976D2'
         },
         {
-            value: 'checked-out',
+            value: 'CHECKED_OUT',
             label: 'Checked Out',
             bgColor: '#F5F5F5',
             textColor: '#757575'
         }
     ]
 
-    return [
+    const frequencies = [
         {
-            accessorKey: 'name',
-            header: "Visitor",
-            cell: ({ row }) => row.getValue("name"),
+            value: 'ONE_OFF',
+            label: 'One Off'
         },
         {
-            accessorKey: 'type',
+            value: 'WHOLE_DAY',
+            label: 'Whole Day'
+        },
+        {
+            value: 'RECURRING',
+            label: 'Recurring'
+        }
+    ]
+
+    return [
+        {
+            accessorKey: 'visitorName',
+            header: "Visitor",
+            cell: ({ row }) => row.getValue('visitorName'),
+        },
+        {
+            accessorKey: 'visitorPhone',
             header: "Phone",
-            cell: ({ row }) => row.getValue("type"),
+            cell: ({ row }) => row.getValue('visitorPhone'),
         },
         {
             accessorKey: "status",
@@ -53,33 +69,47 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] =>
                         justify={'center'}
                         w={'fit'}
                     >
-                        <Text className="capitalize" color={status?.textColor} children={status?.label} />
+                        <Text className="capitalize" color={status?.textColor} children={status?.label || row.getValue('status')} />
                     </Flex>)
             }
 
         },
         {
-            accessorKey: 'type',
+            accessorKey: 'frequency',
             header: 'Access',
-            cell: ({ row }) =>
-                <Text className="capitalize" children={row.getValue('type')} />
+            cell: ({ row }) => {
+                const frequency = frequencies.find((frequency) => frequency.value === row.getValue('frequency'))
+                return <Text className="capitalize" children={frequency?.label || row.getValue('frequency')} />
+            }
         },
-        ...(scheduled
-            ? [{
+        scheduled
+            ? {
                 accessorKey: 'expectedTime',
                 header: 'Expected',
-                cell: ({ row }: { row: Row<Visitor> }) => row.getValue('expectedTime'),
-            }]
-            : []),
+                cell: ({ row }) => row.getValue('expectedTime'),
+            }
+            : {
+                accessorKey: 'lol',
+                header: '',
+                cell: () => <></>,
+            },
         {
             accessorKey: 'checkInTime',
             header: 'Time In',
-            cell: ({ row }) => row.getValue('checkInTime'),
+            cell: ({ row }) => {
+                const roow = row.original.checkInTime
+                if (roow === '-') return '-'
+                return formatDatetoTime(row.getValue('checkInTime'))
+            },
         },
         {
             accessorKey: 'checkOutTime',
             header: 'Time Out',
-            cell: ({ row }) => row.getValue('checkOutTime'),
+            cell: ({ row }) => {
+                const roow = row.original.checkOutTime
+                if (roow === '-') return '-'
+                return formatDatetoTime(row.getValue('checkOutTime'))
+            },
         },
         {
             accessorKey: 'action',

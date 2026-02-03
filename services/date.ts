@@ -74,3 +74,42 @@ export const formatDateToIso = (dateStr: string | undefined) => {
 	const date = new Date(dateStr)
 	return date.toISOString()
 }
+
+export const formatDatetoTime = (dateStr: string | undefined) => {
+	if (!dateStr) {
+		return ""
+	}
+	const date = new Date(dateStr)
+	return date.toLocaleTimeString("en-GB", {
+		hour: "2-digit",
+		minute: "2-digit",
+	})
+}
+
+export const formatDaysToYears = (days: number | undefined) => {
+	if (!days) {
+		return ""
+	}
+	const years = Math.floor(days / 365)
+	const remainingDays = days % 365
+
+	if (years === 0) return `${remainingDays} days`
+	if (remainingDays === 0) return `${years} year${years > 1 ? "s" : ""}`
+
+	return `${years} year${years > 1 ? "s" : ""}`
+}
+
+export const diffInDays = (
+	startDate: string | undefined,
+	endDate: string | undefined,
+) => {
+	if (!startDate || !endDate) {
+		return 0
+	}
+
+	const start = new Date(startDate)
+	const end = new Date(endDate)
+
+	const ms = end.getTime() - start.getTime()
+	return formatDaysToYears(Math.ceil(ms / (1000 * 60 * 60 * 24)))
+}

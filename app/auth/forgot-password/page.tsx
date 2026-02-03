@@ -11,28 +11,32 @@ import http from "@/services/https";
 import endpoints from "@/services/endpoint";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
+import { forgotPassword } from "@/services/auth";
 
 export default function ForgotPassword() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<{ email: string }>();
     const [isSucessful, setIsSucessful] = useState(false);
 
-    const onSubmit = async (data: any) => {
-        const { email } = data;
-        try {
-            const res = await http.post(endpoints.forgotPassword, { email });
-            console.log(res);
+    const mutation = useMutation({
+        mutationFn: (data: string) => forgotPassword(data),
+        onSuccess: () => {
             setIsSucessful(true);
-            toast.success('Email Received')
-            reset();
-        } catch (error) {
-            toast.error(error?.message)
-        }
+        },
+        onError: (error: any) => {
+            toast.error(error.message);
+        },
+    });
+
+    const onSubmit = async (data: { email: string }) => {
+        const email = data.email;
+        mutation.mutate(email);
     };
     return (
         <>
-            <Flex justify={'space-between'} h={'88%'}>
-                <Flex h={'full'} direction={'column'} justify={'center'} align={'center'} className="w-[50%]">
-                    {isSucessful ? <Box w={"468px"}>
+            <Flex justify={{ base: 'center', md: 'space-between' }} w={'full'} p={3} h={'88%'}>
+                <Flex h={'full'} direction={'column'} justify={'center'} align={'center'} className=" w-full lg:w-[50%]">
+                    {isSucessful ? <Box w={{ base: 'full', md: "468px" }}>
                         <Center placeSelf={'center'} my={8} className="bg-primary-gold-70 rounded-full size-[82px]">
                             <LuMail size={40} color={"#CFAA67"} />
                         </Center>
@@ -41,7 +45,7 @@ export default function ForgotPassword() {
                         <Text className="satoshi-medium text-center mt-8 mb-3.5">Didn’t receive the email? <Span className="text-primary-gold">Resend</Span></Text>
                         <Link href={'/auth'} className="flex justify-center items-center"><LuArrowLeft size={18} color="#CFAA67" /><Text className="text-primary-gold satoshi-medium ml-2.5">Back to log in</Text></Link>
                     </Box>
-                        : <Box w={"468px"}>
+                        : <Box w={{ base: 'full', md: "468px" }}>
                             <Center placeSelf={'center'} my={8} className="bg-primary-gold-70 rounded-full size-[82px]">
                                 <Image alt="" src={KeyIcon} />
                             </Center>
@@ -75,9 +79,8 @@ export default function ForgotPassword() {
                             </form>
                             <Link href={'/auth'} className="flex justify-center items-center hover:underline text-primary-gold"><LuArrowLeft size={18} color="#CFAA67" /><Text className="text-primary-gold satoshi-medium ml-2.5">Back to log in</Text></Link>
                         </Box>}
-
                 </Flex>
-                <Image alt="forgot-password" className="w-[50%] -top-7 h-[97%] absolute right-3" src={bgImage} />
+                <Image alt="forgot-password" className="w-[50%] hidden md:block -top-7 h-[97%] absolute right-3" src={bgImage} />
             </Flex>
         </>
     )

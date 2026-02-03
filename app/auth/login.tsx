@@ -108,9 +108,10 @@ export const Login = () => {
             <Grid
                 gapX={4}
                 templateColumns={"repeat(1,1fr)"}
+                className="w-full"
             >
 
-                <Field.Root my={4}>
+                <Field.Root my={{ base: 2, md: 4 }}>
                     <Field.Label className="satoshi-medium">
                         Email Address
                     </Field.Label>
@@ -123,7 +124,7 @@ export const Login = () => {
                     </InputGroup>
                     <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
                 </Field.Root>
-                <Field.Root my={4}>
+                <Field.Root my={{ base: 2, md: 4 }}>
                     <Field.Label className="satoshi-medium">Password</Field.Label>
                     <InputGroup
                         rounded={"6px"}
@@ -165,7 +166,7 @@ export const Login = () => {
                 type="submit"
                 disabled={mutation.isPending}
                 loading={mutation.isPending}
-                my={8}
+                my={{ base: 4, md: 8 }}
                 w={"full"}
                 p={3}
                 h={"48px"}

@@ -5,10 +5,11 @@ import { Divider } from "@/components/ui/divider"
 import { MessageCard } from "@/components/ui/message-card"
 import { PageTitle } from "@/components/ui/page-title"
 import { MaintenanceRequestFormData } from "@/schema"
-import { getMaintenancePayload, MaintenaceResponse, SubmitMaintanceRequest } from "@/services/maintenance"
+import { editMaintenancePayload, EditMaintenanceRequest, getMaintenancePayload, MaintenaceResponse, SubmitMaintanceRequest } from "@/services/maintenance"
 import { useMaintenanceStore } from "@/store/maintenance"
 import { Box, Button, createListCollection, Flex, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { LuImage } from "react-icons/lu"
@@ -19,9 +20,15 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
         (state) => state.messagesByTicket[row?.id ?? '']
     ) ?? []
 
+    const [files, setFiles] = useState<File[] | null>(null);
+    const uploadedImages = files;
+    console.log(uploadedImages)
+
     const fetchMaintenanceMessages = useMaintenanceStore((state) => state.fetchMaintenanceMessages)
 
-    const mutation = useMutation({
+
+
+    const createmutation = useMutation({
         mutationFn: (data: getMaintenancePayload) => SubmitMaintanceRequest(data),
         onSuccess: () => {
             toast.success('Maintenance request created successfully')
@@ -33,16 +40,47 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
             toast.error(error?.message)
         }
     })
-
     const onSubmit = (data: MaintenanceRequestFormData) => {
         const payload: getMaintenancePayload = {
             category: data.type[0].toUpperCase(),
             description: data.description,
             priority: 'HIGH',
-            attachments: []
+            attachments: {
+                filename: uploadedImages?.[0]?.name ?? '',
+                folder: 'maintenance'
+            }
         }
-        mutation.mutate(payload)
+        createmutation.mutate(payload)
     }
+
+
+    const editmutation = useMutation({
+        mutationFn: (data: editMaintenancePayload) => EditMaintenanceRequest(data),
+        onSuccess: () => {
+            toast.success('Maintenance request created successfully')
+            fetchMaintenanceMessages(row?.id ?? '')
+            // Submit?.()
+            reset()
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+    const onSave = (data: MaintenanceRequestFormData) => {
+        const payload: editMaintenancePayload = {
+            ticketId: row?.id ?? '',
+            payload: {
+                category: data.type[0].toUpperCase(),
+                subject: data.title,
+                description: data.description,
+                priority: 'HIGH',
+                attachments: { filename: uploadedImages?.[0]?.name ?? '', folder: 'maintenance' }
+            }
+        }
+        editmutation.mutate(payload)
+    }
+
+
 
     const status = Status.find((status) => status.value === row?.status)
     return (
@@ -55,7 +93,7 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
             </div>
             <Divider my={0} />
             <Flex h={'fit'} gap={8}>
-                <form onSubmit={handleSubmit(onSubmit)} className="p-4 h-full w-[90%]">
+                <form onSubmit={handleSubmit(row ? onSave : onSubmit)} className="p-4 h-full w-[90%]">
                     <div className="my-1">
                         {row ? (
                             <Box>
@@ -92,15 +130,15 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                     </Flex>
                     <Box my={6} w={'148px'}>
                         <Text className="satoshi-bold" mb={2.5} fontSize={"18px"}>Issue Type</Text>
-                        <CustomSelect triggerHeight="31px" alignCenter value={row?.category} name='type' control={control} readOnly={row ? true : false} collection={Issue} placeholder="Issue Type" />
+                        <CustomSelect triggerHeight="31px" alignCenter value={row?.category} name='type' control={control} collection={Issue} placeholder="Issue Type" />
                     </Box>
                     <Box mt={6} mb={8} w={'full'}>
                         <Text className="satoshi-bold" mb={2.5} fontSize={"18px"}>Description</Text>
-                        <CustomTextarea name='description' placeholder="Tell us more about the issue you’re experiencing" control={control} value={row?.description} readOnly={row ? true : false} />
-                        <AddImage />
+                        <CustomTextarea name='description' placeholder="Tell us more about the issue you’re experiencing" control={control} value={row?.description} />
+                        <AddImage onFileChange={setFiles} />
 
                     </Box>
-                    <MainButton disabled={mutation.isPending} type="submit" children={row ? "Save" : "Submit"} />
+                    <MainButton disabled={row ? editmutation.isPending : createmutation.isPending} type="submit" children={row ? "Save" : "Submit"} />
                 </form>
                 <Flex direction={'column'} justify={'space-between'} p={4} bg={'#FBFBFB'} border={'1px solid #EAEAEA'} w={'70%'}>
                     <PageTitle title="Activity & Comments" fontSize={'18px'} />

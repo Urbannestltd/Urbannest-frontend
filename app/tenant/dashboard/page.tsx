@@ -17,11 +17,11 @@ import { Modal } from "@/components/ui/dialog"
 import { useVistorsStore } from "@/store/visitors"
 import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
 import { TenantMaintenanceModal } from "../maintenance/modal"
+import { useMaintenanceStore } from "@/store/maintenance"
+import { VisitorTabs } from "../visitors/visitorTabs"
 
 export default function TenantDashboard() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("7days")
-    const columns = useColumns(false)
-    const Scheduledcolumns = useColumns(true)
     const [openModal, setOpenModal] = useState(false)
     const [SwitchModal, setSwitchModal] = useState(false)
     const lease = useLeaseStore((state) => state.lease);
@@ -30,12 +30,30 @@ export default function TenantDashboard() {
     const visitors = useVistorsStore((state) => state.visitors)
     const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
     const loadingVisitors = useVistorsStore((state) => state.isLoading)
-
+    const maintenance = useMaintenanceStore((state) => state.maintenance)
+    const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)
 
     useEffect(() => {
         fetchLease()
         fetchVisitors()
+        fetchMaintenance()
     }, [])
+
+    const CardData = [
+        {
+            title: "Active Request",
+            data: "09",
+        },
+        {
+            title: "Completed Requests",
+            data: "08",
+        },
+        {
+            title: "Total Requests",
+            data: maintenance.length,
+        },
+    ]
+
     const setOpen = (open: boolean) => {
         setSwitchModal(open)
         console.log(open)
@@ -62,7 +80,7 @@ export default function TenantDashboard() {
                         </Button>
                     ))}
                 </HStack>
-                <Flex mt={3} mb={8} w={"full"} align={"center"} justify="start">
+                <Flex mt={3} mb={8} w={"full"} maxW={'99%'} overflowX={'scroll'} align={"center"} justify="start">
                     <DashboardCard data={CardData} />
                     <Box
                         ml={4}
@@ -75,11 +93,12 @@ export default function TenantDashboard() {
                         p={6}
                         color={"white"}
                         w={"45%"}
+                        minW={'300px'}
                         h={"116px"}
                         rounded={"8px"}
                         bgColor={"#2A3348"}
                     >
-                        <Box className="z-50">
+                        <Box>
                             {loading ? <SkeletonText w={'200px'} noOfLines={1} mb={1} /> : <Text mb={1} className="satoshi-bold text-2xl">
                                 {formatNumber(lease?.contract.rentAmount)}
                             </Text>}
@@ -95,62 +114,24 @@ export default function TenantDashboard() {
             </Box>
             <Box mt={10}>
                 <PageTitle mb={4} title="Visitor’s Today" />
-                <Tabs.Root defaultValue={"walk-in"} variant={"line"}>
-                    <HStack justify={"space-between"}>
-                        <Tabs.List borderBottom={"1px solid #D9D9D9"}>
-                            <Tabs.Trigger px={2} value="walk-in">
-                                Walk-In Visitors ({visitors.length})
-                            </Tabs.Trigger>
-                            <Tabs.Trigger px={2} ml={3} value="scheduled">
-                                Scheduled Visitors
-                            </Tabs.Trigger>
-                            <Tabs.Indicator bg={'transparent'} shadow={"none"} fontWeight={"bold"} />
-                        </Tabs.List>
-                        <Flex gap={2}>
-                            <SearchInput />
-                            <Modal
-                                open={openModal}
-                                onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}
-                                modalContent={
-                                    SwitchModal ? (
-                                        <AddVisitorGroupsModal Submit={() => setOpenModal(false)} />
-                                    ) : (
-                                        <AddVisitorModal
-                                            Open={setOpen}
-                                            Submit={() => setOpenModal(false)}
-                                        />
-                                    )
-                                }
-                                triggerContent="Add Visitor"
-                                triggerIcon={<LuUser />}
-                            />
-                        </Flex>
-                    </HStack>
-                    <Tabs.Content value="walk-in">
-                        <DataTable
-                            headerColor="#FFFFFF"
-                            my={1}
-                            tableName="Walk-in Visitors"
-                            loading={loadingVisitors}
-                            pagination={{ currentPage: 1, pageSize: 10, total: visitors.length, totalPages: Math.ceil(visitors.length / 10) }}
-                            emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
-                            columns={columns}
-                            data={visitors}
-                        />
-                    </Tabs.Content>
-                    <Tabs.Content value="scheduled">
-                        <DataTable
-                            headerColor="#FFFFFF"
-                            my={1}
+                <VisitorTabs
+                    component={<Modal
+                        open={openModal}
+                        onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}
+                        modalContent={
+                            SwitchModal ? (
+                                <AddVisitorGroupsModal unitid={lease?.property.unitId || ''} Submit={() => setOpenModal(false)} />
+                            ) : (
+                                <AddVisitorModal
+                                    Open={setOpen}
+                                    Submit={() => setOpenModal(false)}
+                                />
+                            )
+                        }
+                        triggerContent="Add Visitor"
+                        triggerIcon={<LuUser />}
+                    />} />
 
-                            tableName="Scheduled Visitors"
-                            loading={loadingVisitors}
-                            emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
-                            columns={Scheduledcolumns}
-                            data={[]}
-                        />
-                    </Tabs.Content>
-                </Tabs.Root>
             </Box>
         </Box>
     )
@@ -171,17 +152,3 @@ const MaintenanceFilter = [
     },
 ]
 
-const CardData = [
-    {
-        title: "Active Request",
-        data: "09",
-    },
-    {
-        title: "Completed Requests",
-        data: "08",
-    },
-    {
-        title: "Total Requests",
-        data: "16",
-    },
-]

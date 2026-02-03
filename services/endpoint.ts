@@ -1,6 +1,5 @@
-import { create } from "lodash"
-
 const endpoints = {
+	storeFile: "/storage/sign-url",
 	//Auth endpoints
 	userLogin: "/auth/login",
 	createUser: "/admin/create-user",
@@ -32,6 +31,7 @@ const endpoints = {
 	//Maintenances endpoints
 	getMaintenanceRequests: `/maintenance/history`,
 	createMaintenanceRequest: `/maintenance/submit`,
+	editMaintenanceRequest: (id: string) => `/maintenance/${id}`,
 	sendMaintenanceMessage: (ticketId: string) =>
 		`/maintenance/${ticketId}/message`,
 	getAllMaintenanceRequestsMessages: (ticketId: string) =>

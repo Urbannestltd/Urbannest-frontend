@@ -18,10 +18,10 @@ export default function DashboardLayout({
     return (
         <RequireAuth>
             <div className="flex h-screen">
-                <div className="relative w-[380px]">
+                <div className="relative hidden md:block w-[380px]">
                     <TenantSidebar />
                 </div>
-                <main className="flex w-full justify-center p-8 ">
+                <main className="flex w-full justify-center p-4 lg:p-8 ">
                     <div className=" w-full max-w-[1440px]">
                         <UserNav />
                         {children}
