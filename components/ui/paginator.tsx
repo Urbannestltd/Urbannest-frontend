@@ -50,9 +50,9 @@ export function Paginator({
                 disabled={current <= 1}
                 onClick={() => safeChange(current - 1)}
                 variant="outline"
-                className="satoshi-medium text-button-primary"
+                className="satoshi-medium text-[15px] text-button-primary"
             >
-                <LuChevronLeft size={18} />Previous
+                <LuChevronLeft size={14} />Previous
             </Button>
 
             <HStack gap={4}>
@@ -61,7 +61,7 @@ export function Paginator({
                         key={p}
                         onClick={() => safeChange(p)}
                         className={cn(
-                            "px-3 py-2 rounded-lg bg-[#F5F8FF] text-[15px] font-medium",
+                            " rounded-lg size-[34px] bg-[#F5F8FF] text-[13px] font-medium",
                             p === current
                                 ? "bg-button-primary text-white"
                                 : "text-text-neutral  hover:bg-[#F2F4F7]"
@@ -72,14 +72,13 @@ export function Paginator({
                     </Button>
                 ))}
             </HStack>
-
             <Button
                 disabled={current >= total}
                 onClick={() => safeChange(current + 1)}
                 variant="outline"
-                className="satoshi-medium"
+                className="satoshi-medium text-[15px] text-button-primary"
             >
-                Next <LuChevronRight size={18} />
+                Next <LuChevronRight size={14} />
             </Button>
         </Flex>
     );

@@ -112,7 +112,7 @@ export default function Lease() {
                             </HStack>
                         </Box>}
                 </HStack>
-                <MainButton className="hidden md:inline" disabled={leaseLoading} onClick={PayMyRent} children="Pay Rent" />
+                <MainButton disabled={mutation.isPending || leaseLoading} loading={mutation.isPending} className="hidden md:inline" onClick={PayMyRent} children="Pay Rent" />
             </Flex>
             <Flex direction={{ base: 'column-reverse', md: 'row' }} gapX={12} mt={12}>
                 <Box w={'full'}>

@@ -15,6 +15,7 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
+
     return (
         <RequireAuth>
             <div className="flex h-screen">

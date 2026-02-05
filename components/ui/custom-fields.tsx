@@ -120,6 +120,7 @@ export function CustomSelect<T extends FieldValues>({
     description,
     readOnly,
     width,
+    required,
     orientation = 'vertical',
     avatar,
     labelWidth,
@@ -181,8 +182,10 @@ export function CustomSelect<T extends FieldValues>({
 
     return (
         <Controller
+
             name={name}
             control={control}
+            rules={{ required: required ? `${label ?? name} is required` : false }}
             render={({ field, fieldState }) => {
                 const errorMsg = (fieldState.error?.message as string | undefined) ?? errorTextFallback;
 
@@ -293,7 +296,11 @@ export function CustomInput<T extends FieldValues>({
     setValue,
     orientation = 'vertical'
 }: InputProps<T>) {
-    const { field, fieldState } = useController({ name, control });
+    const { field, fieldState, } = useController({
+        name, control, rules: {
+            required: required ? `${label ?? name} is required` : false,
+        },
+    });
     return (
         <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
             {label && <Box>
@@ -307,6 +314,9 @@ export function CustomInput<T extends FieldValues>({
                 name={field.name}
                 ref={field.ref}
                 value={field.value ?? value}
+                onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                    e.currentTarget.showPicker()
+                }}
                 onChange={(e) => {
                     field.onChange(e.target.value);
                     setValue && setValue?.(e.target.value)
@@ -328,7 +338,6 @@ export function CustomInput<T extends FieldValues>({
                 border={'1px solid #B2B2B2'}
                 rounded={'6px'}
                 fontSize={"14px"}
-                required={required}
                 className=''
                 _active={{
                     border: 'none',

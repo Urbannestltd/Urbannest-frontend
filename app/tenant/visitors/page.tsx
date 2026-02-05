@@ -81,7 +81,7 @@ export default function Visitors() {
                     onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}
                     modalContent={
                         SwitchModal ? (
-                            <AddVisitorGroupsModal unitid={unitId ?? ''} Submit={() => setOpenModal(false)} />
+                            <AddVisitorGroupsModal Open={setOpen} unitid={unitId ?? ''} Submit={() => setOpenModal(false)} />
                         ) : (
                             <AddVisitorModal
                                 Open={setOpen}

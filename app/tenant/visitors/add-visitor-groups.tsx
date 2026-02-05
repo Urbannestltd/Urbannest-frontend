@@ -17,13 +17,17 @@ import { useMutation } from "@tanstack/react-query"
 import { useVistorsStore, Visitor } from "@/store/visitors"
 import { add } from "lodash"
 import { useLeaseStore } from "@/store/lease"
+import { LuUserPlus } from "react-icons/lu"
+import { CgUserAdd } from "react-icons/cg"
+import { FiUserPlus } from "react-icons/fi"
 
 interface addVisitorProps {
     Submit: () => void
     unitid: string
+    Open: (isOpen: boolean) => void
 }
 
-export const AddVisitorGroupsModal = ({ Submit, unitid }: addVisitorProps) => {
+export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps) => {
     const { control, reset, handleSubmit, watch, setValue, formState } = useForm<addVisitorGroupsFormData>()
     const visitors = watch('visitorlist') || []
     const contact = watch('contactNumber')
@@ -73,7 +77,7 @@ export const AddVisitorGroupsModal = ({ Submit, unitid }: addVisitorProps) => {
     const handleAddVisitor = (data: addVisitorGroupsFormData) => {
         const payload: InviteVisitorGroupPayload = {
             visitors: data.visitorlist,
-            type: data.visitorType[0],
+            type: data.visitorType?.[0] ?? '',
             unitId: unitid,
             groupName: data.groupName,
             startDate: formatDateToIso(data.dateExpected),
@@ -92,12 +96,12 @@ export const AddVisitorGroupsModal = ({ Submit, unitid }: addVisitorProps) => {
                     <CustomInput name='contactNumber' width={'full'} required control={control} label='Group Contact Number' placeholder="Group Contact Number" />
                 </HStack>
                 <HStack mt={4} w={'full'} gap={4}>
-                    <CustomSelect name="visitorType" width={'full'} collection={visitorType} required control={control} label='Visitor Type' placeholder="Visitor Type" />
-                    <CustomSelect name="accessType" width={'full'} collection={accessType} required control={control} label='Access Type' placeholder="Access Type" />
+                    <CustomSelect name="visitorType" width={'full'} collection={visitorType} control={control} label='Visitor Type' placeholder="Visitor Type" />
+                    <CustomSelect name="accessType" width={'full'} collection={accessType} control={control} label='Access Type' placeholder="Access Type" />
                 </HStack>
                 <HStack mt={4} mb={4} w={'full'} gap={4}>
-                    <CustomInput name='timeExpected' type='time' width={'full'} control={control} label='Time Expected' placeholder="Time Expected" />
-                    <CustomInput name='dateExpected' type='date' width={'full'} control={control} label='Date Expected' placeholder="Date Expected" />
+                    <CustomInput name='timeExpected' type='time' required width={'full'} control={control} label='Time Expected' placeholder="Time Expected" />
+                    <CustomInput name='dateExpected' type='date' required width={'full'} control={control} label='Date Expected' placeholder="Date Expected" />
                 </HStack>
                 <VisitorList
                     phone={contact}
@@ -106,8 +110,8 @@ export const AddVisitorGroupsModal = ({ Submit, unitid }: addVisitorProps) => {
 
                 />
                 <Flex mt={10} align={'center'} w={'full'}>
-                    <MainButton size="lg" type="submit">Add Vistors</MainButton>
-                    <IconButton size="lg" className="h-8" rounded={'6px'} border={'1.15px solid #B2B2B2'} ml={4} variant="outline"><Image src={addVisitorIcon} alt="add visitor" /></IconButton>
+                    <MainButton disabled={mutation.isPending} loading={mutation.isPending} size="lg" type="submit">Add Vistors</MainButton>
+                    <IconButton size="lg" onClick={() => Open(false)} className="h-8" rounded={'6px'} border={'1.15px solid #B2B2B2'} ml={4} variant="outline"><CgUserAdd color="#B2B2B2" size={1} /></IconButton>
                 </Flex>
             </form>
         </Box>

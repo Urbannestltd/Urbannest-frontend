@@ -38,6 +38,7 @@ export const useMaintenanceStore = create<MaintenanceStore>((set) => {
 			try {
 				const response = await http.get(endpoints.getMaintenanceRequests)
 				set({ maintenance: response.data.data })
+				console.log("✅ Maintenance set in store:", response.data.data)
 			} catch (e) {
 				console.error("❌ Failed to fetch maintenance", e)
 			} finally {

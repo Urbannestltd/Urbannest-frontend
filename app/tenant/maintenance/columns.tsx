@@ -1,5 +1,5 @@
 
-import { Box, Flex, HStack, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Menu, MenuItemGroup, Text } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import ElectricalIcon from '@/app/assets/icons/maintenance-icons/electrical.svg'
 import PlumbingIcon from '@/app/assets/icons/maintenance-icons/plumbing.svg'
@@ -65,7 +65,7 @@ export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
                     <Flex alignItems={'center'} gap={2}>
                         <Image src={issue?.icon} className="size-[27px] mr-[6px] " alt="" />
                         <Box>
-                            <Text className="capitalize" children={maintenanceRequest.subject} />
+                            <Text className="capitalize" children={maintenanceRequest.subject || 'No Subject'} />
                             <Text className="capitalize" children={issue?.label} />
                         </Box>
                     </Flex>)
@@ -105,8 +105,20 @@ export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
                 const maintenanceRequest = row.original
                 return (
                     <HStack justify={'end'}>
-                        <Modal size={'cover'} className="w-[1200px] h-fit" modalContent={<TenantMaintenanceModal row={maintenanceRequest} />} triggerVariant={'outline'} triggerContent={'View Details'} />
-                        <LuEllipsisVertical cursor={'pointer'} size={20} />
+                        <Modal size={'cover'} className="w-[1200px] h-fit" modalContent={<TenantMaintenanceModal row={maintenanceRequest} />} triggerVariant={'outline'} triggerSize='sm' triggerContent={'View Details'} />
+
+                        <Menu.Root>
+                            <Menu.Trigger>
+                                <LuEllipsisVertical cursor={'pointer'} />
+                            </Menu.Trigger>
+                            <Menu.Positioner>
+                                <Menu.Content>
+                                    <Menu.ItemGroup gap={3}>
+                                        <Menu.Item mb={2} cursor={'pointer'} value="save-visitor" >Delete Request</Menu.Item>
+                                    </Menu.ItemGroup>
+                                </Menu.Content>
+                            </Menu.Positioner>
+                        </Menu.Root>
                     </HStack>
                 )
             }

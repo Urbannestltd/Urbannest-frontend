@@ -13,8 +13,8 @@ export const UserNav = () => {
         <HStack justify={"space-between"}>
             <HStack>
                 <Drawer.Root placement={'start'}>
-                    <Drawer.Trigger>
-                        <MdOutlineMenu className="mr-2 inline md:hidden" size={24} />
+                    <Drawer.Trigger className="inline md:hidden">
+                        <MdOutlineMenu className="mr-2 md:mr-0" size={24} />
                     </Drawer.Trigger>
                     <Portal>
                         <Drawer.Backdrop />

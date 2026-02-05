@@ -15,14 +15,14 @@ import toast from "react-hot-toast"
 import { LuImage } from "react-icons/lu"
 
 export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) => {
-    const { control, reset, handleSubmit } = useForm<MaintenanceRequestFormData>()
+    const { control, reset, handleSubmit, formState } = useForm<MaintenanceRequestFormData>()
     const messages = useMaintenanceStore(
         (state) => state.messagesByTicket[row?.id ?? '']
     ) ?? []
 
     const [files, setFiles] = useState<File[] | null>(null);
+    const [edit, setEdit] = useState(false)
     const uploadedImages = files;
-    console.log(uploadedImages)
 
     const fetchMaintenanceMessages = useMaintenanceStore((state) => state.fetchMaintenanceMessages)
 
@@ -42,14 +42,18 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
     })
     const onSubmit = (data: MaintenanceRequestFormData) => {
         const payload: getMaintenancePayload = {
-            category: data.type[0].toUpperCase(),
+            subject: data.title,
+            category: data.type[0].toUpperCase() ?? '',
             description: data.description,
             priority: 'HIGH',
-            attachments: {
-                filename: uploadedImages?.[0]?.name ?? '',
-                folder: 'maintenance'
+        }
+        if (uploadedImages?.[0]?.name) {
+            payload.attachment = {
+                filename: uploadedImages[0].name,
+                folder: 'maintenance',
             }
         }
+        console.log(payload)
         createmutation.mutate(payload)
     }
 
@@ -57,7 +61,8 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
     const editmutation = useMutation({
         mutationFn: (data: editMaintenancePayload) => EditMaintenanceRequest(data),
         onSuccess: () => {
-            toast.success('Maintenance request created successfully')
+            toast.success('Maintenance request updated successfully')
+            setEdit(false)
             fetchMaintenanceMessages(row?.id ?? '')
             // Submit?.()
             reset()
@@ -70,11 +75,16 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
         const payload: editMaintenancePayload = {
             ticketId: row?.id ?? '',
             payload: {
-                category: data.type[0].toUpperCase(),
-                subject: data.title,
+                category: row?.category ?? '',
+                subject: data.title ?? row?.subject ?? 'No Subject',
                 description: data.description,
                 priority: 'HIGH',
-                attachments: { filename: uploadedImages?.[0]?.name ?? '', folder: 'maintenance' }
+            }
+        }
+        if (uploadedImages?.[0]?.name) {
+            payload.payload.attachment = {
+                filename: uploadedImages[0].name,
+                folder: 'maintenance',
             }
         }
         editmutation.mutate(payload)
@@ -97,7 +107,14 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                     <div className="my-1">
                         {row ? (
                             <Box>
-                                <Text className="satoshi-bold" fontSize={'22px'}>{row.description}</Text>
+                                {edit ? <CustomInput
+                                    name="title"
+                                    width={"full"}
+                                    value={row?.subject}
+                                    required
+                                    control={control}
+                                    placeholder="Enter Request Subject"
+                                /> : <Text className="satoshi-bold" onClick={() => setEdit(true)} fontSize={'22px'}>{row.subject || "No Subject"}</Text>}
                                 <Text className="text-[#767676]" my={2} fontSize={'15px'}>22 Jan 2026, 17:34</Text>
                             </Box>
                         ) : (
@@ -130,7 +147,7 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                     </Flex>
                     <Box my={6} w={'148px'}>
                         <Text className="satoshi-bold" mb={2.5} fontSize={"18px"}>Issue Type</Text>
-                        <CustomSelect triggerHeight="31px" alignCenter value={row?.category} name='type' control={control} collection={Issue} placeholder="Issue Type" />
+                        <CustomSelect triggerHeight="31px" readOnly alignCenter value={row?.category || ''} name='type' control={control} collection={Issue} placeholder="Issue Type" />
                     </Box>
                     <Box mt={6} mb={8} w={'full'}>
                         <Text className="satoshi-bold" mb={2.5} fontSize={"18px"}>Description</Text>
@@ -138,7 +155,7 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                         <AddImage onFileChange={setFiles} />
 
                     </Box>
-                    <MainButton disabled={row ? editmutation.isPending : createmutation.isPending} type="submit" children={row ? "Save" : "Submit"} />
+                    <MainButton loading={row ? editmutation.isPending : createmutation.isPending} disabled={(row ? editmutation.isPending : createmutation.isPending) || !formState.isDirty || !formState.isValid} type="submit" children={row ? "Save" : "Submit"} />
                 </form>
                 <Flex direction={'column'} justify={'space-between'} p={4} bg={'#FBFBFB'} border={'1px solid #EAEAEA'} w={'70%'}>
                     <PageTitle title="Activity & Comments" fontSize={'18px'} />

@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserToken } from "@/services/cookies";
 import useAuthStore from "@/store/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,7 +15,10 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
     // ✅ Only access Zustand store after component mounts on client
     useEffect(() => {
         setMounted(true);
-    }, []);
+        if (!getUserToken()) {
+            window.location.href = "/auth"
+        }
+    }, [])
 
     useEffect(() => {
         if (!mounted) return;

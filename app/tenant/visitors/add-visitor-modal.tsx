@@ -88,7 +88,7 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
             <PageTitle title="Add A Visitor" fontSize={'18px'} mb={7} spacing={0} subFontSize={'14px'} subText="Create a visitor pass for guests, deliveries, or service providers." />
             <form onSubmit={handleSubmit(handleAddVisitor)}>
                 <HStack w={'full'} gap={4}>
-                    <CustomInput name='fullName' width={'full'} required control={control} label='Full Name' placeholder="Full Name" />
+                    <CustomInput name='fullName' width={'full'} required control={control} label="Visitor's Name" placeholder="Full Name" />
                     <CustomInput name='phoneNumber' width={'full'} required control={control} label='Phone Number' placeholder="Phone Number" />
                 </HStack>
                 <HStack mt={4} w={'full'} gap={4}>
@@ -100,7 +100,7 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
                     <CustomInput name='dateExpected' type='date' width={'full'} control={control} label='Date Expected' placeholder="Date Expected" />
                 </HStack>
                 <Flex mt={10} align={'center'} w={'full'}>
-                    <MainButton size="lg" type="submit">Add Vistors</MainButton>
+                    <MainButton disabled={mutation.isPending} loading={mutation.isPending} size="lg" type="submit">Add Vistors</MainButton>
                     <IconButton onClick={() => Open(true)} size="lg" className="h-8" rounded={'6px'} border={'1.15px solid #B2B2B2'} ml={4} variant="outline"><Image src={addVisitorIcon} alt="add visitor" /></IconButton>
                 </Flex>
             </form>

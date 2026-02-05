@@ -4,6 +4,7 @@ import http from "./https"
 import useAuthStore from "@/store/auth"
 import Swal from "sweetalert2"
 import endpoints from "./endpoint"
+import { getRefreshToken } from "./cookies"
 
 interface LoginPayload {
 	email: string
@@ -48,6 +49,12 @@ export const getStoredCredentials = () => {
 
 export const clearStoredCredentials = () => {
 	localStorage.removeItem(REMEMBER_ME_KEY)
+}
+
+export const refreshToken = () => {
+	const refreshTokenValue = getRefreshToken()
+	if (!refreshTokenValue)
+		throw new Error("No refresh token available, please login again")
 }
 
 export const loginUserApi = (payload: LoginPayload) => {

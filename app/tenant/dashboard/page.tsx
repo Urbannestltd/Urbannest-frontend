@@ -110,7 +110,7 @@ export default function TenantDashboard() {
                         </Box>
                     </Box>
                 </Flex>
-                <Modal size={'xl'} triggerContent={'Submit Request'} modalContent={<TenantMaintenanceModal />} />
+                <Modal size={'xl'} triggerContent={'Add Request'} modalContent={<TenantMaintenanceModal />} />
             </Box>
             <Box mt={10}>
                 <PageTitle mb={4} title="Visitor’s Today" />
@@ -120,7 +120,7 @@ export default function TenantDashboard() {
                         onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}
                         modalContent={
                             SwitchModal ? (
-                                <AddVisitorGroupsModal unitid={lease?.property.unitId || ''} Submit={() => setOpenModal(false)} />
+                                <AddVisitorGroupsModal Open={setOpen} unitid={lease?.property.unitId || ''} Submit={() => setOpenModal(false)} />
                             ) : (
                                 <AddVisitorModal
                                     Open={setOpen}

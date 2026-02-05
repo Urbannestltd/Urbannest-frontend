@@ -29,7 +29,7 @@ export const VisitorTabs = ({ component }: TabProps) => {
                         Walk-In Visitors ({visitors.length})
                     </Tabs.Trigger>
                     <Tabs.Trigger px={2} ml={3} value="scheduled">
-                        Scheduled Visitors
+                        Scheduled Visitors ({visitors.length})
                     </Tabs.Trigger>
                     <Tabs.Indicator bg={'transparent'} shadow={"none"} fontWeight={"bold"} />
                 </Tabs.List>
@@ -59,7 +59,7 @@ export const VisitorTabs = ({ component }: TabProps) => {
                     loading={loadingVisitors}
                     emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
                     columns={Scheduledcolumns}
-                    data={[]}
+                    data={visitors}
                 />
             </Tabs.Content>
         </Tabs.Root>

@@ -1,4 +1,4 @@
-import { formatDate, formatDateDash, formatDateTime, formatDatetoTime } from "@/services/date";
+import { formatDate, formatDateDash, formatDateRegular, formatDateTime, formatDatetoTime } from "@/services/date";
 import { Visitor } from "@/store/visitors";
 import { Flex, Menu, MenuItemGroup, Text } from "@chakra-ui/react";
 import { ColumnDef, Row } from "@tanstack/react-table";
@@ -45,7 +45,10 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] =>
         {
             accessorKey: 'visitorName',
             header: "Visitor",
-            cell: ({ row }) => row.getValue('visitorName'),
+            cell: ({ row }) => {
+                const visitorName = row.original.visitorName + (row.original.groupName ? ` (${(row.original.groupName)})` : '')
+                return <Text className="capitalize" children={visitorName} />
+            },
         },
         {
             accessorKey: 'visitorPhone',
@@ -86,7 +89,10 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] =>
             ? {
                 accessorKey: 'expectedTime',
                 header: 'Expected',
-                cell: ({ row }) => row.getValue('expectedTime'),
+                cell: ({ row }) => {
+                    const roow = row.original.date
+                    return `${formatDateDash(roow)} | ${formatDatetoTime(roow)}`
+                }
             }
             : {
                 accessorKey: 'lol',

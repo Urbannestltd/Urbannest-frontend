@@ -2,6 +2,8 @@ import { MessageCardProps } from "@/utils/model"
 import endpoints from "./endpoint"
 import http from "./https"
 import axios from "axios"
+import { file } from "zod"
+import { ca } from "zod/v4/locales"
 
 export interface MaintenaceResponse {
 	messages: [
@@ -33,10 +35,12 @@ export interface MaintenaceResponse {
 }
 
 export interface getMaintenancePayload {
+	subject: string
 	category: string
 	description: string
 	priority: string
-	attachments?: fileStorePayload
+	attachments?: string[]
+	attachment?: fileStorePayload
 }
 
 export interface editMaintenancePayload {
@@ -46,7 +50,8 @@ export interface editMaintenancePayload {
 		subject: string
 		description: string
 		priority: string
-		attachments?: fileStorePayload
+		attachments?: string[]
+		attachment?: fileStorePayload
 	}
 }
 
@@ -96,27 +101,43 @@ export const StoreFile = async (payload: fileStorePayload) => {
 export const SubmitMaintanceRequest = async (
 	payload: getMaintenancePayload,
 ) => {
-	const attachments = payload.attachments ?? {
-		folder: "maintenance",
-		filename: "",
-	}
-	const fileUploaded = await StoreFile(attachments)
-
-	if (!fileUploaded.success) {
-		throw new Error("File upload failed")
-	}
 	try {
-		window.location.href = fileUploaded.data.uploadUrl
+		// only upload if attachments exist
+		if (payload.attachment) {
+			const fileUploaded = await StoreFile({
+				folder: "maintenance",
+				filename: payload.attachment?.filename ?? "",
+			})
+
+			if (!fileUploaded.success) {
+				throw new Error("File upload failed")
+			}
+
+			// attach uploaded URL to payload instead of redirecting
+			payload.attachments = [fileUploaded.data.fullUrl]
+			window.location.href = fileUploaded.data.uploadUrl
+		}
+
+		const payloadWithAttachments: getMaintenancePayload = {
+			subject: payload.subject,
+			category: payload.category.toUpperCase(),
+			description: payload.description,
+			priority: payload.priority,
+		}
+		if (payload.attachments) {
+			payloadWithAttachments.attachments = payload.attachments
+		}
 
 		const response = await http.post(
 			endpoints.createMaintenanceRequest,
-			payload,
+			payloadWithAttachments,
 		)
-		return response.data as Promise<MaintenaceResponse>
+
+		return response.data as MaintenaceResponse
 	} catch (error) {
 		if (axios.isAxiosError(error)) {
 			throw new Error(
-				error.response?.data?.message || "Electricity purchase failed",
+				error.response?.data?.message || "Maintenance request failed",
 			)
 		}
 		throw error
@@ -126,26 +147,43 @@ export const SubmitMaintanceRequest = async (
 export const EditMaintenanceRequest = async (
 	payload: editMaintenancePayload,
 ) => {
-	const attachments = payload.payload.attachments ?? {
-		folder: "maintenance",
-		filename: "",
-	}
-	const fileUploaded = await StoreFile(attachments)
-
-	if (!fileUploaded.success) {
-		throw new Error("File upload failed")
-	}
 	try {
-		window.location.href = fileUploaded.data.uploadUrl
+		// only upload if attachments exist
+		if (payload.payload.attachment) {
+			const fileUploaded = await StoreFile({
+				folder: "maintenance",
+				filename: payload.payload.attachment?.filename ?? "",
+			})
+
+			if (!fileUploaded.success) {
+				throw new Error("File upload failed")
+			}
+
+			// attach uploaded URL to payload instead of redirecting
+			payload.payload.attachments = [fileUploaded.data.fullUrl]
+			window.location.href = fileUploaded.data.uploadUrl
+		}
+
+		const payloadWithAttachments: editMaintenancePayload["payload"] = {
+			subject: payload.payload.subject,
+			category: payload.payload.category.toUpperCase(),
+			description: payload.payload.description,
+			priority: payload.payload.priority,
+		}
+		if (payload.payload.attachments) {
+			payloadWithAttachments.attachments = payload.payload.attachments
+		}
+
 		const response = await http.patch(
 			endpoints.editMaintenanceRequest(payload.ticketId),
-			payload.payload,
+			payloadWithAttachments,
 		)
-		return response.data as Promise<MaintenaceResponse>
+
+		return response.data as MaintenaceResponse
 	} catch (error) {
 		if (axios.isAxiosError(error)) {
 			throw new Error(
-				error.response?.data?.message || "Electricity purchase failed",
+				error.response?.data?.message || "Maintenance request failed",
 			)
 		}
 		throw error

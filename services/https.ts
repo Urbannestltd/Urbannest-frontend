@@ -6,24 +6,28 @@ const axiosInstance = axios.create({
 	timeout: 10_000,
 })
 
-axiosInstance.interceptors.request.use(
-	(config) => {
-		const token = useAuthStore.getState().token
+axiosInstance.interceptors.request.use((config) => {
+	const token = useAuthStore.getState().token
 
-		if (token) {
-			config.headers.Authorization = token.startsWith("Bearer ")
-				? token
-				: `Bearer ${token}`
-		}
+	if (token) {
+		config.headers.Authorization = token.startsWith("Bearer ")
+			? token
+			: `Bearer ${token}`
+	}
 
-		return config
-	},
+	return config
+})
+
+axiosInstance.interceptors.response.use(
+	(response) => response,
 	(error) => {
 		if (error.response?.status === 401) {
-			console.log("🔒 Token expired or unauthorized")
+			console.log("🔒 Session expired — logging out")
+
 			useAuthStore.getState().logoutUser()
 			window.location.href = "/auth"
 		}
+
 		return Promise.reject(error)
 	},
 )

@@ -56,8 +56,8 @@ export const MessageCard = ({ cardData, ticketId }: Message) => {
     }
 
     return (
-        <Flex direction={'column'} h={'full'} flexWrap={'wrap'} justify={'end'}>
-            <Flex direction={'column'} h={'full'} maxH={'500px'} overflowY={'scroll'}>
+        <Flex direction={'column'} h={'full'} justify={'end'}>
+            <Flex direction={'column'} w={'full'} h={'full'} maxH={'500px'} overflowY={'scroll'}>
                 {cardData && cardData.map((item) => {
                     if (!item.sender || !item) return null
                     return (
