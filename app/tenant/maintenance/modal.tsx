@@ -147,7 +147,7 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                     </Flex>
                     <Box my={6} w={'148px'}>
                         <Text className="satoshi-bold" mb={2.5} fontSize={"18px"}>Issue Type</Text>
-                        <CustomSelect triggerHeight="31px" readOnly alignCenter value={row?.category || ''} name='type' control={control} collection={Issue} placeholder="Issue Type" />
+                        <CustomSelect triggerHeight="31px" readOnly={row ? true : false} alignCenter value={row?.category || ''} name='type' control={control} collection={Issue} placeholder="Issue Type" />
                     </Box>
                     <Box mt={6} mb={8} w={'full'}>
                         <Text className="satoshi-bold" mb={2.5} fontSize={"18px"}>Description</Text>

@@ -18,7 +18,7 @@ export const VisitorTabs = ({ component }: TabProps) => {
     const loadingVisitors = useVistorsStore((state) => state.isLoading)
 
     useEffect(() => {
-        fetchVisitors()
+
     }, [])
 
     return (
