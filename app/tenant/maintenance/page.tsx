@@ -8,22 +8,23 @@ import { TenantMaintenanceModal } from "./modal";
 import { Modal } from "@/components/ui/dialog";
 import { useMaintenanceStore } from "@/store/maintenance";
 import { stat } from "fs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Maintenance() {
     const columns = useColumns()
     const maintenance = useMaintenanceStore((state) => state.maintenance)
+    const [closeModal, setCloseModal] = useState(false)
     const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)
 
     useEffect(() => {
-        fetchMaintenance()
-    }, [])
+        if (!closeModal) fetchMaintenance()
+    }, [closeModal])
 
     return (
         <>
             <HStack mt={7} mb={4} justify={'space-between'}>
                 <PageTitle title="Maintenance Requests" />
-                <Modal className="w-[1200px] h-fit" size="cover" modalContent={<TenantMaintenanceModal />} triggerVariant={'primary'} triggerContent={'Add Request'} />
+                <Modal open={closeModal} onOpenChange={setCloseModal} className="w-[1200px] h-fit" size="cover" modalContent={<TenantMaintenanceModal />} triggerVariant={'primary'} triggerContent={'Add Request'} />
             </HStack>
             <DataTable tableName="Maintenance Requests" loading={useMaintenanceStore((state) => state.isLoading)} data={maintenance} my={5} columns={columns} />
         </>

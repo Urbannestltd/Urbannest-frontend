@@ -36,6 +36,9 @@ const FileUploadList = () => {
     const files = fileUpload.acceptedFiles
     if (files.length === 0) return null
 
+
+
+
     return (
         <FileUpload.ItemGroup mt={4} >
             <HStack>

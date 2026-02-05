@@ -5,14 +5,14 @@ import { Divider } from "@/components/ui/divider"
 import { MessageCard } from "@/components/ui/message-card"
 import { PageTitle } from "@/components/ui/page-title"
 import { MaintenanceRequestFormData } from "@/schema"
-import { editMaintenancePayload, EditMaintenanceRequest, getMaintenancePayload, MaintenaceResponse, SubmitMaintanceRequest } from "@/services/maintenance"
+import { editMaintenancePayload, EditMaintenanceRequest, getMaintenancePayload, MaintenaceResponse, StoreFile, SubmitMaintanceRequest } from "@/services/maintenance"
 import { useMaintenanceStore } from "@/store/maintenance"
-import { Box, Button, createListCollection, Flex, Text } from "@chakra-ui/react"
+import { Box, Button, createListCollection, Flex, Float, HStack, Image, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { useState } from "react"
+import { use, useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { LuImage } from "react-icons/lu"
+import { LuX } from "react-icons/lu"
 
 export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) => {
     const { control, reset, handleSubmit, formState } = useForm<MaintenanceRequestFormData>()
@@ -21,12 +21,43 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
     ) ?? []
 
     const [files, setFiles] = useState<File[] | null>(null);
+    const [existing, setExisting] = useState<File[]>([])
+    const [attachmentList, setAttachmentList] = useState<string[]>(row?.attachments ?? []);
     const [edit, setEdit] = useState(false)
-    const uploadedImages = files;
+    const originalAttachments = useRef<string[]>([])
 
+
+    const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)
     const fetchMaintenanceMessages = useMaintenanceStore((state) => state.fetchMaintenanceMessages)
+    console.log(row)
+
+    useEffect(() => {
+        if (row?.attachments) {
+            setAttachmentList(row.attachments)
+            originalAttachments.current = row.attachments
+        }
+    }, [row])
+
+    const hasAttachmentChanges =
+        existing.length > 0 ||
+        attachmentList.length !== originalAttachments.current.length
+
+    const canSave = formState.isDirty || hasAttachmentChanges
 
 
+    const upload = async (): Promise<string[]> => {
+        if (!files?.length) return []
+
+        return Promise.all(
+            files.map(file =>
+                StoreFile({ file, folder: 'maintenance' })
+            )
+        )
+    }
+
+    const removeExisting = (index: number) => {
+        setAttachmentList(prev => prev.filter((_, i) => i !== index))
+    }
 
     const createmutation = useMutation({
         mutationFn: (data: getMaintenancePayload) => SubmitMaintanceRequest(data),
@@ -40,22 +71,20 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
             toast.error(error?.message)
         }
     })
-    const onSubmit = (data: MaintenanceRequestFormData) => {
+    const onSubmit = async (data: MaintenanceRequestFormData) => {
+        const urls = await upload()
+
         const payload: getMaintenancePayload = {
             subject: data.title,
-            category: data.type[0].toUpperCase() ?? '',
+            category: data.type?.[0]?.toUpperCase() ?? '',
             description: data.description,
             priority: 'HIGH',
+            attachments: urls.length ? urls : undefined,
         }
-        if (uploadedImages?.[0]?.name) {
-            payload.attachment = {
-                filename: uploadedImages[0].name,
-                folder: 'maintenance',
-            }
-        }
-        console.log(payload)
+
         createmutation.mutate(payload)
     }
+
 
 
     const editmutation = useMutation({
@@ -63,6 +92,7 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
         onSuccess: () => {
             toast.success('Maintenance request updated successfully')
             setEdit(false)
+            fetchMaintenance()
             fetchMaintenanceMessages(row?.id ?? '')
             // Submit?.()
             reset()
@@ -71,7 +101,13 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
             toast.error(error?.message)
         }
     })
-    const onSave = (data: MaintenanceRequestFormData) => {
+    const onSave = async (data: MaintenanceRequestFormData) => {
+        const urls = await upload()
+        const finalAttachments = [
+            ...attachmentList,
+            ...urls
+        ]
+
         const payload: editMaintenancePayload = {
             ticketId: row?.id ?? '',
             payload: {
@@ -79,16 +115,13 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                 subject: data.title ?? row?.subject ?? 'No Subject',
                 description: data.description,
                 priority: 'HIGH',
+                attachments: finalAttachments.length ? finalAttachments : undefined,
             }
         }
-        if (uploadedImages?.[0]?.name) {
-            payload.payload.attachment = {
-                filename: uploadedImages[0].name,
-                folder: 'maintenance',
-            }
-        }
+
         editmutation.mutate(payload)
     }
+
 
 
 
@@ -152,10 +185,17 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                     <Box mt={6} mb={8} w={'full'}>
                         <Text className="satoshi-bold" mb={2.5} fontSize={"18px"}>Description</Text>
                         <CustomTextarea name='description' placeholder="Tell us more about the issue you’re experiencing" control={control} value={row?.description} />
-                        <AddImage onFileChange={setFiles} />
+                        <HStack>
+                            {row?.attachments && attachmentList.length > 0 && attachmentList.map((image, index) =>
+                                <Flex mt={2} key={index}>
+                                    <Image mt={2} key={index} src={image ?? ''} alt={`attachment ${index}`} rounded={'8px'} w={'128px'} h={'66px'} />
+                                    <LuX cursor={'pointer'} onClick={() => removeExisting(index)} />
+                                </Flex>)}
+                            <AddImage onFileChange={(files) => { setFiles; setExisting }} />
+                        </HStack>
 
                     </Box>
-                    <MainButton loading={row ? editmutation.isPending : createmutation.isPending} disabled={(row ? editmutation.isPending : createmutation.isPending) || !formState.isDirty || !formState.isValid} type="submit" children={row ? "Save" : "Submit"} />
+                    <MainButton disabled={!canSave} loading={row ? editmutation.isPending : createmutation.isPending} type="submit" children={row ? "Save" : "Submit"} />
                 </form>
                 <Flex direction={'column'} justify={'space-between'} p={4} bg={'#FBFBFB'} border={'1px solid #EAEAEA'} w={'70%'}>
                     <PageTitle title="Activity & Comments" fontSize={'18px'} />

@@ -40,7 +40,6 @@ export interface getMaintenancePayload {
 	description: string
 	priority: string
 	attachments?: string[]
-	attachment?: fileStorePayload
 }
 
 export interface editMaintenancePayload {
@@ -51,7 +50,6 @@ export interface editMaintenancePayload {
 		description: string
 		priority: string
 		attachments?: string[]
-		attachment?: fileStorePayload
 	}
 }
 
@@ -73,7 +71,7 @@ export interface getMaintenanceResponse {
 
 export interface fileStorePayload {
 	folder: string
-	filename: string
+	file: File
 }
 
 export interface fileStoreResponse {
@@ -86,38 +84,23 @@ export interface fileStoreResponse {
 	}
 }
 
-export const StoreFile = async (payload: fileStorePayload) => {
-	try {
-		const response = await http.post(endpoints.storeFile, payload)
-		return response.data as Promise<fileStoreResponse>
-	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			throw new Error(error.response?.data?.message || "File upload failed")
-		}
-		throw error
+export const StoreFile = async (payload: fileStorePayload): Promise<string> => {
+	const body = {
+		folder: payload.folder,
+		filename: payload.file.name,
 	}
+
+	const response = await http.post(endpoints.storeFile, body)
+
+	await http.put(response.data.data.uploadUrl, payload.file)
+
+	return response.data.data.fullUrl
 }
 
 export const SubmitMaintanceRequest = async (
 	payload: getMaintenancePayload,
 ) => {
 	try {
-		// only upload if attachments exist
-		if (payload.attachment) {
-			const fileUploaded = await StoreFile({
-				folder: "maintenance",
-				filename: payload.attachment?.filename ?? "",
-			})
-
-			if (!fileUploaded.success) {
-				throw new Error("File upload failed")
-			}
-
-			// attach uploaded URL to payload instead of redirecting
-			payload.attachments = [fileUploaded.data.fullUrl]
-			window.location.href = fileUploaded.data.uploadUrl
-		}
-
 		const payloadWithAttachments: getMaintenancePayload = {
 			subject: payload.subject,
 			category: payload.category.toUpperCase(),
@@ -148,22 +131,6 @@ export const EditMaintenanceRequest = async (
 	payload: editMaintenancePayload,
 ) => {
 	try {
-		// only upload if attachments exist
-		if (payload.payload.attachment) {
-			const fileUploaded = await StoreFile({
-				folder: "maintenance",
-				filename: payload.payload.attachment?.filename ?? "",
-			})
-
-			if (!fileUploaded.success) {
-				throw new Error("File upload failed")
-			}
-
-			// attach uploaded URL to payload instead of redirecting
-			payload.payload.attachments = [fileUploaded.data.fullUrl]
-			window.location.href = fileUploaded.data.uploadUrl
-		}
-
 		const payloadWithAttachments: editMaintenancePayload["payload"] = {
 			subject: payload.payload.subject,
 			category: payload.payload.category.toUpperCase(),
