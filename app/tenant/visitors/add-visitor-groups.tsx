@@ -36,7 +36,6 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
 
     useEffect(() => {
         if (!startDate) return
-
         const nextDay = dayjs(startDate)
             .add(1, "day")
             .format("YYYY-MM-DD")

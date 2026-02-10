@@ -43,9 +43,9 @@ export const TenantSidebar = () => {
                 </div>
                 <Box className=" mb-4 mt-4 ">
                     <Text className="satoshi-bold text-[10px] mb-4 tracking-[0.2em] mt-4 uppercase">Settings</Text>
-                    <Tabs.Trigger w={'full'} value={'/settings'} className="flex items-center gap-2" p={2}>
+                    <Button onClick={() => router.push('/tenant/settings')} className=" hover:bg-button-hover w-full flex justify-start pl-2">
                         <LuSettings /> Settings
-                    </Tabs.Trigger>
+                    </Button>
                     <Button onClick={handleLogout} className=" hover:bg-button-hover w-full flex justify-start pl-2">
                         <LuLogOut size={4} />Logout</Button>
                 </Box>

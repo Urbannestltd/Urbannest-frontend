@@ -1,5 +1,5 @@
-import { Button, FileUpload, Float, HStack, useFileUploadContext } from "@chakra-ui/react"
-import { LuImage, LuX } from "react-icons/lu"
+import { Box, Button, FileUpload, Flex, Float, HStack, Icon, Span, Text, useFileUploadContext } from "@chakra-ui/react"
+import { LuImage, LuUpload, LuX } from "react-icons/lu"
 
 export const AddImage = ({ onFileChange }: { onFileChange: (file: File[] | null) => void }) => {
     return (
@@ -54,5 +54,23 @@ const FileUploadList = () => {
                 ))}
             </HStack>
         </FileUpload.ItemGroup>
+    )
+}
+
+export const DragAndDrop = () => {
+    return (
+        <FileUpload.Root maxW="md" alignItems="stretch" accept={'image/*'} maxFiles={1}>
+            <FileUpload.HiddenInput />
+            <FileUpload.Dropzone rounded={'10px'} h={'148px'} border={'1px solid #000000'}>
+                <Icon size="md" color="fg.muted">
+                    <LuUpload />
+                </Icon>
+                <FileUpload.DropzoneContent>
+                    <Flex><Text className="satoshi-bold mr-1">Click to upload</Text>or drag and drop</Flex>
+                    <Box color="fg.muted">PNG or JPG (max 5mb)</Box>
+                </FileUpload.DropzoneContent>
+            </FileUpload.Dropzone>
+            <FileUpload.List />
+        </FileUpload.Root>
     )
 }

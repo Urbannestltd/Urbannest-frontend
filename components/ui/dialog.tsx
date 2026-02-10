@@ -8,6 +8,7 @@ type ModalProps = {
     triggerVariant?: ButtonVariant
     triggerSize?: ButtonSize
     triggerContent?: string
+    triggerElement?: React.ReactNode
     triggerIcon?: React.ReactElement
     triggerClassName?: string
     modalContent: React.ReactNode
@@ -23,6 +24,7 @@ export const Modal = ({
     triggerVariant = 'primary',
     triggerSize = 'md',
     triggerContent,
+    triggerElement,
     triggerIcon,
     modalContent,
     open,
@@ -34,9 +36,9 @@ export const Modal = ({
     return (
         <Dialog.Root size={size} open={open} onOpenChange={(e) => onOpenChange?.(e.open)} placement={placement}>
             <Dialog.Trigger asChild>
-                <MainButton size={triggerSize} className={`satoshi ${triggerClassName}`} variant={triggerVariant} icon={triggerIcon}>
+                {triggerElement ? triggerElement : <MainButton size={triggerSize} className={`satoshi ${triggerClassName}`} variant={triggerVariant} icon={triggerIcon}>
                     {triggerContent}
-                </MainButton>
+                </MainButton>}
             </Dialog.Trigger>
             <Dialog.Backdrop />
             <Dialog.Positioner>

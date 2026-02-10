@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 import { RequireAuth } from "../auth/require-auth"
 import { TenantSidebar } from "./sidebar"
-import { Tabs } from "@chakra-ui/react"
 import { UserNav } from "./user-nav"
+import { SideBarSetup } from "./page"
 
 export const metadata: Metadata = {
     title: "Tenant Dashboard",
@@ -15,13 +15,10 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
-
     return (
         <RequireAuth>
             <div className="flex h-screen">
-                <div className="relative hidden md:block w-[380px]">
-                    <TenantSidebar />
-                </div>
+                <SideBarSetup />
                 <main className="flex w-full justify-center p-4 lg:p-8 ">
                     <div className=" w-full max-w-[1440px]">
                         <UserNav />

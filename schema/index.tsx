@@ -58,11 +58,40 @@ export const UtilitiesSchema = z.object({
     saveMeter: z.boolean(),
 })
 
+export const PersonalInfoSchema = z.object({
+    fullName: inputField("Full name is required"),
+    emailAddress: inputField("Email address is required"),
+    phoneNumber: inputField("Phone number is required"),
+    emergencyContact: inputField("Emergency contact is required"),
+})
+export const NotificationSchema = z.object({
+    payments: selectArrayField("Payments is required"),
+    lease: selectArrayField("Lease is required"),
+    maintenance: selectArrayField("Maintenance is required"),
+    visitors: selectArrayField("Visitors is required"),
+})
+
+export const SecurityPrivacySchema = z.object({
+    oldPassword: inputField("Old password is required"),
+    newPassword: inputField("New password is required"),
+    confirmPassword: inputField("Confirm password is required"),
+    twofa: z.boolean(),
+})
+
+export const NeedHelpSchema = z.object({
+    category: selectArrayField("Category is required"),
+    description: inputField("Description is required"),
+})
+
 export type addVisitorFormData = z.infer<typeof addVisitorSchema>
 export type addVisitorGroupsFormData = z.infer<typeof addVisitorGroupsSchema>
 export type VisitorListFormData = z.infer<typeof VisitorListSchema>
 export type MaintenanceRequestFormData = z.infer<typeof MaintenanceRequestSchema>
 export type UtilitiesFormData = z.infer<typeof UtilitiesSchema>
+export type PersonalInfoFormData = z.infer<typeof PersonalInfoSchema>
+export type NotificationFormData = z.infer<typeof NotificationSchema>
+export type SecurityPrivacyFormData = z.infer<typeof SecurityPrivacySchema>
+export type NeedHelpFormData = z.infer<typeof NeedHelpSchema>
 
 
 export type loginFormData = z.input<typeof loginSchema>

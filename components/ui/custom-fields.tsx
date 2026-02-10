@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Control, FieldPath, FieldValues, Controller, useController } from 'react-hook-form';
-import { Field, Select, Portal, Text, Input, NumberInput, Textarea, Box, useSelectContext, Flex, RadioGroup, Fieldset, Stack, Checkbox, CheckboxGroup } from '@chakra-ui/react';
+import { Field, Select, Portal, Text, Input, NumberInput, Textarea, Box, useSelectContext, Flex, RadioGroup, Fieldset, Stack, Checkbox, CheckboxGroup, CheckboxRootProps, Switch, SelectRootProps } from '@chakra-ui/react';
 import { Avatar } from './avatar';
+import { InputGroup } from './input-group';
 
 const isMobile = window.innerWidth < 500;
 type BaseProps<T extends FieldValues> = {
@@ -20,7 +21,7 @@ type BaseProps<T extends FieldValues> = {
     required?: boolean
 };
 
-type Option = { label: string; value: string } & Record<string, any>;
+export type Option = { label: string; value: string, description?: string } & Record<string, any>;
 
 type CustomSelectProps<T extends FieldValues> = BaseProps<T> & {
     collection: any;
@@ -32,8 +33,10 @@ type CustomSelectProps<T extends FieldValues> = BaseProps<T> & {
     errorTextFallback?: string;
     avatar?: boolean;
     value?: any;
+    labelBold?: boolean
     labelWidth?: string | number;
     alignCenter?: boolean
+    size?: SelectRootProps['size']
 };
 
 type InputProps<T extends FieldValues> = BaseProps<T> & {
@@ -48,6 +51,8 @@ type InputProps<T extends FieldValues> = BaseProps<T> & {
     description?: string;
     labelWidth?: string | number;
     setValue?: (value: any) => void
+    startElement?: React.ReactNode
+    endElement?: React.ReactNode
 };
 
 type TextareaProps<T extends FieldValues> = BaseProps<T> & {
@@ -60,6 +65,7 @@ type TextareaProps<T extends FieldValues> = BaseProps<T> & {
     readOnly?: boolean;
     value?: string;
     labelWidth?: string | number;
+    labelBold?: boolean
 };
 
 type NumberInputProps<T extends FieldValues> = BaseProps<T> & {
@@ -88,7 +94,7 @@ type RadioButtonProps<T extends FieldValues> = BaseProps<T> & {
 };
 
 type CheckboxProps<T extends FieldValues> = BaseProps<T> & {
-    options: Option[];
+    options: Option;
     description?: string;
     labelWidth?: string | number;
     renderItem?: (item: Option) => React.ReactNode;
@@ -98,9 +104,23 @@ type CheckboxProps<T extends FieldValues> = BaseProps<T> & {
     triggerHeight?: string;
     errorTextFallback?: string;
     avatar?: boolean;
+    variant?: CheckboxRootProps['variant'];
     value?: any;
     buttonDirection?: 'row' | 'column';
 };
+
+type SwitchProps<T extends FieldValues> = BaseProps<T> & {
+    options: Option;
+    description?: string;
+    labelWidth?: string | number;
+    renderItem?: (item: Option) => React.ReactNode;
+    isLoading?: boolean;
+    multiple?: boolean;
+    arrayValue?: boolean;
+    triggerHeight?: string;
+    errorTextFallback?: string;
+    value?: any;
+}
 
 export function CustomSelect<T extends FieldValues>({
     name,
@@ -123,7 +143,9 @@ export function CustomSelect<T extends FieldValues>({
     required,
     orientation = 'vertical',
     avatar,
+    labelBold,
     labelWidth,
+    size,
     bg = 'white',
     value
 }: CustomSelectProps<T>) {
@@ -182,7 +204,6 @@ export function CustomSelect<T extends FieldValues>({
 
     return (
         <Controller
-
             name={name}
             control={control}
             rules={{ required: required ? `${label ?? name} is required` : false }}
@@ -201,7 +222,7 @@ export function CustomSelect<T extends FieldValues>({
                     <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
 
                         <Field.Label
-                            className='satoshi-medium'
+                            className={labelBold ? 'satoshi-bold' : `satoshi-medium`}
                         >{label}
                         </Field.Label>
 
@@ -217,6 +238,7 @@ export function CustomSelect<T extends FieldValues>({
                             readOnly={readOnly}
                             color={'black'}
                             bg={bg}
+                            size={size}
                             onInteractOutside={() => field.onBlur()}
                             onValueChange={(event) => {
                                 if (multiple) {
@@ -228,12 +250,12 @@ export function CustomSelect<T extends FieldValues>({
                             }}
                         >
                             {multiple && <Select.HiddenSelect />}
-                            <Select.Control>
+                            <Select.Control >
                                 <Select.Trigger h={avatar ? 'fit' : triggerHeight}>
                                     {isLoading ? (
                                         <Text>Loading...</Text>
                                     ) : (
-                                        avatar ? <SelectValue /> : <Select.ValueText textAlign={alignCenter ? 'center' : 'start'} w={'full'} placeholder={placeholder} fontSize={'14px'} p={2} _placeholder={{ color: '#B3B3B3' }} color='black' />
+                                        avatar ? <SelectValue /> : <Select.ValueText p={2} textAlign={alignCenter ? 'center' : 'start'} w={'full'} placeholder={placeholder} fontSize={'14px'} _placeholder={{ color: '#B3B3B3' }} color='black' />
                                     )}
                                 </Select.Trigger>
                                 <Select.IndicatorGroup>
@@ -241,7 +263,7 @@ export function CustomSelect<T extends FieldValues>({
                                 </Select.IndicatorGroup>
                             </Select.Control>
 
-                            <Portal>
+                            <Portal >
                                 <Select.Positioner w={width} >
                                     <Select.Content p={2} w={'96%'} zIndex='9999' bg='white'>
                                         {collection.items.map((item: Option) => (
@@ -278,6 +300,7 @@ export function CustomSelect<T extends FieldValues>({
     );
 }
 
+
 export function CustomInput<T extends FieldValues>({
     name,
     control,
@@ -286,15 +309,19 @@ export function CustomInput<T extends FieldValues>({
     disabled,
     fieldProps,
     trimOnBlur,
-    required,
     type = 'text',
     inputProps,
-    height = '40px',
+    height = '3rem',
     width,
     readOnly,
+    required,
     value,
     setValue,
-    orientation = 'vertical'
+    description,
+    labelWidth,
+    orientation = 'vertical',
+    startElement,
+    endElement
 }: InputProps<T>) {
     const { field, fieldState, } = useController({
         name, control, rules: {
@@ -302,51 +329,96 @@ export function CustomInput<T extends FieldValues>({
         },
     });
     return (
-        <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
-            {label && <Box>
-                <Field.Label className='satoshi-medium'>
-                    {label}{label && required && '*'}
-                </Field.Label>
-            </Box>}
-            <Input
-                {...inputProps}
-                type={type}
-                name={field.name}
-                ref={field.ref}
-                value={field.value ?? value}
-                onClick={(e: React.MouseEvent<HTMLInputElement>) => {
-                    e.currentTarget.showPicker()
-                }}
-                onChange={(e) => {
-                    field.onChange(e.target.value);
-                    setValue && setValue?.(e.target.value)
-                }}
-                onBlur={(e) => {
-                    if (trimOnBlur) {
-                        const v = (e.target.value ?? '').trim();
-                        if (v !== field.value) field.onChange(v);
-                    }
-                    field.onBlur();
-                }}
-                disabled={disabled}
-                placeholder={placeholder}
-                color={'black'}
-                bg={readOnly ? '#F9FAFB' : 'white'}
-                p={3}
-                h={height}
-                w={width}
-                border={'1px solid #B2B2B2'}
-                rounded={'6px'}
-                fontSize={"14px"}
-                className=''
-                _active={{
-                    border: 'none',
-                }}
-            />
-            {fieldState.error?.message && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
-        </Field.Root>
+        <div>
+            <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
+                {label && <Box>
+                    <Field.Label className='satoshi-medium'>
+                        {label}{label && required && '*'}
+                    </Field.Label>
+                </Box>}
+                {startElement || endElement ? (
+                    <InputGroup startElement={startElement} endElement={endElement} w={width}>
+                        <Input
+                            {...inputProps}
+                            type={type}
+                            name={field.name}
+                            ref={field.ref}
+                            value={field.value ?? value}
+                            onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                                e.currentTarget.showPicker()
+                            }}
+                            onChange={(e) => {
+                                field.onChange(e.target.value);
+                                setValue && setValue?.(e.target.value)
+                            }}
+                            onBlur={(e) => {
+                                if (trimOnBlur) {
+                                    const v = (e.target.value ?? '').trim();
+                                    if (v !== field.value) field.onChange(v);
+                                }
+                                field.onBlur();
+                            }}
+                            disabled={disabled}
+                            placeholder={placeholder}
+                            color={'black'}
+                            bg={readOnly ? '#F9FAFB' : 'white'}
+                            p={3}
+                            h={height}
+                            w={width}
+                            border={'1px solid #B2B2B2'}
+                            rounded={'6px'}
+                            fontSize={"14px"}
+                            className=''
+                            _active={{
+                                border: 'none',
+                            }}
+                        />
+                    </InputGroup>
+                ) : (
+                    <Input
+                        {...inputProps}
+                        type={type}
+                        name={field.name}
+                        ref={field.ref}
+                        value={field.value ?? value}
+                        onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                            e.currentTarget.showPicker()
+                        }}
+                        onChange={(e) => {
+                            field.onChange(e.target.value);
+                            setValue && setValue?.(e.target.value)
+                        }}
+                        onBlur={(e) => {
+                            if (trimOnBlur) {
+                                const v = (e.target.value ?? '').trim();
+                                if (v !== field.value) field.onChange(v);
+                            }
+                            field.onBlur();
+                        }}
+                        disabled={disabled}
+                        placeholder={placeholder}
+                        color={'black'}
+                        bg={readOnly ? '#F9FAFB' : 'white'}
+                        p={3}
+                        h={height}
+                        w={width}
+                        border={'1px solid #B2B2B2'}
+                        rounded={'6px'}
+                        fontSize={"14px"}
+                        className=''
+                        _active={{
+                            border: 'none',
+                        }}
+                    />
+                )}
+                {fieldState.error?.message && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
+            </Field.Root >
+        </div>
     );
 }
+
+
+
 
 export function CustomTextarea<T extends FieldValues>({
     value,
@@ -359,6 +431,7 @@ export function CustomTextarea<T extends FieldValues>({
     trimOnBlur,
     textareaProps,
     minH = '100px',
+    labelBold,
     width,
     description,
     readOnly,
@@ -376,7 +449,7 @@ export function CustomTextarea<T extends FieldValues>({
                         alignItems={'flex-start'}
                         flexDirection={'column'}
                     >
-                        <Text>{label}</Text>
+                        <Text className={labelBold ? 'satoshi-bold' : 'satoshi-medium'}>{label}</Text>
                         <Text fontWeight={'normal'} w={orientation === 'horizontal' ? !isMobile ? '15vw' : 'full' : 'full'} fontSize={'14px'} color={'#475467'}>
                             {description}
                         </Text>
@@ -556,6 +629,7 @@ export function CustomCheckbox<T extends FieldValues>({ name,
     label,
     renderItem,
     description,
+    variant = 'outline',
     width,
     orientation = 'horizontal',
     labelWidth }: CheckboxProps<T>) {
@@ -565,35 +639,20 @@ export function CustomCheckbox<T extends FieldValues>({ name,
         <Fieldset.Root justifyContent={'start'} invalid={!!fieldState.error} >
             <CheckboxGroup value={field.value}
                 onValueChange={field.onChange} name={name} >
-                <Stack w={'full'} direction={'row'}>
-                    <Fieldset.Legend
-                        w={labelWidth ?? 'fit'}
-                        color='#344054'
-                        display={'flex'}
-                        alignItems={'flex-start'}
-                        flexDirection={'column'}
-                    >
-                        <Text color={'#344054'}>{label}</Text>
-                        {description && <Text fontWeight={'normal'} w={orientation === 'horizontal' ? !isMobile ? '15vw' : 'full' : 'full'} fontSize={'14px'} color={'#475467'}>
-                            {description}
-                        </Text>}
-                    </Fieldset.Legend>
+                <>
+                    <Checkbox.Root variant={variant} key={options.value} width={width} mb={1} value={options.value} disabled={options.disabled}>
+                        <Checkbox.HiddenInput onBlur={field.onBlur} />
+                        <Checkbox.Control rounded={'sm'} border={'1.5px solid #2A3348'} ><Checkbox.Indicator /></Checkbox.Control>
+                        {renderItem ? renderItem(options) : <Checkbox.Label>
+                            <Box mt={3}>
+                                <Text fontSize={'16px'} className={options.description ? 'satoshi-bold' : 'satoshi'}>{options.label}</Text>
+                                <Text>{options.description}</Text>
+                            </Box></Checkbox.Label>}
+                    </Checkbox.Root>
+                    {fieldState.error && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
+                </>
 
-                    <Fieldset.Content
-                        width={width} p={2}>
 
-                        {options.map((option) => (
-                            <>
-                                <Checkbox.Root variant={'solid'} key={option.value} my={3} colorPalette={'purple'} value={option.value} disabled={option.disabled}>
-                                    <Checkbox.Control border={'1px solid #D0D5DD'} > <Checkbox.HiddenInput /></Checkbox.Control>
-                                    {renderItem ? renderItem(option) : <Checkbox.Label>{option.label}</Checkbox.Label>}
-                                </Checkbox.Root>
-                                {fieldState.error && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
-                            </>
-
-                        ))}
-                    </Fieldset.Content>
-                </Stack>
             </CheckboxGroup>
         </Fieldset.Root>
     )
@@ -639,5 +698,43 @@ export function CustomDatePicker<T extends FieldValues>({
             />
             {fieldState.error && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
         </Field.Root>
+    )
+}
+
+export function CustomSwitch<T extends FieldValues>({
+    name,
+    control,
+    label,
+    disabled,
+    height = '40px',
+    width,
+    readOnly,
+    value,
+    orientation = 'vertical'
+}: InputProps<T>) {
+    return (
+        <Stack mt={2} >
+            <Controller
+                name={name}
+                control={control}
+                render={({ field, fieldState }) => (
+                    <Field.Root invalid={!!!fieldState.error}>
+                        <Switch.Root
+                            name={field.name}
+                            checked={field.value}
+                            colorPalette={'green'}
+                            disabled={disabled}
+                            readOnly={readOnly}
+                            onCheckedChange={({ checked }) => field.onChange(checked)}
+                        >
+                            <Switch.HiddenInput onBlur={field.onBlur} />
+                            <Switch.Control />
+                            <Switch.Label>{label}</Switch.Label>
+                        </Switch.Root>
+                        {fieldState.error && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
+                    </Field.Root>
+                )}
+            />
+        </Stack>
     )
 }

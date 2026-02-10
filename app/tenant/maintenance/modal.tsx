@@ -191,7 +191,7 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                                     <Image mt={2} key={index} src={image ?? ''} alt={`attachment ${index}`} rounded={'8px'} w={'128px'} h={'66px'} />
                                     <LuX cursor={'pointer'} onClick={() => removeExisting(index)} />
                                 </Flex>)}
-                            <AddImage onFileChange={(files) => { setFiles; setExisting }} />
+                            <AddImage onFileChange={() => { setFiles; setExisting }} />
                         </HStack>
 
                     </Box>
