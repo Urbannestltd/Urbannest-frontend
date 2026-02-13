@@ -4,6 +4,7 @@ import { da } from 'zod/v4/locales';
 const selectArrayField = (msg: string) => z.array(z.string()).min(1, msg).default([]);
 const inputField = (msg: string) => z.string().min(1, msg);
 const number = (msg: string) => z.coerce.number().refine((v) => v > 0, { message: msg });
+const boolean = (msg: string) => z.boolean().default(false);
 
 export const loginSchema = z.object({
     email: inputField("Email is required"),
@@ -65,10 +66,10 @@ export const PersonalInfoSchema = z.object({
     emergencyContact: inputField("Emergency contact is required"),
 })
 export const NotificationSchema = z.object({
-    payments: selectArrayField("Payments is required"),
-    lease: selectArrayField("Lease is required"),
-    maintenance: selectArrayField("Maintenance is required"),
-    visitors: selectArrayField("Visitors is required"),
+    emailPayments: boolean("Payments is required"),
+    emailLease: boolean("Lease is required"),
+    emailMaintenance: boolean("Maintenance is required"),
+    emailVisitors: boolean("Visitors is required"),
 })
 
 export const SecurityPrivacySchema = z.object({

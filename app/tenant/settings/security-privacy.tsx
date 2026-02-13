@@ -4,22 +4,48 @@ import { CustomInput, CustomSwitch } from "@/components/ui/custom-fields"
 import { Divider } from "@/components/ui/divider"
 import { PageTitle } from "@/components/ui/page-title"
 import { SecurityPrivacyFormData } from "@/schema"
+import { resetPassword, ResetPasswordPayload } from "@/services/auth"
+import useAuthStore from "@/store/auth"
 import { Box, Flex, HStack } from "@chakra-ui/react"
+import { useMutation } from "@tanstack/react-query"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import { LuEye, LuEyeOff, LuLock } from "react-icons/lu"
 
 export const SecurityPrivacy = () => {
     const [showPassword, setShowPassword] = useState<number>(0)
-    const { control } = useForm<SecurityPrivacyFormData>()
+    const { control, handleSubmit, formState } = useForm<SecurityPrivacyFormData>()
+    const token = useAuthStore.getState().token
+
+    const mutate = useMutation({
+        mutationFn: (data: ResetPasswordPayload) => resetPassword(data),
+
+        onSuccess: () => {
+            toast.success('Password Reset Successfully')
+        },
+
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+
+
+    const onSubmit = async (data: SecurityPrivacyFormData) => {
+        const payload: ResetPasswordPayload = {
+            token: token ?? '',
+            newPassword: data.confirmPassword
+        }
+        mutate.mutate(payload)
+    };
     return (
         <Box w={'full'}>
-            <form action="">
+            <form>
                 <HStack justify={'space-between'}>
                     <PageTitle title="Security & Privacy" />
                     <Flex gap={2}>
                         <MainButton variant='outline' className="h-[35px]" size='sm'>Cancel</MainButton>
-                        <MainButton className="h-[35px]" size='sm'>Save</MainButton>
+                        <MainButton className="h-[35px]" type='submit' disabled={mutate.isPending || !formState.isDirty} size='sm'>Save</MainButton>
                     </Flex>
                 </HStack>
                 <Divider my={10} />

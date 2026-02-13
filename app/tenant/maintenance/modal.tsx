@@ -7,9 +7,9 @@ import { PageTitle } from "@/components/ui/page-title"
 import { MaintenanceRequestFormData } from "@/schema"
 import { editMaintenancePayload, EditMaintenanceRequest, getMaintenancePayload, MaintenaceResponse, StoreFile, SubmitMaintanceRequest } from "@/services/maintenance"
 import { useMaintenanceStore } from "@/store/maintenance"
-import { Box, Button, createListCollection, Flex, Float, HStack, Image, Text } from "@chakra-ui/react"
+import { Box, createListCollection, Flex, HStack, Image, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { use, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { LuX } from "react-icons/lu"
@@ -29,7 +29,6 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
 
     const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)
     const fetchMaintenanceMessages = useMaintenanceStore((state) => state.fetchMaintenanceMessages)
-    console.log(row)
 
     useEffect(() => {
         if (row?.attachments) {
@@ -121,9 +120,6 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
 
         editmutation.mutate(payload)
     }
-
-
-
 
     const status = Status.find((status) => status.value === row?.status)
     return (

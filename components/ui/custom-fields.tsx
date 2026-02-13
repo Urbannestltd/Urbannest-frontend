@@ -94,10 +94,14 @@ type RadioButtonProps<T extends FieldValues> = BaseProps<T> & {
 };
 
 type CheckboxProps<T extends FieldValues> = BaseProps<T> & {
-    options: Option;
+    options: {
+        label: string;
+        description?: string;
+    };
     description?: string;
     labelWidth?: string | number;
     renderItem?: (item: Option) => React.ReactNode;
+    onChange?: () => void;
     isLoading?: boolean;
     multiple?: boolean;
     arrayValue?: boolean;
@@ -105,7 +109,7 @@ type CheckboxProps<T extends FieldValues> = BaseProps<T> & {
     errorTextFallback?: string;
     avatar?: boolean;
     variant?: CheckboxRootProps['variant'];
-    value?: any;
+    value?: boolean;
     buttonDirection?: 'row' | 'column';
 };
 
@@ -630,30 +634,30 @@ export function CustomCheckbox<T extends FieldValues>({ name,
     renderItem,
     description,
     variant = 'outline',
+    value,
+    disabled,
+    onChange,
     width,
     orientation = 'horizontal',
     labelWidth }: CheckboxProps<T>) {
     const { field, fieldState } = useController({ name, control });
+    const currentValue = field.value ?? value;
 
     return (
         <Fieldset.Root justifyContent={'start'} invalid={!!fieldState.error} >
-            <CheckboxGroup value={field.value}
-                onValueChange={field.onChange} name={name} >
-                <>
-                    <Checkbox.Root variant={variant} key={options.value} width={width} mb={1} value={options.value} disabled={options.disabled}>
-                        <Checkbox.HiddenInput onBlur={field.onBlur} />
-                        <Checkbox.Control rounded={'sm'} border={'1.5px solid #2A3348'} ><Checkbox.Indicator /></Checkbox.Control>
-                        {renderItem ? renderItem(options) : <Checkbox.Label>
-                            <Box mt={3}>
-                                <Text fontSize={'16px'} className={options.description ? 'satoshi-bold' : 'satoshi'}>{options.label}</Text>
-                                <Text>{options.description}</Text>
-                            </Box></Checkbox.Label>}
-                    </Checkbox.Root>
-                    {fieldState.error && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
-                </>
-
-
-            </CheckboxGroup>
+            <>
+                <Checkbox.Root variant={variant} checked={currentValue}
+                    onCheckedChange={({ checked }) => { field.onChange(checked); onChange?.(); }} width={width} mb={1} disabled={disabled}>
+                    <Checkbox.HiddenInput onBlur={field.onBlur} />
+                    <Checkbox.Control rounded={'sm'} border={'1.5px solid #2A3348'} ><Checkbox.Indicator /></Checkbox.Control>
+                    <Checkbox.Label>
+                        <Box mt={3}>
+                            <Text fontSize={'16px'} className={options.description ? 'satoshi-bold' : 'satoshi'}>{options.label}</Text>
+                            <Text>{options.description}</Text>
+                        </Box></Checkbox.Label>
+                </Checkbox.Root>
+                {fieldState.error && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
+            </>
         </Fieldset.Root>
     )
 }
@@ -676,6 +680,7 @@ export function CustomDatePicker<T extends FieldValues>({
     orientation = 'vertical'
 }: InputProps<T>) {
     const { field, fieldState } = useController({ name, control });
+
     return (
         <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
             <Box>

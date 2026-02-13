@@ -27,6 +27,7 @@ export function ResetPasswordFunc() {
 
         onSuccess: () => {
             toast.success('Password Reset Successfully')
+            setIsSucessful(true)
         },
 
         onError: (error) => {

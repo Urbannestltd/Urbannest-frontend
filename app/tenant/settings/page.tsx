@@ -1,10 +1,19 @@
+'use client'
 import { Heading, Tabs } from "@chakra-ui/react"
 import { AccountInfo } from "./account-info"
 import { NotifPref } from "./notif-pref"
 import { SecurityPrivacy } from "./security-privacy"
 import { SupportCenter } from "./support-center/support-center"
+import { useEffect } from "react"
+import { useSettingStore } from "@/store/settings"
 
 export default function Settings() {
+
+    const fetchSettings = useSettingStore((state) => state.fetchUserSettings);
+
+    useEffect(() => {
+        fetchSettings()
+    })
     return (
         <Tabs.Root variant={'plain'} defaultValue={'account-info'} orientation="vertical">
             <Tabs.List mt={'50px'} w={'20%'} ml={'36px'}>

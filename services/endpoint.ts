@@ -36,6 +36,19 @@ const endpoints = {
 		`/maintenance/${ticketId}/message`,
 	getAllMaintenanceRequestsMessages: (ticketId: string) =>
 		`/maintenance/${ticketId}/messages`,
+
+	//Settings endpoints
+	getSettings: `/settings/profile`,
+	updateSettings: `/settings/profile`,
+	getNotifPreference: `/settings/notifications`,
+	updateNotifPreference: `/settings/notifications`,
+	getReminders: `/settings/reminders`,
+	deleteReminder: (id: string) => `/settings/reminders/${id}`,
+
+	//Suuport Center endpoints
+	createTicket: `/support/create`,
+	getTicket: (id: string) => `/support/${id}`,
+	sendTicketMessage: (id: string) => `/support/${id}/reply`,
 }
 
 export default endpoints
