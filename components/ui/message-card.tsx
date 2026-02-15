@@ -57,7 +57,7 @@ export const MessageCard = ({ cardData, ticketId }: Message) => {
 
     return (
         <Flex direction={'column'} h={'full'} justify={'end'}>
-            <Flex direction={'column'} w={'full'} h={'full'} maxH={'500px'} overflowY={'scroll'}>
+            <Flex direction={'column'} w={'full'} h={{ base: '300px', lg: 'full' }} maxH={'500px'} overflowY={'scroll'}>
                 {cardData && cardData.map((item) => {
                     if (!item.sender || !item) return null
                     return (
@@ -78,6 +78,7 @@ export const MessageCard = ({ cardData, ticketId }: Message) => {
                     <CustomInput
                         name="message"
                         control={control}
+                        width={'100%'}
                         height='40px'
                         placeholder="Write a comment"
                     />

@@ -131,7 +131,7 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                 />
             </div>
             <Divider my={0} />
-            <Flex h={'fit'} gap={8}>
+            <Flex direction={{ base: 'column', lg: 'row' }} h={'fit'} gap={8}>
                 <form onSubmit={handleSubmit(row ? onSave : onSubmit)} className="p-4 h-full w-[90%]">
                     <div className="my-1">
                         {row ? (
@@ -193,7 +193,7 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                     </Box>
                     <MainButton disabled={!canSave} loading={row ? editmutation.isPending : createmutation.isPending} type="submit" children={row ? "Save" : "Submit"} />
                 </form>
-                <Flex direction={'column'} justify={'space-between'} p={4} bg={'#FBFBFB'} border={'1px solid #EAEAEA'} w={'70%'}>
+                <Flex direction={'column'} justify={'space-between'} p={4} bg={'#FBFBFB'} border={'1px solid #EAEAEA'} w={{ base: 'full', lg: '70%' }}>
                     <PageTitle title="Activity & Comments" fontSize={'18px'} />
                     <MessageCard ticketId={row?.id} cardData={row ? messages : undefined} />
                 </Flex>

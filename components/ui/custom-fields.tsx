@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Control, FieldPath, FieldValues, Controller, useController } from 'react-hook-form';
+import { Control, FieldPath, FieldValues, Controller, useController, RegisterOptions } from 'react-hook-form';
 import { Field, Select, Portal, Text, Input, NumberInput, Textarea, Box, useSelectContext, Flex, RadioGroup, Fieldset, Stack, Checkbox, CheckboxGroup, CheckboxRootProps, Switch, SelectRootProps } from '@chakra-ui/react';
 import { Avatar } from './avatar';
 import { InputGroup } from './input-group';
@@ -41,6 +41,7 @@ type CustomSelectProps<T extends FieldValues> = BaseProps<T> & {
 
 type InputProps<T extends FieldValues> = BaseProps<T> & {
     type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
+    rules?: RegisterOptions<T>
     inputProps?: Omit<
         React.ComponentProps<typeof Input>,
         'name' | 'value' | 'onChange' | 'onBlur' | 'ref'
@@ -114,10 +115,9 @@ type CheckboxProps<T extends FieldValues> = BaseProps<T> & {
 };
 
 type SwitchProps<T extends FieldValues> = BaseProps<T> & {
-    options: Option;
     description?: string;
     labelWidth?: string | number;
-    renderItem?: (item: Option) => React.ReactNode;
+    onChange?: (checked: boolean) => void;
     isLoading?: boolean;
     multiple?: boolean;
     arrayValue?: boolean;
@@ -308,6 +308,7 @@ export function CustomSelect<T extends FieldValues>({
 export function CustomInput<T extends FieldValues>({
     name,
     control,
+    rules,
     label,
     placeholder,
     disabled,
@@ -328,9 +329,7 @@ export function CustomInput<T extends FieldValues>({
     endElement
 }: InputProps<T>) {
     const { field, fieldState, } = useController({
-        name, control, rules: {
-            required: required ? `${label ?? name} is required` : false,
-        },
+        name, control, rules: { ...rules, required: required ? `${label ?? name} is required` : false }
     });
     return (
         <div>
@@ -681,6 +680,7 @@ export function CustomDatePicker<T extends FieldValues>({
 }: InputProps<T>) {
     const { field, fieldState } = useController({ name, control });
 
+
     return (
         <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
             <Box>
@@ -711,35 +711,31 @@ export function CustomSwitch<T extends FieldValues>({
     control,
     label,
     disabled,
-    height = '40px',
     width,
+    onChange,
     readOnly,
     value,
     orientation = 'vertical'
-}: InputProps<T>) {
+}: SwitchProps<T>) {
+    const { field, fieldState } = useController({ name, control });
+    const currentValue = field.value ?? value;
     return (
         <Stack mt={2} >
-            <Controller
-                name={name}
-                control={control}
-                render={({ field, fieldState }) => (
-                    <Field.Root invalid={!!!fieldState.error}>
-                        <Switch.Root
-                            name={field.name}
-                            checked={field.value}
-                            colorPalette={'green'}
-                            disabled={disabled}
-                            readOnly={readOnly}
-                            onCheckedChange={({ checked }) => field.onChange(checked)}
-                        >
-                            <Switch.HiddenInput onBlur={field.onBlur} />
-                            <Switch.Control />
-                            <Switch.Label>{label}</Switch.Label>
-                        </Switch.Root>
-                        {fieldState.error && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
-                    </Field.Root>
-                )}
-            />
+            <Field.Root invalid={!!!fieldState.error}>
+                <Switch.Root
+                    name={field.name}
+                    checked={currentValue}
+                    colorPalette={'green'}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                    onCheckedChange={({ checked }) => { field.onChange(checked); onChange?.(checked); }}
+                >
+                    <Switch.HiddenInput onBlur={field.onBlur} />
+                    <Switch.Control />
+                    <Switch.Label>{label}</Switch.Label>
+                </Switch.Root>
+                {fieldState.error && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
+            </Field.Root>
         </Stack>
     )
 }

@@ -25,6 +25,7 @@ export default function Lease() {
     const history = usePaymentHistoryStore((state) => state.history);
     const loading = usePaymentHistoryStore((state) => state.isLoading);
     const fetchPaymentHistory = usePaymentHistoryStore((state) => state.fetchPaymentHistory);
+    const IsMobile = window.innerWidth < 750
 
     useEffect(() => {
         fetchLease()
@@ -114,8 +115,12 @@ export default function Lease() {
                 </HStack>
                 <MainButton disabled={mutation.isPending || leaseLoading} loading={mutation.isPending} className="hidden md:inline" onClick={PayMyRent} children="Pay Rent" />
             </Flex>
-            <Flex direction={{ base: 'column-reverse', md: 'row' }} gapX={12} mt={12}>
-                <Box w={'full'}>
+            <Flex display={{ base: 'flex', lg: 'none' }} mt={6} gap={1}>
+                <MainButton size='md' disabled={mutation.isPending || leaseLoading} loading={mutation.isPending} onClick={PayMyRent} children="Pay Rent" />
+                <Modal triggerSize="md" modalContent={<UtilitiesModal />} triggerVariant={'outline'} triggerContent={'Pay Utilities'} />
+            </Flex>
+            <Flex direction={{ base: 'column-reverse', md: 'row' }} gapX={{ base: 2, lg: 12 }} mt={12}>
+                <Box mb={4} w={'full'}>
                     <PageTitle mt={2} title="Lease Information" />
                     {leaseLoading ? <Skeleton height={'300px'} mt={6} rounded={'8px'} /> :
                         <Box mt={6} p={'16px 24px'} rounded={'8px'} border={'1px solid #F1F1F1'}>
@@ -123,7 +128,7 @@ export default function Lease() {
                                 <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Current Rent Amount</Text>
                                 <Text className="satoshi-bold text-2xl"> {formatNumber(lease?.contract.rentAmount)}</Text>
                             </Box>
-                            <Grid gapX={'100px'} mt={4.5} gapY={'52px'} templateColumns={'repeat(3,1fr)'}>
+                            <Grid gapX={'100px'} mt={4.5} gapY={'52px'} templateColumns={{ base: 'repeat(2,1fr)', lg: 'repeat(3,1fr)' }}>
                                 {LeaseDetails.info.map((item, index) => (
                                     <Box key={index}>
                                         <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>{item.label}</Text>
@@ -137,11 +142,11 @@ export default function Lease() {
                             </Grid>
                         </Box>}
                 </Box>
-                <Box w={'80%'}>
+                <Box mb={4} w={{ base: 'full', lg: '80%' }}>
                     <HStack justify={'space-between'}>
                         <PageTitle title="Payment History" />
-                        <Modal triggerSize="sm" modalContent={<UtilitiesModal />} triggerVariant={'outline'} triggerContent={'Pay Utilities'} />
-                    </HStack>
+                        {!IsMobile && <Modal triggerSize="sm" modalContent={<UtilitiesModal />} triggerVariant={'outline'} triggerContent={'Pay Utilities'} />
+                        } </HStack>
                     <Box maxH={'450px'} overflowY={'scroll'} mt={6}>
                         {loading ? (
                             <>

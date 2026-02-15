@@ -24,7 +24,7 @@ export default function Maintenance() {
         <>
             <HStack mt={7} mb={4} justify={'space-between'}>
                 <PageTitle title="Maintenance Requests" />
-                <Modal open={closeModal} onOpenChange={setCloseModal} className="w-[1200px] h-fit" size="cover" modalContent={<TenantMaintenanceModal />} triggerVariant={'primary'} triggerContent={'Add Request'} />
+                <Modal open={closeModal} onOpenChange={setCloseModal} className="lg:w-[1200px] border border-red-700 h-fit" size="cover" modalContent={<TenantMaintenanceModal />} triggerVariant={'primary'} triggerContent={'Add Request'} />
             </HStack>
             <DataTable tableName="Maintenance Requests" loading={useMaintenanceStore((state) => state.isLoading)} data={maintenance} my={5} columns={columns} />
         </>

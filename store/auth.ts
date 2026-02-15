@@ -6,9 +6,15 @@ import { clearAuthTokens, storeUserToken } from "@/services/cookies"
 interface AuthStore {
 	user: User | null
 	token: string | null
+	twofa: boolean | null
 	isHydrated: boolean
 
-	loginUser: (userData: User, token: string, persistToken: boolean) => void
+	loginUser: (
+		userData: User,
+		token: string,
+		twofa: boolean,
+		persistToken: boolean,
+	) => void
 	logoutUser: () => void
 	setHydrated: () => void
 }
@@ -19,13 +25,13 @@ const useAuthStore = create<AuthStore>()(
 			user: null,
 			token: null,
 			isHydrated: false,
+			twofa: null,
 
-			loginUser: (userData, token, persistToken) => {
+			loginUser: (userData, token, persistToken, twofa) => {
 				console.log("🔐 loginUser called", { userData, persistToken })
 				storeUserToken(token, persistToken)
-				set({ user: userData, token })
+				set({ user: userData, token, twofa })
 				console.log("✅ User set in store:", userData)
-
 				setTimeout(() => {
 					const stored = localStorage.getItem("auth-storage")
 					console.log("📦 localStorage content:", stored)

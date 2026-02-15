@@ -17,6 +17,10 @@ export interface createTicketPayload {
 	priority: string
 	attachments?: string[]
 }
+export interface ChangePasswordPayload {
+	oldPassword: string
+	newPassword: string
+}
 
 export const UpdateUserProfile = async (payload: UserProfilePayload) => {
 	const response = await http.patch(endpoints.updateSettings, payload)
@@ -35,5 +39,20 @@ export const getNotifPreferences = async () => {
 
 export const updateNotifPreferences = async (payload: NotificationFormData) => {
 	const response = await http.patch(endpoints.updateNotifPreference, payload)
+	return response.data
+}
+
+export const ChangePassword = async (payload: ChangePasswordPayload) => {
+	const response = await http.post(endpoints.changePassword, payload)
+	return response.data
+}
+
+export const Enable2fa = async () => {
+	const response = await http.post(endpoints.enable2fa)
+	return response.data
+}
+
+export const Disable2fa = async () => {
+	const response = await http.post(endpoints.disable2fa)
 	return response.data
 }

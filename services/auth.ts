@@ -13,8 +13,15 @@ interface LoginPayload {
 }
 
 interface LoginResponse {
-	token: string
-	user: User
+	data: {
+		user: User
+		token: string
+		tempToken: string
+		message: string
+		require2fa: boolean
+	}
+	message: string
+	success: boolean
 }
 
 interface SignUpPayload {
@@ -57,11 +64,15 @@ export const refreshToken = () => {
 		throw new Error("No refresh token available, please login again")
 }
 
-export const loginUserApi = (payload: LoginPayload) => {
-	return http.post<LoginResponse>(
+export const loginUserApi = async (
+	payload: LoginPayload,
+): Promise<LoginResponse> => {
+	const res = await http.post<LoginResponse>(
 		"/auth/login",
 		_.omit(payload, ["rememberMe"]),
 	)
+
+	return res.data
 }
 
 export const registerUser = (payload: SignUpPayload, token: string) => {

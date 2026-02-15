@@ -1,6 +1,5 @@
 import { Metadata } from "next"
 import { RequireAuth } from "../auth/require-auth"
-import { TenantSidebar } from "./sidebar"
 import { UserNav } from "./user-nav"
 import { SideBarSetup } from "./page"
 

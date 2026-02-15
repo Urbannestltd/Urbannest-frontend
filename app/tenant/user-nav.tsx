@@ -15,7 +15,6 @@ export const UserNav = () => {
     const { user } = useAuthStore()
     const pathname = usePathname();
     const isSetting = pathname.includes('settings');
-    const userSettings = useSettingStore((state) => state.userSettings);
     const Logout = useAuthStore((state) => state.logoutUser)
     const router = useRouter();
 
@@ -47,7 +46,7 @@ export const UserNav = () => {
                     <Menu.Trigger>
                         <Avatar
                             name={user?.name}
-                            src={userSettings?.userProfileUrl}
+                            src={user?.profilePic}
                             size='xs'
                         />
                     </Menu.Trigger>
@@ -57,7 +56,7 @@ export const UserNav = () => {
                                 <Menu.ItemGroup>
                                     <Menu.Item className="satoshi-medium" value='profile'> <Avatar
                                         name={user?.name}
-                                        src={userSettings?.userProfileUrl}
+                                        src={user?.profilePic}
                                         size='xs'
                                     />{user?.name}</Menu.Item>
                                     <Menu.Item value="setings" onClick={() => router.push('/tenant/settings')}>Settings</Menu.Item>

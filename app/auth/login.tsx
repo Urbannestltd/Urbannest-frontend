@@ -39,11 +39,13 @@ export const Login = () => {
         onSuccess: async (response, variables: loginFormData) => {
             toast.success('Logged in')
             const remember = !!variables.rememberMe;
+            console.log(response)
 
             if (response.data?.token && response.data?.user) {
                 loginUser(
                     response.data.user,
                     response.data.token,
+                    response.data.require2fa,
                     remember
                 )
 

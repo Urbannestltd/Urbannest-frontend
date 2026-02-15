@@ -3,6 +3,7 @@ export interface User {
 	email?: string
 	password?: string
 	name: string
+	profilePic?: string
 	role: "admin" | "tenant" | "ADMIN" | "TENANT"
 	phone?: string
 	displayName?: string
@@ -12,6 +13,9 @@ export interface User {
 export interface UserLoginResponse {
 	user: User
 	token: string
+	tempToken: string
+	require2fa: boolean
+	message: string
 }
 
 export interface userData {

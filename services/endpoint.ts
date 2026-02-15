@@ -44,6 +44,10 @@ const endpoints = {
 	updateNotifPreference: `/settings/notifications`,
 	getReminders: `/settings/reminders`,
 	deleteReminder: (id: string) => `/settings/reminders/${id}`,
+	changePassword: `/settings/change-password`,
+	enable2fa: `/settings/2fa/enable`,
+	disable2fa: `/settings/2fa/disable`,
+	confirmOtp: `/settings/2fa/confirm`,
 
 	//Suuport Center endpoints
 	createTicket: `/support/create`,
