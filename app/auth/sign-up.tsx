@@ -63,7 +63,7 @@ export const SignUp = () => {
             loginUser(
                 loginRes.data.user,
                 loginRes.data.token,
-                true,
+                loginRes.data.require2fa,
                 variables.rememberMe
             )
 
