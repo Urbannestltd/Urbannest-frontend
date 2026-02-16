@@ -102,8 +102,8 @@ export default function Lease() {
 
                     {leaseLoading ?
                         <Box>
-                            <SkeletonText w={'300px'} mb={2} noOfLines={1} h={'20px'} />
-                            <SkeletonText w={'400px'} noOfLines={1} h={'20px'} />
+                            <SkeletonText w={{ base: '150px', md: '300px' }} mb={2} noOfLines={1} h={'20px'} />
+                            <SkeletonText w={{ base: '200px', md: '400px' }} noOfLines={1} h={'20px'} />
                         </Box> :
                         <Box>
                             <Text className="satoshi-bold text-[20px] md:text-[24px]"> {lease?.property.unit}</Text>

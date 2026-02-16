@@ -1,14 +1,14 @@
 'use client'
-import { Box, Button, Icon, Tabs, Text } from "@chakra-ui/react"
+import { Box, Button, Tabs, Text } from "@chakra-ui/react"
 import Image from "next/image"
 import Logo from '@/app/assets/urbannest-logo-white.png'
 import { sidebarLinks } from "@/utils/data";
 import { LuLogOut, LuSettings } from "react-icons/lu";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import useAuthStore from "@/store/auth";
 
 
-export const TenantSidebar = () => {
+export const TenantSidebar = ({ onClose }: { onClose?: () => void }) => {
     const pathname = usePathname();
     const router = useRouter();
     const { logoutUser } = useAuthStore()
@@ -36,7 +36,7 @@ export const TenantSidebar = () => {
                     <Image src={Logo} onClick={() => router.push('/')} className="w-[147.5px] mb-[54px]" alt="" />
                     <Text className="satoshi-bold text-[10px] mb-4 tracking-[0.2em] mt-4 uppercase">Menu</Text>
                     {sidebarLinks.map((link) =>
-                        <Tabs.Trigger w={'full'} value={link.value} className="" p={2} onClick={() => router.push(link.href)} key={link.href}>
+                        <Tabs.Trigger w={'full'} value={link.value} className="" p={2} onClick={() => { router.push(link.href); onClose && onClose() }} key={link.href}>
                             <Image alt='image' src={link.icon} /> {link.title}
                         </Tabs.Trigger>)}
                     <Tabs.Indicator className="satoshi-bold" bg={'#2A3348'} />

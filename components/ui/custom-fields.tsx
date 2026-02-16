@@ -314,112 +314,107 @@ export function CustomInput<T extends FieldValues>({
     disabled,
     fieldProps,
     trimOnBlur,
+    required,
     type = 'text',
     inputProps,
-    height = '3rem',
+    height = '40px',
     width,
     readOnly,
-    required,
     value,
-    setValue,
-    description,
-    labelWidth,
-    orientation = 'vertical',
     startElement,
-    endElement
+    endElement,
+    setValue,
+    orientation = 'vertical'
 }: InputProps<T>) {
     const { field, fieldState, } = useController({
-        name, control, rules: { ...rules, required: required ? `${label ?? name} is required` : false }
+        name, control, rules: {
+            ...rules,
+            required: required ? `${label ?? name} is required` : false,
+        },
     });
     return (
-        <div>
-            <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
-                {label && <Box>
-                    <Field.Label className='satoshi-medium'>
-                        {label}{label && required && '*'}
-                    </Field.Label>
-                </Box>}
-                {startElement || endElement ? (
-                    <InputGroup startElement={startElement} endElement={endElement} w={width}>
-                        <Input
-                            {...inputProps}
-                            type={type}
-                            name={field.name}
-                            ref={field.ref}
-                            value={field.value ?? value}
-                            onClick={(e: React.MouseEvent<HTMLInputElement>) => {
-                                e.currentTarget.showPicker()
-                            }}
-                            onChange={(e) => {
-                                field.onChange(e.target.value);
-                                setValue && setValue?.(e.target.value)
-                            }}
-                            onBlur={(e) => {
-                                if (trimOnBlur) {
-                                    const v = (e.target.value ?? '').trim();
-                                    if (v !== field.value) field.onChange(v);
-                                }
-                                field.onBlur();
-                            }}
-                            disabled={disabled}
-                            placeholder={placeholder}
-                            color={'black'}
-                            bg={readOnly ? '#F9FAFB' : 'white'}
-                            p={3}
-                            h={height}
-                            w={width}
-                            border={'1px solid #B2B2B2'}
-                            rounded={'6px'}
-                            fontSize={"14px"}
-                            className=''
-                            _active={{
-                                border: 'none',
-                            }}
-                        />
-                    </InputGroup>
-                ) : (
-                    <Input
-                        {...inputProps}
-                        type={type}
-                        name={field.name}
-                        ref={field.ref}
-                        value={field.value ?? value}
-                        onClick={(e: React.MouseEvent<HTMLInputElement>) => {
-                            e.currentTarget.showPicker()
-                        }}
-                        onChange={(e) => {
-                            field.onChange(e.target.value);
-                            setValue && setValue?.(e.target.value)
-                        }}
-                        onBlur={(e) => {
-                            if (trimOnBlur) {
-                                const v = (e.target.value ?? '').trim();
-                                if (v !== field.value) field.onChange(v);
-                            }
-                            field.onBlur();
-                        }}
-                        disabled={disabled}
-                        placeholder={placeholder}
-                        color={'black'}
-                        bg={readOnly ? '#F9FAFB' : 'white'}
-                        p={3}
-                        h={height}
-                        w={width}
-                        border={'1px solid #B2B2B2'}
-                        rounded={'6px'}
-                        fontSize={"14px"}
-                        className=''
-                        _active={{
-                            border: 'none',
-                        }}
-                    />
-                )}
-                {fieldState.error?.message && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
-            </Field.Root >
-        </div>
+        <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
+            {label && <Box>
+                <Field.Label className='satoshi-medium'>
+                    {label}{label && required && '*'}
+                </Field.Label>
+            </Box>}
+            {startElement || endElement ? <InputGroup startElement={startElement} endElement={endElement}>
+                <Input
+                    {...inputProps}
+                    type={type}
+                    name={field.name}
+                    ref={field.ref}
+                    value={field.value ?? value}
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                        e.currentTarget.showPicker()
+                    }}
+                    onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setValue && setValue?.(e.target.value)
+                    }}
+                    onBlur={(e) => {
+                        if (trimOnBlur) {
+                            const v = (e.target.value ?? '').trim();
+                            if (v !== field.value) field.onChange(v);
+                        }
+                        field.onBlur();
+                    }}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    color={'black'}
+                    bg={readOnly ? '#F9FAFB' : 'white'}
+                    p={3}
+                    h={height}
+                    w={width}
+                    border={'1px solid #B2B2B2'}
+                    rounded={'6px'}
+                    fontSize={"14px"}
+                    className=''
+                    _active={{
+                        border: 'none',
+                    }}
+                />
+            </InputGroup> :
+                <Input
+                    {...inputProps}
+                    type={type}
+                    name={field.name}
+                    ref={field.ref}
+                    value={field.value ?? value}
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                        e.currentTarget.showPicker()
+                    }}
+                    onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setValue && setValue?.(e.target.value)
+                    }}
+                    onBlur={(e) => {
+                        if (trimOnBlur) {
+                            const v = (e.target.value ?? '').trim();
+                            if (v !== field.value) field.onChange(v);
+                        }
+                        field.onBlur();
+                    }}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    color={'black'}
+                    bg={readOnly ? '#F9FAFB' : 'white'}
+                    p={3}
+                    h={height}
+                    w={width}
+                    border={'1px solid #B2B2B2'}
+                    rounded={'6px'}
+                    fontSize={"14px"}
+                    className=''
+                    _active={{
+                        border: 'none',
+                    }}
+                />}
+            {fieldState.error?.message && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
+        </Field.Root>
     );
 }
-
 
 
 

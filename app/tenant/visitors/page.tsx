@@ -17,7 +17,7 @@ import { AddVisitorGroupsModal } from "./add-visitor-groups"
 import { Modal } from "@/components/ui/dialog"
 import { useVistorsStore } from "@/store/visitors"
 import { useLeaseStore } from "@/store/lease"
-import { VisitorTabs } from "./visitorTabs"
+import { VisitorTabs } from "./visitor-tabs"
 
 export default function Visitors() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("today")
@@ -74,8 +74,8 @@ export default function Visitors() {
                     </Button>
                 ))}
             </HStack>
-            <DashboardCard data={visitorDashboard} />
-            <Flex mt={8} mb={10} justify={"end"}>
+            <Flex mt={3} mb={8} w={"full"} maxW={'99%'} overflowX={'scroll'} align={"center"} justify="start"><DashboardCard data={visitorDashboard} /> </Flex>
+            <Flex mt={8} mb={10} justify={{ base: 'start', md: "end" }}>
                 <Modal
                     open={openModal}
                     onOpenChange={() => { setOpenModal(!openModal); setSwitchModal(false) }}

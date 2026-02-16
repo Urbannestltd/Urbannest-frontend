@@ -131,7 +131,7 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
                 />
             </div>
             <Divider my={0} />
-            <Flex direction={{ base: 'column', lg: 'row' }} h={'fit'} gap={8}>
+            <Flex direction={{ base: 'column', lg: 'row' }} h={'fit'} maxH={{ base: '90%', md: '100%' }} overflow={{ base: 'scroll', md: 'auto' }} gap={8}>
                 <form onSubmit={handleSubmit(row ? onSave : onSubmit)} className="p-4 h-full w-[90%]">
                     <div className="my-1">
                         {row ? (

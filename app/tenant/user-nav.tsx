@@ -10,21 +10,29 @@ import { usePathname, useRouter } from "next/navigation"
 import Image from 'next/image'
 import Logo from '@/app/assets/urbannest-logo.png'
 import { useSettingStore } from "@/store/settings"
+import toast from "react-hot-toast"
+import { useState } from "react"
 
 export const UserNav = () => {
     const { user } = useAuthStore()
     const pathname = usePathname();
     const isSetting = pathname.includes('settings');
-    const Logout = useAuthStore((state) => state.logoutUser)
+    const logoutUser = useAuthStore((state) => state.logoutUser)
+    const [openDrawer, setOpenDrawer] = useState(false)
     const router = useRouter();
-
+    const handleLogout = () => {
+        logoutUser()
+        toast.success('Logged out')
+        console.log('logged out')
+        router.push('/auth')
+    }
 
     return (
         <HStack justify={"space-between"
         }>
             {
                 isSetting ? <Image className='w-[185px] h-10 mt-4 cursor-pointer' onClick={() => router.push('/tenant/dashboard')} src={Logo} alt="logo" /> : <HStack>
-                    <Drawer.Root placement={'start'}>
+                    <Drawer.Root open={openDrawer} onOpenChange={(e) => setOpenDrawer(e.open)} placement={'start'}>
                         <Drawer.Trigger className="inline md:hidden">
                             <MdOutlineMenu className="mr-2 md:mr-0" size={24} />
                         </Drawer.Trigger>
@@ -32,7 +40,7 @@ export const UserNav = () => {
                             <Drawer.Backdrop />
                             <Drawer.Positioner>
                                 <Drawer.Content w={'fit'}>
-                                    <TenantSidebar />
+                                    <TenantSidebar onClose={() => setOpenDrawer(false)} />
                                 </Drawer.Content>
                             </Drawer.Positioner>
                         </Portal>
@@ -60,7 +68,7 @@ export const UserNav = () => {
                                         size='xs'
                                     />{user?.name}</Menu.Item>
                                     <Menu.Item value="setings" onClick={() => router.push('/tenant/settings')}>Settings</Menu.Item>
-                                    <Menu.Item value="log-out" color={'red.700'} onClick={() => Logout()}>Logout</Menu.Item>
+                                    <Menu.Item value="log-out" color={'red.700'} onClick={handleLogout}>Logout</Menu.Item>
                                 </Menu.ItemGroup></Menu.Content>
                         </Menu.Positioner>
                     </Portal>

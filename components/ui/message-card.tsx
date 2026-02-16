@@ -74,15 +74,14 @@ export const MessageCard = ({ cardData, ticketId }: Message) => {
                 })}
             </Flex>
             <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-                <InputGroup w={'full'} endElement={<MdSend onClick={handleSubmit(onSubmit)} color='#2A3348' size='20px' />} >
-                    <CustomInput
-                        name="message"
-                        control={control}
-                        width={'100%'}
-                        height='40px'
-                        placeholder="Write a comment"
-                    />
-                </InputGroup>
+                <CustomInput
+                    name="message"
+                    control={control}
+                    width={'100%'}
+                    height='40px'
+                    endElement={<MdSend onClick={handleSubmit(onSubmit)} color='#2A3348' size='20px' />}
+                    placeholder="Write a comment"
+                />
             </form>
         </Flex>
     )

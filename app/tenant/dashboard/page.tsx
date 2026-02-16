@@ -18,7 +18,7 @@ import { useVistorsStore } from "@/store/visitors"
 import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
 import { TenantMaintenanceModal } from "../maintenance/modal"
 import { useMaintenanceStore } from "@/store/maintenance"
-import { VisitorTabs } from "../visitors/visitorTabs"
+import { VisitorTabs } from "../visitors/visitor-tabs"
 
 export default function TenantDashboard() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("7days")

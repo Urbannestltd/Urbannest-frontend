@@ -45,7 +45,7 @@ export function Paginator({
     };
 
     return (
-        <Flex align="center" justify="center" gap={4} mt={10} aria-label="Pagination">
+        <Flex align="center" justify="center" gap={{ base: 2, lg: 4 }} mt={10} aria-label="Pagination">
             <Button
                 disabled={current <= 1}
                 onClick={() => safeChange(current - 1)}
@@ -55,7 +55,7 @@ export function Paginator({
                 <LuChevronLeft size={14} />Previous
             </Button>
 
-            <HStack gap={4}>
+            <HStack gap={{ base: 2, lg: 4 }}>
                 {pages.map((p) => (
                     <Button
                         key={p}

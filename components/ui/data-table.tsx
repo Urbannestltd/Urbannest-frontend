@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
     type ColumnDef,
     flexRender,
     getCoreRowModel,
     useReactTable,
-    getPaginationRowModel,
 } from '@tanstack/react-table';
 import { cn } from '@/utils/lib';
 import { Table, TableBody, TableCell, TableEmpty, TableHead, TableHeader, TableRow } from './table';
@@ -12,7 +11,6 @@ import { Table, TableBody, TableCell, TableEmpty, TableHead, TableHeader, TableR
 import { Paginator } from './paginator';
 import { Box, Skeleton } from '@chakra-ui/react';
 import Image from 'next/image';
-import { da } from 'zod/v4/locales';
 
 
 export type EmptyDetails = {
