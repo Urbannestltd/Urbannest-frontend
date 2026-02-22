@@ -12,35 +12,40 @@ interface Visitor {
 interface VisitorListProps {
     visitors: Visitor[]
     onChange: (list: Visitor[]) => void
-    phone: string
 }
 
-export const VisitorList = ({ visitors, onChange, phone }: VisitorListProps) => {
+export const VisitorList = ({ visitors, onChange }: VisitorListProps) => {
     const [visitorList, setVisitorList] = useState<Visitor[]>(visitors);
 
     const { handleSubmit, formState, reset, control } = useForm<Visitor>();
 
     const addVisitor = (data: Visitor) => {
-        if (data.name && data.name !== '') {
-            onChange([...visitors, { name: data.name, phone: phone }]);
-            setVisitorList([...visitorList, { name: data.name, phone: phone }]);
-            reset({ name: '' });
+        if (data.name && data.name !== '' || data.phone && data.phone !== '') {
+            onChange([...visitors, { name: data.name, phone: data.phone }]);
+            setVisitorList([...visitorList, { name: data.name, phone: data.phone }]);
+            reset({ name: '', phone: '' });
         }
     };
 
     return (
         <>
 
-            <HStack align="end">
+            <HStack gap={4} align="end">
                 <CustomInput
                     name="name"
                     control={control}
                     label="Visitor Name"
                     placeholder="John Doe"
                 />
+                <CustomInput
+                    name='phone'
+                    control={control}
+                    label="Visitor Phone"
+                    placeholder="123-456-7890"
+                />
 
                 <Button
-                    disabled={!!formState.errors.name || !formState.isValid}
+
                     onClick={handleSubmit(addVisitor)}
                     bg="#F5F5F5"
                     className="hover:border disabled:bg-button-disabled disabled:text-text-disabled hover:border-button-primary rounded-full size-[40px]"

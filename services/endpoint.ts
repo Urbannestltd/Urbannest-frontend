@@ -6,6 +6,9 @@ const endpoints = {
 	forgotPassword: "/auth/forgot-password",
 	resetPassword: "/auth/reset-password",
 
+	//Dashboard endpoints
+	fetchDashboardData: "/dashboard/overview",
+
 	//Lease endpoints
 	getCurrentLease: `/leases/current`,
 	downloadLease: (id: string) => `/leases/${id}/download`,
@@ -36,6 +39,7 @@ const endpoints = {
 		`/maintenance/${ticketId}/message`,
 	getAllMaintenanceRequestsMessages: (ticketId: string) =>
 		`/maintenance/${ticketId}/messages`,
+	deleteMaintenanceRequest: (ticketId: string) => `/maintenance/${ticketId}`,
 
 	//Settings endpoints
 	getSettings: `/settings/profile`,

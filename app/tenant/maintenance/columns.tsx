@@ -11,10 +11,16 @@ import Image from "next/image";
 import { LuEllipsisVertical } from "react-icons/lu";
 import { Modal } from "@/components/ui/dialog";
 import { TenantMaintenanceModal } from "./modal";
-import { MaintenaceResponse } from "@/services/maintenance";
+import { deleteMaintenanceRequest, MaintenaceResponse } from "@/services/maintenance";
 import { formatDate } from "@/services/date";
+import { use } from "react";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { useMaintenanceStore } from "@/store/maintenance";
 
 export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
+    const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)
+
     const Status = [
         {
             value: 'PENDING',
@@ -52,6 +58,17 @@ export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
         { value: 'BUILDING', label: 'Building (Walls, Doors, Windows, Ceiling)', icon: BuildingIcon },
         { value: 'SAFETY', label: 'Safety & Security', icon: SecurityIcon },
     ]
+
+    const mutate = useMutation({
+        mutationFn: (ticketId: string) => deleteMaintenanceRequest(ticketId),
+        onSuccess: () => {
+            toast.success('Maintenance request deleted successfully'),
+                fetchMaintenance()
+        },
+        onError: () => {
+            toast.error('Something went wrong')
+        }
+    })
 
     return [
         {
@@ -114,7 +131,7 @@ export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
                             <Menu.Positioner>
                                 <Menu.Content>
                                     <Menu.ItemGroup gap={3}>
-                                        <Menu.Item mb={2} cursor={'pointer'} value="save-visitor" >Delete Request</Menu.Item>
+                                        <Menu.Item mb={2} onClick={() => mutate.mutate(maintenanceRequest.id)} cursor={'pointer'} value="save-visitor" >Delete Request</Menu.Item>
                                     </Menu.ItemGroup>
                                 </Menu.Content>
                             </Menu.Positioner>

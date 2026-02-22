@@ -5,21 +5,15 @@ import { useForm } from "react-hook-form"
 import { CustomInput, CustomSelect } from "@/components/ui/custom-fields"
 import { PageTitle } from "@/components/ui/page-title"
 import { MainButton } from "@/components/ui/button"
-import addVisitorIcon from '@/app/assets/icons/add-user-icon.svg'
-import Image from "next/image"
 import toast from "react-hot-toast"
 import { VisitorList } from "./visitor-list"
 import { formatDateToIso } from "@/services/date"
-import { InviteVisitorBulk, InviteVisitorGroupPayload, InviteVisitorPayload } from "@/services/visitors"
+import { InviteVisitorBulk, InviteVisitorGroupPayload } from "@/services/visitors"
 import { useEffect } from "react"
 import dayjs from "dayjs"
 import { useMutation } from "@tanstack/react-query"
 import { useVistorsStore, Visitor } from "@/store/visitors"
-import { add } from "lodash"
-import { useLeaseStore } from "@/store/lease"
-import { LuUserPlus } from "react-icons/lu"
 import { CgUserAdd } from "react-icons/cg"
-import { FiUserPlus } from "react-icons/fi"
 
 interface addVisitorProps {
     Submit: () => void
@@ -30,7 +24,6 @@ interface addVisitorProps {
 export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps) => {
     const { control, reset, handleSubmit, watch, setValue, formState } = useForm<addVisitorGroupsFormData>()
     const visitors = watch('visitorlist') || []
-    const contact = watch('contactNumber')
     const addVisitor = useVistorsStore((state) => state.addVisitor)
     const startDate = watch('dateExpected')
 
@@ -53,16 +46,17 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
             const newVisitor: Visitor = {
                 date: variables.startDate,
                 code: response.code,
-                type: "GUEST",
+                type: variables.type,
                 frequency: variables.frequency,
                 isGroupInvite: true,
                 visitorPhone: variables.visitors[0].phone,
                 visitorName: variables.visitors[0].name,
                 id: variables.visitors[0].name,
-                checkInTime: variables.startDate,
-                checkOutTime: variables.endDate,
+                checkInTime: '-',
+                checkOutTime: '-',
                 status: 'UPCOMING',
             }
+
             addVisitor(newVisitor)
             Submit?.()
             reset()
@@ -103,7 +97,6 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
                     <CustomInput name='dateExpected' type='date' required width={'full'} control={control} label='Date Expected' placeholder="Date Expected" />
                 </HStack>
                 <VisitorList
-                    phone={contact}
                     visitors={visitors}
                     onChange={(list) => setValue('visitorlist', list)}
 

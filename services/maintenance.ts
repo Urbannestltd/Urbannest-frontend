@@ -171,3 +171,10 @@ export const getAllMaintenanceRequestsMessages = async (ticketId: string) => {
 	)
 	return response.data as Promise<MessageCardProps[]>
 }
+
+export const deleteMaintenanceRequest = async (ticketId: string) => {
+	const response = await http.delete(
+		endpoints.deleteMaintenanceRequest(ticketId),
+	)
+	return response.data
+}

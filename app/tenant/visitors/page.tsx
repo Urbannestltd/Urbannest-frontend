@@ -1,23 +1,20 @@
 "use client"
 import { DashboardCard } from "@/components/ui/card"
-import { DataTable } from "@/components/ui/data-table"
 import { PageTitle } from "@/components/ui/page-title"
-import { SearchInput } from "@/components/ui/search-input"
 import {
     Button,
     Flex,
     HStack,
-    Tabs,
 } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { LuUserPlus } from "react-icons/lu"
-import { useColumns } from "../dashboard/columns"
 import { AddVisitorModal } from "./add-visitor-modal"
 import { AddVisitorGroupsModal } from "./add-visitor-groups"
 import { Modal } from "@/components/ui/dialog"
 import { useVistorsStore } from "@/store/visitors"
 import { useLeaseStore } from "@/store/lease"
 import { VisitorTabs } from "./visitor-tabs"
+import { useDashboardStore } from "@/store/dashboard"
 
 export default function Visitors() {
     const [maintenanceFilter, setMaintenanceFilter] = useState("today")
@@ -27,11 +24,9 @@ export default function Visitors() {
     const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
     const unitId = useLeaseStore((state) => state.lease?.property.unitId);
     const fetchLease = useLeaseStore((state) => state.fetchLease);
+    const fetchDashboard = useDashboardStore((state) => state.fetchDashboard)
 
-    useEffect(() => {
-        fetchVisitors()
-        fetchLease()
-    })
+
     const visitorDashboard = [
         {
             title: "Total Vistors",
@@ -39,7 +34,7 @@ export default function Visitors() {
         },
         {
             title: "Total Scheduled",
-            data: "08",
+            data: visitors.length,
         },
         {
             title: "Total Walk-ins",

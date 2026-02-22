@@ -2,6 +2,7 @@ import { loginFormData, loginSchema } from "@/schema"
 import { clearStoredCredentials, getStoredCredentials, loginUserApi, saveCredentials } from "@/services/auth"
 
 import useAuthStore from "@/store/auth"
+import { useDashboardStore } from "@/store/dashboard"
 import { useLeaseStore } from "@/store/lease"
 import { Button, Field, Grid, Input, InputGroup, Text } from "@chakra-ui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -29,6 +30,7 @@ export const Login = () => {
     const [showPassword, setShowPassword] = useState(false)
     const { loginUser } = useAuthStore()
     const { fetchLease } = useLeaseStore()
+    const { fetchDashboard } = useDashboardStore()
     const router = useRouter()
 
     const mutation = useMutation({
@@ -68,6 +70,7 @@ export const Login = () => {
                 if (role === "admin" || role === "ADMIN") {
                     console.log("→ Redirecting to admin dashboard");
                     router.replace("/admin/dashboard")
+                    fetchDashboard(7)
                 } else if (role === "tenant" || role === "TENANT") {
                     console.log("→ Redirecting to tenant dashboard");
                     toast.success("Redirecting to tenant dashboard")

@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/ui/data-table";
 import { SearchInput } from "@/components/ui/search-input";
 import { Box, Flex, HStack, Menu, Tabs, Text } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useColumns } from "../dashboard/columns";
 import { useVistorsStore, Visitor } from "@/store/visitors";
 import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
@@ -9,8 +9,11 @@ import { LuEllipsisVertical } from "react-icons/lu";
 import Image from "next/image";
 import { formatDateDash, formatDatetoTime } from "@/services/date";
 import { Paginator } from "@/components/ui/paginator";
+import { useDashboardStore } from "@/store/dashboard";
+import { usePathname } from "next/navigation";
 
 interface TabProps {
+    list?: Visitor[]
     component?: React.ReactNode;
 }
 
@@ -20,7 +23,11 @@ export const VisitorTabs = ({ component }: TabProps) => {
     const visitors = useVistorsStore((state) => state.visitors)
     const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
     const loadingVisitors = useVistorsStore((state) => state.isLoading)
+    const dashboard = useDashboardStore((state) => state.dashboard)
+    const isLoading = useDashboardStore((state) => state.isLoading)
     const isMobile = window.innerWidth < 700
+    const pathname = usePathname();
+    const isDashboard = pathname?.includes("dashboard")
 
 
     return (
@@ -32,10 +39,10 @@ export const VisitorTabs = ({ component }: TabProps) => {
             <HStack justify={"space-between"}>
                 <Tabs.List borderBottom={"1px solid #D9D9D9"}>
                     <Tabs.Trigger px={2} value="walk-in">
-                        Walk-In Visitors ({visitors.length})
+                        Walk-In Visitors ({isDashboard ? dashboard?.visitorsToday.walkInCount : 0})
                     </Tabs.Trigger>
                     <Tabs.Trigger px={2} ml={3} value="scheduled">
-                        Scheduled Visitors ({visitors.length})
+                        Scheduled Visitors ({isDashboard ? dashboard?.visitorsToday.scheduledCount : visitors.length})
                     </Tabs.Trigger>
                     <Tabs.Indicator bg={'transparent'} shadow={"none"} fontWeight={"bold"} />
                 </Tabs.List>
@@ -45,16 +52,16 @@ export const VisitorTabs = ({ component }: TabProps) => {
                 </Flex>}
             </HStack>
             <Tabs.Content value="walk-in">
-                {isMobile ? <MobileTable rows={visitors} /> :
+                {isMobile ? <MobileTable rows={[]} /> :
                     <DataTable
                         headerColor="#FFFFFF"
                         my={1}
                         tableName="Walk-in Visitors"
-                        loading={loadingVisitors}
+                        loading={isLoading || loadingVisitors}
                         pagination={{ currentPage: 1, pageSize: 10, total: visitors.length, totalPages: Math.ceil(visitors.length / 10) }}
                         emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
                         columns={columns}
-                        data={visitors}
+                        data={[]}
                     />}
             </Tabs.Content>
             <Tabs.Content value="scheduled">
@@ -62,10 +69,10 @@ export const VisitorTabs = ({ component }: TabProps) => {
                     headerColor="#FFFFFF"
                     my={1}
                     tableName="Scheduled Visitors"
-                    loading={loadingVisitors}
+                    loading={isLoading || loadingVisitors}
                     emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
                     columns={Scheduledcolumns}
-                    data={visitors}
+                    data={isDashboard ? dashboard?.visitorsToday.list ?? [] : visitors}
                 />}
             </Tabs.Content>
         </Tabs.Root>

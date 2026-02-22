@@ -1,7 +1,7 @@
 "use client"
 import { PageTitle } from "@/components/ui/page-title"
 import { Box, Button, Flex, HStack, Skeleton, SkeletonText, Tabs, Text } from "@chakra-ui/react"
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { DashboardCard } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress-bar"
 import { SearchInput } from "@/components/ui/search-input"
@@ -19,9 +19,10 @@ import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.s
 import { TenantMaintenanceModal } from "../maintenance/modal"
 import { useMaintenanceStore } from "@/store/maintenance"
 import { VisitorTabs } from "../visitors/visitor-tabs"
+import { useDashboardStore } from "@/store/dashboard"
 
 export default function TenantDashboard() {
-    const [maintenanceFilter, setMaintenanceFilter] = useState("7days")
+    const [maintenanceFilter, setMaintenanceFilter] = useState(7)
     const [openModal, setOpenModal] = useState(false)
     const [SwitchModal, setSwitchModal] = useState(false)
     const lease = useLeaseStore((state) => state.lease);
@@ -30,27 +31,29 @@ export default function TenantDashboard() {
     const visitors = useVistorsStore((state) => state.visitors)
     const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
     const loadingVisitors = useVistorsStore((state) => state.isLoading)
-    const maintenance = useMaintenanceStore((state) => state.maintenance)
     const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)
+    const dashboard = useDashboardStore((state) => state.dashboard)
+    const fetchDashboard = useDashboardStore((state) => state.fetchDashboard)
 
     useEffect(() => {
         fetchLease()
         fetchVisitors()
+        fetchDashboard(7)
         fetchMaintenance()
     }, [])
 
     const CardData = [
         {
             title: "Active Request",
-            data: "09",
+            data: dashboard?.maintenance.active ?? 0,
         },
         {
             title: "Completed Requests",
-            data: "08",
+            data: dashboard?.maintenance.completed ?? 0,
         },
         {
             title: "Total Requests",
-            data: maintenance.length,
+            data: dashboard?.maintenance.total ?? 0,
         },
     ]
 
@@ -66,7 +69,7 @@ export default function TenantDashboard() {
                     {MaintenanceFilter.map((item) => (
                         <Button
                             key={item.value}
-                            onClick={() => setMaintenanceFilter(item.value)}
+                            onClick={() => { setMaintenanceFilter(item.value); fetchDashboard(item.value) }}
                             w={"72px"}
                             h={"30px"}
                             rounded={"full"}
@@ -100,13 +103,13 @@ export default function TenantDashboard() {
                     >
                         <Box>
                             {loading ? <SkeletonText w={'200px'} noOfLines={1} mb={1} /> : <Text mb={1} className="satoshi-bold text-2xl">
-                                {formatNumber(lease?.contract.rentAmount)}
+                                {formatNumber(dashboard?.lease.amount)}
                             </Text>}
                             <HStack mb={2} justify={"space-between"} fontSize={"12px"}>
                                 <Text className="satoshi-bold">Rent Expiry Date:</Text>
-                                {loading ? <SkeletonText w={'60px'} noOfLines={1} /> : <Text>{formatDateDash(lease?.contract.endDate)}</Text>}
+                                {loading ? <SkeletonText w={'60px'} noOfLines={1} /> : <Text>{formatDateDash(dashboard?.lease.expiryDate)}</Text>}
                             </HStack>
-                            <Progress value={80} size="lg" />
+                            <Progress value={dashboard?.lease.progressPercentage} size="lg" />
                         </Box>
                     </Box>
                 </Flex>
@@ -140,15 +143,15 @@ export default function TenantDashboard() {
 const MaintenanceFilter = [
     {
         label: "7 Days",
-        value: "7days",
+        value: 7,
     },
     {
         label: "15 Days",
-        value: "15days",
+        value: 15,
     },
     {
         label: "30 Days",
-        value: "30days",
+        value: 30,
     },
 ]
 
