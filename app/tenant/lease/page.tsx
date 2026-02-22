@@ -204,7 +204,7 @@ export default function Lease() {
                                     </Flex>
                                 )
                             })}
-                        <Modal open={openPopup} onOpenChange={() => setOpenPopup(!openPopup)} modalContent={<PopupDetails />} />
+                        <Modal size={'sm'} open={openPopup} onOpenChange={() => setOpenPopup(!openPopup)} modalContent={<PopupDetails />} />
                     </Box>
                 </Box>
             </Flex >
