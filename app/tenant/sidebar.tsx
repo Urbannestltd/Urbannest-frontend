@@ -1,11 +1,13 @@
 'use client'
-import { Box, Button, Tabs, Text } from "@chakra-ui/react"
+import { Box, Button, Flex, Tabs, Text } from "@chakra-ui/react"
 import Image from "next/image"
 import Logo from '@/app/assets/urbannest-logo-white.png'
 import { sidebarLinks } from "@/utils/data";
 import { LuLogOut, LuSettings } from "react-icons/lu";
 import { usePathname, useRouter } from "next/navigation";
 import useAuthStore from "@/store/auth";
+import { Modal } from "@/components/ui/dialog";
+import { MainButton } from "@/components/ui/button";
 
 
 export const TenantSidebar = ({ onClose }: { onClose?: () => void }) => {
@@ -46,10 +48,19 @@ export const TenantSidebar = ({ onClose }: { onClose?: () => void }) => {
                     <Button onClick={() => router.push('/tenant/settings')} className=" hover:bg-button-hover w-full flex justify-start pl-2">
                         <LuSettings /> Settings
                     </Button>
-                    <Button onClick={handleLogout} className=" hover:bg-button-hover w-full flex justify-start pl-2">
-                        <LuLogOut size={4} />Logout</Button>
+                    <Modal size={'sm'} triggerElement={<Button className=" hover:bg-button-hover w-full flex justify-start pl-2">
+                        <LuLogOut size={4} />Logout</Button>} modalContent={<PopUpDets onClick={handleLogout} />} />
+
                 </Box>
             </Tabs.List>
         </Tabs.Root>)
 }
 
+export const PopUpDets = ({ onClick }: { onClick: () => void, onClose?: () => void }) => {
+    return (
+        <Flex direction={'column'} align={'center'} p={10} color={'black'}>
+            <Text className="satoshi-medium text-xl my-3">Are you sure you want to logout?</Text>
+            <MainButton onClick={onClick}>Logout</MainButton>
+        </Flex>
+    )
+}

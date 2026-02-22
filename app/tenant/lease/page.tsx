@@ -1,6 +1,6 @@
 'use client'
 import { PageTitle } from "@/components/ui/page-title";
-import { Box, Flex, Grid, HStack, Image, Span, Text, Link, Skeleton, SkeletonText } from "@chakra-ui/react";
+import { Box, Flex, Grid, HStack, Image, Span, Text, Link, Skeleton, SkeletonText, Center, Heading } from "@chakra-ui/react";
 import rentImage from '@/app/assets/images/lease-image.png'
 import locateIcon from '@/app/assets/icons/location-icon.svg'
 import { MainButton } from "@/components/ui/button";
@@ -11,11 +11,12 @@ import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { payRent, PayRentPayload, verifyPayment } from "@/services/payment";
 import { diffInDays, formatDate, formatDateDash, formatDaysToYears, formatNumber } from "@/services/date";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/dialog";
 import { UtilitiesModal } from "./modal";
 import { usePaymentHistoryStore } from "@/store/payment";
 import emptyStateIcon from '@/app/assets/icons/empty-state-icons/payment.svg'
+import { LuCircleCheck } from "react-icons/lu";
 
 
 export default function Lease() {
@@ -26,6 +27,7 @@ export default function Lease() {
     const loading = usePaymentHistoryStore((state) => state.isLoading);
     const fetchPaymentHistory = usePaymentHistoryStore((state) => state.fetchPaymentHistory);
     const IsMobile = window.innerWidth < 750
+    const [openPopup, setOpenPopup] = useState(false)
 
     useEffect(() => {
         fetchLease()
@@ -86,11 +88,27 @@ export default function Lease() {
             toast.error('Lease not found')
         }
     }
+    const verifyMutation = useMutation({
+        mutationFn: (reference: string) => verifyPayment(reference),
+        onSuccess: () => {
+            const trigger = () => {
+                setOpenPopup(true);
+
+                setTimeout(() => {
+                    setOpenPopup(false);
+                }, 5000);
+            }
+            trigger()
+        },
+        onError: (error) => {
+            toast.error(`Error logging in please try again: ${error?.message}`)
+        }
+    })
 
     useEffect(() => {
         const reference = localStorage.getItem("payment_reference")
         if (!reference) return
-        verifyPayment(reference)
+        verifyMutation.mutate(reference)
     }, [])
 
     return (
@@ -186,24 +204,19 @@ export default function Lease() {
                                     </Flex>
                                 )
                             })}
+                        <Modal open={openPopup} onOpenChange={() => setOpenPopup(!openPopup)} modalContent={<PopupDetails />} />
                     </Box>
                 </Box>
             </Flex >
         </Box >
     )
 }
-
-{/*
-    apartmentName: 'The Wings Court',
-    address: '1234 Baker Street, San Francisco',
-    rentAmount: '₦12,000,000',
-    info: [
-        { label: 'Lease Length', value: lease?.contract.leaseLength },
-        { label: 'Lease Start Date', value: '12-11-23' },
-        { label: 'Lease End Date', value: '12-11-26' },
-        { label: 'Service Charge', value: '₦2,000,000' },
-        { label: 'Move Out Notice', value: '1 month' },
-    ],
-    agreement: 'View Agreement'
-*/}
+const PopupDetails = () => {
+    return (<Box w={{ base: 'full', md: "468px" }}>
+        <Center placeSelf={'center'} my={8} className="bg-[#EBFFEE] rounded-full size-[82px]">
+            <LuCircleCheck size={40} color={"#14AE5C"} />
+        </Center>
+        <Heading textAlign={'center'} className="satoshi-bold text-[28px] mb-2.5">Electricity Bill Paid!</Heading>
+    </Box>)
+}
 

@@ -36,7 +36,7 @@ export const Modal = ({
     return (
         <Dialog.Root size={size} open={open} onOpenChange={(e) => onOpenChange?.(e.open)} placement={placement}>
             <Dialog.Trigger asChild>
-                {triggerElement ? triggerElement : <MainButton size={triggerSize} className={`satoshi ${triggerClassName}`} variant={triggerVariant} icon={triggerIcon}>
+                {triggerElement ? triggerElement : triggerContent && <MainButton size={triggerSize} className={`satoshi ${triggerClassName}`} variant={triggerVariant} icon={triggerIcon}>
                     {triggerContent}
                 </MainButton>}
             </Dialog.Trigger>
@@ -44,7 +44,7 @@ export const Modal = ({
             <Dialog.Positioner>
                 <Dialog.Content className={`${base} ${className ?? ''}`}>
                     <Dialog.CloseTrigger p={2}>
-                        <LuX size={20} />
+                        <LuX color="black" size={20} />
                     </Dialog.CloseTrigger>
                     {modalContent}
                 </Dialog.Content>
