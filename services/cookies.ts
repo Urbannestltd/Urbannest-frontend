@@ -1,10 +1,17 @@
-export const storeUserToken = (token: string, persist: boolean) => {
-	const maxAge = persist ? 60 * 60 * 24 * 30 : undefined
-	document.cookie = `token=${token}; path=/; ${
-		maxAge ? `max-age=${maxAge};` : ""
-	} SameSite=Strict`
-}
+import Cookies from "js-cookie"
 
+const CookieApi = Cookies.withAttributes({
+	path: "/",
+	secure: false,
+})
+
+export const storeUserToken = (
+	token: string,
+	persistToken: boolean = false,
+): void => {
+	const options = persistToken ? { expires: 1 } : {}
+	CookieApi.set("x-auth-token", token, options)
+}
 export const getRefreshToken = (): string | null => {
 	const cookies = document.cookie.split(";")
 	const refreshTokenCookie = cookies.find((c) =>
@@ -13,8 +20,12 @@ export const getRefreshToken = (): string | null => {
 	return refreshTokenCookie ? refreshTokenCookie.split("=")[1] : null
 }
 
-export const storeRefreshToken = (token: string) => {
-	document.cookie = `refreshToken=${token}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Strict`
+export const storeRefreshToken = (
+	token: string,
+	persistToken: boolean = false,
+): void => {
+	const options = persistToken ? { expires: 7 } : {}
+	CookieApi.set("x-refresh-token", token, options)
 }
 
 export const getUserToken = () => {
@@ -23,7 +34,7 @@ export const getUserToken = () => {
 	return tokenCookie ? tokenCookie.split("=")[1] : null
 }
 
-export const clearAuthTokens = () => {
-	document.cookie = "token=; path=/; max-age=0"
-	document.cookie = "refreshToken=; path=/; max-age=0"
+export const clearAuthTokens = (): void => {
+	CookieApi.remove("x-auth-token")
+	CookieApi.remove("x-refresh-token")
 }

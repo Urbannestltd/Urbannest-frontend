@@ -8,8 +8,8 @@ export interface InviteVisitorPayload {
 	}
 	type: string
 	frequency: string
-	startDate: string
-	endDate: string
+	startDate?: string
+	endDate?: string
 }
 
 export interface InviteVisitorGroupPayload {
@@ -21,8 +21,8 @@ export interface InviteVisitorGroupPayload {
 	unitId: string
 	groupName: string
 	frequency?: string
-	startDate: string
-	endDate: string
+	startDate?: string
+	endDate?: string
 }
 
 interface InviteVisitorResponse {

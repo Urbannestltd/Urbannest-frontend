@@ -54,6 +54,9 @@ type InputProps<T extends FieldValues> = BaseProps<T> & {
     setValue?: (value: any) => void
     startElement?: React.ReactNode
     endElement?: React.ReactNode
+    pattern?: RegisterOptions<T>['pattern']
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+
 };
 
 type TextareaProps<T extends FieldValues> = BaseProps<T> & {
@@ -324,12 +327,14 @@ export function CustomInput<T extends FieldValues>({
     startElement,
     endElement,
     setValue,
-    orientation = 'vertical'
+    pattern,
+    orientation = 'vertical', onKeyDown
 }: InputProps<T>) {
     const { field, fieldState, } = useController({
         name, control, rules: {
             ...rules,
             required: required ? `${label ?? name} is required` : false,
+            pattern: pattern
         },
     });
     return (
@@ -339,7 +344,7 @@ export function CustomInput<T extends FieldValues>({
                     {label}{label && required && '*'}
                 </Field.Label>
             </Box>}
-            {startElement || endElement ? <InputGroup startElement={startElement} endElement={endElement}>
+            {startElement || endElement ? <InputGroup w={'full'} startElement={startElement} endElement={endElement}>
                 <Input
                     {...inputProps}
                     type={type}
@@ -360,6 +365,7 @@ export function CustomInput<T extends FieldValues>({
                         }
                         field.onBlur();
                     }}
+                    onKeyDown={onKeyDown}
                     disabled={disabled}
                     placeholder={placeholder}
                     color={'black'}
@@ -396,6 +402,7 @@ export function CustomInput<T extends FieldValues>({
                         }
                         field.onBlur();
                     }}
+                    onKeyDown={onKeyDown}
                     disabled={disabled}
                     placeholder={placeholder}
                     color={'black'}

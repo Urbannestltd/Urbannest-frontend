@@ -36,7 +36,8 @@ export default function Maintenance() {
         <>
             <Stack direction={{ base: 'column', md: 'row' }} mt={7} mb={4} justify={'space-between'}>
                 <PageTitle mb={2} title="Maintenance Requests" />
-                <Modal open={closeModal} onOpenChange={setCloseModal} size={{ base: 'full', md: 'cover' }} className=" w-[100%] rounded-none lg:rounded-[12px] md:w-[1200px] h-full md:h-fit" modalContent={<TenantMaintenanceModal />} triggerVariant={'primary'} triggerContent={'Add Request'} />
+
+                <Modal open={closeModal} onOpenChange={setCloseModal} size={isMobile ? 'full' : 'xl'} className=" w-[100%] rounded-none lg:rounded-[12px] md:w-[1200px] h-full md:h-fit" modalContent={<TenantMaintenanceModal />} triggerVariant={'primary'} triggerContent={'Add Request'} />
             </Stack>
             {isMobile ? <MobileTable rows={maintenance} /> : <DataTable tableName="Maintenance Requests" loading={useMaintenanceStore((state) => state.isLoading)} data={maintenance} my={5} columns={columns} />
             } </>

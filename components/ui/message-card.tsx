@@ -24,7 +24,7 @@ export const MessageCard = ({ cardData, ticketId }: Message) => {
     const addMessages = useMaintenanceStore((state) => state.addMessage)
 
     useEffect(() => {
-        fetchMaintenanceMessages(ticketId ?? '')
+        if (ticketId) fetchMaintenanceMessages(ticketId ?? '')
     }, [ticketId])
 
     const mutation = useMutation({

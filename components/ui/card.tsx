@@ -21,6 +21,7 @@ export const DashboardCard = ({ data }: CardProps) => {
                     justify={"center"}
                     w={"full"}
                     minW={'184px'}
+                    bg={'white'}
                     h={"full"} wrap={'wrap'}
                     rounded={"8px"}
                     border={"1px solid #F4F4F4"}

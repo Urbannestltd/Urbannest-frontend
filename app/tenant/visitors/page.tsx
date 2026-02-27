@@ -14,31 +14,36 @@ import { Modal } from "@/components/ui/dialog"
 import { useVistorsStore } from "@/store/visitors"
 import { useLeaseStore } from "@/store/lease"
 import { VisitorTabs } from "./visitor-tabs"
-import { useDashboardStore } from "@/store/dashboard"
 
 export default function Visitors() {
-    const [maintenanceFilter, setMaintenanceFilter] = useState("today")
+    const [maintenanceFilter, setMaintenanceFilter] = useState('TODAY')
     const [openModal, setOpenModal] = useState(false)
     const [SwitchModal, setSwitchModal] = useState(false)
     const visitors = useVistorsStore((state) => state.visitors)
     const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
     const unitId = useLeaseStore((state) => state.lease?.property.unitId);
     const fetchLease = useLeaseStore((state) => state.fetchLease);
-    const fetchDashboard = useDashboardStore((state) => state.fetchDashboard)
+    const visitorDashboards = useVistorsStore((state) => state.visitorDashboard);
+    const fetchVisitorsDashboard = useVistorsStore((state) => state.fetchVisitorsDashboard);
 
+    useEffect(() => {
+        fetchLease()
+        fetchVisitors()
+        fetchVisitorsDashboard("TODAY")
+    }, [])
 
     const visitorDashboard = [
         {
             title: "Total Vistors",
-            data: visitors.length,
+            data: visitorDashboards?.totalVisitors ?? 0,
         },
         {
             title: "Total Scheduled",
-            data: visitors.length,
+            data: visitorDashboards?.totalScheduled ?? 0,
         },
         {
             title: "Total Walk-ins",
-            data: "16",
+            data: visitorDashboards?.totalWalkIns ?? 0,
         },
         {
             title: "Total Cancels",
@@ -55,7 +60,7 @@ export default function Visitors() {
                 {visitorFilter.map((item) => (
                     <Button
                         key={item.value}
-                        onClick={() => setMaintenanceFilter(item.value)}
+                        onClick={() => { setMaintenanceFilter(item.value); fetchVisitorsDashboard(item.value) }}
                         w={"72px"}
                         h={"30px"}
                         rounded={"full"}
@@ -94,9 +99,9 @@ export default function Visitors() {
 }
 
 const visitorFilter = [
-    { label: "Today", value: "today" },
-    { label: "Last Week", value: "last-week" },
-    { label: "Last Month", value: "last-month" },
+    { label: "Today", value: "TODAY" },
+    { label: "Last Week", value: "LAST_WEEK" },
+    { label: "Last Month", value: "LAST_MONTH" },
 ]
 
 

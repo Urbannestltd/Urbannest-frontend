@@ -47,6 +47,7 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] =>
             header: "Visitor",
             cell: ({ row }) => {
                 const visitorName = row.original.visitorName + (row.original.groupName ? ` (${(row.original.groupName)})` : '')
+                console.log(row.original)
                 return <Text className="capitalize" children={visitorName} />
             },
         },

@@ -15,6 +15,7 @@ interface LoginPayload {
 interface LoginResponse {
 	data: {
 		user: User
+		refreshToken: string
 		token: string
 		tempToken: string
 		message: string
@@ -22,6 +23,10 @@ interface LoginResponse {
 	}
 	message: string
 	success: boolean
+}
+
+interface RefreshTokenResponse {
+	accessToken: string
 }
 
 interface SignUpPayload {
@@ -62,6 +67,16 @@ export const refreshToken = () => {
 	const refreshTokenValue = getRefreshToken()
 	if (!refreshTokenValue)
 		throw new Error("No refresh token available, please login again")
+	console.log("🔄 Refreshing token...")
+	return http.post<RefreshTokenResponse>(
+		"/auth/refresh",
+		{},
+		{
+			headers: {
+				"x-refresh-token": refreshTokenValue,
+			},
+		},
+	)
 }
 
 export const loginUserApi = async (

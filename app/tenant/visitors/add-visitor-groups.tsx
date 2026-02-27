@@ -26,6 +26,23 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
     const visitors = watch('visitorlist') || []
     const addVisitor = useVistorsStore((state) => state.addVisitor)
     const startDate = watch('dateExpected')
+    const access = watch('accessType')
+
+    const dateRequirement = () => {
+        if (access?.includes('ONE_OFF') || access?.includes('WHOLE_DAY')) {
+            return true
+        }
+        if (access?.includes('RECURRING')) return false
+        return false
+    }
+
+    const timeRequirement = () => {
+        if (access?.includes('ONE_OFF')) {
+            return true
+        }
+        if (access?.includes('WHOLE_DAY') || access?.includes('RECURRING')) return false
+        return false
+    }
 
     useEffect(() => {
         if (!startDate) return
@@ -42,9 +59,9 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
     const mutation = useMutation({
         mutationFn: (data: InviteVisitorGroupPayload) => InviteVisitorBulk(data),
         onSuccess: (response, variables) => {
-            toast.success('Visitor added successfully')
+            toast.success('Visitors added successfully')
             const newVisitor: Visitor = {
-                date: variables.startDate,
+                date: variables.startDate ?? '',
                 code: response.code,
                 type: variables.type,
                 frequency: variables.frequency,
@@ -56,7 +73,6 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
                 checkOutTime: '-',
                 status: 'UPCOMING',
             }
-
             addVisitor(newVisitor)
             Submit?.()
             reset()
@@ -68,15 +84,21 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
 
 
     const handleAddVisitor = (data: addVisitorGroupsFormData) => {
+        const start = () => {
+            if (!data.dateExpected || !data.timeExpected) {
+                return null
+            }
+            return (new Date(`${data.dateExpected}T${data.timeExpected}`))
+        }
         const payload: InviteVisitorGroupPayload = {
             visitors: data.visitorlist,
             type: data.visitorType?.[0] ?? '',
             unitId: unitid,
             groupName: data.groupName,
-            startDate: formatDateToIso(data.dateExpected),
+            startDate: start() ? start()?.toISOString() : undefined,
             endDate: formatDateToIso(data.endDate)
         }
-        mutation.mutate(payload)
+        console.log(payload)
     }
 
 
@@ -93,8 +115,8 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
                     <CustomSelect name="accessType" width={'full'} collection={accessType} control={control} label='Access Type' placeholder="Access Type" />
                 </HStack>
                 <HStack mt={4} mb={4} w={'full'} gap={4}>
-                    <CustomInput name='timeExpected' type='time' required width={'full'} control={control} label='Time Expected' placeholder="Time Expected" />
-                    <CustomInput name='dateExpected' type='date' required width={'full'} control={control} label='Date Expected' placeholder="Date Expected" />
+                    <CustomInput name='timeExpected' disabled={!timeRequirement()} type='time' required={timeRequirement()} width={'full'} control={control} label='Time Expected' placeholder="Time Expected" />
+                    <CustomInput name='dateExpected' disabled={!dateRequirement()} type='date' required={dateRequirement()} width={'full'} control={control} label='Date Expected' placeholder="Date Expected" />
                 </HStack>
                 <VisitorList
                     visitors={visitors}
@@ -102,7 +124,7 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
 
                 />
                 <Flex mt={10} align={'center'} w={'full'}>
-                    <MainButton disabled={mutation.isPending} loading={mutation.isPending} size="lg" type="submit">Add Vistors</MainButton>
+                    <MainButton disabled={mutation.isPending || !formState.isValid} loading={mutation.isPending} size="lg" type="submit">Add Vistors</MainButton>
                     <IconButton size="lg" onClick={() => Open(false)} className="h-8" rounded={'6px'} border={'1.15px solid #B2B2B2'} ml={4} variant="outline"><CgUserAdd color="#B2B2B2" size={1} /></IconButton>
                 </Flex>
             </form>

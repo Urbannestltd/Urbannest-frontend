@@ -37,7 +37,7 @@ function SignIn() {
                 align={"center"}
                 justify={'center'}
                 h={{ base: "auto", md: "100%" }}
-                bg={"white"}
+                bg={'transparent'}
             >
                 <Heading mt={{ base: 6 }} fontSize={{ base: "30px", md: "32px" }} mb={{ base: 4, md: 8 }} className="satoshi-bold">
                     {isSignUp ? "Let’s Get Started" : "Welcome Back"}

@@ -28,8 +28,6 @@ export default function TenantDashboard() {
     const lease = useLeaseStore((state) => state.lease);
     const loading = useLeaseStore((state) => state.isLoading);
     const fetchLease = useLeaseStore((state) => state.fetchLease);
-    const visitors = useVistorsStore((state) => state.visitors)
-    const fetchVisitors = useVistorsStore((state) => state.fetchVisitors);
     const loadingVisitors = useVistorsStore((state) => state.isLoading)
     const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)
     const dashboard = useDashboardStore((state) => state.dashboard)
@@ -37,7 +35,6 @@ export default function TenantDashboard() {
 
     useEffect(() => {
         fetchLease()
-        fetchVisitors()
         fetchDashboard(7)
         fetchMaintenance()
     }, [])

@@ -26,9 +26,9 @@ export const addVisitorSchema = z.object({
     phoneNumber: inputField("Phone number is required"),
     visitorType: selectArrayField("Visitor type is required"),
     accessType: selectArrayField("Access type is required"),
-    timeExpected: inputField("Time expected is required"),
-    endDate: inputField("End date is required"),
-    dateExpected: inputField("Date expected is required"),
+    timeExpected: inputField("Time expected is required").optional(),
+    endDate: inputField("End date is required").optional(),
+    dateExpected: inputField("Date expected is required").optional(),
 })
 
 export const VisitorListSchema = z.object({

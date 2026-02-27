@@ -30,6 +30,7 @@ const endpoints = {
 	verifyVisitor: `/visitors/verify`,
 	inviteVisitor: `/visitors/invite`,
 	inviteGroupVisitor: `/visitors/invite/bulk`,
+	getVisitorsDashboard: `/visitors/stats`,
 
 	//Maintenances endpoints
 	getMaintenanceRequests: `/maintenance/history`,

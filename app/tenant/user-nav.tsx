@@ -28,7 +28,7 @@ export const UserNav = () => {
     }
 
     return (
-        <HStack justify={"space-between"
+        <HStack bg={isSetting ? 'white' : 'transparent'} justify={"space-between"
         }>
             {
                 isSetting ? <Image className='w-[185px] h-10 mt-4 cursor-pointer' onClick={() => router.push('/tenant/dashboard')} src={Logo} alt="logo" /> : <HStack>

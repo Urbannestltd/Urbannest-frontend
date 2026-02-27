@@ -44,7 +44,7 @@ export const VisitorTabs = ({ component }: TabProps) => {
                     <Tabs.Trigger px={2} ml={3} value="scheduled">
                         Scheduled Visitors ({isDashboard ? dashboard?.visitorsToday.scheduledCount : visitors.length})
                     </Tabs.Trigger>
-                    <Tabs.Indicator bg={'transparent'} shadow={"none"} fontWeight={"bold"} />
+                    <Tabs.Indicator bg={'white'} shadow={"none"} fontWeight={"bold"} />
                 </Tabs.List>
                 {!isMobile && <Flex gap={2}>
                     <SearchInput />
@@ -113,18 +113,20 @@ export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isSchedule
 
     const tableData = (currentData ?? []);
 
-    if (!rows) return (<div className='flex flex-col items-center justify-center space-y-6'>
-        <div className='flex items-center justify-center'>
-            <Image src={EmptyTableIcon} alt="" />
-        </div>
+    if (!rows || rows.length === 0) {
+        return (<div className='flex flex-col my-7 pb-10 items-center justify-center space-y-6'>
+            <div className='flex items-center justify-center'>
+                <Image src={EmptyTableIcon} alt="" />
+            </div>
 
-        <div className='flex flex-col items-center justify-center space-y-2'>
-            <h4 className='text-xl font-bold text-[#303030]'>No Visitors yet</h4>
-            <p className='text-sm font-medium text-[#6A6C88]'>
-                Visitors you add will appear here for easy access and entry tracking.
-            </p>
-        </div>
-    </div>)
+            <div className='flex flex-col items-center justify-center space-y-2'>
+                <h4 className='text-xl font-bold text-[#303030]'>No Visitors yet</h4>
+                <p className='text-sm text-center font-medium text-[#6A6C88]'>
+                    Visitors you add will appear here for easy access and entry tracking.
+                </p>
+            </div>
+        </div>)
+    }
     return (
         <Box>
             {tableData?.map((row) => {

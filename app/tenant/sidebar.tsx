@@ -1,5 +1,4 @@
-'use client'
-import { Box, Button, Flex, Tabs, Text } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, Tabs, Text } from "@chakra-ui/react"
 import Image from "next/image"
 import Logo from '@/app/assets/urbannest-logo-white.png'
 import { sidebarLinks } from "@/utils/data";
@@ -48,7 +47,7 @@ export const TenantSidebar = ({ onClose }: { onClose?: () => void }) => {
                     <Button onClick={() => router.push('/tenant/settings')} className=" hover:bg-button-hover w-full flex justify-start pl-2">
                         <LuSettings /> Settings
                     </Button>
-                    <Modal size={'sm'} triggerElement={<Button className=" hover:bg-button-hover w-full flex justify-start pl-2">
+                    <Modal size={'xs'} triggerElement={<Button className=" hover:bg-button-hover w-full flex justify-start pl-2">
                         <LuLogOut size={4} />Logout</Button>} modalContent={<PopUpDets onClick={handleLogout} />} />
 
                 </Box>
@@ -56,11 +55,14 @@ export const TenantSidebar = ({ onClose }: { onClose?: () => void }) => {
         </Tabs.Root>)
 }
 
-export const PopUpDets = ({ onClick }: { onClick: () => void, onClose?: () => void }) => {
+export const PopUpDets = ({ onClick, onClose }: { onClick: () => void, onClose?: () => void }) => {
     return (
-        <Flex direction={'column'} align={'center'} p={10} color={'black'}>
-            <Text className="satoshi-medium text-xl my-3">Are you sure you want to logout?</Text>
-            <MainButton onClick={onClick}>Logout</MainButton>
+        <Flex direction={'column'} align={'center'} py={10} px={5} color={'black'}>
+            <Center mb={2} bg={'#F5F5F5'} w={12} h={12} rounded={'full'}><LuLogOut color="#757575" size={24} /></Center>
+            <Text className="satoshi-bold text-lg my-1">Logout?</Text>
+            <Text w={'237px'} my={2} textAlign={'center'} fontSize={'16px'}>Are you sure you want to log out of your account?</Text>
+            <MainButton size='lg' className="my-2" onClick={onClick}>Logout</MainButton>
+            <MainButton size="lg" variant='outline' onClick={onClose}>Cancel</MainButton>
         </Flex>
     )
 }

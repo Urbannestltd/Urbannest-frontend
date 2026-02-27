@@ -45,7 +45,7 @@ export const VisitorList = ({ visitors, onChange }: VisitorListProps) => {
                 />
 
                 <Button
-
+                    disabled={!formState.isValid}
                     onClick={handleSubmit(addVisitor)}
                     bg="#F5F5F5"
                     className="hover:border disabled:bg-button-disabled disabled:text-text-disabled hover:border-button-primary rounded-full size-[40px]"
