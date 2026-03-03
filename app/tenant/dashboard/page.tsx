@@ -31,6 +31,7 @@ export default function TenantDashboard() {
     const loadingVisitors = useVistorsStore((state) => state.isLoading)
     const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)
     const dashboard = useDashboardStore((state) => state.dashboard)
+    const loadingDashboard = useDashboardStore((state) => state.isLoading)
     const fetchDashboard = useDashboardStore((state) => state.fetchDashboard)
 
     useEffect(() => {
@@ -99,12 +100,12 @@ export default function TenantDashboard() {
                         bgColor={"#2A3348"}
                     >
                         <Box>
-                            {loading ? <SkeletonText w={'200px'} noOfLines={1} mb={1} /> : <Text mb={1} className="satoshi-bold text-2xl">
+                            {loadingDashboard ? <SkeletonText w={'200px'} noOfLines={1} mb={1} /> : <Text mb={1} className="satoshi-bold text-2xl">
                                 {formatNumber(dashboard?.lease.amount)}
                             </Text>}
                             <HStack mb={2} justify={"space-between"} fontSize={"12px"}>
                                 <Text className="satoshi-bold">Rent Expiry Date:</Text>
-                                {loading ? <SkeletonText w={'60px'} noOfLines={1} /> : <Text>{formatDateDash(dashboard?.lease.expiryDate)}</Text>}
+                                {loadingDashboard ? <SkeletonText w={'60px'} noOfLines={1} /> : <Text>{formatDateDash(dashboard?.lease.expiryDate)}</Text>}
                             </HStack>
                             <Progress value={dashboard?.lease.progressPercentage} size="lg" />
                         </Box>

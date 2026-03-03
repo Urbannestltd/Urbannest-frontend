@@ -4,15 +4,15 @@ import { Drawer, Flex, HStack, Menu, Portal } from "@chakra-ui/react"
 import { Notifications } from "@/components/common/notifications"
 import useAuthStore from "@/store/auth"
 import { Avatar } from "@/components/ui/avatar"
-import { TenantSidebar } from "./sidebar"
 import { MdOutlineMenu } from "react-icons/md"
 import { usePathname, useRouter } from "next/navigation"
 import Image from 'next/image'
 import Logo from '@/app/assets/urbannest-logo.png'
 import toast from "react-hot-toast"
 import { useState } from "react"
+import { AdminSidebar } from "./dashboard/sidebar"
 
-export const UserNav = () => {
+export const AdminNav = () => {
     const { user } = useAuthStore()
     const pathname = usePathname();
     const isSetting = pathname.includes('settings');
@@ -27,7 +27,7 @@ export const UserNav = () => {
     }
 
     return (
-        <HStack bg={isSetting ? 'white' : 'transparent'} justify={"space-between"
+        <HStack mb={4} bg={isSetting ? 'white' : 'transparent'} justify={"space-between"
         }>
             {
                 isSetting ? <Image className='w-[185px] h-10 mt-4 cursor-pointer' onClick={() => router.push('/tenant/dashboard')} src={Logo} alt="logo" /> : <HStack>
@@ -39,7 +39,7 @@ export const UserNav = () => {
                             <Drawer.Backdrop />
                             <Drawer.Positioner>
                                 <Drawer.Content w={'fit'}>
-                                    <TenantSidebar onClose={() => setOpenDrawer(false)} />
+                                    <AdminSidebar onClose={() => setOpenDrawer(false)} />
                                 </Drawer.Content>
                             </Drawer.Positioner>
                         </Portal>

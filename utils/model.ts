@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image"
+
 export interface User {
 	id: string
 	email?: string
@@ -95,4 +97,17 @@ export interface MessageCardProps {
 	message: string
 	createdAt: string
 	id: string
+}
+
+export interface Properties {
+	fullAddress: string
+	address: string
+	unit: string
+	unitId: string
+	date: string
+	occupancy: number
+	complaints: number
+	owner: string
+	image: StaticImageData
+	name: string
 }

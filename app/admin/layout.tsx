@@ -1,13 +1,13 @@
 import { Metadata } from "next"
 import { RequireAuth } from "../auth/require-auth"
-import { UserNav } from "./user-nav"
-import { SideBarSetup } from "./page"
+import { AdminNav } from "./admin-nav"
+import { AdminSideBarSetup } from "./dashboard/page"
 import { Box } from "@chakra-ui/react"
 
 export const metadata: Metadata = {
-    title: "Tenant Dashboard",
-    description: "Welcome to the Tenant Dashboard",
-    keywords: "tenant dashboard",
+    title: "Admin Dashboard",
+    description: "Welcome to the Admin Dashboard",
+    keywords: "admin dashboard",
 }
 
 export default function DashboardLayout({
@@ -18,7 +18,7 @@ export default function DashboardLayout({
     return (
         <RequireAuth>
             <div className="flex h-screen">
-                <SideBarSetup />
+                <AdminSideBarSetup />
                 <Box
                     position="absolute"
                     bg="white"
@@ -30,7 +30,7 @@ export default function DashboardLayout({
                     className="scrollbar-hide"
                 >
                     <div className=" w-full max-w-[1440px]">
-                        <UserNav />
+                        <AdminNav />
                         {children}
                     </div>
                 </Box>

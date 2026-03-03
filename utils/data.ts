@@ -2,7 +2,16 @@ import dashboardIcon from "@/app/assets/icons/tenant-sidebar-icons/dashboard-ico
 import leaseIcon from "@/app/assets/icons/tenant-sidebar-icons/lease-icon.svg"
 import maintenanceIcon from "@/app/assets/icons/tenant-sidebar-icons/maintenance-icon.svg"
 import visitorIcon from "@/app/assets/icons/tenant-sidebar-icons/vistor-icon.svg"
-import { Maintance, MessageCardProps, notification, userData } from "./model"
+import financialIcon from "@/app/assets/icons/admin-sidebar-icons/financials.svg"
+import userIcon from "@/app/assets/icons/admin-sidebar-icons/user-management-icon.svg"
+import leaseImage from "@/app/assets/images/lease-image.png"
+import {
+	Maintance,
+	MessageCardProps,
+	notification,
+	Properties,
+	userData,
+} from "./model"
 
 export const sidebarLinks = [
 	{
@@ -30,7 +39,38 @@ export const sidebarLinks = [
 		value: "visitors",
 	},
 ]
-
+export const adminSidebarLinks = [
+	{
+		title: "Dashboard",
+		href: "/admin/dashboard",
+		icon: dashboardIcon,
+		value: "dashboard",
+	},
+	{
+		title: "Tenant & Leases",
+		href: "/admin/tenant-and-leases",
+		icon: leaseIcon,
+		value: "tenant-and-leases",
+	},
+	{
+		title: "Financials",
+		href: "/admin/financials",
+		icon: financialIcon,
+		value: "financials",
+	},
+	{
+		title: "Maintenance & Issues",
+		href: "/admin/maintenance",
+		icon: maintenanceIcon,
+		value: "maintenance",
+	},
+	{
+		title: "User Management",
+		href: "/admin/user-management",
+		icon: userIcon,
+		value: "user-management",
+	},
+]
 export const VistorData: userData = {
 	id: 1,
 	firstName: "John",
@@ -220,5 +260,80 @@ export const messages: MessageCardProps[] = [
 				roleUpdatedAt: "2025-12-15T12:30:00.000Z",
 			},
 		},
+	},
+]
+
+export const propertiess: Properties[] = [
+	{
+		name: "Property 1",
+		owner: "John Doe",
+		address: "123 Main St, Anytown, USA",
+		unit: "Apt 101",
+		unitId: "A101",
+		image: leaseImage,
+		occupancy: 35,
+		complaints: 82,
+		date: "2023-01-01",
+		fullAddress: "123 Main St, Anytown, USA, Apt 101",
+	},
+	{
+		name: "Property 2",
+		owner: "Jane Smith",
+		address: "456 Elm St, Anytown, USA",
+		unit: "Apt 202",
+		unitId: "A202",
+		image: leaseImage,
+		occupancy: 73,
+		complaints: 1,
+		date: "2023-01-02",
+		fullAddress: "456 Elm St, Anytown, USA, Apt 202",
+	},
+	{
+		name: "Property 3",
+		owner: "Bob Johnson",
+		address: "789 Oak St, Anytown, USA",
+		unit: "Apt 303",
+		unitId: "A303",
+		image: leaseImage,
+		occupancy: 64,
+		complaints: 10,
+		date: "2023-01-03",
+		fullAddress: "789 Oak St, Anytown, USA, Apt 303",
+	},
+	{
+		name: "Property 4",
+		owner: "Alice Williams",
+		address: "101 Pine St, Anytown, USA",
+		unit: "Apt 404",
+		unitId: "A404",
+		image: leaseImage,
+		occupancy: 20,
+		complaints: 40,
+		date: "2023-01-04",
+		fullAddress: "101 Pine St, Anytown, USA, Apt 404",
+	},
+	{
+		name: "Property 5",
+		owner: "Charlie Brown",
+		address: "202 Maple St, Anytown, USA",
+		unit: "Apt 505",
+		unitId: "A505",
+		image: leaseImage,
+		occupancy: 90,
+		complaints: 70,
+		date: "2023-01-05",
+		fullAddress: "202 Maple St, Anytown, USA, Apt 505",
+	},
+	{
+		name: "Property 6",
+		owner: "Emily Davis",
+		address: "303 Cedar St, Anytown, USA",
+		unit: "Apt 606",
+		unitId: "A606",
+		image: leaseImage,
+		occupancy: 50,
+		complaints: 30,
+		date: "2023-01-06",
+		fullAddress: "303 Cedar St, Anytown, USA, Apt 606",
 	},
 ]

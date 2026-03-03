@@ -1,4 +1,4 @@
-import { Progress as ChakraProgress } from "@chakra-ui/react"
+import { Box, Progress as ChakraProgress } from "@chakra-ui/react"
 import * as React from "react"
 
 interface ProgressProps extends ChakraProgress.RootProps {
@@ -10,20 +10,28 @@ interface ProgressProps extends ChakraProgress.RootProps {
 
 export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
     function Progress(props, ref) {
-        const { showValueText, valueText, label, info, ...rest } = props
+        const { showValueText, valueText, label, info, color, ...rest } = props
         return (
-            <ChakraProgress.Root shape={'rounded'} {...rest} ref={ref}>
+            <ChakraProgress.Root orientation='horizontal' shape={'rounded'} {...rest} ref={ref}>
+
                 {label && (
-                    <ChakraProgress.Label>
+                    <ChakraProgress.Label mb={0} whiteSpace="nowrap">
                         {label}
                     </ChakraProgress.Label>
                 )}
-                <ChakraProgress.Track rounded={'full'} stroke={'#FFFFFF'}>
-                    <ChakraProgress.Range rounded={'full'} {...{ css: { backgroundColor: '#CFAA67' } }} strokeLinecap={'round'} />
-                </ChakraProgress.Track>
-                {showValueText && (
-                    <ChakraProgress.ValueText>{valueText}</ChakraProgress.ValueText>
-                )}
+                <Box display="flex" alignItems="space-between" gap={1}>
+                    <ChakraProgress.Track rounded={'full'} flex={1}>
+                        <ChakraProgress.Range
+                            rounded={'full'}
+                            css={{ backgroundColor: color ? color : '#CFAA67' }}
+                        />
+                    </ChakraProgress.Track>
+                    {showValueText && (
+                        <ChakraProgress.ValueText w={'20px'} ml={1} whiteSpace="nowrap">
+                            {valueText}
+                        </ChakraProgress.ValueText>
+                    )}
+                </Box>
             </ChakraProgress.Root>
         )
     },

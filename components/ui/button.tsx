@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from '@chakra-ui/react';
 import { CgSpinner } from 'react-icons/cg';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'plain' | 'darkGhost';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'colored' | 'darkGhost';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl' | 'auto';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -15,6 +15,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     icon?: React.ReactElement;
     iconColor?: string;
     iconPosition?: 'left' | 'right';
+    color?: string;
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
@@ -26,8 +27,7 @@ const variantStyles: Record<ButtonVariant, string> = {
         'bg-transparent border border-button-primary hover:border-primary-gold text-button-primary hover:bg-primary-gold hover:text-white',
     ghost:
         'bg-transparent border border-button-ghost',
-    plain:
-        'bg-button-plain',
+    colored: '',
     darkGhost:
         'bg-transparent border border-button-dark-ghost',
 
