@@ -39,7 +39,7 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
                 const occupance = occupancy(row.original.occupancy)
                 return (
                     <Center px={2} w={'50px'} rounded={'full'} bg={occupance}>
-                        <Text>{row.original.occupancy}</Text>
+                        <Text>{row.original.occupancy}%</Text>
                     </Center>)
             }
 
