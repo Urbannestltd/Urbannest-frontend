@@ -1,7 +1,6 @@
 import endpoints from "@/services/endpoint"
 import http from "@/services/https"
 import { LeaseDetails } from "@/utils/model"
-import axios from "axios"
 import { create } from "zustand"
 import useAuthStore from "./auth"
 

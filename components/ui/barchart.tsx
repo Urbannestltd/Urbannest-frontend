@@ -1,8 +1,5 @@
 "use client"
-
-import { Chart, useChart } from "@chakra-ui/charts"
-import { Box, Flex, HStack, Select, Text } from "@chakra-ui/react"
-import Image from "next/image"
+import { Box, HStack, Text } from "@chakra-ui/react"
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import leaseImages from '@/app/assets/images/lease-image.png'
 import { useState } from "react"
@@ -41,7 +38,6 @@ export const Demo = () => {
 
     const data = allData[filter]
     const maxValue = Math.max(...data.map((d) => d.value))
-    const ticks = data.map((d) => d.value) // e.g. [200, 450, 300, 500, 350]
 
 
     return (
@@ -64,6 +60,7 @@ export const Demo = () => {
                     <CartesianGrid
                         vertical={false}
                         horizontal={false}
+
                         strokeDasharray="4 4"
                         stroke="#E5E7EB"
                     />
@@ -72,6 +69,7 @@ export const Demo = () => {
                     <YAxis
                         axisLine={false}
                         tickLine={false}
+
                         tickCount={5}
                         tickFormatter={(value) => `${value}`}
                     />
@@ -81,6 +79,7 @@ export const Demo = () => {
                         {data.map((entry, index) => (
                             <Cell
                                 key={index}
+
                                 fill={entry.value === maxValue ? "#CFAA67" : "#E5E7EB"}
                             />
                         ))}
@@ -105,7 +104,7 @@ const CustomLabel = ({ x, y, width }: any) => {
                 width={imgSize}
                 height={imgSize}
 
-                style={{ borderRadius: "2px" }} // optional
+                style={{ borderRadius: "2px" }}
             />
         </foreignObject>
     )

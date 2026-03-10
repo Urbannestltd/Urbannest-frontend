@@ -5,59 +5,61 @@ const endpoints = {
 	createUser: "/admin/create-user",
 	forgotPassword: "/auth/forgot-password",
 	resetPassword: "/auth/reset-password",
+	//payment verification
 
+	paymentVerification: `/payments/verify`,
 	//Dashboard endpoints
-	fetchDashboardData: "/dashboard/overview",
+	fetchDashboardData: "/tenant/dashboard/overview",
 
 	//Lease endpoints
-	getCurrentLease: `/leases/current`,
-	downloadLease: (id: string) => `/leases/${id}/download`,
+	getCurrentLease: `/tenant/leases/current`,
+	downloadLease: (id: string) => `/tenant/leases/${id}/download`,
 
 	//Utitlities endpoints
-	verifyMeter: `/utilities/verify-meter`,
-	purchaseUtilities: `/utilities/purchase`,
-	getSavedMeters: `/utilities/saved-meters`,
-	deleteMeter: (id: string) => `/utilities/saved-meters/${id}`,
+	verifyMeter: `/tenant/utilities/verify-meter`,
+	purchaseUtilities: `/tenant/utilities/purchase`,
+	getSavedMeters: `/tenant/utilities/saved-meters`,
+	deleteMeter: (id: string) => `/tenant/utilities/saved-meters/${id}`,
 
 	//Rent endpoints
-	payRent: `/rent/pay`,
-	rentHistory: `/rent/history`,
-	paymentVerification: `/payments/verify`,
+	payRent: `/tenant/rent/pay`,
+	rentHistory: `/tenant/rent/history`,
 
 	//Visitor endpoints
-	getVisitors: `/visitors/history`,
-	visitorAccess: `/visitors/check-in`,
-	verifyVisitor: `/visitors/verify`,
-	inviteVisitor: `/visitors/invite`,
-	inviteGroupVisitor: `/visitors/invite/bulk`,
-	getVisitorsDashboard: `/visitors/stats`,
+	getVisitors: `/tenant/visitors/history`,
+	visitorAccess: `/tenant/visitors/check-in`,
+	verifyVisitor: `/tenant/visitors/verify`,
+	inviteVisitor: `/tenant/visitors/invite`,
+	inviteGroupVisitor: `/tenant/visitors/invite/bulk`,
+	getVisitorsDashboard: `/tenant/visitors/stats`,
 
 	//Maintenances endpoints
-	getMaintenanceRequests: `/maintenance/history`,
-	createMaintenanceRequest: `/maintenance/submit`,
-	editMaintenanceRequest: (id: string) => `/maintenance/${id}`,
+	getMaintenanceRequests: `/tenant/maintenance/history`,
+	createMaintenanceRequest: `/tenant/maintenance/submit`,
+	editMaintenanceRequest: (id: string) => `/tenant/maintenance/${id}`,
 	sendMaintenanceMessage: (ticketId: string) =>
-		`/maintenance/${ticketId}/message`,
+		`/tenant/maintenance/${ticketId}/message`,
 	getAllMaintenanceRequestsMessages: (ticketId: string) =>
-		`/maintenance/${ticketId}/messages`,
-	deleteMaintenanceRequest: (ticketId: string) => `/maintenance/${ticketId}`,
+		`/tenant/maintenance/${ticketId}/messages`,
+	deleteMaintenanceRequest: (ticketId: string) =>
+		`/tenant/maintenance/${ticketId}`,
 
 	//Settings endpoints
-	getSettings: `/settings/profile`,
-	updateSettings: `/settings/profile`,
-	getNotifPreference: `/settings/notifications`,
-	updateNotifPreference: `/settings/notifications`,
-	getReminders: `/settings/reminders`,
-	deleteReminder: (id: string) => `/settings/reminders/${id}`,
-	changePassword: `/settings/change-password`,
-	enable2fa: `/settings/2fa/enable`,
-	disable2fa: `/settings/2fa/disable`,
-	confirmOtp: `/settings/2fa/confirm`,
+	getSettings: `/tenant/settings/profile`,
+	updateSettings: `/tenant/settings/profile`,
+	getNotifPreference: `/tenant/settings/notifications`,
+	updateNotifPreference: `/tenant/settings/notifications`,
+	getReminders: `/tenant/settings/reminders`,
+	deleteReminder: (id: string) => `/tenant/settings/reminders/${id}`,
+	changePassword: `/tenant/settings/change-password`,
+	enable2fa: `/tenant/settings/2fa/enable`,
+	disable2fa: `/tenant/settings/2fa/disable`,
+	confirmOtp: `/tenant/settings/2fa/confirm`,
 
 	//Suuport Center endpoints
-	createTicket: `/support/create`,
-	getTicket: (id: string) => `/support/${id}`,
-	sendTicketMessage: (id: string) => `/support/${id}/reply`,
+	createTicket: `/tenant/support/create`,
+	getTicket: (id: string) => `/tenant/support/${id}`,
+	sendTicketMessage: (id: string) => `/tenant/support/${id}/reply`,
 }
 
 export default endpoints

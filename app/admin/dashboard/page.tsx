@@ -1,5 +1,5 @@
 'use client'
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AdminSidebar } from "./sidebar";
 import { DashboardCard } from "@/components/ui/card";
 import { SemiProgressCircle } from "@/components/ui/semi-progress-circle";
@@ -18,6 +18,8 @@ import USerImage from "@/app/assets/images/user-avatar.png";
 
 export default function AdminDashboard() {
     const columns = useColumns()
+    const router = useRouter()
+
     return (
         <>
             <DashboardCard data={cardData} />
@@ -50,7 +52,7 @@ export default function AdminDashboard() {
                     <SearchInput />
                     <MainButton icon={<LuUserPlus />} className="h-[35px]" size='sm'>Add Property</MainButton>
                 </HStack>
-                <DataTable data={propertiess} my={5} columns={columns} />
+                <DataTable data={propertiess} my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.unitId}`)} columns={columns} />
             </Box>
             <Box bg={'white'} my={8} p={3} rounded={'8px'} border={'1px solid #F4F4F4'}>
                 <PageTitle title="Tenant Status" mb={4} fontSize={'20px'} />

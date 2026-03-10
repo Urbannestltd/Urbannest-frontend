@@ -27,7 +27,7 @@ const useAuthStore = create<AuthStore>()(
 			isHydrated: false,
 			twofa: null,
 
-			loginUser: (userData, token, persistToken, twofa) => {
+			loginUser: (userData, token, twofa, persistToken) => {
 				console.log("🔐 loginUser called", { userData, persistToken })
 				storeUserToken(token, persistToken)
 				set({ user: userData, token, twofa })

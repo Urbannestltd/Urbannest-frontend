@@ -8,48 +8,28 @@ import { useEffect, useState } from "react";
 export function RequireAuth({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
-
     const { user, isHydrated } = useAuthStore();
 
-
-    // ✅ Only access Zustand store after component mounts on client
     useEffect(() => {
         setMounted(true);
-        if (!getUserToken()) {
-            window.location.href = "/auth"
-        }
-    }, [])
+    }, []);
 
     useEffect(() => {
-        if (!mounted) return;
+        if (!mounted || !isHydrated) return;
 
-        const { user, isHydrated } = useAuthStore.getState();
+        const token = getUserToken();
 
-        console.log("🛡️ RequireAuth check:", { isHydrated, hasUser: !!user });
-
-        if (isHydrated && !user) {
-            console.log("❌ Redirecting to login...");
+        if (!user && !token) {
+            console.log("❌ No user or token, redirecting...");
             router.replace("/auth");
         }
-    }, [mounted, router]);
+    }, [mounted, isHydrated, user, router]);
 
-    // ✅ Show nothing until mounted on client
-    if (!mounted) {
-        return null;
-    }
+    if (!mounted) return null;
 
-    // ✅ Wait for hydration
-    if (!isHydrated) {
-        console.log("⏳ Waiting for hydration...");
-        return null;
-    }
+    if (!isHydrated) return null;
 
-    // ✅ Check authentication
-    if (!user) {
-        console.log("❌ No user after hydration");
-        return null;
-    }
+    if (!user && !getUserToken()) return null;
 
-    console.log("✅ User authenticated, rendering children");
     return <>{children}</>;
 }
