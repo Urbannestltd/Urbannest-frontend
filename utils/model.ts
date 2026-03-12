@@ -110,4 +110,6 @@ export interface Properties {
 	owner: string
 	image: StaticImageData
 	name: string
+	rent: number
+	noOfUnits: number
 }

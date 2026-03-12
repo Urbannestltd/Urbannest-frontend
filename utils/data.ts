@@ -275,6 +275,8 @@ export const propertiess: Properties[] = [
 		complaints: 82,
 		date: "2023-01-01",
 		fullAddress: "123 Main St, Anytown, USA, Apt 101",
+		rent: 1000000,
+		noOfUnits: 10,
 	},
 	{
 		name: "Property 2",
@@ -287,6 +289,8 @@ export const propertiess: Properties[] = [
 		complaints: 1,
 		date: "2023-01-02",
 		fullAddress: "456 Elm St, Anytown, USA, Apt 202",
+		rent: 1200000,
+		noOfUnits: 8,
 	},
 	{
 		name: "Property 3",
@@ -299,6 +303,8 @@ export const propertiess: Properties[] = [
 		complaints: 10,
 		date: "2023-01-03",
 		fullAddress: "789 Oak St, Anytown, USA, Apt 303",
+		rent: 1500000,
+		noOfUnits: 7,
 	},
 	{
 		name: "Property 4",
@@ -311,6 +317,8 @@ export const propertiess: Properties[] = [
 		complaints: 40,
 		date: "2023-01-04",
 		fullAddress: "101 Pine St, Anytown, USA, Apt 404",
+		rent: 800000,
+		noOfUnits: 5,
 	},
 	{
 		name: "Property 5",
@@ -323,6 +331,8 @@ export const propertiess: Properties[] = [
 		complaints: 70,
 		date: "2023-01-05",
 		fullAddress: "202 Maple St, Anytown, USA, Apt 505",
+		rent: 1800000,
+		noOfUnits: 10,
 	},
 	{
 		name: "Property 6",
@@ -335,5 +345,7 @@ export const propertiess: Properties[] = [
 		complaints: 30,
 		date: "2023-01-06",
 		fullAddress: "303 Cedar St, Anytown, USA, Apt 606",
+		rent: 1100000,
+		noOfUnits: 10,
 	},
 ]

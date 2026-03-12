@@ -69,6 +69,7 @@ export const Login = () => {
 
                 if (role === "admin" || role === "ADMIN") {
                     console.log("→ Redirecting to admin dashboard");
+                    toast.success("Redirecting to admin dashboard")
                     router.replace("/admin/dashboard")
                     fetchDashboard(7)
                 } else if (role === "tenant" || role === "TENANT") {
