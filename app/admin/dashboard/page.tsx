@@ -13,19 +13,51 @@ import { PageTitle } from "@/components/ui/page-title";
 import { SearchInput } from "@/components/ui/search-input";
 import { MainButton } from "@/components/ui/button";
 import { LuUserPlus } from "react-icons/lu";
-import { ListCard, ListCardData } from "@/components/ui/list-card";
+import { ListCard } from "@/components/ui/list-card";
 import USerImage from "@/app/assets/images/user-avatar.png";
+import { useAdminDashboardStore } from "@/store/admin/dashboard";
+import { useEffect } from "react";
+import { formatNumber } from "@/services/date";
+import { usePropertyStore } from "@/store/admin/properties";
 
 export default function AdminDashboard() {
     const columns = useColumns()
     const router = useRouter()
+    const fetchAdminDashboard = useAdminDashboardStore((state) => state.fetchDashboard)
+    const fetchTenantStatus = useAdminDashboardStore((state) => state.fetchTenantStatus)
+    const dashboard = useAdminDashboardStore((state) => state.dashboard)
+    const tenants = useAdminDashboardStore((state) => state.tenants)
+    const isLoading = useAdminDashboardStore((state) => state.isLoadingDashboard)
+    const properties = usePropertyStore((state) => state.properties)
+    const fetchProperties = usePropertyStore((state) => state.fetchProperties)
+
+    useEffect(() => {
+        fetchAdminDashboard()
+        fetchTenantStatus()
+        fetchProperties()
+    }, [])
+
+    const cardData = [
+        {
+            title: 'No of Properties',
+            data: dashboard?.totalProperties ?? 0
+        }, {
+            title: 'No of Tenants',
+            data: dashboard?.totalTenants ?? 0
+        },
+        {
+            title: 'Defaulting Tenants',
+            data: dashboard?.defaultingTenants ?? 0
+        }
+    ]
+
 
     return (
         <>
             <DashboardCard data={cardData} />
             <HStack gap={6} mt={6} h={'413px'} align={'start'}>
                 <Flex direction={'column'} justify={'center'} p={6} bg={'white'} w={'60%'} h={'full'} rounded={'8px'} border={'1px solid #F4F4F4'}>
-                    <Demo />
+                    <Demo chartData={dashboard?.maintenanceChart ?? []} />
                 </Flex>
                 <Flex direction={'column'} justify={'center'} p={6} bg={'white'} w={'40%'} h={'full'} rounded={'8px'} border={'1px solid #F4F4F4'}>
                     <Text className="satoshi-medium text-[#5A5A5A]" mb={'20px'}>Expected Income</Text>
@@ -34,7 +66,7 @@ export default function AdminDashboard() {
                         <Text textAlign={'center'} className="satoshi-medium mb-2 text-sm" color={'#5A5A5A'}>Collected</Text>
                     </Flex>
                     <Flex w={'full'} justify={'center'}>
-                        <SemiProgressCircle value={30} />
+                        <SemiProgressCircle expectedValue={dashboard?.revenue.expectedIncome} value={30} />
                     </Flex>
                     <HStack mb={1} mt={6} >
                         <Circle size={'6px'} bg={'#E7EEF5'} />
@@ -42,7 +74,7 @@ export default function AdminDashboard() {
                     </HStack>
                     <HStack my={1}>
                         <Circle size={'6px'} bg={'#CFAA67'} />
-                        <Text className="satoshi-medium text-[#5A5A5A]">Amount Collected - ₦840,000</Text>
+                        <Text className="satoshi-medium text-[#5A5A5A]">Amount Collected - {formatNumber(dashboard?.revenue.amountCollected ?? 0)}</Text>
                     </HStack>
                 </Flex>
             </HStack>
@@ -52,11 +84,11 @@ export default function AdminDashboard() {
                     <SearchInput />
                     <MainButton icon={<LuUserPlus />} className="h-[35px]" size='sm'>Add Property</MainButton>
                 </HStack>
-                <DataTable data={propertiess} my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.unitId}`)} columns={columns} />
+                <DataTable data={properties} my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.id}`)} columns={columns} />
             </Box>
             <Box bg={'white'} my={8} p={3} rounded={'8px'} border={'1px solid #F4F4F4'}>
                 <PageTitle title="Tenant Status" mb={4} fontSize={'20px'} />
-                <ListCard cardData={ListCardDatas} />
+                <ListCard cardData={tenants} />
             </Box>
 
         </>
@@ -72,83 +104,3 @@ export function AdminSideBarSetup() {
     </div>}</>)
 }
 
-const cardData = [
-    {
-        title: 'No of Properties',
-        data: 0
-    }, {
-        title: 'No of Tenants',
-        data: 0
-    },
-    {
-        title: 'Defaulting Tenants',
-        data: 0
-    }
-]
-
-const ListCardDatas: ListCardData[] = [
-    {
-        image: USerImage,
-        name: 'Teniola Khadijah',
-        phone: '08123456789',
-        address: 'No 3 Ayoola coker, Ikeja GRA, Lagos',
-        lease: '5 years',
-        isDefaulting: 'Yes'
-    },
-    {
-        image: USerImage,
-        name: 'Teniola Khadijah',
-        phone: '08123456789',
-        address: 'No 3 Ayoola coker, Ikeja GRA, Lagos',
-        lease: '5 years',
-        isDefaulting: 'Yes'
-    },
-    {
-        image: USerImage,
-        name: 'Teniola Khadijah',
-        phone: '08123456789',
-        address: 'No 3 Ayoola coker, Ikeja GRA, Lagos',
-        lease: '5 years',
-        isDefaulting: 'Warning'
-    },
-    {
-        image: USerImage,
-        name: 'Teniola Khadijah',
-        phone: '08123456789',
-        address: 'No 3 Ayoola coker, Ikeja GRA, Lagos',
-        lease: '5 years',
-        isDefaulting: 'Yes'
-    },
-    {
-        image: USerImage,
-        name: 'Teniola Khadijah',
-        phone: '08123456789',
-        address: 'No 3 Ayoola coker, Ikeja GRA, Lagos',
-        lease: '5 years',
-        isDefaulting: 'Warning'
-    },
-    {
-        image: USerImage,
-        name: 'Teniola Khadijah',
-        phone: '08123456789',
-        address: 'No 3 Ayoola coker, Ikeja GRA, Lagos',
-        lease: '5 years',
-        isDefaulting: 'Warning'
-    },
-    {
-        image: USerImage,
-        name: 'Teniola Khadijah',
-        phone: '08123456789',
-        address: 'No 3 Ayoola coker, Ikeja GRA, Lagos',
-        lease: '5 years',
-        isDefaulting: 'Warning'
-    },
-    {
-        image: USerImage,
-        name: 'Teniola Khadijah',
-        phone: '08123456789',
-        address: 'No 3 Ayoola coker, Ikeja GRA, Lagos',
-        lease: '5 years',
-        isDefaulting: 'Yes'
-    }
-]

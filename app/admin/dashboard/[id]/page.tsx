@@ -1,5 +1,5 @@
 'use client'
-import { Box, Flex, HStack, Image, Text } from "@chakra-ui/react";
+import { Box, Breadcrumb, Flex, HStack, Image, Text } from "@chakra-ui/react";
 import rentImage from '@/app/assets/images/lease-image.png'
 import locateIcon from '@/app/assets/icons/location-icon.svg'
 import { MainButton } from "@/components/ui/button";
@@ -13,7 +13,22 @@ export default function Page() {
     const property = propertiess.find(property => property.unitId === params.id)
 
     return (<div>
-        <Flex direction={{ base: 'column', md: 'row' }} mb={12} justify={'space-between'} align={'center'} rounded={'8px'} p={4} className="bg-primary-gold-50">
+        <Breadcrumb.Root>
+            <Breadcrumb.List>
+                <Breadcrumb.Item>
+                    <Breadcrumb.Link href="/admin/dashboard">Dashboard</Breadcrumb.Link>
+                </Breadcrumb.Item>
+                <Breadcrumb.Separator />
+                <Breadcrumb.Item>
+                    <Breadcrumb.Link href="#">Property Details</Breadcrumb.Link>
+                </Breadcrumb.Item>
+                <Breadcrumb.Separator />
+                <Breadcrumb.Item>
+                    <Breadcrumb.CurrentLink>Overview</Breadcrumb.CurrentLink>
+                </Breadcrumb.Item>
+            </Breadcrumb.List>
+        </Breadcrumb.Root>
+        <Flex direction={{ base: 'column', md: 'row' }} mb={12} mt={4} justify={'space-between'} align={'center'} rounded={'8px'} p={4} className="bg-primary-gold-50">
             <HStack>
                 <Image src={rentImage.src} mr={3} w={{ base: '100px', md: '165px' }} rounded={'8px'} h={{ base: '60px', md: '80px' }} alt="rent" />
 

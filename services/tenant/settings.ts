@@ -1,6 +1,6 @@
 import { NotificationFormData } from "@/schema"
-import endpoints from "./endpoint"
-import http from "./https"
+import endpoints from "../endpoint"
+import http from "../https"
 
 export interface UserProfilePayload {
 	userFullName: string

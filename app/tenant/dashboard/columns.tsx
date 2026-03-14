@@ -1,5 +1,5 @@
 import { formatDate, formatDateDash, formatDateRegular, formatDateTime, formatDatetoTime } from "@/services/date";
-import { Visitor } from "@/store/visitors";
+import { Visitor } from "@/store/tenant/visitors";
 import { Flex, Menu, MenuItemGroup, Text } from "@chakra-ui/react";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { LuEllipsisVertical } from "react-icons/lu";

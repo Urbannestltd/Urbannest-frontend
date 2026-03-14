@@ -8,7 +8,7 @@ import { CustomInput } from "@/components/ui/custom-fields"
 import { MainButton } from "@/components/ui/button"
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
-import { purchaseElectricity, UtilityPaymentPayload } from "@/services/utilities"
+import { purchaseElectricity, UtilityPaymentPayload } from "@/services/tenant/utilities"
 import toast from "react-hot-toast"
 
 export const UtilitiesModal = () => {

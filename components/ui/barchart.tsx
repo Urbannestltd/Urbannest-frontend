@@ -5,7 +5,7 @@ import leaseImages from '@/app/assets/images/lease-image.png'
 import { useState } from "react"
 
 
-export const Demo = () => {
+export const Demo = ({ chartData }: { chartData: { month: string; count: number }[] }) => {
     const allData = {
         perProperty: [
             { label: "Property 1", value: 1200 },
@@ -36,8 +36,8 @@ export const Demo = () => {
     }
     const [filter, setFilter] = useState<keyof typeof allData>('perProperty')
 
-    const data = allData[filter]
-    const maxValue = Math.max(...data.map((d) => d.value))
+    // const data = chartData[filter]
+    const maxValue = Math.max(...chartData.map((d) => d.count))
 
 
     return (
@@ -45,8 +45,8 @@ export const Demo = () => {
             <HStack justify={'space-between'}>
                 <Text className="satoshi-medium text-[#5A5A5A]" mb={'40px'}>Maintenance Requests</Text>
                 <select
-                    value={[filter]}
-                    onChange={(e) => setFilter(e.target.value as keyof typeof allData)}
+                    value={'perProperty'}
+                    //onChange={(e) => setFilter(e.target.value as keyof typeof )}
                     className="w-[150px] border border-[#D9D9D9] satoshi text-sm text-[#1E1E1E] rounded-lg p-1 mb-4"
                 >
                     <option value='perProperty'>Per Property</option>
@@ -56,7 +56,7 @@ export const Demo = () => {
                 </select>
             </HStack>
             <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data} barSize={32}>
+                <BarChart data={chartData} barSize={32}>
                     <CartesianGrid
                         vertical={false}
                         horizontal={false}
@@ -64,7 +64,7 @@ export const Demo = () => {
                         strokeDasharray="4 4"
                         stroke="#E5E7EB"
                     />
-                    <XAxis dataKey="label" axisLine={false} tickLine={false} />
+                    <XAxis dataKey='month' axisLine={false} tickLine={false} />
 
                     <YAxis
                         axisLine={false}
@@ -75,12 +75,12 @@ export const Demo = () => {
                     />
 
                     <Tooltip cursor={{ fill: "transparent" }} />
-                    <Bar dataKey="value" radius={[10, 10, 0, 0]} label={<CustomLabel />}>
-                        {data.map((entry, index) => (
+                    <Bar dataKey='count' radius={[10, 10, 0, 0]} label={<CustomLabel />}>
+                        {chartData.map((entry, index) => (
                             <Cell
                                 key={index}
 
-                                fill={entry.value === maxValue ? "#CFAA67" : "#E5E7EB"}
+                                fill={entry.count === maxValue ? "#CFAA67" : "#E5E7EB"}
                             />
                         ))}
                     </Bar>

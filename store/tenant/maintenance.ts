@@ -1,6 +1,6 @@
 import endpoints from "@/services/endpoint"
 import http from "@/services/https"
-import { MaintenaceResponse } from "@/services/maintenance"
+import { MaintenaceResponse } from "@/services/tenant/maintenance"
 import { MessageCardProps } from "@/utils/model"
 import { create } from "zustand"
 

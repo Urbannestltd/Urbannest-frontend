@@ -1,6 +1,6 @@
 import { MessageCardProps } from "@/utils/model"
-import endpoints from "./endpoint"
-import http from "./https"
+import endpoints from "../endpoint"
+import http from "../https"
 import axios from "axios"
 import { file } from "zod"
 import { ca } from "zod/v4/locales"

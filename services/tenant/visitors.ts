@@ -1,5 +1,5 @@
-import endpoints from "./endpoint"
-import http from "./https"
+import endpoints from "../endpoint"
+import http from "../https"
 
 export interface InviteVisitorPayload {
 	visitor: {

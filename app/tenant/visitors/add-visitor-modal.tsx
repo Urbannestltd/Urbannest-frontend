@@ -10,10 +10,10 @@ import Image from "next/image"
 import toast from "react-hot-toast"
 import { useEffect } from "react"
 import { useMutation } from "@tanstack/react-query"
-import { InviteVisitor, InviteVisitorPayload } from "@/services/visitors"
+import { InviteVisitor, InviteVisitorPayload } from "@/services/tenant/visitors"
 import { formatDateToIso } from "@/services/date"
 import dayjs from "dayjs"
-import { useVistorsStore, Visitor } from "@/store/visitors"
+import { useVistorsStore, Visitor } from "@/store/tenant/visitors"
 
 interface addVisitorProps {
     Submit: () => void

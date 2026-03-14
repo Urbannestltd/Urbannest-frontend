@@ -3,13 +3,13 @@ import { SearchInput } from "@/components/ui/search-input";
 import { Box, Flex, HStack, Menu, Tabs, Text } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { useColumns } from "../dashboard/columns";
-import { useVistorsStore, Visitor } from "@/store/visitors";
+import { useVistorsStore, Visitor } from "@/store/tenant/visitors";
 import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
 import { LuEllipsisVertical } from "react-icons/lu";
 import Image from "next/image";
 import { formatDateDash, formatDatetoTime } from "@/services/date";
 import { Paginator } from "@/components/ui/paginator";
-import { useDashboardStore } from "@/store/dashboard";
+import { useDashboardStore } from "@/store/tenant/dashboard";
 import { usePathname } from "next/navigation";
 
 interface TabProps {

@@ -5,7 +5,7 @@ import { NotifPref } from "./notif-pref"
 import { SecurityPrivacy } from "./security-privacy"
 import { SupportCenter } from "./support-center/support-center"
 import { useEffect } from "react"
-import { useSettingStore } from "@/store/settings"
+import { useSettingStore } from "@/store/tenant/settings"
 
 export default function Settings() {
 

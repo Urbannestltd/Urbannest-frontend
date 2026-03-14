@@ -1,5 +1,5 @@
 'use client';
-import { useLeaseStore } from "@/store/lease";
+import { useLeaseStore } from "@/store/tenant/lease";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { TenantSidebar } from "./sidebar";

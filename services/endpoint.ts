@@ -63,3 +63,14 @@ const endpoints = {
 }
 
 export default endpoints
+
+const adminEndpoints = {
+	//Dashboard
+	fetchDashboard: `/admin/dashboard/metrics`,
+	fetchUSers: `/admin/dashboard/tenants/status`,
+
+	//Property endpoints
+	fetchProperties: `/admin/properties`,
+}
+
+export { adminEndpoints }

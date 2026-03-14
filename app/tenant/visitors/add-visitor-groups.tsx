@@ -8,11 +8,11 @@ import { MainButton } from "@/components/ui/button"
 import toast from "react-hot-toast"
 import { VisitorList } from "./visitor-list"
 import { formatDateToIso } from "@/services/date"
-import { InviteVisitorBulk, InviteVisitorGroupPayload } from "@/services/visitors"
+import { InviteVisitorBulk, InviteVisitorGroupPayload } from "@/services/tenant/visitors"
 import { useEffect } from "react"
 import dayjs from "dayjs"
 import { useMutation } from "@tanstack/react-query"
-import { useVistorsStore, Visitor } from "@/store/visitors"
+import { useVistorsStore, Visitor } from "@/store/tenant/visitors"
 import { CgUserAdd } from "react-icons/cg"
 
 interface addVisitorProps {

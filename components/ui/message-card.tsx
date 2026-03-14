@@ -7,10 +7,10 @@ import { CustomInput } from "./custom-fields"
 import { useForm } from "react-hook-form"
 import { MdSend } from "react-icons/md";
 import { useMutation } from "@tanstack/react-query"
-import { getAllMaintenanceRequestsMessages, messageProps, sendMaintenanceMessage, submitMessagePayload } from "@/services/maintenance"
+import { getAllMaintenanceRequestsMessages, messageProps, sendMaintenanceMessage, submitMessagePayload } from "@/services/tenant/maintenance"
 import toast from "react-hot-toast"
 import { useEffect } from "react"
-import { useMaintenanceStore } from "@/store/maintenance"
+import { useMaintenanceStore } from "@/store/tenant/maintenance"
 
 interface Message {
     ticketId: string | undefined

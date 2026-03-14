@@ -11,12 +11,12 @@ import Image from "next/image";
 import { LuEllipsisVertical } from "react-icons/lu";
 import { Modal } from "@/components/ui/dialog";
 import { TenantMaintenanceModal } from "./modal";
-import { deleteMaintenanceRequest, MaintenaceResponse } from "@/services/maintenance";
+import { deleteMaintenanceRequest, MaintenaceResponse } from "@/services/tenant/maintenance";
 import { formatDate } from "@/services/date";
 import { use } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useMaintenanceStore } from "@/store/maintenance";
+import { useMaintenanceStore } from "@/store/tenant/maintenance";
 
 export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
     const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)

@@ -11,8 +11,8 @@ import { LuUserPlus } from "react-icons/lu"
 import { AddVisitorModal } from "./add-visitor-modal"
 import { AddVisitorGroupsModal } from "./add-visitor-groups"
 import { Modal } from "@/components/ui/dialog"
-import { useVistorsStore } from "@/store/visitors"
-import { useLeaseStore } from "@/store/lease"
+import { useVistorsStore } from "@/store/tenant/visitors"
+import { useLeaseStore } from "@/store/tenant/lease"
 import { VisitorTabs } from "./visitor-tabs"
 
 export default function Visitors() {

@@ -11,15 +11,15 @@ import { DataTable } from "@/components/ui/data-table"
 import ellipsisbg from "@/app/assets/images/ellipse-bg.svg"
 import { AddVisitorModal } from "../visitors/add-visitor-modal"
 import { AddVisitorGroupsModal } from "../visitors/add-visitor-groups"
-import { useLeaseStore } from "@/store/lease"
+import { useLeaseStore } from "@/store/tenant/lease"
 import { formatDateDash, formatNumber } from "@/services/date"
 import { Modal } from "@/components/ui/dialog"
-import { useVistorsStore } from "@/store/visitors"
+import { useVistorsStore } from "@/store/tenant/visitors"
 import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
 import { TenantMaintenanceModal } from "../maintenance/modal"
-import { useMaintenanceStore } from "@/store/maintenance"
+import { useMaintenanceStore } from "@/store/tenant/maintenance"
 import { VisitorTabs } from "../visitors/visitor-tabs"
-import { useDashboardStore } from "@/store/dashboard"
+import { useDashboardStore } from "@/store/tenant/dashboard"
 
 export default function TenantDashboard() {
     const [maintenanceFilter, setMaintenanceFilter] = useState(7)

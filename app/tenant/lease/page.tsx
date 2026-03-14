@@ -4,17 +4,17 @@ import { Box, Flex, Grid, HStack, Image, Text, Link, Skeleton, SkeletonText, Hea
 import rentImage from '@/app/assets/images/lease-image.png'
 import locateIcon from '@/app/assets/icons/location-icon.svg'
 import { MainButton } from "@/components/ui/button";
-import { useLeaseStore } from "@/store/lease";
+import { useLeaseStore } from "@/store/tenant/lease";
 import http from "@/services/https";
 import endpoints from "@/services/endpoint";
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
-import { payRent, PayRentPayload, verifyPayment } from "@/services/payment";
+import { payRent, PayRentPayload, verifyPayment } from "@/services/tenant/payment";
 import { diffInDays, formatDate, formatDateDash, formatNumber } from "@/services/date";
 import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/dialog";
 import { UtilitiesModal } from "./modal";
-import { usePaymentHistoryStore } from "@/store/payment";
+import { usePaymentHistoryStore } from "@/store/tenant/payment";
 import emptyStateIcon from '@/app/assets/icons/empty-state-icons/payment.svg'
 import meterSuccessIcon from '@/app/assets/icons/meter-success.svg'
 

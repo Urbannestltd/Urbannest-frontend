@@ -1,6 +1,6 @@
 import toast from "react-hot-toast"
-import endpoints from "./endpoint"
-import http from "./https"
+import endpoints from "../endpoint"
+import http from "../https"
 import axios from "axios"
 
 export interface VerifyMeterPayload {

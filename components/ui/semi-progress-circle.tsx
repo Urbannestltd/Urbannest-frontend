@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import CompassArrow from '@/app/assets/icons/compass-arrow.svg'
 import { Box, Flex } from "@chakra-ui/react";
+import { formatNumber } from "@/services/date";
 
 type SemiProgressCircleProps = {
     value: number;
@@ -9,6 +10,7 @@ type SemiProgressCircleProps = {
     color?: string;
     trackColor?: string;
     needleColor?: string;
+    expectedValue?: number
 };
 
 export const SemiProgressCircle = ({
@@ -18,6 +20,7 @@ export const SemiProgressCircle = ({
     color = "#CFAA67",
     trackColor = "#E7EEF5",
     needleColor = "#CFAA67",
+    expectedValue
 }: SemiProgressCircleProps) => {
     const [animatedValue, setAnimatedValue] = useState(0)
 
@@ -83,7 +86,7 @@ export const SemiProgressCircle = ({
                 left={`${(cx - iconSize / 2) - 20}px`}
             >
                 <Flex direction={'column'} align={'center'}>
-                    <p className="satoshi-bold text-[18px] mb-1"> ₦1,200,000</p>
+                    <p className="satoshi-bold text-[18px] mb-1"> {formatNumber(expectedValue ?? 0)}</p>
                     <p className="satoshi-medium text-sm mb-5 text-[#5A5A5A]">Expected</p>
                 </Flex>
 

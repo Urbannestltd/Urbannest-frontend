@@ -5,9 +5,9 @@ import { Box, Flex, HStack, Menu, Stack, Text } from "@chakra-ui/react";
 import { useColumns } from "./columns";
 import { TenantMaintenanceModal } from "./modal";
 import { Modal } from "@/components/ui/dialog";
-import { useMaintenanceStore } from "@/store/maintenance";
+import { useMaintenanceStore } from "@/store/tenant/maintenance";
 import { useEffect, useMemo, useState } from "react";
-import { MaintenaceResponse } from "@/services/maintenance";
+import { MaintenaceResponse } from "@/services/tenant/maintenance";
 import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/maintenance-table.svg'
 import { LuEllipsisVertical } from "react-icons/lu";
 import ElectricalIcon from '@/app/assets/icons/maintenance-icons/electrical.svg'

@@ -2,7 +2,7 @@ import endpoints from "@/services/endpoint"
 import http from "@/services/https"
 import { LeaseDetails } from "@/utils/model"
 import { create } from "zustand"
-import useAuthStore from "./auth"
+import useAuthStore from "../auth"
 
 interface LeaseStore {
 	lease: LeaseDetails | null

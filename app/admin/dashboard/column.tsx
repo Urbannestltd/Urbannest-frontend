@@ -1,16 +1,23 @@
 import { Progress } from "@/components/ui/progress-bar"
 import { formatDateRegular } from "@/services/date"
+import { Property } from "@/store/admin/properties"
 import { Properties } from "@/utils/model"
 import { Center, HStack, Text } from "@chakra-ui/react"
 import { ColumnDef } from "@tanstack/react-table"
 import Image from "next/image"
 import { LuEllipsisVertical } from "react-icons/lu"
+import rentImage from '@/app/assets/images/lease-image.png'
 
-export const useColumns = (): ColumnDef<Properties, any>[] => {
-    const occupancy = (row: number) => {
-        if (row >= 0 && row <= 49) { return '#FEE9E7' }
-        if (row >= 50 && row <= 69) { return '#FFFBEB' }
-        if (row >= 70) { return '#EBFFEE' }
+export const useColumns = (): ColumnDef<Property, any>[] => {
+    const occupancy = (row: number | string) => {
+        const value = typeof row === "string"
+            ? parseFloat(row.replace("%", ""))
+            : row
+
+        if (isNaN(value)) return ''
+        if (value >= 0 && value <= 49) return '#FEE9E7'
+        if (value >= 50 && value <= 69) return '#FFFBEB'
+        if (value >= 70) return '#EBFFEE'
         return ''
     }
     const complaints = (row: number) => {
@@ -24,22 +31,22 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             accessorKey: 'name',
             header: "Name",
             cell: ({ row }) => <HStack>
-                <Image src={row.original.image} alt="profile" className="rounded-lg" width={74} height={47} />
+                <Image src={rentImage} alt="profile" className="rounded-lg" width={74} height={47} />
                 <Text>{row.original.name}</Text>
             </HStack>
         },
         {
-            accessorKey: 'owner',
+            accessorKey: 'landlord',
             header: "Owner Info",
         },
         {
-            accessorKey: 'occupancy',
+            accessorFn: (row) => row.stats.occupancyRate,
             header: "Occupancy",
             cell: ({ row }) => {
-                const occupance = occupancy(row.original.occupancy)
+                const occupance = occupancy(row.original.stats.occupancyRate)
                 return (
                     <Center px={2} w={'50px'} rounded={'full'} bg={occupance}>
-                        <Text>{row.original.occupancy}%</Text>
+                        <Text>{row.original.stats.occupancyRate}</Text>
                     </Center>)
             }
 
@@ -48,16 +55,16 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             accessorKey: 'complaints',
             header: "Complaints",
             cell: ({ row }) => {
-                const complaint = complaints(row.original.complaints)
+                const complaint = complaints(row.original.stats.totalComplaints)
                 return (
-                    <Progress showValueText value={row.original.complaints} color={complaint} info={complaint} />
+                    <Progress showValueText value={row.original.stats.totalComplaints} color={complaint} info={complaint} />
                 )
             }
         },
         {
             accessorKey: 'date',
             header: "Date Listed",
-            cell: ({ row }) => <Text>{formatDateRegular(row.original.date)}</Text>
+            cell: () => <Text>{formatDateRegular('12-03-26')}</Text>
         },
         {
             accessorKey: 'actions',
