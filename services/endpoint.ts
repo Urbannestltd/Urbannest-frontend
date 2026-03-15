@@ -71,6 +71,7 @@ const adminEndpoints = {
 
 	//Property endpoints
 	fetchProperties: `/admin/properties`,
+	fetchUnits: (id: string) => `/admin/units/${id}/units`,
 }
 
 export { adminEndpoints }

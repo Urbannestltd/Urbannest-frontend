@@ -18,7 +18,7 @@ import USerImage from "@/app/assets/images/user-avatar.png";
 import { useAdminDashboardStore } from "@/store/admin/dashboard";
 import { useEffect } from "react";
 import { formatNumber } from "@/services/date";
-import { usePropertyStore } from "@/store/admin/properties";
+import { Property, usePropertyStore } from "@/store/admin/properties";
 
 export default function AdminDashboard() {
     const columns = useColumns()
@@ -30,6 +30,8 @@ export default function AdminDashboard() {
     const isLoading = useAdminDashboardStore((state) => state.isLoadingDashboard)
     const properties = usePropertyStore((state) => state.properties)
     const fetchProperties = usePropertyStore((state) => state.fetchProperties)
+    const setSelectedProperty = usePropertyStore((s) => s.setSelectedProperty)
+
 
     useEffect(() => {
         fetchAdminDashboard()
@@ -50,6 +52,11 @@ export default function AdminDashboard() {
             data: dashboard?.defaultingTenants ?? 0
         }
     ]
+
+    const handleRowClick = (row: Property) => {
+        setSelectedProperty(row)
+        router.push(`/admin/dashboard/${row.id}`)
+    }
 
 
     return (
@@ -84,7 +91,7 @@ export default function AdminDashboard() {
                     <SearchInput />
                     <MainButton icon={<LuUserPlus />} className="h-[35px]" size='sm'>Add Property</MainButton>
                 </HStack>
-                <DataTable data={properties} my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.id}`)} columns={columns} />
+                <DataTable data={properties} my={5} onRowClick={handleRowClick} columns={columns} />
             </Box>
             <Box bg={'white'} my={8} p={3} rounded={'8px'} border={'1px solid #F4F4F4'}>
                 <PageTitle title="Tenant Status" mb={4} fontSize={'20px'} />

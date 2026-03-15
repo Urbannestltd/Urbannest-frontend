@@ -13,12 +13,18 @@ import { LuEllipsisVertical, LuImage, LuMail, LuPhone } from "react-icons/lu"
 import Pfp from '@/app/assets/images/user-avatar.png'
 import { Avatar } from "@/components/ui/avatar"
 import { Divider } from "@/components/ui/divider"
+import { Property } from "@/store/admin/properties"
 
-export const Overview = ({ property }: { property?: Properties }) => {
-    const occupancy = (row: number) => {
-        if (row >= 0 && row <= 49) { return '#FEE9E7' }
-        if (row >= 50 && row <= 69) { return '#FFFBEB' }
-        if (row >= 70) { return '#EBFFEE' }
+export const Overview = ({ property }: { property?: Property | null }) => {
+    const occupancy = (row: number | string) => {
+        const value = typeof row === "string"
+            ? parseFloat(row.replace("%", ""))
+            : row
+
+        if (isNaN(value)) return ''
+        if (value >= 0 && value <= 49) return '#FEE9E7'
+        if (value >= 50 && value <= 69) return '#FFFBEB'
+        if (value >= 70) return '#EBFFEE'
         return ''
     }
     const complaints = (row: number) => {
@@ -35,25 +41,25 @@ export const Overview = ({ property }: { property?: Properties }) => {
                     <Flex wrap={'wrap'} gapX={4} gapY={4} mt={4} w={'full'} color={'#5A5A5A'}>
                         <SectionFlex gap={5} h={'50px'} align={'center'} minW={'217px'} justify={'space-between'}>
                             <Text className="satoshi-medium" >Rental Price</Text>
-                            <Text className="satoshi-bold" >{formatNumber(property?.rent)}</Text>
+                            <Text className="satoshi-bold" >{formatNumber(property?.stats.expectedMonthlyIncome)}</Text>
                         </SectionFlex>
                         <SectionFlex gap={5} h={'50px'} align={'center'} minW={'217px'} justify={'space-between'}>
                             <Text className="satoshi-medium" >No Of Units</Text>
-                            <Text className="satoshi-variable font-semibold">{property?.noOfUnits}</Text>
+                            <Text className="satoshi-variable font-semibold">{property?.stats.totalUnits}</Text>
                         </SectionFlex>
                         <SectionFlex gap={5} h={'50px'} align={'center'} minW={'217px'} justify={'space-between'}>
                             <Text className="satoshi-medium" >Listed On</Text>
-                            <Text className="satoshi-variable font-semibold">{formatDateRegular(property?.date)}</Text>
+                            <Text className="satoshi-variable font-semibold">{formatDateRegular('12-03-26')}</Text>
                         </SectionFlex>
                         <SectionFlex gap={5} h={'50px'} align={'center'} w={'337px'} justify={'space-between'}>
                             <Text className="satoshi-medium" >Occupancy Rate (%)</Text>
-                            <Center px={2} w={'50px'} rounded={'full'} bg={occupancy(property?.occupancy ?? 0)}>
-                                <Text>{property?.occupancy}%</Text>
+                            <Center px={2} w={'50px'} rounded={'full'} bg={occupancy(property?.stats.occupancyRate ?? 0)}>
+                                <Text>{property?.stats.occupiedUnits}%</Text>
                             </Center>
                         </SectionFlex>
                         <SectionFlex gap={5} h={'50px'} align={'center'} w={'337px'} justify={'space-between'}>
                             <Text className="satoshi-medium" >Complaints</Text>
-                            <Progress showValueText value={property?.complaints} color={complaints(property?.complaints ?? 0)} info={property?.complaints} />
+                            <Progress showValueText value={property?.stats.totalComplaints} color={complaints(property?.stats.totalComplaints ?? 0)} info={property?.stats.totalComplaints} />
                         </SectionFlex>
                     </Flex>
                 </SectionBox>

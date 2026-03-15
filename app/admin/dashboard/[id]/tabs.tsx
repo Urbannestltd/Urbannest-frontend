@@ -2,8 +2,10 @@ import { Divider } from "@/components/ui/divider"
 import { Tabs } from "@chakra-ui/react"
 import { Overview } from "./overview"
 import { Properties } from "@/utils/model"
+import { Property } from "@/store/admin/properties"
+import { Unit } from "./unit"
 
-export const PropertyTabs = ({ property }: { property?: Properties }) => {
+export const PropertyTabs = ({ property }: { property?: Property | null }) => {
 
     return (
         <Tabs.Root variant={'line'} defaultValue="overview">
@@ -18,7 +20,9 @@ export const PropertyTabs = ({ property }: { property?: Properties }) => {
             <Tabs.Content value="overview">
                 <Overview property={property} />
             </Tabs.Content>
-            <Tabs.Content value="units"></Tabs.Content>
+            <Tabs.Content value="units">
+                <Unit property={property} />
+            </Tabs.Content>
             <Tabs.Content value="tickets"></Tabs.Content>
             <Tabs.Content value="Documents"></Tabs.Content>
 

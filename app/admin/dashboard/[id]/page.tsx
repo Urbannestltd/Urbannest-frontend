@@ -7,10 +7,11 @@ import { FiEdit } from "react-icons/fi";
 import { useParams } from "next/navigation"
 import { propertiess } from "@/utils/data";
 import { PropertyTabs } from "./tabs";
+import { useQueryClient } from "@tanstack/react-query";
+import { Property, usePropertyStore } from "@/store/admin/properties";
 
 export default function Page() {
-    const params = useParams()
-    const property = propertiess.find(property => property.unitId === params.id)
+    const property = usePropertyStore((state) => state.selectedProperty)
 
     return (<div>
         <Breadcrumb.Root>

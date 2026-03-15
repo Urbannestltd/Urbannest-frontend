@@ -1,3 +1,4 @@
+import { Row } from "@/app/admin/dashboard/[id]/unit-columns"
 import { adminEndpoints } from "@/services/endpoint"
 import http from "@/services/https"
 import { create } from "zustand"
@@ -18,16 +19,28 @@ export interface Property {
 	id: string
 }
 
+export interface Unit {
+	grouped: {
+		Unassigned: Row[]
+	}
+	totalUnits: number
+}
+
 interface PropertyStore {
 	properties: Property[]
 	isLoading: boolean
+	units: Unit | null
 	fetchProperties: () => Promise<void>
 	setProperties: (properties: Property[]) => void
+	fetchUnits: (id: string) => Promise<void>
+	selectedProperty: Property | null
+	setSelectedProperty: (property: Property) => void
 }
 
 export const usePropertyStore = create<PropertyStore>((set) => ({
 	properties: [],
 	isLoading: false,
+	units: null,
 	fetchProperties: async () => {
 		set({ isLoading: true })
 		try {
@@ -41,6 +54,21 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 			set({ isLoading: false })
 		}
 	},
+	selectedProperty: null,
+	fetchUnits: async (id: string) => {
+		set({ isLoading: true })
+		try {
+			const units = await http.get(adminEndpoints.fetchUnits(id))
+			set({ units: units.data.data })
+			console.log("✅ Units set in store:", units.data.data)
+		} catch (e) {
+			set({ units: null })
+			console.error("❌ Failed to fetch units", e)
+		} finally {
+			set({ isLoading: false })
+		}
+	},
+	setSelectedProperty: (property) => set({ selectedProperty: property }),
 	setProperties: (properties: Property[]) => {
 		set({ properties })
 	},

@@ -22,9 +22,9 @@ export const ListCard = ({ cardData }: ListCardProps) => {
                     <Text className="text-[15px] satoshi-medium text-[#5A5A5A]">{card.phone}</Text>
                     <Divider my={3} />
                     <Text className="text-[15px] satoshi-medium text-[#5A5A5A]">{card.address}</Text>
-                    <Text className="text-[15px] satoshi-medium text-[#5A5A5A]">Lease : {card.leaseDuration}</Text>
+                    <Text className="text-[15px] satoshi-medium text-[#5A5A5A]">{card.leaseDuration}</Text>
                     <HStack mt={2}>
-                        <Flex justify={'center'} align={'center'} rounded={'md'} p={2} className="text-[14px] h-[34px] w-[120px] text-center satoshi-medium ">Defaulting</Flex>
+                        <Flex justify={'center'} align={'center'} rounded={'md'} p={2} color={colors[card.status].color ?? 'red'} bg={colors[card.status].bg ?? 'red'} className="text-[14px] h-[34px] w-[120px] text-center satoshi-medium ">Defaulting</Flex>
                         <MainButton variant='outline' size="sm" className="h-[34px] w-[120px] text-sm">View Profile</MainButton>
                     </HStack>
                 </Box>
@@ -34,7 +34,8 @@ export const ListCard = ({ cardData }: ListCardProps) => {
 }
 
 const colors = {
-    "YES": { bg: '#FEE9E7', color: '#C00F0C' },
+    "ACTIVE": { bg: '#FFF8EB', color: '#975102' },
+    /*"YES": { bg: '#FEE9E7', color: '#C00F0C' },
     "WARNING": { bg: '#FFF8EB', color: '#975102' },
-    "NO": { bg: '#EBF9EE', color: '#34C759' }
+    "NO": { bg: '#EBF9EE', color: '#34C759' } */
 }
