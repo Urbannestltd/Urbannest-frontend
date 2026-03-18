@@ -21,7 +21,6 @@ export default function DashboardLayout({
                 <AdminSideBarSetup />
                 <Box
                     position="absolute"
-                    bg="white"
                     color="blue.900"
                     top="0rem"
                     left="17rem"
