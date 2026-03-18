@@ -15,6 +15,8 @@ import { LuEllipsisVertical, LuMail, LuPhone } from "react-icons/lu"
 import { Divider } from "@/components/ui/divider"
 import { useState } from "react"
 import { formatDate } from "@/services/date"
+import { Modal } from "@/components/ui/dialog"
+import { LeaseInfo } from "./lease-info"
 
 export const Tenant = ({ tenant }: { tenant: Row }) => {
     const [maintenanceFilter, setMaintenanceFilter] = useState(7)
@@ -126,7 +128,8 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                 <SectionBox mt={6} w={'748px'}>
                     <HStack justify={'space-between'}>
                         <PageTitle mt={2} fontSize={'18px'} title="Lease Information" />
-                        <FiEdit size={16} />
+                        <Modal size={'cover'} className="w-[700px]" triggerElement={<FiEdit size={16} />} modalContent={<LeaseInfo />} />
+
                     </HStack>
                     <Box mt={6}>
                         <HStack>
