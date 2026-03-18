@@ -6,6 +6,7 @@ import financialIcon from "@/app/assets/icons/admin-sidebar-icons/financials.svg
 import userIcon from "@/app/assets/icons/admin-sidebar-icons/user-management-icon.svg"
 import leaseImage from "@/app/assets/images/lease-image.png"
 import {
+	LeaseAgreement,
 	Maintance,
 	MessageCardProps,
 	notification,
@@ -47,12 +48,6 @@ export const adminSidebarLinks = [
 		value: "dashboard",
 	},
 	{
-		title: "Tenant & Leases",
-		href: "/admin/tenant-and-leases",
-		icon: leaseIcon,
-		value: "tenant-and-leases",
-	},
-	{
 		title: "Financials",
 		href: "/admin/financials",
 		icon: financialIcon,
@@ -80,9 +75,9 @@ export const VistorData: userData = {
 	visitors: [
 		{
 			id: 1,
-			name: "John Doe",
+			visitorName: "John Doe",
 			email: "lVjRt@example.com",
-			phone: "08123456789",
+			visitorPhone: "08123456789",
 			status: "checked-out",
 			access: "one-off",
 			timeIn: "10:00 AM",
@@ -90,9 +85,9 @@ export const VistorData: userData = {
 		},
 		{
 			id: 2,
-			name: "Rose Doe",
+			visitorName: "Rose Doe",
 			email: "lVjRt@example.com",
-			phone: "08123456789",
+			visitorPhone: "08123456789",
 			status: "checked-in",
 			access: "one-off",
 			timeIn: "10:00 AM",
@@ -100,9 +95,9 @@ export const VistorData: userData = {
 		},
 		{
 			id: 3,
-			name: "Temi Kalaro",
+			visitorName: "Temi Kalaro",
 			email: "lVjRt@example.com",
-			phone: "08123456789",
+			visitorPhone: "08123456789",
 			status: "checked-in",
 			access: "one-off",
 			timeIn: "10:00 AM",
@@ -347,5 +342,32 @@ export const propertiess: Properties[] = [
 		fullAddress: "303 Cedar St, Anytown, USA, Apt 606",
 		rent: 1100000,
 		noOfUnits: 10,
+	},
+]
+
+export const leaseAgreements: LeaseAgreement[] = [
+	{
+		name: "The Principal Towers",
+		startDate: "Jan 01, 2025",
+		endDate: "Dec 31, 2025",
+		leaseAgreement: "https://example.com/lease-agreement-1.pdf",
+	},
+	{
+		name: "The Principal Towers",
+		startDate: "Jan 01, 2025",
+		endDate: "Dec 31, 2025",
+		leaseAgreement: "https://example.com/lease-agreement-2.pdf",
+	},
+	{
+		name: "The Principal Towers",
+		startDate: "Jan 01, 2025",
+		endDate: "Dec 31, 2025",
+		leaseAgreement: "https://example.com/lease-agreement-3.pdf",
+	},
+	{
+		name: "The Principal Towers",
+		startDate: "Jan 01, 2025",
+		endDate: "Dec 31, 2025",
+		leaseAgreement: "https://example.com/lease-agreement-4.pdf",
 	},
 ]

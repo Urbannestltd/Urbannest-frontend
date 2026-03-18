@@ -21,11 +21,11 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     const { name, src, srcSet, loading, icon, fallback, children, ...rest } =
       props
     return (
-      <ChakraAvatar.Root ref={ref} {...rest}>
+      <ChakraAvatar.Root position={'relative'} ref={ref} {...rest}>
         <AvatarFallback name={name} icon={icon}>
           {fallback}
         </AvatarFallback>
-        <ChakraAvatar.Image src={src} srcSet={srcSet} loading={loading} />
+        <ChakraAvatar.Image src={src} srcSet={srcSet} boxSize={'full'} loading={loading} />
         {children}
       </ChakraAvatar.Root>
     )

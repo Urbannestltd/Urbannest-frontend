@@ -2,9 +2,9 @@ import { Input } from '@chakra-ui/react';
 import { InputGroup } from './input-group';
 import { FiSearch } from 'react-icons/fi';
 
-export const SearchInput = () => {
+export const SearchInput = ({ width }: { width?: string | number }) => {
     return (
-        <InputGroup startElement={<FiSearch color='#B3B3B3' size='16px' />}>
+        <InputGroup w={width} startElement={<FiSearch color='#B3B3B3' size='16px' />}>
             <Input
                 h='34px'
                 rounded='full'

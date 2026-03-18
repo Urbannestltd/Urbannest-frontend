@@ -28,9 +28,9 @@ export interface userData {
 	rent: string
 	visitors: {
 		id: number
-		name: string
+		visitorName: string
 		email: string
-		phone: string
+		visitorPhone: string
 		status: string
 		access: string
 		timeIn: string
@@ -112,4 +112,11 @@ export interface Properties {
 	name: string
 	rent: number
 	noOfUnits: number
+}
+
+export interface LeaseAgreement {
+	name: string
+	startDate: string
+	endDate: string
+	leaseAgreement: string
 }

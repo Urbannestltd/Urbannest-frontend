@@ -33,7 +33,7 @@ export const formatDateRegular = (dateStr: string | undefined) => {
 }
 
 export const formatNumber = (number: number | string | undefined) => {
-	if (!number) return null
+	if (!number) return "₦0"
 	return number.toLocaleString("en-NG", {
 		style: "currency",
 		currency: "NGN",

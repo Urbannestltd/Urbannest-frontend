@@ -4,14 +4,13 @@ import rentImage from '@/app/assets/images/lease-image.png'
 import locateIcon from '@/app/assets/icons/location-icon.svg'
 import { MainButton } from "@/components/ui/button";
 import { FiEdit } from "react-icons/fi";
-import { useParams } from "next/navigation"
-import { propertiess } from "@/utils/data";
 import { PropertyTabs } from "./tabs";
-import { useQueryClient } from "@tanstack/react-query";
-import { Property, usePropertyStore } from "@/store/admin/properties";
+import { usePropertyStore } from "@/store/admin/properties";
+import { useState } from "react";
 
 export default function Page() {
     const property = usePropertyStore((state) => state.selectedProperty)
+    const [selectedTab, setSelectedTab] = useState('Overview')
 
     return (<div>
         <Breadcrumb.Root>
@@ -25,7 +24,7 @@ export default function Page() {
                 </Breadcrumb.Item>
                 <Breadcrumb.Separator />
                 <Breadcrumb.Item>
-                    <Breadcrumb.CurrentLink>Overview</Breadcrumb.CurrentLink>
+                    <Breadcrumb.CurrentLink>{selectedTab}</Breadcrumb.CurrentLink>
                 </Breadcrumb.Item>
             </Breadcrumb.List>
         </Breadcrumb.Root>
@@ -46,7 +45,7 @@ export default function Page() {
             </HStack>
             <MainButton icon={<FiEdit />} children="Edit" />
         </Flex>
-        <PropertyTabs property={property} />
+        <PropertyTabs setTab={setSelectedTab} property={property} />
     </div >
     )
 }

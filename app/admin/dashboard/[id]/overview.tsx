@@ -3,7 +3,6 @@ import { PageTitle } from "@/components/ui/page-title"
 import { Progress } from "@/components/ui/progress-bar"
 import { SectionBox, SectionFlex } from "@/components/ui/section-box"
 import { formatDateRegular, formatNumber } from "@/services/date"
-import { Properties } from "@/utils/model"
 import { Box, Center, Flex, HStack, Text } from "@chakra-ui/react"
 import Image from "next/image"
 import mapImage from '@/app/assets/images/map-image.png'

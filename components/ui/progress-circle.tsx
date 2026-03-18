@@ -1,6 +1,5 @@
 import type { SystemStyleObject } from "@chakra-ui/react"
 import {
-    AbsoluteCenter,
     ProgressCircle as ChakraProgressCircle,
 } from "@chakra-ui/react"
 import * as React from "react"
@@ -39,11 +38,9 @@ export const ProgressCircle = React.forwardRef<
             <ChakraProgressCircle.Range stroke={color} strokeLinecap={cap} />
         </ChakraProgressCircle.Circle>
         {showValueText && (
-            <AbsoluteCenter>
-                <ChakraProgressCircle.ValueText>
-                    {valueText}
-                </ChakraProgressCircle.ValueText>
-            </AbsoluteCenter>
+            <ChakraProgressCircle.ValueText>
+                {valueText}
+            </ChakraProgressCircle.ValueText>
         )}
     </ChakraProgressCircle.Root>
     )

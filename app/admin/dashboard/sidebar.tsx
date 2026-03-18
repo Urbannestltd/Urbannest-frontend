@@ -16,7 +16,6 @@ export const AdminSidebar = ({ onClose }: { onClose?: () => void }) => {
 
     const getActiveTab = () => {
         if (pathname.includes('admin/dashboard')) return 'dashboard'
-        if (pathname.includes('admin/tenant-and-leases')) return 'tenant-and-leases'
         if (pathname.includes('admin/financials')) return 'financials'
         if (pathname.includes('admin/maintenance-and-issues')) return 'maintenance-and-issues'
         if (pathname.includes('admin/user-management')) return 'user-management'
