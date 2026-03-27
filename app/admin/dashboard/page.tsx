@@ -30,7 +30,6 @@ export default function AdminDashboard() {
     const isLoading = useAdminDashboardStore((state) => state.isLoadingDashboard)
     const properties = usePropertyStore((state) => state.properties)
     const fetchProperties = usePropertyStore((state) => state.fetchProperties)
-    const setSelectedProperty = usePropertyStore((s) => s.setSelectedProperty)
 
 
     useEffect(() => {
@@ -53,18 +52,12 @@ export default function AdminDashboard() {
         }
     ]
 
-    const handleRowClick = (row: Property) => {
-        setSelectedProperty(row)
-        router.push(`/admin/dashboard/${row.id}`)
-    }
-
-
     return (
         <>
             <DashboardCard data={cardData} />
             <HStack gap={6} mt={6} h={'413px'} align={'start'}>
                 <Flex direction={'column'} justify={'center'} p={6} bg={'white'} w={'60%'} h={'full'} rounded={'8px'} border={'1px solid #F4F4F4'}>
-                    <Demo chartData={dashboard?.maintenanceChart ?? []} />
+                    <Demo loading={isLoading} chartData={dashboard?.maintenanceChart ?? []} />
                 </Flex>
                 <Flex direction={'column'} justify={'center'} p={6} bg={'white'} w={'40%'} h={'full'} rounded={'8px'} border={'1px solid #F4F4F4'}>
                     <Text className="satoshi-medium text-[#5A5A5A]" mb={'20px'}>Expected Income</Text>
@@ -89,9 +82,9 @@ export default function AdminDashboard() {
                 <PageTitle title="All Properties" fontSize={'20px'} />
                 <HStack my={2} justify={'space-between'}>
                     <SearchInput />
-                    <MainButton icon={<LuUserPlus />} className="h-[35px]" size='sm'>Add Property</MainButton>
+                    <MainButton icon={<LuUserPlus />} onClick={() => router.push('/admin/dashboard/new-property')} className="h-[35px]" size='sm'>Add Property</MainButton>
                 </HStack>
-                <DataTable data={properties} my={5} onRowClick={handleRowClick} columns={columns} />
+                <DataTable data={properties} loading={isLoading} my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.id}`)} columns={columns} />
             </Box>
             <Box bg={'white'} my={8} p={3} rounded={'8px'} border={'1px solid #F4F4F4'}>
                 <PageTitle title="Tenant Status" mb={4} fontSize={'20px'} />

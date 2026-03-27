@@ -32,15 +32,15 @@ export const TenantSidebar = ({ onClose }: { onClose?: () => void }) => {
 
     return (
         <Tabs.Root variant={'plain'} orientation='vertical' position={'fixed'} defaultValue={activeTab} zIndex={'modal'} lazyMount unmountOnExit value={activeTab}>
-            <Tabs.List className="flex flex-col justify-between" h={'100vh'} w={'280px'} color={'white'} p={'32px 24px'} pr={14} bg={'#141822'}>
+            <Tabs.List className="flex flex-col justify-between " h={'100vh'} w={'240px'} color={'white'} py={'32px'} pl={'24px'} pr={'35px'} bg={'#141822'}>
                 <div>
                     <Image src={Logo} onClick={() => router.push('/')} className="w-[147.5px] mb-[54px]" alt="" />
                     <Text className="satoshi-bold text-[10px] mb-4 tracking-[0.2em] mt-4 uppercase">Menu</Text>
                     {sidebarLinks.map((link) =>
-                        <Tabs.Trigger w={'full'} value={link.value} className="" p={2} onClick={() => { router.push(link.href); onClose && onClose() }} key={link.href}>
-                            <Image alt='image' src={link.icon} /> {link.title}
+                        <Tabs.Trigger _selected={{ fontWeight: 'bold' }} w={'full'} value={link.value} className="text-sm selection:satoshi-bold satoshi-medium" p={2} onClick={() => { router.push(link.href); onClose && onClose() }} key={link.href}>
+                            <Image alt='image' src={link.icon} />{link.title}
                         </Tabs.Trigger>)}
-                    <Tabs.Indicator className="satoshi-bold" bg={'#2A3348'} />
+                    <Tabs.Indicator className="satoshi-bold" rounded={'8px'} bg={'#2A3348'} />
                 </div>
                 <Box className=" mb-4 mt-4 ">
                     <Text className="satoshi-bold text-[10px] mb-4 tracking-[0.2em] mt-4 uppercase">Settings</Text>

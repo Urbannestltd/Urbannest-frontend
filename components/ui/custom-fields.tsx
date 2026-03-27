@@ -273,7 +273,7 @@ export function CustomSelect<T extends FieldValues>({
                             <Portal >
                                 <Select.Positioner w={width} >
                                     <Select.Content p={2} w={'96%'} zIndex='9999' bg='white'>
-                                        {collection.items.map((item: Option) => (
+                                        {(collection.items ?? []).map((item: Option) => (
                                             <Select.Item
                                                 justifyContent={'start'}
                                                 item={item as any}

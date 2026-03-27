@@ -1,5 +1,6 @@
-import { Box, Button, FileUpload, Flex, Float, HStack, Icon, Span, Text, useFileUploadContext } from "@chakra-ui/react"
+import { Box, Button, FileUpload, FileUploadRootProps, Flex, Float, HStack, Icon, Span, Text, useFileUploadContext } from "@chakra-ui/react"
 import { LuImage, LuUpload, LuX } from "react-icons/lu"
+import { MainButton } from "./button"
 
 export const AddImage = ({ onFileChange }: { onFileChange: (file: File[] | null) => void }) => {
     return (
@@ -57,9 +58,9 @@ const FileUploadList = () => {
     )
 }
 
-export const DragAndDrop = ({ onFileChange }: { onFileChange: (file: File | null) => void }) => {
+export const DragAndDrop = ({ onFileChange, width = 'md' }: { onFileChange: (file: File | null) => void, width?: FileUploadRootProps['maxW'] }) => {
     return (
-        <FileUpload.Root maxW="md" alignItems="stretch" onFileChange={(details) => onFileChange?.(details.acceptedFiles[0] || null)} accept={'image/*'} maxFiles={1}>
+        <FileUpload.Root maxW={width} alignItems="stretch" onFileChange={(details) => onFileChange?.(details.acceptedFiles[0] || null)} accept={'image/*'} maxFiles={1}>
             <FileUpload.HiddenInput />
             <FileUpload.Dropzone rounded={'10px'} h={'148px'} border={'1px solid #000000'}>
                 <Icon size="md" color="fg.muted">

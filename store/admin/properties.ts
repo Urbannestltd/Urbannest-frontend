@@ -3,20 +3,55 @@ import { adminEndpoints } from "@/services/endpoint"
 import http from "@/services/https"
 import { create } from "zustand"
 
-export interface Property {
-	stats: {
-		totalTenants: number
-		expectedMonthlyIncome: number
-		totalComplaints: number
-		occupancyRate: string
-		occupiedUnits: number
-		totalUnits: number
+export interface Properties {
+	_count: {
+		units: number
 	}
-	landlord: string
-	type: "MULTI_UNIT" | "SINGLE_UNIT"
+	images: string[]
+	amenities: string[]
+	price: number
+	zip: string
+	city: string
+	state: string
 	address: string
+	facilityManagerId: string
+	landlordId: string
 	name: string
+	updatedAt: string
+	createdAt: string
+	type: "SINGLE_UNIT" | "MULTI_UNIT"
 	id: string
+}
+
+export interface Property {
+	id: string
+	name: string
+	address: string
+	lastUpdated: string
+	rentalPrice: number
+	noOfFloors: number
+	noOfUnits: number
+	listedOn: string
+	occupancyRate: string
+	complaintsPercentage: string
+	images: string[]
+	amenities: string[]
+	facilityManager: {
+		photoUrl: string
+		email: string
+		name: string
+	}
+	landlord: {
+		photoUrl: string
+		email: string
+		name: string
+	}
+	rentalRevenue: [
+		{
+			revenue: number
+			month: string
+		},
+	]
 }
 
 export interface Unit {
@@ -27,11 +62,13 @@ export interface Unit {
 }
 
 interface PropertyStore {
-	properties: Property[]
+	properties: Properties[]
+	property: Property | null
 	isLoading: boolean
 	units: Unit | null
 	fetchProperties: () => Promise<void>
-	setProperties: (properties: Property[]) => void
+	fetchProperty: (id: string) => Promise<void>
+	setProperties: (properties: Properties[]) => void
 	fetchUnits: (id: string) => Promise<void>
 	selectedProperty: Property | null
 	setSelectedProperty: (property: Property) => void
@@ -39,6 +76,7 @@ interface PropertyStore {
 
 export const usePropertyStore = create<PropertyStore>((set) => ({
 	properties: [],
+	property: null,
 	isLoading: false,
 	units: null,
 	fetchProperties: async () => {
@@ -55,6 +93,19 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 		}
 	},
 	selectedProperty: null,
+	fetchProperty: async (id: string) => {
+		set({ isLoading: true })
+		try {
+			const property = await http.get(adminEndpoints.fetchProperty(id))
+			set({ property: property.data.data })
+			console.log("✅ Property set in store:", property.data.data)
+		} catch (e) {
+			set({ property: null })
+			console.error("❌ Failed to fetch property", e)
+		} finally {
+			set({ isLoading: false })
+		}
+	},
 	fetchUnits: async (id: string) => {
 		set({ isLoading: true })
 		try {
@@ -69,7 +120,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 		}
 	},
 	setSelectedProperty: (property) => set({ selectedProperty: property }),
-	setProperties: (properties: Property[]) => {
+	setProperties: (properties: Properties[]) => {
 		set({ properties })
 	},
 }))

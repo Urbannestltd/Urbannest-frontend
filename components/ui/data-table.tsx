@@ -9,7 +9,7 @@ import { cn } from '@/utils/lib';
 import { Table, TableBody, TableCell, TableEmpty, TableHead, TableHeader, TableRow } from './table';
 
 import { Paginator } from './paginator';
-import { Box, Skeleton } from '@chakra-ui/react';
+import { Box, Skeleton, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 
 
@@ -162,6 +162,7 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
                 <div className="mt-3 px-4 sm:mt-6">
+                    <Text fontSize={'14px'}>Showing 1-{currentData?.length} of {data?.length} {tableName}</Text>
                     <Paginator
                         current={currentPage}
                         total={totalPages}

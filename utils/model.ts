@@ -120,3 +120,16 @@ export interface LeaseAgreement {
 	endDate: string
 	leaseAgreement: string
 }
+
+export interface PropertyTicket {
+	id: string
+	propertyName: string
+	propertyUnit: string
+	subject: string
+	category: string
+	dateSubmitted: string
+	priority: string
+	status: string
+	facilityManager: string
+	response: string
+}

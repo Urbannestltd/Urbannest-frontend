@@ -1,11 +1,12 @@
 "use client"
-import { Box, HStack, Text } from "@chakra-ui/react"
+import { Box, HStack, Skeleton, Text } from "@chakra-ui/react"
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import leaseImages from '@/app/assets/images/lease-image.png'
 import { useState } from "react"
 
 
-export const MultiBar = () => {
+
+export const MultiBar = ({ chartData, loading }: { chartData: { revenue: number; month: string }[], loading?: boolean }) => {
     const allData = {
         perProperty: [
             { label: "Property 1", value1: 1200, value2: 1100, value3: 1400 },
@@ -36,7 +37,7 @@ export const MultiBar = () => {
     }
     const [filter, setFilter] = useState<keyof typeof allData>('perProperty')
 
-    const data = allData[filter]
+    const data = chartData
 
 
     return (
@@ -45,7 +46,7 @@ export const MultiBar = () => {
                 <Text className="satoshi-medium text-[#5A5A5A]" mb={'40px'}>Rental Revenue</Text>
                 <select
                     value={[filter]}
-                    onChange={(e) => setFilter(e.target.value as keyof typeof allData)}
+                    //onChange={(e) => setFilter(e.target.value as keyof typeof allData)}
                     className="w-[150px] border border-[#D9D9D9] satoshi text-sm text-[#1E1E1E] rounded-lg p-1 mb-4"
                 >
                     <option value='perProperty'>Per Property</option>
@@ -54,7 +55,7 @@ export const MultiBar = () => {
                     <option value="yearly">Yearly</option>
                 </select>
             </HStack>
-            <ResponsiveContainer width="100%" height={300}>
+            {loading ? <Skeleton height={'300px'} /> : <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={data} barSize={16}>
                     <CartesianGrid
                         vertical={false}
@@ -62,7 +63,7 @@ export const MultiBar = () => {
                         strokeDasharray="0"
                         stroke="#E5E7EB"
                     />
-                    <XAxis dataKey="label" axisLine={false} tickLine={false} />
+                    <XAxis dataKey='month' axisLine={false} tickLine={false} />
 
                     <YAxis
                         axisLine={false}
@@ -73,31 +74,12 @@ export const MultiBar = () => {
 
                     <Tooltip cursor={{ fill: "transparent" }} />
 
-                    <Bar dataKey="value1" fill="#A7C3DF" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="value2" fill="#539EE9" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="value3" fill="#142C43" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="revenue" fill="#A7C3DF" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="revenue" fill="#539EE9" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="revenue" fill="#142C43" radius={[6, 6, 0, 0]} />
                 </BarChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer>}
         </Box>
     )
 }
 
-const CustomLabel = ({ x, y, width }: any) => {
-    const imgSize = 50
-    return (
-        <foreignObject
-            x={x + width / 2 - imgSize / 2}
-            y={y - imgSize / 2 - 10}
-            width={imgSize}
-            height={imgSize / 2}
-        >
-            <img
-                src={leaseImages.src}
-                width={imgSize}
-                height={imgSize}
-
-                style={{ borderRadius: "2px" }}
-            />
-        </foreignObject>
-    )
-}

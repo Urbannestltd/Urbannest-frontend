@@ -26,7 +26,7 @@ const variantStyles: Record<ButtonVariant, string> = {
     outline:
         'bg-transparent border border-button-primary hover:border-primary-gold text-button-primary hover:bg-primary-gold hover:text-white',
     ghost:
-        'bg-transparent border border-button-ghost',
+        'bg-[#F5F5F5] border-none rounded-full text-[#2A3348] ',
     colored: '',
     darkGhost:
         'bg-transparent border border-button-dark-ghost',

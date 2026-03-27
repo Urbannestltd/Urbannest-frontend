@@ -6,6 +6,7 @@ import { Property } from "@/store/admin/properties"
 import { Unit } from "./unit"
 import { useState } from "react"
 import { LuEllipsis, LuEllipsisVertical } from "react-icons/lu"
+import { Tickets } from "./tickets"
 
 export const PropertyTabs = ({ property, setTab }: { property?: Property | null, setTab: (tab: string) => void }) => {
 
@@ -17,8 +18,7 @@ export const PropertyTabs = ({ property, setTab }: { property?: Property | null,
                     <Tabs.Trigger value="overview" onClick={() => setTab('Overview')}>Overview</Tabs.Trigger>
                     <Tabs.Trigger value="units" onClick={() => setTab('Units')}>Units</Tabs.Trigger>
                     <Tabs.Trigger value="tickets" onClick={() => setTab('Tickets')}>Tickets</Tabs.Trigger>
-                    <Tabs.Trigger value="documents" onClick={() => setTab('Documents')}>Documents</Tabs.Trigger>
-                    <Tabs.Indicator bg={'white'} shadow={'none'} />
+                    <Tabs.Indicator bg={'transparent'} shadow={'none'} />
                 </Tabs.List>
                 <Menu.Root>
                     <Menu.Trigger>
@@ -41,8 +41,9 @@ export const PropertyTabs = ({ property, setTab }: { property?: Property | null,
             <Tabs.Content value="units">
                 <Unit property={property} />
             </Tabs.Content>
-            <Tabs.Content value="tickets"></Tabs.Content>
-            <Tabs.Content value="documents"></Tabs.Content>
+            <Tabs.Content value="tickets">
+                <Tickets />
+            </Tabs.Content>
 
         </Tabs.Root>
     )

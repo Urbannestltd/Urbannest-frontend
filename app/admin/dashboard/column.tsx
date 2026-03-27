@@ -1,14 +1,13 @@
 import { Progress } from "@/components/ui/progress-bar"
 import { formatDateRegular } from "@/services/date"
-import { Property } from "@/store/admin/properties"
-import { Properties } from "@/utils/model"
 import { Center, HStack, Text } from "@chakra-ui/react"
 import { ColumnDef } from "@tanstack/react-table"
 import Image from "next/image"
 import { LuEllipsisVertical } from "react-icons/lu"
 import rentImage from '@/app/assets/images/lease-image.png'
+import { Properties } from "@/store/admin/properties"
 
-export const useColumns = (): ColumnDef<Property, any>[] => {
+export const useColumns = (): ColumnDef<Properties, any>[] => {
     const occupancy = (row: number | string) => {
         const value = typeof row === "string"
             ? parseFloat(row.replace("%", ""))
@@ -40,13 +39,13 @@ export const useColumns = (): ColumnDef<Property, any>[] => {
             header: "Owner Info",
         },
         {
-            accessorFn: (row) => row.stats.occupancyRate,
+            accessorFn: (row) => row._count.units,
             header: "Occupancy",
             cell: ({ row }) => {
-                const occupance = occupancy(row.original.stats.occupancyRate)
+                const occupance = occupancy(row.original._count.units)
                 return (
                     <Center px={2} w={'50px'} rounded={'full'} bg={occupance}>
-                        <Text>{row.original.stats.occupancyRate}</Text>
+                        <Text>{row.original._count.units}</Text>
                     </Center>)
             }
 
@@ -55,9 +54,9 @@ export const useColumns = (): ColumnDef<Property, any>[] => {
             accessorKey: 'complaints',
             header: "Complaints",
             cell: ({ row }) => {
-                const complaint = complaints(row.original.stats.totalComplaints)
+                const complaint = complaints(0)
                 return (
-                    <Progress showValueText value={row.original.stats.totalComplaints} color={complaint} info={complaint} />
+                    <Progress showValueText value={0} color={complaint} info={complaint} />
                 )
             }
         },

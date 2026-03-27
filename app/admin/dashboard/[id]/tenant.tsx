@@ -13,13 +13,20 @@ import Pfp from '@/app/assets/images/user-avatar.png'
 import { MainButton } from "@/components/ui/button"
 import { LuEllipsisVertical, LuMail, LuPhone } from "react-icons/lu"
 import { Divider } from "@/components/ui/divider"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { formatDate } from "@/services/date"
 import { Modal } from "@/components/ui/dialog"
 import { LeaseInfo } from "./lease-info"
+import { useAdminTenantStore } from "@/store/admin/tenant"
 
 export const Tenant = ({ tenant }: { tenant: Row }) => {
     const [maintenanceFilter, setMaintenanceFilter] = useState(7)
+    const tenants = useAdminTenantStore((state) => state.tenant)
+    const fetchTenant = useAdminTenantStore((state) => state.fetchTenant)
+
+    useEffect(() => {
+        fetchTenant(tenant.id)
+    }, [tenant.id])
     const status = [
         {
             value: 'AVAILABLE',
@@ -32,34 +39,34 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
             bg: '#EBFFEE'
         }
     ]
-    const statusDeets = status.find((status) => status.value === tenant.status)
+    const statusDeets = status.find((status) => status.value === tenants?.status)
 
     const columns = useLeaseHistoryColumns()
 
     const generalInfo = [
         {
             label: 'Email Address',
-            value: 'Teniola.Khadijah@gmail.com',
+            value: tenants?.email ?? 'N/A',
         },
         {
             label: 'Contact Number',
-            value: '+234 812 345 6789'
+            value: tenants?.phone ?? 'N/A'
         },
         {
             label: 'Emergency Contact No',
-            value: '+234 812 345 6789'
+            value: tenants?.emergencyContact ?? 'N/A'
         },
         {
             label: 'Date of Birth',
-            value: '11-12-1997'
+            value: formatDate(tenants?.dateOfBirth) ?? 'N/A'
         },
         {
             label: 'Occupation',
-            value: 'UX Designer'
+            value: tenants?.occupation ?? 'N/A'
         },
         {
             label: 'Current Employer',
-            value: 'Paystack'
+            value: tenants?.employer ?? 'N/A'
         },
     ]
     const LeaseDetails = {
@@ -67,11 +74,11 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
         address: '1234 Baker Street, San Francisco',
         rentAmount: '₦12,000,000',
         info: [
-            { label: 'Lease Length', value: '4 years' },
-            { label: 'Lease Start Date', value: '12-11-23' },
-            { label: 'Lease End Date', value: '12-11-26' },
-            { label: 'Service Charge', value: '₦2,000,000' },
-            { label: 'Move Out Notice', value: '1 month' },
+            { label: 'Lease Length', value: tenants?.currentLease?.leaseLength ?? 'N/A' },
+            { label: 'Lease Start Date', value: formatDate(tenants?.currentLease?.startDate) ?? 'N/A' },
+            { label: 'Lease End Date', value: formatDate(tenants?.currentLease?.endDate) ?? 'N/A' },
+            { label: 'Service Charge', value: tenants?.currentLease?.serviceCharge ?? 'N/A' },
+            { label: 'Move Out Notice', value: tenants?.currentLease?.moveOutNotice ?? 'N/A' },
         ],
         agreement: 'View Agreement'
     }
@@ -95,20 +102,27 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
             bgColor: '#F5F5F5',
             textColor: '#757575'
         }
+
     ]
 
+    const stringToNumber = (val: string | number | undefined) => {
+        if (val === undefined || val === null) return 0
+        return parseFloat(String(val).replace('%', '')) || 0
+    }
+
+
     return (
-        <Flex gap={8}>
+        <Flex maxW={'full'} justify={'center'} gap={8}>
             <Box>
                 <SectionBox w={'748px'}>
                     <HStack justify={'space-between'}>
                         <Flex align={'center'} gap={3}>
                             <Box boxSize={'90px'}>
-                                <Avatar size='full' name={tenant.name} src={tenant.tenantProfilePic} />
+                                <Avatar size='full' name={tenants?.fullName} src={tenants?.profilePic} />
                             </Box>
                             <Box>
-                                <Text className="text-[20px] satoshi-bold">{tenant.tenantName}</Text>
-                                <Center py={1} mt={1} color={'#02542D'} className="satoshi-medium text-[14px]" rounded={'full'} bg={statusDeets?.bg}>Active Lease</Center>
+                                <Text className="text-[20px] satoshi-bold">{tenants?.fullName}</Text>
+                                <Center py={1} mt={1} color={'#02542D'} className="satoshi-medium text-[14px]" rounded={'full'} bg={statusDeets?.bg}>{statusDeets?.label}</Center>
                             </Box>
                         </Flex>
                         <CgTrash size={20} />
@@ -135,11 +149,11 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                         <HStack>
                             <Box w={'50%'} pb={1.5} borderBottom={'1px solid #F1F1F1'}>
                                 <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Current Rent Amount</Text>
-                                <Text className="satoshi-bold text-2xl">{LeaseDetails.rentAmount}</Text>
+                                <Text className="satoshi-bold text-2xl">{tenants?.currentLease?.rentAmount}</Text>
                             </Box>
                             <Box w={'50%'}>
                                 <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Lease Expiry</Text>
-                                <ProgressCircle showValueText value={80} size={'sm'} />
+                                <ProgressCircle showValueText thickness={2} cap={'round'} value={stringToNumber(tenants?.currentLease?.leaseExpiryPercentage)} color={'red'} size={'xs'} />
                             </Box>
 
                         </HStack>
@@ -159,18 +173,18 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                 </SectionBox>
                 <SectionBox mt={6} w={'748px'}>
                     <PageTitle mt={2} fontSize={'18px'} title="Lease History" />
-                    <DataTable columns={columns} my={0} data={leaseAgreements} />
+                    <DataTable columns={columns} my={0} data={tenants?.leaseHistory ?? []} />
                 </SectionBox>
             </Box>
-            <Box ml={8}>
+            <Box>
                 <SectionBox w={'376px'}>
                     <PageTitle title={'Cohabitants'} fontSize={'16px'} />
                     {
-                        PropertyContacts.map((contact, index) => (
+                        tenants?.cohabitants?.map((contact, index) => (
                             <Box key={index}>
                                 <HStack justify={'space-between'}>
                                     <Flex mt={2} justify={'start'}>
-                                        <Avatar size={'lg'} src={contact.pfp.src} />
+                                        <Avatar size={'lg'} src={contact.photoUrl} name={contact.name} />
                                         <Box ml={'11px'} w={'full'}>
                                             <Box >
                                                 <Text className="satoshi-bold">{contact.name}</Text>
@@ -211,14 +225,14 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                         ))}
                     </HStack>
                     <Box mt={6}>
-                        {VistorData.visitors.map((row, index) => {
+                        {tenants?.visitorHistory?.map((row, index) => {
                             const status = Status.find((status) => status.value === (row?.status ?? 'CHECKED_IN'))
 
                             return <Box p={1} >
                                 <HStack justify={'space-between'} >
                                     <Box>
-                                        <Text className="satoshi-bold text-sm capitalize">{row?.visitorName}</Text>
-                                        <Text className="satoshi-medium text-sm">{row?.visitorPhone}</Text>
+                                        <Text className="satoshi-bold text-sm capitalize">{row?.name}</Text>
+                                        <Text className="satoshi-medium text-sm">{row?.phone}</Text>
                                     </Box>
                                     <Flex gap={1}>
                                         <Flex
@@ -252,7 +266,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                                 </HStack>
                                 <HStack justify={'space-between'} my={1}>
                                     <Text className="satoshi-bold text-sm">Frequency:</Text>
-                                    <Text className="satoshi-medium text-sm capitalize" >{row?.access}</Text>
+                                    <Text className="satoshi-medium text-sm capitalize" >{row?.frequency}</Text>
                                 </HStack>
                                 {index !== VistorData.visitors.length - 1 && <Divider my={4} />}
                             </Box>
@@ -263,18 +277,18 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                 <SectionBox mt={6}>
                     <PageTitle title="Payment History" fontSize={'16px'} />
                     <Box>
-                        {PaymentHistory.map((item, index) => (
+                        {tenants?.paymentHistory?.map((item, index) => (
                             <><Flex p={2} key={index}>
                                 <Box>
-                                    <Text className="satoshi-bold">{item.paymentName}</Text>
+                                    <Text className="satoshi-bold">{item.amount}</Text>
                                     <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'} >{formatDate(item.date)}</Text>
                                 </Box>
-                                <Box className={`text-end ${item.success ? 'text-success-400' : 'text-error-400'}`} ml={'auto'}>
+                                <Box className={`text-end ${item.status ? 'text-success-400' : 'text-error-400'}`} ml={'auto'}>
                                     <Text className="satoshi-bold">{item.amount}</Text>
-                                    <Text fontSize={'12px'}>Payment{' '}{item.success === true ? 'Successful' : 'Failed'}</Text>
+                                    <Text fontSize={'12px'}>Payment{' '}{item.status}</Text>
                                 </Box>
                             </Flex>
-                                {index !== PaymentHistory.length - 1 && <Divider my={4} />}
+                                {index !== tenants.paymentHistory.length - 1 && <Divider my={4} />}
                             </>
                         ))}
                     </Box>

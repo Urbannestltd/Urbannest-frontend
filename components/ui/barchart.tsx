@@ -1,11 +1,11 @@
 "use client"
-import { Box, HStack, Text } from "@chakra-ui/react"
+import { Box, Flex, HStack, Image, Skeleton, Text } from "@chakra-ui/react"
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import leaseImages from '@/app/assets/images/lease-image.png'
 import { useState } from "react"
 
 
-export const Demo = ({ chartData }: { chartData: { month: string; count: number }[] }) => {
+export const Demo = ({ chartData, loading }: { chartData: { month: string; count: number }[], loading: boolean }) => {
     const allData = {
         perProperty: [
             { label: "Property 1", value: 1200 },
@@ -40,6 +40,7 @@ export const Demo = ({ chartData }: { chartData: { month: string; count: number 
     const maxValue = Math.max(...chartData.map((d) => d.count))
 
 
+
     return (
         <Box>
             <HStack justify={'space-between'}>
@@ -55,7 +56,7 @@ export const Demo = ({ chartData }: { chartData: { month: string; count: number 
                     <option value="yearly">Yearly</option>
                 </select>
             </HStack>
-            <ResponsiveContainer width="100%" height={300}>
+            {loading ? <Skeleton height={'300px'} /> : <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={chartData} barSize={32}>
                     <CartesianGrid
                         vertical={false}
@@ -74,7 +75,7 @@ export const Demo = ({ chartData }: { chartData: { month: string; count: number 
                         tickFormatter={(value) => `${value}`}
                     />
 
-                    <Tooltip cursor={{ fill: "transparent" }} />
+                    <Tooltip cursor={{ fill: "transparent" }} content={<CustomTooltip />} />
                     <Bar dataKey='count' radius={[10, 10, 0, 0]} label={<CustomLabel />}>
                         {chartData.map((entry, index) => (
                             <Cell
@@ -85,7 +86,7 @@ export const Demo = ({ chartData }: { chartData: { month: string; count: number 
                         ))}
                     </Bar>
                 </BarChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer>}
         </Box>
     )
 }
@@ -98,14 +99,45 @@ const CustomLabel = ({ x, y, width }: any) => {
             y={y - imgSize / 2 - 10}
             width={imgSize}
             height={imgSize / 2}
+
         >
             <img
                 src={leaseImages.src}
                 width={imgSize}
                 height={imgSize}
-
-                style={{ borderRadius: "2px" }}
+                style={{ borderRadius: "2px", margin: '10px' }}
             />
         </foreignObject>
+    )
+}
+
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (!active || !payload || !payload.length) return null
+
+    return (
+        <Box
+            bg='#FDFAF3'
+            border="1px solid #E5E7EB"
+            borderRadius="8px"
+            p={3}
+            shadow="md"
+            minW="140px"
+            position={'relative'}
+        >
+            <Text position={'absolute'} top={-7}>{label}</Text>
+            {payload.map((entry: any, index: number) => (
+                <Flex
+                    justify={'center'}
+                    align={'center'}>
+                    <Image src={leaseImages.src} width={'134.56px'} h={'65.24px'} rounded={'lg'} alt="lease" />
+                    <Box ml={2}>
+                        <Text className="satoshi-bold text-[18px]">The Wings Court</Text>
+                        <Text fontSize={'14px'}>1234 Baker Street, San Francisco</Text>
+                    </Box></Flex>
+
+            ))}
+
+        </Box>
     )
 }

@@ -71,11 +71,11 @@ export default function Auth() {
                 <Flex
                     direction={"column"}
                     mt={10}
-                    w={"468px"}
+                    w={"full"}
                     align={"center"}
                     justify={'center'}
                     h={'90vh'}
-                    bg={"white"}
+                    bg={'transparent'}
                 >
                     <Image src={Logo} alt="loader" />
                 </Flex>

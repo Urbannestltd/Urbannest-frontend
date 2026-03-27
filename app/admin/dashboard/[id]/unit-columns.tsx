@@ -89,7 +89,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
             accessorKey: 'leaseExpiry',
             header: 'Lease Expiry',
             cell({ row }) {
-                return <ProgressCircle cap={'round'} thickness={'20px'} showValueText color={'#14AE5C'} value={80} size={'sm'} />
+                return <ProgressCircle showValueText value={80} thickness={2} cap={'round'} color={'green'} size={'xs'} />
             },
         },
         {
@@ -110,7 +110,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
                 return <Flex
                     justify={'center'}
                 >
-                    <Menu.Root>
+                    <Menu.Root >
                         <Menu.Trigger>
                             <LuEllipsisVertical size={20} />
                         </Menu.Trigger>

@@ -1,3 +1,6 @@
+import { remove } from "lodash"
+import { uploadLease } from "./admin/property"
+
 const endpoints = {
 	storeFile: "/storage/sign-url",
 	//Auth endpoints
@@ -71,7 +74,14 @@ const adminEndpoints = {
 
 	//Property endpoints
 	fetchProperties: `/admin/properties`,
+	fetchProperty: (id: string) => `/admin/properties/${id}`,
 	fetchUnits: (id: string) => `/admin/units/${id}/units`,
+	fetchTenant: (id: string) => `/admin/units/${id}`,
+	uploadLease: `/admin/leases`,
+
+	//MEmebr
+	addMember: (id: string) => `/admin/properties/${id}/members`,
+	removeMember: (id: string) => `/admin/properties/${id}/members/remove`,
 }
 
 export { adminEndpoints }

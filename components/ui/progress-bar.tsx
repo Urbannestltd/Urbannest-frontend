@@ -13,7 +13,6 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
         const { showValueText, valueText, label, info, color, ...rest } = props
         return (
             <ChakraProgress.Root orientation='horizontal' shape={'rounded'} {...rest} ref={ref}>
-
                 {label && (
                     <ChakraProgress.Label mb={0} whiteSpace="nowrap">
                         {label}
