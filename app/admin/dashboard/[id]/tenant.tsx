@@ -151,7 +151,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                     </HStack>
                     <Box mt={6}>
                         <HStack>
-                            <Box w={'50%'} pb={1.5} borderBottom={'1px solid #F1F1F1'}>
+                            <Box w={'50%'} pb={1.5}>
                                 <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Current Rent Amount</Text>
                                 <Text className="satoshi-bold text-2xl">{tenants?.currentLease?.rentAmount}</Text>
                             </Box>
@@ -161,6 +161,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                             </Box>
 
                         </HStack>
+                        <Divider />
                         <Grid gapX={'100px'} mt={4.5} gapY={'52px'} alignContent={'space-between'} templateColumns={'repeat(3,1fr)'}>
                             {LeaseDetails.info.map((item, index) => (
                                 <Box key={index}>
@@ -177,7 +178,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                 </SectionBox>
                 <SectionBox mt={6} w={'728px'}>
                     <PageTitle mt={2} fontSize={'18px'} title="Lease History" />
-                    <DataTable columns={columns} my={0} data={tenants?.leaseHistory ?? []} />
+                    <DataTable columns={columns} tableName="Lease History" my={0} data={tenants?.leaseHistory ?? []} />
                 </SectionBox>
             </Box>
             <Box>
