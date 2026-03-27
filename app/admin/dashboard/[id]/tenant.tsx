@@ -110,11 +110,15 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
         return parseFloat(String(val).replace('%', '')) || 0
     }
 
+    /*if (!tenants) return <Flex h={'50vh'} justify={'center'} align={'center'}>
+        <Text fontSize={'24px'} className="satoshi-bold">No Tenant Info Found</Text>
+    </Flex> */
+
 
     return (
         <Flex maxW={'full'} justify={'center'} gap={8}>
-            <Box>
-                <SectionBox w={'748px'}>
+            <Box w={'728px'}>
+                <SectionBox w={'728px'}>
                     <HStack justify={'space-between'}>
                         <Flex align={'center'} gap={3}>
                             <Box boxSize={'90px'}>
@@ -139,7 +143,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                         </Grid>
                     </Box>
                 </SectionBox>
-                <SectionBox mt={6} w={'748px'}>
+                <SectionBox mt={6} w={'728px'}>
                     <HStack justify={'space-between'}>
                         <PageTitle mt={2} fontSize={'18px'} title="Lease Information" />
                         <Modal size={'cover'} className="w-[700px]" triggerElement={<FiEdit size={16} />} modalContent={<LeaseInfo />} />
@@ -171,7 +175,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                         </Grid>
                     </Box>
                 </SectionBox>
-                <SectionBox mt={6} w={'748px'}>
+                <SectionBox mt={6} w={'728px'}>
                     <PageTitle mt={2} fontSize={'18px'} title="Lease History" />
                     <DataTable columns={columns} my={0} data={tenants?.leaseHistory ?? []} />
                 </SectionBox>
