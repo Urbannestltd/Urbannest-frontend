@@ -13,6 +13,7 @@ import { Avatar } from "@/components/ui/avatar"
 import { Divider } from "@/components/ui/divider"
 import { Property, usePropertyStore } from "@/store/admin/properties"
 import { useEffect } from "react"
+import { ImageSlot } from "@/components/ui/image-slot"
 
 export const Overview = ({ property }: { property?: Property | null }) => {
     const Property = usePropertyStore((state) => state.property)
@@ -137,11 +138,11 @@ export const Overview = ({ property }: { property?: Property | null }) => {
                 <SectionBox w={'full'}>
                     <PageTitle title="Images" fontSize={'16px'} />
                     <Box w={'full'}>
-                        <Image src={rentImage.src} className="w-full h-[177px] rounded-lg mt-2" alt="Property Image 1" />
+                        <ImageSlot src={Property.images[0]} className="w-full h-[177px] rounded-lg mt-2" alt="Property Image 1" />
                         <HStack mt={2} justify={'center'} w={'full'} mb={6}>
-                            <Image src={rentImage.src} className="w-[31%] h-[93px] rounded-lg" alt="Property Image 2" />
-                            <Image src={rentImage.src} className="w-[31%] h-[93px] rounded-lg" alt="Property Image 3" />
-                            <Image src={rentImage.src} className="w-[31%] h-[93px] rounded-lg" alt="Property Image 4" />
+                            <ImageSlot src={Property.images[1]} className="w-[31%] h-[93px] rounded-lg" alt="Property Image 2" />
+                            <ImageSlot src={Property.images[2]} className="w-[31%] h-[93px] rounded-lg" alt="Property Image 3" />
+                            <ImageSlot src={Property.images[3]} className="w-[31%] h-[93px] rounded-lg" alt="Property Image 4" />
                         </HStack>
                         <MainButton icon={<LuImage />} size='lg' variant='outline'>See All Images ({Property?.images.length})</MainButton>
                     </Box>
