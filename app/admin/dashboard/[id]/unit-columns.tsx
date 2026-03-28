@@ -22,6 +22,7 @@ export interface Row {
     moveInDate: string
     name: string
     rentAmount: number
+    tenantId: string
     status: string
     tenantName: string
     tenantProfilePic: string
@@ -105,7 +106,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
         {
             accessorKey: 'action',
             header: 'Action',
-            cell: () => {
+            cell: ({ row }) => {
                 const [open, setOpen] = useState(false)
                 return <Flex
                     justify={'center'}
@@ -123,7 +124,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
                             </Menu.Positioner>
                         </Portal>
                     </Menu.Root>
-                    <Modal open={open} onOpenChange={setOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal />} /></Flex>
+                    <Modal open={open} onOpenChange={setOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal unit unitId={row.original.tenantId} />} /></Flex>
             }
         }
 

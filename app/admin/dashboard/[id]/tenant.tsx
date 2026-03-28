@@ -25,7 +25,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
     const fetchTenant = useAdminTenantStore((state) => state.fetchTenant)
 
     useEffect(() => {
-        fetchTenant(tenant.id)
+        fetchTenant(tenant.tenantId)
     }, [tenant.id])
     const status = [
         {

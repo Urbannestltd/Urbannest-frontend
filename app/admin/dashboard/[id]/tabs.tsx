@@ -7,6 +7,8 @@ import { Unit } from "./unit"
 import { useState } from "react"
 import { LuEllipsis, LuEllipsisVertical } from "react-icons/lu"
 import { Tickets } from "./tickets"
+import { Modal } from "@/components/ui/dialog"
+import { AddMemberModal } from "./add-modal"
 
 export const PropertyTabs = ({ property, setTab }: { property?: Property | null, setTab: (tab: string) => void }) => {
 
@@ -27,7 +29,7 @@ export const PropertyTabs = ({ property, setTab }: { property?: Property | null,
                     <Portal>
                         <Menu.Positioner>
                             <Menu.Content>
-                                <Menu.Item value="assign-members" className="satoshi-medium">Assign Members</Menu.Item>
+                                <Modal triggerElement={<Menu.Item value="assign-members" className="satoshi-medium">Assign Members</Menu.Item>} modalContent={<AddMemberModal propertyId={property?.id} unitId="" />} />
                                 <Menu.Item value="delete-property" className="satoshi-medium" color={'#C00F0C'}>Delete Property</Menu.Item>
                             </Menu.Content>
                         </Menu.Positioner>

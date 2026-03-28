@@ -13,13 +13,43 @@ import toast from "react-hot-toast"
 import { FiSearch } from "react-icons/fi"
 import { LuChevronDown } from "react-icons/lu"
 
-export const AddMemberModal = () => {
+export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, propertyId?: string, unit?: boolean }) => {
     const [userId, setUserId] = useState('')
     const [inviteRole, setInviteRole] = useState<{ value: string, label: string } | null>(null)
 
     const [memberRoles, setMemberRoles] = useState<Record<number, { value: string, label: string }>>({}); // 👈 per-member roles
     const [deleteTarget, setDeleteTarget] = useState<{ index: number, role: string } | null>(null)
 
+    const roles = createListCollection({
+        items: unit
+            ? [{ value: "TENANT", label: "Tenant" }]
+            : [
+                { value: 'LANDLORD', label: 'Landlord' },
+                { value: 'FACILITY_MANAGER', label: 'Facility Manager' },
+            ]
+    })
+
+    const Members = unit ? [
+        {
+            name: "Ade Adeyemi",
+            role: "TENANT",
+            email: 'adeadeyemi@gmailcom',
+        },
+        {
+            name: 'kunle adeyemi',
+            role: "TENANT",
+            email: 'kunle@gmailcom',
+        }
+    ] : [{
+        name: 'Ibrahim Adeyemi',
+        role: "FACILITY_MANAGER",
+        email: 'ibrahim@gmailcom',
+    },
+    {
+        name: 'John Doe',
+        role: "LANDLORD",
+        email: 'john@gmailcom',
+    },]
     const handleRoleChange = (memberIndex: number, role: { value: string, label: string }) => {
         setMemberRoles(prev => ({ ...prev, [memberIndex]: role }))
     }
@@ -35,11 +65,11 @@ export const AddMemberModal = () => {
     })
     const onAddMember = () => {
         const payload: addMemberPayload = {
-            propertyId: '',
+            propertyId: propertyId ?? '',
             data: {
                 userId: userId,
                 role: inviteRole?.value ?? '',
-                unitId: '',
+                unitId: unitId ?? '',
                 rentAmount: 0,
                 leaseMonths: 0
             }
@@ -77,7 +107,7 @@ export const AddMemberModal = () => {
                                 minW={'150px'}
                                 justify={'space-between'}
                             >
-                                <Text fontSize={'14px'}>{inviteRole?.label ?? 'Facility Manager'}</Text>
+                                <Text fontSize={'14px'}>{inviteRole?.label ?? unit ? 'Tenant' : 'Landlord'}</Text>
                                 <LuChevronDown />
                             </Flex>
                         </Menu.Trigger>
@@ -179,13 +209,13 @@ const DeletePopUp = ({ role }: { role: string }) => {
 
     const description = [
         {
-            role: 'tenant', description: 'This will remove the tenant from the unit. They will no longer have access to their tenant account for this property.',
+            role: 'TENANT', description: 'This will remove the tenant from the unit. They will no longer have access to their tenant account for this property.',
         },
         {
-            role: 'landlord', description: 'This will remove the landlord from the property. They will no longer have access to manage it.',
+            role: 'LANDLORD', description: 'This will remove the landlord from the property. They will no longer have access to manage it.',
         },
         {
-            role: 'facility-manager', description: 'This will remove the facility manager from the property. They will no longer receive or manage maintenance requests for it.',
+            role: 'FACILITY MANAGER', description: 'This will remove the facility manager from the property. They will no longer receive or manage maintenance requests for it.',
         }
     ]
     const selectDescription = description.find(item => item.role === role)
@@ -199,33 +229,3 @@ const DeletePopUp = ({ role }: { role: string }) => {
 
 }
 
-const roles = createListCollection({
-    items: [
-        { value: "TENANT", label: "Tenant" },
-        { value: 'LANDLORD', label: 'Landlord' },
-        { value: 'FACILITY_MANAGER', label: 'Facility Manager' },
-    ]
-})
-
-const Members = [
-    {
-        name: "Ade Adeyemi",
-        role: "tenant",
-        email: 'adeadeyemi@gmailcom',
-    },
-    {
-        name: 'Ibrahim Adeyemi',
-        role: "facility-manager",
-        email: 'ibrahim@gmailcom',
-    },
-    {
-        name: 'John Doe',
-        role: "landlord",
-        email: 'john@gmailcom',
-    },
-    {
-        name: 'kunle adeyemi',
-        role: "tenant",
-        email: 'kunle@gmailcom',
-    }
-]
