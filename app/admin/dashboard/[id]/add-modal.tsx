@@ -17,7 +17,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
     const [userId, setUserId] = useState('')
     const [inviteRole, setInviteRole] = useState<{ value: string, label: string } | null>(null)
 
-    const [memberRoles, setMemberRoles] = useState<Record<number, { value: string, label: string }>>({}); // 👈 per-member roles
+    const [memberRoles, setMemberRoles] = useState<Record<number, { value: string, label: string }>>({});
     const [deleteTarget, setDeleteTarget] = useState<{ index: number, role: string } | null>(null)
 
     const roles = createListCollection({
@@ -79,6 +79,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
 
     }
 
+
     return (
         <Box p={4}>
             <PageTitle title="Add A Member" />
@@ -131,16 +132,17 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                             </Menu.Positioner>
                         </Portal>
                     </Menu.Root></Box>
-                <MainButton className="h-[34px]" onClick={onAddMember} size='sm'>Invite Member</MainButton>
+                <MainButton className="h-[34px] " onClick={onAddMember} size='sm'>Invite Member</MainButton>
             </HStack>
 
             <Box borderBottom={'1px solid #F5F5F5'}>
-                <Text pb={2} w={'fit'} borderBottom={'2px solid #000000'}>Members (45)</Text>
+                <Text pb={2} w={'fit'} borderBottom={'2px solid #000000'}>Members ({Members.length})</Text>
             </Box>
 
             <Box>
                 {Members.map((member, memberIndex) => {
-                    const currentRole = memberRoles[memberIndex] // 👈 per member
+                    const currentRole = memberRoles[memberIndex]
+                    const initialRole = roles.items.find(role => role.value === member.role)
                     return (
                         <Flex key={memberIndex} _hover={{ bg: '#F5F5F5' }} align={'center'} justify={'space-between'} p={2}>
                             <Flex align={'center'}>
@@ -154,7 +156,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                             <Menu.Root>
                                 <Menu.Trigger>
                                     <Flex align={'center'} gap={2} p={2} border={'1px solid #D9D9D9'} borderRadius={'6px'} cursor={'pointer'}>
-                                        {currentRole?.label ?? member.role}
+                                        {currentRole?.label ?? initialRole?.label}
                                         <LuChevronDown />
                                     </Flex>
                                 </Menu.Trigger>
@@ -184,7 +186,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                                                 _hover={{ bg: '#FDFAF3' }}
                                                 className="satoshi-medium"
                                             >
-                                                Remove {currentRole?.label ?? member.role}
+                                                Remove {currentRole?.label ?? initialRole?.label}
                                             </Menu.Item>
                                         </Menu.Content>
                                     </Menu.Positioner>

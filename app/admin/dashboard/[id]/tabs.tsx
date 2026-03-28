@@ -11,6 +11,7 @@ import { Modal } from "@/components/ui/dialog"
 import { AddMemberModal } from "./add-modal"
 
 export const PropertyTabs = ({ property, setTab }: { property?: Property | null, setTab: (tab: string) => void }) => {
+    const [isOpen, setIsOpen] = useState(false)
 
 
     return (
@@ -29,12 +30,13 @@ export const PropertyTabs = ({ property, setTab }: { property?: Property | null,
                     <Portal>
                         <Menu.Positioner>
                             <Menu.Content>
-                                <Modal triggerElement={<Menu.Item value="assign-members" className="satoshi-medium">Assign Members</Menu.Item>} modalContent={<AddMemberModal propertyId={property?.id} unitId="" />} />
+                                <Menu.Item onClick={() => setIsOpen(true)} value="assign-members" className="satoshi-medium">Assign Members</Menu.Item>
                                 <Menu.Item value="delete-property" className="satoshi-medium" color={'#C00F0C'}>Delete Property</Menu.Item>
                             </Menu.Content>
                         </Menu.Positioner>
                     </Portal>
                 </Menu.Root>
+                <Modal open={isOpen} onOpenChange={setIsOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal propertyId={property?.id} />} />
             </Flex>
             <Divider my={0} />
             <Tabs.Content value="overview">
