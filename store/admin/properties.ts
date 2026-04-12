@@ -55,9 +55,7 @@ export interface Property {
 }
 
 export interface Unit {
-	grouped: {
-		Unassigned: Row[]
-	}
+	grouped: {}
 	totalUnits: number
 }
 

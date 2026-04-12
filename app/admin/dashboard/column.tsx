@@ -1,8 +1,7 @@
 import { Progress } from "@/components/ui/progress-bar"
 import { formatDateRegular } from "@/services/date"
-import { Center, HStack, Text } from "@chakra-ui/react"
+import { Center, HStack, Image, Text } from "@chakra-ui/react"
 import { ColumnDef } from "@tanstack/react-table"
-import Image from "next/image"
 import { LuEllipsisVertical } from "react-icons/lu"
 import rentImage from '@/app/assets/images/lease-image.png'
 import { Properties } from "@/store/admin/properties"
@@ -30,7 +29,7 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             accessorKey: 'name',
             header: "Name",
             cell: ({ row }) => <HStack>
-                <Image src={rentImage} alt="profile" className="rounded-lg" width={74} height={47} />
+                <Image src={row.original.images[0] ?? rentImage.src} alt="profile" className="rounded-lg" width={74} height={47} />
                 <Text>{row.original.name}</Text>
             </HStack>
         },

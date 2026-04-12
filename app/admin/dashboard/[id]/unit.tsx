@@ -15,6 +15,7 @@ import { set } from "lodash"
 
 export const Unit = ({ property }: { property?: Property | null }) => {
     const [showTenant, setShowTenant] = useState(false)
+    const [showAddUnit, setShowAddUnit] = useState(false)
 
     const [selectedRow, setSelectedRow] = useState<Row | null>(null)
 
@@ -35,9 +36,7 @@ export const Unit = ({ property }: { property?: Property | null }) => {
 
     //const FirstFloorUnits = units?.grouped.Unassigned.find((unit) => unit.floor === 1)
 
-    if (!units) {
-        return <Flex height={'50vh'} justify={'center'} align={'center'}>No Units for  {property?.name} Found</Flex>
-    }
+
 
 
     return (
@@ -52,14 +51,14 @@ export const Unit = ({ property }: { property?: Property | null }) => {
                 <HStack justify={'space-between'}>
                     <SearchInput />
                     <Flex>
-                        <Modal triggerIcon={<LuUser />} triggerContent="Add Unit" modalContent={<AddUnit />} />
+                        <Modal open={showAddUnit} onOpenChange={setShowAddUnit} triggerIcon={<LuUser />} triggerContent="Add Unit" modalContent={<AddUnit onClose={() => setShowAddUnit(false)} propertyId={property?.id ?? ''} propertyName={property?.name ?? ''} />} />
                     </Flex>
                 </HStack>
             </SectionBox>
-                <SectionBox>
-                    <PageTitle title="First Floor" />
-                    <DataTable tableName="Units" data={units?.grouped.Unassigned ?? null} emptyDetails={{ title: 'No Units Found', description: 'NonUn', icon: '' }} columns={columns} />
-                </SectionBox></>}
+                {Object.entries(units?.grouped ?? {}).map(([floorName, floorUnits]) => (<SectionBox my={4}>
+                    <PageTitle title={floorName} />
+                    <DataTable tableName="Units" data={floorUnits as Row[] ?? null} emptyDetails={{ title: 'No Units Found', description: 'No Units Found', icon: '' }} columns={columns} />
+                </SectionBox>))}</>}
         </>
     )
 }

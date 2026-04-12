@@ -45,8 +45,28 @@ export interface removeMemberPayload {
 	}
 }
 
+export interface addUnitPayload {
+	propertyId: string
+	data: {
+		name: string
+		floor: string
+		baseRent?: number
+		bedrooms?: number
+		bathrooms?: number
+		type: string
+		status?: string
+	}
+}
+
 export const addProperty = async (payload: AddPropertyPayload) => {
 	const response = await http.post(adminEndpoints.fetchProperties, payload)
+	return response.data.data as Promise<Property>
+}
+export const addUnit = async (payload: addUnitPayload) => {
+	const response = await http.post(
+		adminEndpoints.fetchUnits(payload.propertyId),
+		payload.data,
+	)
 	return response.data.data as Promise<Property>
 }
 
