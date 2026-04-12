@@ -4,7 +4,7 @@ import { CustomSelect } from "@/components/ui/custom-fields"
 import { Modal } from "@/components/ui/dialog"
 import { PageTitle } from "@/components/ui/page-title"
 import { SearchInput } from "@/components/ui/search-input"
-import { addMember, addMemberPayload } from "@/services/admin/property"
+import { addMember, addMemberPayload, removeMember, removeMemberPayload } from "@/services/admin/property"
 import { Box, Button, createListCollection, Flex, HStack, Input, InputGroup, Menu, Portal, Select, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { useState } from "react"
@@ -18,7 +18,14 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
     const [inviteRole, setInviteRole] = useState<{ value: string, label: string } | null>(null)
 
     const [memberRoles, setMemberRoles] = useState<Record<number, { value: string, label: string }>>({});
-    const [deleteTarget, setDeleteTarget] = useState<{ index: number, role: string } | null>(null)
+    const [deleteTarget, setDeleteTarget] = useState<{
+        index: number, data: {
+            userId: string,
+            role: string,
+            unitId: string,
+            propertyId: string
+        }
+    } | null>(null)
 
     const roles = createListCollection({
         items: unit
@@ -58,6 +65,8 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
         mutationFn: (payload: addMemberPayload) => addMember(payload),
         onSuccess: () => {
             toast.success('Member added successfully')
+            setUserId('')
+            setInviteRole(null)
         },
         onError: () => {
             toast.error('Failed to add member')
@@ -66,14 +75,9 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
     const onAddMember = () => {
         const payload: addMemberPayload = {
             propertyId: propertyId ?? '',
-            data: {
-                userId: userId,
-                role: inviteRole?.value ?? '',
-                unitId: unitId ?? '',
-                rentAmount: 0,
-                leaseMonths: 0
-            }
-
+            unitId: unitId ?? '',
+            userEmail: userId,
+            userRole: inviteRole?.value.toUpperCase() ?? ''
         }
         mutation.mutate(payload)
 
@@ -108,7 +112,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                                 minW={'150px'}
                                 justify={'space-between'}
                             >
-                                <Text fontSize={'14px'}>{inviteRole?.label ?? unit ? 'Tenant' : 'Landlord'}</Text>
+                                <Text fontSize={'14px'}>{inviteRole?.label ?? 'Role'}</Text>
                                 <LuChevronDown />
                             </Flex>
                         </Menu.Trigger>
@@ -178,7 +182,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                                             ))}
                                             <Menu.Item
                                                 value={`remove-${memberIndex}`} // 👈 unique per member
-                                                onClick={() => setDeleteTarget({ index: memberIndex, role: currentRole?.value ?? member.role })}
+                                                onClick={() => setDeleteTarget({ index: memberIndex, data: { userId: member.email, role: member.role, unitId: unitId ?? '', propertyId: propertyId ?? '' } })}
                                                 textTransform={'capitalize'}
                                                 borderLeft={'6px solid transparent'}
                                                 bg={'white'}
@@ -202,12 +206,43 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                 className="w-[350px] h-fit"
                 open={!!deleteTarget}
                 onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}
-                modalContent={<DeletePopUp role={deleteTarget?.role ?? ''} />}
+                modalContent={<DeletePopUp data={deleteTarget?.data ?? { userId: '', role: '', unitId: '', propertyId: '' }} />}
             />
         </Box>
     )
 }
-const DeletePopUp = ({ role }: { role: string }) => {
+const DeletePopUp = ({ data }: {
+    data: {
+        userId: string,
+        role: string,
+        unitId: string,
+        propertyId: string
+    }
+}) => {
+
+    const mutate = useMutation({
+        mutationFn: (payload: removeMemberPayload) => {
+            return removeMember(payload)
+        },
+        onSuccess: () => {
+            toast.success('Member removed successfully')
+        },
+        onError: () => {
+            toast.error('Failed to remove member')
+        }
+    })
+
+    const removeMembers = async () => {
+        const payload: removeMemberPayload = {
+            propertyId: data.propertyId ?? '',
+            data: {
+                userId: data.userId,
+                role: data.role,
+                unitId: data.unitId ?? '',
+            },
+        }
+        mutate.mutate(payload)
+    }
 
     const description = [
         {
@@ -220,12 +255,12 @@ const DeletePopUp = ({ role }: { role: string }) => {
             role: 'FACILITY MANAGER', description: 'This will remove the facility manager from the property. They will no longer receive or manage maintenance requests for it.',
         }
     ]
-    const selectDescription = description.find(item => item.role === role)
+    const selectDescription = description.find(item => item.role === data.role)
     return <>
         <Flex direction={'column'} mt={4} p={4} align={'center'}>
-            <Text fontSize={'18px'} mb={2} className="satoshi-bold capitalize">Remove {role}</Text>
+            <Text fontSize={'18px'} mb={2} className="satoshi-bold capitalize">Remove {data.role}</Text>
             <Text w={'full'} textWrap={'wrap'} mb={4} color={'#303030'} textAlign={'center'}  >{selectDescription?.description}</Text>
-            <Button h={'45px'} w={'full'} color={'white'} bg={'#C00F0C'}>Remove</Button>
+            <Button h={'45px'} onClick={removeMembers} w={'full'} color={'white'} bg={'#C00F0C'}>Remove</Button>
         </Flex>
     </>
 

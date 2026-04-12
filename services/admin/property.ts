@@ -16,7 +16,7 @@ export interface AddPropertyPayload {
 	noOfUnitsPerFloor: number
 }
 
-interface UploadLeasePayload {
+export interface UploadLeasePayload {
 	tenantId: string
 	unitId: string
 	rentAmount: number
@@ -28,13 +28,20 @@ interface UploadLeasePayload {
 }
 
 export interface addMemberPayload {
+	userEmail: string
+	unitId?: string
+	propertyId: string
+	userRole: string
+}
+
+export interface removeMemberPayload {
 	propertyId: string
 	data: {
 		userId: string
 		role: string
 		unitId: string
-		rentAmount: number
-		leaseMonths: number
+		rentAmount?: number
+		leaseMonths?: number
 	}
 }
 
@@ -49,8 +56,13 @@ export const uploadLease = async (payload: UploadLeasePayload) => {
 }
 
 export const addMember = async (payload: addMemberPayload) => {
-	const response = await http.post(
-		adminEndpoints.addMember(payload.propertyId),
+	const response = await http.post(adminEndpoints.addMember, payload)
+	return response.data.data as Promise<Property>
+}
+
+export const removeMember = async (payload: removeMemberPayload) => {
+	const response = await http.put(
+		adminEndpoints.removeMember(payload.propertyId),
 		payload.data,
 	)
 	return response.data.data as Promise<Property>

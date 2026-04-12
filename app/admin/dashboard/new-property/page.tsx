@@ -29,12 +29,16 @@ import { useMutation } from "@tanstack/react-query"
 import { addProperty, AddPropertyPayload } from "@/services/admin/property"
 import toast from "react-hot-toast"
 import { da } from "zod/v4/locales"
+import { useRouter } from "next/navigation"
+import { set } from "lodash"
 
 export default function NewProperty() {
     const { control, reset, handleSubmit, formState } = useForm<addPropertyFormData>()
     const [input, setInput] = useState("")
     const [amenities, setAmenities] = useState<string[]>([])
     const [files, setFiles] = useState<File[] | null>(null);
+    const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleAdd = () => {
         const item = input.trim()
@@ -56,29 +60,45 @@ export default function NewProperty() {
         mutationFn: (payload: AddPropertyPayload) => addProperty(payload),
         onSuccess: () => {
             toast.success('Property added successfully')
+            setIsLoading(false)
             reset()
+            router.push('/admin/dashboard')
         },
         onError: () => {
+            setIsLoading(false)
             toast.error('Something went wrong')
         }
     })
 
     const onSubmit = async (data: addPropertyFormData) => {
-        const urls = await upload()
+        const getUrls = async () => {
+            try {
+                setIsLoading(true)
+                const result = await upload()
+                return result
+            } catch (e) {
+                console.error(e)
+                return []
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        const urls = await getUrls()
+
 
         const payload: AddPropertyPayload = {
             name: data.propertyName,
             type: data.propertyType?.[0]?.toUpperCase() ?? '',
             price: data.propertyPrice,
             address: data.propertyAddress,
-            state: data.propertyState,
-            city: data.propertyState,
+            state: data.propertyState[0].toUpperCase(),
+            city: data.propertyState[0].toUpperCase(),
             zip: '1000001',
             amenities: amenities.length ? amenities : [],
             images: urls.length ? urls : [],
             noOfFloors: data.noOfFloors,
             noOfUnitsPerFloor: data.noOfUnitsPerFloor,
-
 
         }
         mutation.mutate(payload)
@@ -112,10 +132,11 @@ export default function NewProperty() {
                             fullWidth
                             variant="outline"
                             className="h-[39px]"
+                            onClick={() => router.back()}
                         >
                             Cancel
                         </MainButton>
-                        <MainButton size="lg" type="submit" disabled={mutation.isPending || !formState.isValid} fullWidth className="h-[39px]">
+                        <MainButton size="lg" type="submit" loading={mutation.isPending || isLoading} disabled={mutation.isPending || !formState.isValid} fullWidth className="h-[39px]">
                             Submit
                         </MainButton>
                     </Flex>
@@ -149,27 +170,52 @@ export default function NewProperty() {
                                     required
                                     label="Property Price"
                                     control={control}
+                                    onKeyDown={(e) => {
+                                        const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "+"]
+                                        if (!allowed.includes(e.key) && !/[0-9]/.test(e.key)) {
+                                            e.preventDefault()
+                                        }
+                                    }} pattern={{
+                                        value: /^[0-9]+$/,
+                                        message: "Enter a valid price",
+                                    }}
                                     placeholder="Property Price"
                                 />
                             </Flex>
                             <Flex gap={4} mt={6}>
-                                <CustomSelect
+                                <CustomInput
                                     name="noOfFloors"
                                     width={"full"}
                                     required
                                     label="No of Floors"
                                     control={control}
                                     placeholder="No of Floors"
-                                    collection={numberofFloors}
+                                    onKeyDown={(e) => {
+                                        const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "+"]
+                                        if (!allowed.includes(e.key) && !/[0-9]/.test(e.key)) {
+                                            e.preventDefault()
+                                        }
+                                    }} pattern={{
+                                        value: /^[0-9]+$/,
+                                        message: "Enter a valid number",
+                                    }}
                                 />
-                                <CustomSelect
+                                <CustomInput
                                     name="noOfUnitsPerFloor"
                                     width={"full"}
                                     required
                                     label="No of Units per Floor"
                                     control={control}
                                     placeholder="No of Units per Floor"
-                                    collection={numberofFloors}
+                                    onKeyDown={(e) => {
+                                        const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "+"]
+                                        if (!allowed.includes(e.key) && !/[0-9]/.test(e.key)) {
+                                            e.preventDefault()
+                                        }
+                                    }} pattern={{
+                                        value: /^[0-9]+$/,
+                                        message: "Enter a valid number",
+                                    }}
                                 />
                             </Flex>
                             <Flex gap={4} mt={6}>
@@ -181,12 +227,13 @@ export default function NewProperty() {
                                     control={control}
                                     placeholder="Property Address"
                                 />
-                                <CustomInput
+                                <CustomSelect
                                     name="propertyState"
                                     width={"full"}
                                     required
                                     label="State"
                                     control={control}
+                                    collection={States}
                                     placeholder="State"
                                 />
                             </Flex>
@@ -284,22 +331,55 @@ export default function NewProperty() {
 }
 const itemsTypes = createListCollection({
     items: [
-        { value: "SINGLE_UNIT", label: "Single Unit" },
-        { value: "MULTI_UNIT", label: "Multi Unit" },
+        { value: "RESIDENTIAL", label: "Residential" },
+        { value: "COMMERCIAL", label: "Commercial" },
     ],
 })
 
-const numberofFloors = createListCollection({
-    items: [
-        { value: 1, label: "1" },
-        { value: 2, label: "2" },
-        { value: 3, label: "3" },
-        { value: 4, label: "4" },
-        { value: 5, label: "5" },
-        { value: 6, label: "6" },
-        { value: 7, label: "7" },
-        { value: 8, label: "8" },
-        { value: 9, label: "9" },
-        { value: 10, label: "10" },
-    ],
+
+const nigeriaStates = [
+    "Abia",
+    "Adamawa",
+    "Akwa Ibom",
+    "Anambra",
+    "Bauchi",
+    "Bayelsa",
+    "Benue",
+    "Borno",
+    "Cross River",
+    "Delta",
+    "Ebonyi",
+    "Edo",
+    "Ekiti",
+    "Enugu",
+    "Gombe",
+    "Imo",
+    "Jigawa",
+    "Kaduna",
+    "Kano",
+    "Katsina",
+    "Kebbi",
+    "Kogi",
+    "Kwara",
+    "Lagos",
+    "Nasarawa",
+    "Niger",
+    "Ogun",
+    "Ondo",
+    "Osun",
+    "Oyo",
+    "Plateau",
+    "Rivers",
+    "Sokoto",
+    "Taraba",
+    "Yobe",
+    "Zamfara",
+    "FCT",
+]
+
+const States = createListCollection({
+    items: nigeriaStates.map((state) => ({
+        label: state,
+        value: state.toUpperCase(),
+    }))
 })

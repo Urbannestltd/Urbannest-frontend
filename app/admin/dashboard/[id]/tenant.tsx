@@ -1,7 +1,7 @@
 import { SectionBox } from "@/components/ui/section-box"
 import { Row } from "./unit-columns"
 import { Avatar } from "@/components/ui/avatar"
-import { Box, Button, Center, Flex, Grid, GridItem, HStack, Link, Menu, Text } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, Grid, GridItem, HStack, Link, Menu, Skeleton, Text } from "@chakra-ui/react"
 import { CgTrash } from "react-icons/cg"
 import { PageTitle } from "@/components/ui/page-title"
 import { FiEdit } from "react-icons/fi"
@@ -23,6 +23,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
     const [maintenanceFilter, setMaintenanceFilter] = useState(7)
     const tenants = useAdminTenantStore((state) => state.tenant)
     const fetchTenant = useAdminTenantStore((state) => state.fetchTenant)
+    const isLoading = useAdminTenantStore((state) => state.isLoading)
 
     useEffect(() => {
         fetchTenant(tenant.tenantId)
@@ -110,9 +111,14 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
         return parseFloat(String(val).replace('%', '')) || 0
     }
 
-    /*if (!tenants) return <Flex h={'50vh'} justify={'center'} align={'center'}>
+    if (!tenants) return <Flex h={'50vh'} justify={'center'} align={'center'}>
         <Text fontSize={'24px'} className="satoshi-bold">No Tenant Info Found</Text>
-    </Flex> */
+    </Flex>
+
+    if (isLoading) {
+        return <Skeleton h={'20vh'} />
+
+    }
 
 
     return (
@@ -146,7 +152,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                 <SectionBox mt={6} w={'728px'}>
                     <HStack justify={'space-between'}>
                         <PageTitle mt={2} fontSize={'18px'} title="Lease Information" />
-                        <Modal size={'cover'} className="w-[700px]" triggerElement={<FiEdit size={16} />} modalContent={<LeaseInfo />} />
+                        <Modal size={'cover'} className="h-fit w-[700px]" triggerElement={<FiEdit cursor={'pointer'} size={16} />} modalContent={<LeaseInfo tenantId={tenants.id} unitId={tenant.id} />} />
 
                     </HStack>
                     <Box mt={6}>
@@ -159,7 +165,6 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                                 <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Lease Expiry</Text>
                                 <ProgressCircle showValueText thickness={2} cap={'round'} value={stringToNumber(tenants?.currentLease?.leaseExpiryPercentage)} color={'red'} size={'xs'} />
                             </Box>
-
                         </HStack>
                         <Divider />
                         <Grid gapX={'100px'} mt={4.5} gapY={'52px'} alignContent={'space-between'} templateColumns={'repeat(3,1fr)'}>

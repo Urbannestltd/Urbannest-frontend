@@ -3,17 +3,54 @@ import { MainButton } from "@/components/ui/button"
 import { CustomInput, CustomSelect } from "@/components/ui/custom-fields"
 import { PageTitle } from "@/components/ui/page-title"
 import { TenantLeaseFormData } from "@/schema"
+import { uploadLease, UploadLeasePayload } from "@/services/admin/property"
+import { StoreFile } from "@/services/tenant/maintenance"
 import { Box, createListCollection, Flex, HStack } from "@chakra-ui/react"
+import { useMutation } from "@tanstack/react-query"
+import { error } from "console"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 
-const UploadDocuments = () => {
-    const [files, setFiles] = useState<File[] | null>(null)
+const UploadDocuments = ({ formData, onComplete, tenantId, unitId }: {
+    formData: TenantLeaseFormData,
+    onComplete: () => void,
+    tenantId: string,
+    unitId: string
+}) => {
+    const [files, setFiles] = useState<File | null>(null)
+
+    const mutate = useMutation({
+        mutationFn: (payload: UploadLeasePayload) => uploadLease(payload),
+        onSuccess: () => {
+            toast.success('Property added successfully')
+            onComplete()
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+
+    const handleSubmit = async () => {
+        const payload: UploadLeasePayload = {
+            tenantId: tenantId,
+            unitId: unitId,
+            rentAmount: formData.rentAmount,
+            serviceCharge: formData.serviceCharge,
+            startDate: formData.leaseStartDate,
+            endDate: formData.leaseEndDate,
+            moveOutNotice: formData.moveOutNotice[0],
+            documentUrl: await StoreFile({ file: files!, folder: 'leases' }),
+        }
+        mutate.mutate(payload)
+
+    }
+
     return (
         < >
             <PageTitle title="Upload Documents" mb={7.5} fontSize={'18px'} />
-            <DragAndDrop width={'full'} onFileChange={(file) => setFiles} />
-            <MainButton size="lg" className="my-4">
+            <DragAndDrop width={'full'} accept={'application/*'} onFileChange={setFiles} />
+            <MainButton size="lg" className="my-4" loading={mutate.isPending} disabled={!files} onClick={handleSubmit}>
                 Continue
             </MainButton>
         </>
@@ -103,15 +140,19 @@ const LeaseForm = ({ onNext }: { onNext: (next: boolean, data?: TenantLeaseFormD
     )
 }
 
-export const LeaseInfo = () => {
+export const LeaseInfo = ({ tenantId, unitId }: { tenantId: string, unitId: string }) => {
     const [next, setNext] = useState(false)
-    const [formdata, setFormData] = useState<TenantLeaseFormData>()
+    const [formData, setFormData] = useState<TenantLeaseFormData>()
 
-    const handleSubmit = (data: TenantLeaseFormData) => {
-        const payload = { ...formdata, ...data }
-    }
 
-    return <Box p={4} h={'fit'}>{next ? <UploadDocuments /> : <LeaseForm onNext={(next, payload) => { setNext(next); setFormData(payload) }} />}</Box>
+    return <Box p={4} h={'fit'}>
+        {next ?
+            <UploadDocuments
+                tenantId={tenantId}
+                unitId={unitId}
+                formData={formData!}
+                onComplete={() => { }} /> :
+            <LeaseForm onNext={(next, payload) => { setNext(next); setFormData(payload) }} />}</Box>
 }
 
 const moveOutNotice = createListCollection({

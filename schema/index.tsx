@@ -85,12 +85,12 @@ export const NeedHelpSchema = z.object({
 })
 
 export const TenantLeaseSchema = z.object({
-    rentAmount: inputField("Amount is required"),
+    rentAmount: number("Amount is required"),
     leaseLength: inputField("Lease length is required"),
     leaseStartDate: inputField("Start date is required"),
     leaseEndDate: inputField("End date is required"),
     moveOutNotice: inputField("Move out notice is required"),
-    serviceCharge: inputField("Service charge is required"),
+    serviceCharge: number("Service charge is required"),
 })
 
 export type addVisitorFormData = z.infer<typeof addVisitorSchema>

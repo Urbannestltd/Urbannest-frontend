@@ -80,7 +80,7 @@ const adminEndpoints = {
 	uploadLease: `/admin/leases`,
 
 	//MEmebr
-	addMember: (id: string) => `/admin/properties/${id}/members`,
+	addMember: `/admin/create-user`,
 	removeMember: (id: string) => `/admin/properties/${id}/members/remove`,
 }
 

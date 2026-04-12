@@ -54,19 +54,24 @@ interface AdminTenantState {
 
 interface AdminTenantStore {
 	tenant: AdminTenantState | null
+	isLoading: boolean
 	fetchTenant: (id: string) => Promise<void>
 }
 
 export const useAdminTenantStore = create<AdminTenantStore>((set) => ({
 	tenant: {} as AdminTenantState,
+	isLoading: false,
 	fetchTenant: async (id: string) => {
 		try {
+			set({ isLoading: true })
 			const tenant = await http.get(adminEndpoints.fetchTenant(id))
 			set({ tenant: tenant.data.data })
 			console.log("✅ Tenant set in store:", tenant.data.data)
 		} catch (e) {
 			set({ tenant: null })
 			console.error("❌ Failed to fetch tenant", e)
+		} finally {
+			set({ isLoading: false })
 		}
 	},
 }))

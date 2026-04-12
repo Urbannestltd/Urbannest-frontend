@@ -58,9 +58,9 @@ const FileUploadList = () => {
     )
 }
 
-export const DragAndDrop = ({ onFileChange, width = 'md' }: { onFileChange: (file: File | null) => void, width?: FileUploadRootProps['maxW'] }) => {
+export const DragAndDrop = ({ onFileChange, width = 'md', accept = 'image/*' }: { onFileChange: (file: File | null) => void, width?: FileUploadRootProps['maxW'], accept?: FileUploadRootProps['accept'] }) => {
     return (
-        <FileUpload.Root maxW={width} alignItems="stretch" onFileChange={(details) => onFileChange?.(details.acceptedFiles[0] || null)} accept={'image/*'} maxFiles={1}>
+        <FileUpload.Root maxW={width} alignItems="stretch" onFileChange={(details) => onFileChange?.(details.acceptedFiles[0] || null)} accept={accept} maxFiles={1}>
             <FileUpload.HiddenInput />
             <FileUpload.Dropzone rounded={'10px'} h={'148px'} border={'1px solid #000000'}>
                 <Icon size="md" color="fg.muted">

@@ -2,7 +2,6 @@ import { Avatar } from "@/components/ui/avatar"
 import { Modal } from "@/components/ui/dialog"
 import { Progress } from "@/components/ui/progress-bar"
 import { formatDate, formatNumber } from "@/services/date"
-import { Unit } from "@/store/admin/properties"
 import { Center, Flex, Menu, Portal, Text } from "@chakra-ui/react"
 import { ColumnDef } from "@tanstack/react-table"
 import { LuEllipsisVertical } from "react-icons/lu"
@@ -51,6 +50,11 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
         return ''
     }
 
+    const stringToNumber = (val: string | number | undefined) => {
+        if (val === undefined || val === null) return 0
+        return parseFloat(String(val).replace('%', '')) || 0
+    }
+
     return [
         {
             accessorKey: 'name',
@@ -61,7 +65,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
             header: 'Status',
             cell: ({ row }) => {
                 const statusDeets = status.find((status) => status.value === row.original.status)
-                return <Center py={1} rounded={'full'} bg={statusDeets?.bg}>{statusDeets?.label}</Center>
+                return <Center py={1} px={1} rounded={'full'} bg={statusDeets?.bg}>{statusDeets?.label}</Center>
             }
         },
         {
@@ -90,7 +94,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
             accessorKey: 'leaseExpiry',
             header: 'Lease Expiry',
             cell({ row }) {
-                return <ProgressCircle showValueText value={80} thickness={2} cap={'round'} color={'green'} size={'xs'} />
+                return <ProgressCircle showValueText value={stringToNumber(row.original.complaints.percentage)} thickness={2} cap={'round'} color={'green'} size={'xs'} />
             },
         },
         {
