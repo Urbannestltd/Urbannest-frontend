@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Control, FieldPath, FieldValues, Controller, useController, RegisterOptions } from 'react-hook-form';
-import { Field, Select, Portal, Text, Input, NumberInput, Textarea, Box, useSelectContext, Flex, RadioGroup, Fieldset, Stack, Checkbox, CheckboxGroup, CheckboxRootProps, Switch, SelectRootProps } from '@chakra-ui/react';
+import { Field, Select, Portal, Text, Input, NumberInput, Textarea, Box, useSelectContext, Flex, RadioGroup, Fieldset, Stack, Checkbox, CheckboxGroup, CheckboxRootProps, Switch, SelectRootProps, Icon, HStack } from '@chakra-ui/react';
 import { Avatar } from './avatar';
 import { InputGroup } from './input-group';
 
@@ -35,8 +35,10 @@ type CustomSelectProps<T extends FieldValues> = BaseProps<T> & {
     value?: any;
     labelBold?: boolean
     labelWidth?: string | number;
+    icon?: React.ElementType
     alignCenter?: boolean
     size?: SelectRootProps['size']
+    borderColor?: string
 };
 
 type InputProps<T extends FieldValues> = BaseProps<T> & {
@@ -51,6 +53,7 @@ type InputProps<T extends FieldValues> = BaseProps<T> & {
     value?: any;
     description?: string;
     labelWidth?: string | number;
+    labelBold?: boolean
     setValue?: (value: any) => void
     startElement?: React.ReactNode
     endElement?: React.ReactNode
@@ -154,7 +157,9 @@ export function CustomSelect<T extends FieldValues>({
     labelWidth,
     size,
     bg = 'white',
-    value
+    value,
+    icon,
+    borderColor
 }: CustomSelectProps<T>) {
     const SelectValue = () => {
         const select = useSelectContext();
@@ -238,7 +243,7 @@ export function CustomSelect<T extends FieldValues>({
                             collection={collection}
                             name={field.name}
                             value={valueForSelect}
-                            border={'1px solid #A0A0A0'}
+                            border={borderColor ? '1px solid ' + borderColor : '1px solid #A0A0A0'}
                             rounded={'md'}
                             width={width}
                             disabled={disabled}
@@ -257,17 +262,19 @@ export function CustomSelect<T extends FieldValues>({
                             }}
                         >
                             {multiple && <Select.HiddenSelect />}
-                            <Select.Control >
-                                <Select.Trigger h={avatar ? 'fit' : triggerHeight}>
-                                    {isLoading ? (
-                                        <Text>Loading...</Text>
-                                    ) : (
-                                        avatar ? <SelectValue /> : <Select.ValueText p={2} textAlign={alignCenter ? 'center' : 'start'} w={'full'} placeholder={placeholder} fontSize={'14px'} _placeholder={{ color: '#B3B3B3' }} color='black' />
-                                    )}
-                                </Select.Trigger>
-                                <Select.IndicatorGroup>
-                                    <Select.Indicator />
-                                </Select.IndicatorGroup>
+                            <Select.Control  >
+                                <HStack>
+                                    <Select.Trigger h={avatar ? 'fit' : triggerHeight}>
+                                        {icon && <Icon className='ml-1' color='fg.muted' size='xs' as={icon} />}
+                                        {isLoading ? (
+                                            <Text>Loading...</Text>
+                                        ) : (
+                                            avatar ? <SelectValue /> : <Select.ValueText p={icon ? 1 : 2} mr={4} textAlign={alignCenter ? 'center' : 'start'} w={'full'} placeholder={placeholder} fontSize={'14px'} _placeholder={{ color: '#B3B3B3' }} color='black' />
+                                        )}
+                                    </Select.Trigger>
+                                    <Select.IndicatorGroup>
+                                        <Select.Indicator />
+                                    </Select.IndicatorGroup></HStack>
                             </Select.Control>
 
                             <Portal >
@@ -328,6 +335,7 @@ export function CustomInput<T extends FieldValues>({
     endElement,
     setValue,
     pattern,
+    labelBold = false,
     orientation = 'vertical', onKeyDown
 }: InputProps<T>) {
     const { field, fieldState, } = useController({
@@ -340,7 +348,7 @@ export function CustomInput<T extends FieldValues>({
     return (
         <Field.Root orientation={orientation} justifyContent={'start'} invalid={!!fieldState.error} {...fieldProps}>
             {label && <Box>
-                <Field.Label className='satoshi-medium'>
+                <Field.Label className={labelBold ? 'satoshi-bold' : 'satoshi-medium'}>
                     {label}{label && required && '*'}
                 </Field.Label>
             </Box>}

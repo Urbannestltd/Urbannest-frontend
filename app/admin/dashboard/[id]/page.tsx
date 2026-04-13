@@ -43,7 +43,7 @@ export default function Page() {
         </Breadcrumb.Root>
         <Flex direction={{ base: 'column', md: 'row' }} mb={12} mt={4} justify={'space-between'} align={'center'} rounded={'8px'} p={4} className="bg-primary-gold-50">
             <HStack>
-                <Image src={rentImage.src} mr={3} w={{ base: '100px', md: '165px' }} rounded={'8px'} h={{ base: '60px', md: '80px' }} alt="rent" />
+                <Image src={property?.images[0] ?? rentImage.src} mr={3} w={{ base: '100px', md: '165px' }} rounded={'8px'} h={{ base: '60px', md: '80px' }} alt="rent" />
                 {isLoading ? <Box>
                     <SkeletonText w={{ base: '150px', md: '300px' }} mb={2} noOfLines={1} h={'20px'} />
                     <SkeletonText w={{ base: '200px', md: '400px' }} noOfLines={1} h={'20px'} />

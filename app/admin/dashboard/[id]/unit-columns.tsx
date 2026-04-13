@@ -76,9 +76,9 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
         {
             accessorFn: (row) => `${row.tenantName} (${row.tenantProfilePic})`,
             header: 'Tenant',
-            cell: ({ row }) => <Flex gap={2} onClick={() => onTenantClick(row.original)} cursor={'pointer'} align={'center'}>
+            cell: ({ row }) => <Flex gap={2} className=" group" onClick={() => onTenantClick(row.original)} cursor={'pointer'} align={'center'}>
                 <Avatar src={row.original.tenantProfilePic} name={row.original.tenantName} />
-                <Text>{row.original.tenantName}</Text>
+                <Text className=" group-hover:underline">{row.original.tenantName ?? 'N/A'}</Text>
             </Flex>
         },
         {

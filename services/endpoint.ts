@@ -79,6 +79,9 @@ const adminEndpoints = {
 	fetchTenant: (id: string) => `/admin/units/${id}`,
 	uploadLease: `/admin/leases`,
 
+	//Financial Endpoint
+	fetchFinancials: `/admin/payments`,
+	createExpense: `/admin/expenses`,
 	//MEmebr
 	addMember: `/admin/create-user`,
 	removeMember: (id: string) => `/admin/properties/${id}/members/remove`,

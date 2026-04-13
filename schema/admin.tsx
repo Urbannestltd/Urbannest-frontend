@@ -1,3 +1,4 @@
+import { property } from 'lodash';
 import * as z from 'zod'
 import { da } from 'zod/v4/locales';
 
@@ -24,5 +25,25 @@ export const AddUnitSchema = z.object({
     property: inputField("Property is required"),
 })
 
+export const addExpenseSchema = z.object({
+    property: selectArrayField("Property is required"),
+    unit: selectArrayField("Unit is required"),
+    paymentMethod: selectArrayField("Payment method is required"),
+    date: inputField("Date is required"),
+    amount: number("Amount is required"),
+    description: inputField("Description is required"),
+})
+
+export const searchMaintenanceSchema = z.object({
+    property: selectArrayField("Property is required"),
+    status: selectArrayField("Status is required"),
+    priority: selectArrayField("Priority is required"),
+    issue: selectArrayField("Issue is required"),
+    dateRange: selectArrayField("Date range is required"),
+})
+
+
 export type addPropertyFormData = z.infer<typeof addPropertySchema>
 export type addUnitFormData = z.infer<typeof AddUnitSchema>
+export type addExpenseFormData = z.infer<typeof addExpenseSchema>
+export type searchMaintenanceFormData = z.infer<typeof searchMaintenanceSchema>
