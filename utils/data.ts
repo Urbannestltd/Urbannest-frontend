@@ -56,9 +56,9 @@ export const adminSidebarLinks = [
 	},
 	{
 		title: "Maintenance & Issues",
-		href: "/admin/maintenance",
+		href: "/admin/maintenance-and-issues",
 		icon: maintenanceIcon,
-		value: "maintenance",
+		value: "maintenance-and-issues",
 	},
 	{
 		title: "User Management",
