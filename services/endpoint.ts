@@ -73,7 +73,7 @@ const adminEndpoints = {
 	fetchUSers: `/admin/dashboard/tenants/status`,
 
 	//Property endpoints
-	fetchProperties: `/admin/properties`,
+	fetchProperties: `/admin/dashboard/properties/overview`,
 	fetchProperty: (id: string) => `/admin/properties/${id}`,
 	fetchUnits: (id: string) => `/admin/units/${id}/units`,
 	fetchTenant: (id: string) => `/admin/units/${id}`,

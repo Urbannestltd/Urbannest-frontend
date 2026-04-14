@@ -16,6 +16,7 @@ import { useFinancialStore } from "@/store/admin/financial"
 import { useEffect, useState } from "react"
 import { Modal } from "@/components/ui/dialog"
 import { AddExpense } from "./add-expense"
+import { Drawers } from "@/components/ui/drawer"
 
 export default function Financials() {
     const { control } = useForm()
@@ -60,7 +61,7 @@ export default function Financials() {
                 <PageTitle title="Financials" fontSize={'24px'} />
                 <Flex w={'290px'} gap={2}>
                     <MainButton size='lg' variant="outline" className="h-[41px]" icon={<LuDownload />}>Export</MainButton>
-                    <Modal open={closeModal} onOpenChange={setCloseModal} size={'cover'} className="w-[500px] h-fit" triggerElement={<MainButton size='lg' className="h-[41px]" fullWidth icon={<LuPlus />}>Add Expense</MainButton>} modalContent={<AddExpense onClose={() => { setCloseModal(false); fetchFinancials() }} />} />
+                    <Drawers open={closeModal} onOpenChange={setCloseModal} size={'full'} className="w-[500px] h-full" triggerElement={<MainButton size='lg' className="h-[41px]" fullWidth icon={<LuPlus />}>Add Expense</MainButton>} modalContent={<AddExpense onClose={() => { setCloseModal(false); fetchFinancials() }} />} />
                 </Flex>
             </HStack>
             <DashboardCard data={cardData} />

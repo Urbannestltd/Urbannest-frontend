@@ -29,8 +29,8 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             accessorKey: 'name',
             header: "Name",
             cell: ({ row }) => <HStack>
-                <Image src={row.original.images[0] ?? rentImage.src} alt="profile" className="rounded-lg" width={74} height={47} />
-                <Text>{row.original.name}</Text>
+                <Image src={rentImage.src} alt="profile" className="rounded-lg" width={74} height={47} />
+                <Text>{row.original.propertyName}</Text>
             </HStack>
         },
         {
@@ -38,13 +38,13 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             header: "Owner Info",
         },
         {
-            accessorFn: (row) => row._count.units,
+            accessorFn: (row) => row.occupancyPercent,
             header: "Occupancy",
             cell: ({ row }) => {
-                const occupance = occupancy(row.original._count.units)
+                const occupance = occupancy(row.original.occupancyPercent)
                 return (
                     <Center px={2} w={'50px'} rounded={'full'} bg={occupance}>
-                        <Text>{row.original._count.units}</Text>
+                        <Text>{row.original.occupancyPercent}</Text>
                     </Center>)
             }
 
@@ -62,7 +62,7 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
         {
             accessorKey: 'date',
             header: "Date Listed",
-            cell: () => <Text>{formatDateRegular('12-03-26')}</Text>
+            cell: ({ row }) => <Text>{formatDateRegular('12-06-23')}</Text>
         },
         {
             accessorKey: 'actions',

@@ -19,6 +19,7 @@ export interface Row {
     id: string
     members: number
     moveInDate: string
+    leaseExpiry: string,
     name: string
     rentAmount: number
     tenantId: string
@@ -94,7 +95,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
             accessorKey: 'leaseExpiry',
             header: 'Lease Expiry',
             cell({ row }) {
-                return <ProgressCircle showValueText value={stringToNumber(row.original.complaints.percentage)} thickness={2} cap={'round'} color={'green'} size={'xs'} />
+                return <ProgressCircle showValueText value={stringToNumber(row.original.leaseExpiry)} thickness={2} cap={'round'} color={'green'} size={'xs'} />
             },
         },
         {

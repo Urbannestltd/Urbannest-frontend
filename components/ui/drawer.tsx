@@ -1,9 +1,9 @@
-import { Dialog, DialogContentProps, DialogRootProps } from "@chakra-ui/react"
+import { Dialog, Drawer, DrawerRootProps } from "@chakra-ui/react"
 import { ButtonSize, MainButton, type ButtonVariant } from "./button";
 import React from "react";
 import { LuX } from "react-icons/lu";
 
-type ModalProps = {
+type DrawerProps = {
     className?: string;
     triggerVariant?: ButtonVariant
     triggerSize?: ButtonSize
@@ -14,11 +14,11 @@ type ModalProps = {
     modalContent: React.ReactNode
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
-    size?: DialogRootProps['size']
-    placement?: "bottom" | "top" | "center"
+    size?: DrawerRootProps['size']
+    placement?: DrawerRootProps['placement']
 }
 
-export const Modal = ({
+export const Drawers = ({
     className,
     triggerClassName,
     triggerVariant = 'primary',
@@ -30,25 +30,25 @@ export const Modal = ({
     open,
     onOpenChange,
     size = 'lg',
-    placement = 'center',
-}: ModalProps) => {
+    placement = 'start',
+}: DrawerProps) => {
     const base = 'bg-white rounded-[12px] shadow-xs'
     return (
-        <Dialog.Root size={size} open={open} onOpenChange={(e) => onOpenChange?.(e.open)} placement={placement}>
-            <Dialog.Trigger asChild>
+        <Drawer.Root size={size} open={open} onOpenChange={(e) => onOpenChange?.(e.open)} placement={placement}>
+            <Drawer.Trigger asChild>
                 {triggerElement ? triggerElement : triggerContent && <MainButton size={triggerSize} className={`satoshi ${triggerClassName}`} variant={triggerVariant} icon={triggerIcon}>
                     {triggerContent}
                 </MainButton>}
-            </Dialog.Trigger>
-            <Dialog.Backdrop />
-            <Dialog.Positioner >
-                <Dialog.Content className={`${base} ${className ?? ''}`}>
-                    <Dialog.CloseTrigger p={2}>
+            </Drawer.Trigger>
+            <Drawer.Backdrop />
+            <Drawer.Positioner >
+                <Drawer.Content roundedLeft={'none'} className={`${base} ${className ?? ''}`}>
+                    <Drawer.CloseTrigger p={2}>
                         <LuX color="black" size={20} />
-                    </Dialog.CloseTrigger>
+                    </Drawer.CloseTrigger>
                     {modalContent}
-                </Dialog.Content>
-            </Dialog.Positioner>
-        </Dialog.Root>
+                </Drawer.Content>
+            </Drawer.Positioner>
+        </Drawer.Root>
     )
 }

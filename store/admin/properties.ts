@@ -4,23 +4,23 @@ import http from "@/services/https"
 import { create } from "zustand"
 
 export interface Properties {
-	_count: {
-		units: number
+	propertyId: string
+	propertyName: string
+	occupancyPercent: number
+	tenantSummary: {
+		defaulting: number
+		active: number
 	}
-	images: string[]
-	amenities: string[]
-	price: number
-	zip: string
-	city: string
-	state: string
-	address: string
-	facilityManagerId: string
-	landlordId: string
-	name: string
-	updatedAt: string
-	createdAt: string
-	type: "SINGLE_UNIT" | "MULTI_UNIT"
-	id: string
+	arrears: number
+	openMaintenance: number
+	openMaintenancePercent: number
+	facilityManager: {
+		id: string
+		name: string
+		photoUrl: string
+	}
+	alerts: string[]
+	additionalProp1: {}
 }
 
 export interface Property {
@@ -81,7 +81,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 		set({ isLoading: true })
 		try {
 			const properties = await http.get(adminEndpoints.fetchProperties)
-			set({ properties: properties.data.data })
+			set({ properties: properties.data.data.properties })
 			console.log("✅ Properties set in store:", properties.data.data)
 		} catch (e) {
 			set({ properties: [] })

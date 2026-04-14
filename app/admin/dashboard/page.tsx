@@ -84,7 +84,7 @@ export default function AdminDashboard() {
                     <SearchInput />
                     <MainButton icon={<LuUserPlus />} onClick={() => router.push('/admin/dashboard/new-property')} className="h-[35px]" size='sm'>Add Property</MainButton>
                 </HStack>
-                <DataTable data={properties} loading={isLoading} my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.id}`)} columns={columns} />
+                <DataTable data={properties} loading={isLoading} my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.propertyId}`)} columns={columns} />
             </Box>
             <Box bg={'white'} my={8} p={3} rounded={'8px'} border={'1px solid #F4F4F4'}>
                 <PageTitle title="Tenant Status" mb={4} fontSize={'20px'} />
