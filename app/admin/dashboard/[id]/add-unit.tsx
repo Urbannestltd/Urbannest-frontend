@@ -96,7 +96,7 @@ export const AddUnit = ({ propertyId, propertyName, onClose }: { propertyId: str
                     />
                 </HStack>
                 <Flex mt={10} align={"center"} w={"full"}>
-                    <MainButton size="lg" type="submit">
+                    <MainButton size="lg" loading={mutation.isPending} type="submit">
                         Add Unit
                     </MainButton>
                 </Flex>

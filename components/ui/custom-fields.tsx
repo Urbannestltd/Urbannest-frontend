@@ -420,6 +420,7 @@ export function CustomInput<T extends FieldValues>({
                     w={width}
                     border={'1px solid #B2B2B2'}
                     rounded={'6px'}
+                    readOnly={readOnly}
                     fontSize={"14px"}
                     className=''
                     _active={{

@@ -68,7 +68,7 @@ export const DragAndDrop = ({ onFileChange, width = 'md', accept = 'image/*' }: 
                 </Icon>
                 <FileUpload.DropzoneContent>
                     <Flex><Text className="satoshi-bold mr-1">Click to upload</Text>or drag and drop</Flex>
-                    <Box color="fg.muted">PNG or JPG (max 5mb)</Box>
+                    <Box color="fg.muted">{accept === 'image/*' ? 'PNG or JPG (max 5MB)' : 'PDF or DOCX (max 5MB)'}</Box>
                 </FileUpload.DropzoneContent>
             </FileUpload.Dropzone>
             <FileUpload.List />
