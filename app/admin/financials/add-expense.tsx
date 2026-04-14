@@ -34,7 +34,7 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
         fetchUnits(selectedValue[0])
     }, [selectedValue])
     const props = createListCollection({
-        items: properties.map((item) => ({ label: item.name, value: item.id }))
+        items: properties.map((item) => ({ label: item.propertyName, value: item.propertyId }))
     })
     const unit = createListCollection({
         items: Object.entries(units?.grouped ?? {}).flatMap(([floor, floorUnits]) => (floorUnits as Row[]).map((item) => ({ label: item.name, value: item.id })))
