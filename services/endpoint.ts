@@ -81,6 +81,7 @@ const adminEndpoints = {
 
 	//Financial Endpoint
 	fetchFinancials: `/admin/payments`,
+	exportFinancials: `/admin/payments/export`,
 	createExpense: `/admin/expenses`,
 	//MEmebr
 	addMember: `/admin/create-user`,

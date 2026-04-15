@@ -29,7 +29,7 @@ const variantStyles: Record<ButtonVariant, string> = {
         'bg-[#F5F5F5] border-none rounded-full text-[#2A3348] ',
     colored: '',
     darkGhost:
-        'bg-transparent border border-button-dark-ghost',
+        'bg-button-primary border-none rounded-full text-white hover:bg-button-hover hover:text-white',
 
 };
 

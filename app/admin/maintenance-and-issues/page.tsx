@@ -6,15 +6,16 @@ import { DataTable } from "@/components/ui/data-table"
 import { PageTitle } from "@/components/ui/page-title"
 import { searchMaintenanceFormData } from "@/schema/admin"
 import { createListCollection, Flex, HStack } from "@chakra-ui/react"
-import { use } from "react"
 import { useForm } from "react-hook-form"
 import { LuCalendar, LuDownload } from "react-icons/lu"
 import { useTicketColumns } from "../dashboard/[id]/ticket-columns"
 import { TickettData } from "@/utils/data"
+import { useRouter } from "next/navigation"
 
 export default function Maintenance() {
     const { control } = useForm<searchMaintenanceFormData>()
     const columns = useTicketColumns()
+    const router = useRouter()
     return (
         <div>
             <PageTitle mb={6} title="Maintenance & Issues" />
@@ -31,7 +32,7 @@ export default function Maintenance() {
                     <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
                 </HStack>
             </form>
-            <DataTable data={TickettData} tableName="Tickets" columns={columns} />
+            <DataTable data={TickettData} tableName="Tickets" onRowClick={(row) => router.push(`/admin/maintenance-and-issues/${row.id}`)} columns={columns} />
 
         </div>
     )

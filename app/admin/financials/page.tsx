@@ -4,7 +4,7 @@ import { CardData, DashboardCard } from "@/components/ui/card"
 import { CustomSelect } from "@/components/ui/custom-fields"
 import { PageTitle } from "@/components/ui/page-title"
 import { SectionFlex } from "@/components/ui/section-box"
-import { createListCollection, Flex, HStack } from "@chakra-ui/react"
+import { createListCollection, Flex, HStack, Span } from "@chakra-ui/react"
 import { useForm } from "react-hook-form"
 import { LuCalendar, LuDownload, LuPlus } from "react-icons/lu"
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
@@ -17,11 +17,17 @@ import { useEffect, useState } from "react"
 import { Modal } from "@/components/ui/dialog"
 import { AddExpense } from "./add-expense"
 import { Drawers } from "@/components/ui/drawer"
+import { exportExpenses } from "@/services/admin/financial"
+import { useMutation } from "@tanstack/react-query"
+import toast from "react-hot-toast"
+import { filterFormData } from "@/schema/admin"
+import { getDateRange } from "@/services/date"
 
 export default function Financials() {
-    const { control } = useForm()
+    const { control } = useForm<filterFormData>()
     const columns = useColumns()
     const financials = useFinancialStore(state => state.financials)
+    const loading = useFinancialStore(state => state.loading)
     const fetchFinancials = useFinancialStore(state => state.fetchFinancials)
     const [closeModal, setCloseModal] = useState(false)
 
@@ -53,6 +59,37 @@ export default function Financials() {
         }
     ]
 
+    const mutation = useMutation({
+        mutationFn: () => {
+            return exportExpenses()
+        },
+        onSuccess: () => {
+            toast.success('Expenses exported successfully')
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+
+    const exportFinancials = () => {
+        mutation.mutate()
+    }
+
+    const selectFilter = (value: string) => {
+        const { startDate, endDate } = getDateRange(value[0])
+        console.log(value[0])
+        fetchFinancials({
+            startDate: startDate,
+            endDate: endDate
+        })
+    }
+
+    const selectStatus = (value: string) => {
+        fetchFinancials({
+            type: value[0]
+        })
+    }
+
 
 
     return (
@@ -60,24 +97,33 @@ export default function Financials() {
             <HStack my={7} justify={'space-between'}>
                 <PageTitle title="Financials" fontSize={'24px'} />
                 <Flex w={'290px'} gap={2}>
-                    <MainButton size='lg' variant="outline" className="h-[41px]" icon={<LuDownload />}>Export</MainButton>
+                    <MainButton size='lg' variant="outline" onClick={exportFinancials} className="h-[41px]" icon={<LuDownload />}>Export</MainButton>
                     <Drawers open={closeModal} onOpenChange={setCloseModal} size={'full'} className="w-[500px] h-full" triggerElement={<MainButton size='lg' className="h-[41px]" fullWidth icon={<LuPlus />}>Add Expense</MainButton>} modalContent={<AddExpense onClose={() => { setCloseModal(false); fetchFinancials() }} />} />
                 </Flex>
             </HStack>
             <DashboardCard data={cardData} />
             <SectionFlex justify={'space-between'} mt={9}>
-                <Flex >
-                    <CustomSelect name="property" control={control} icon={HiOutlineBuildingOffice2} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="All Types" collection={propertyTypes} />
+                <Flex align={'center'} >
+
+                    <Span mb={1} mr={4}>
+                        <CustomSelect name="property" control={control} icon={HiOutlineBuildingOffice2} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="All Types" collection={propertyTypes} />
+                    </Span>
                     <SearchInput width={'356px'} />
                 </Flex>
-                <Flex gap={2} w={'270px'}>
-                    <CustomSelect name="date" control={control} icon={LuCalendar} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Today" collection={dateFilter} />
-                    <CustomSelect name="payment" control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Payment Types" collection={paymentFilter} />
-                    <CustomSelect name="property" control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="All Types" collection={propertyTypes} />
-                    <MdRefresh className=" size-14" />
+                <Flex gap={2} align={'center'}>
+                    <Flex>
+                        <CustomSelect name='dateRange' control={control} onChange={selectFilter} icon={LuCalendar} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Today" collection={dateFilter} />
+                    </Flex>
+                    <Flex>
+                        <CustomSelect name='paymentMethod' control={control} onChange={selectStatus} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Payment Types" collection={paymentFilter} />
+                    </Flex>
+                    <Flex>
+                        <CustomSelect name='status' control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="All Types" collection={propertyTypes} />
+                    </Flex>
+                    <MdRefresh color="#94A3B8" className=" size-4" />
                 </Flex>
             </SectionFlex>
-            <DataTable data={financials ?? []} tableName="Financials" columns={columns} />
+            <DataTable data={financials ?? []} loading={loading} tableName="Financials" columns={columns} />
         </div>
     )
 }
@@ -112,9 +158,9 @@ const dateFilter = createListCollection({
 
 const paymentFilter = createListCollection({
     items: [
-        { label: 'Rent', value: 'rent' },
-        { label: 'Maintenance', value: 'maintenance' },
-        { label: 'Utility', value: 'utility' },
-        { label: 'Service', value: 'service' }
+        { label: 'Rent', value: 'RENT' },
+        { label: 'Maintenance', value: 'UTILITY_TOKEN' },
+        { label: 'Utility', value: 'UTILITY_BILL' },
+        { label: 'Service', value: 'SERVICE_CHARGE' }
     ]
 })

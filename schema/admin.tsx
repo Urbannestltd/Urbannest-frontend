@@ -42,8 +42,16 @@ export const searchMaintenanceSchema = z.object({
     dateRange: selectArrayField("Date range is required"),
 })
 
+export const filterSchema = z.object({
+    property: selectArrayField("Property is required"),
+    status: selectArrayField("Status is required"),
+    dateRange: selectArrayField("Date range is required"),
+    paymentMethod: selectArrayField("Payment method is required"),
+})
+
 
 export type addPropertyFormData = z.infer<typeof addPropertySchema>
 export type addUnitFormData = z.infer<typeof AddUnitSchema>
 export type addExpenseFormData = z.infer<typeof addExpenseSchema>
 export type searchMaintenanceFormData = z.infer<typeof searchMaintenanceSchema>
+export type filterFormData = z.infer<typeof filterSchema>

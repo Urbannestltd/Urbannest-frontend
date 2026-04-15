@@ -39,6 +39,7 @@ type CustomSelectProps<T extends FieldValues> = BaseProps<T> & {
     alignCenter?: boolean
     size?: SelectRootProps['size']
     borderColor?: string
+    onChange?: (value: any) => void
 };
 
 type InputProps<T extends FieldValues> = BaseProps<T> & {
@@ -59,7 +60,7 @@ type InputProps<T extends FieldValues> = BaseProps<T> & {
     endElement?: React.ReactNode
     pattern?: RegisterOptions<T>['pattern']
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
-
+    borderColor?: string
 };
 
 type TextareaProps<T extends FieldValues> = BaseProps<T> & {
@@ -73,6 +74,7 @@ type TextareaProps<T extends FieldValues> = BaseProps<T> & {
     value?: string;
     labelWidth?: string | number;
     labelBold?: boolean
+    borderColor?: string
 };
 
 type NumberInputProps<T extends FieldValues> = BaseProps<T> & {
@@ -159,7 +161,8 @@ export function CustomSelect<T extends FieldValues>({
     bg = 'white',
     value,
     icon,
-    borderColor
+    borderColor,
+    onChange
 }: CustomSelectProps<T>) {
     const SelectValue = () => {
         const select = useSelectContext();
@@ -255,9 +258,11 @@ export function CustomSelect<T extends FieldValues>({
                             onValueChange={(event) => {
                                 if (multiple) {
                                     field.onChange(event.value);
+
                                 } else {
                                     const v = event.value[0] ?? '';
                                     field.onChange(arrayValue ? [v] : v);
+                                    onChange?.(arrayValue ? [v] : v);
                                 }
                             }}
                         >
@@ -449,7 +454,8 @@ export function CustomTextarea<T extends FieldValues>({
     width,
     description,
     readOnly,
-    orientation = 'vertical'
+    orientation = 'vertical',
+    borderColor
 }: TextareaProps<T>) {
     const { field, fieldState } = useController({ name, control });
     return (
@@ -488,7 +494,7 @@ export function CustomTextarea<T extends FieldValues>({
                     p={3}
                     color={'black'}
                     bg={'white'}
-                    border={'1px solid #A0A0A0'}
+                    border={borderColor ? '1px solid ' + borderColor : '1px solid #A0A0A0'}
                     rounded={'8px'}
                     minH={minH}
                     w={width}
@@ -515,7 +521,7 @@ export function CustomNumberInput<T extends FieldValues>({
     placeholder,
     description,
     labelWidth,
-    orientation = 'horizontal'
+    orientation = 'horizontal',
 }: NumberInputProps<T>) {
     const { field, fieldState } = useController({ name, control });
     const stringValue = field.value === undefined || field.value === null ? '' : String(field.value);

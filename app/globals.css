@@ -21,6 +21,7 @@
 	}
 }
 
+html,
 body {
 	background: var(--background);
 	color: var(--foreground);
@@ -186,4 +187,8 @@ body {
 
 .satoshi-variable {
 	font-family: "Satoshi-Variable", sans-serif !important;
+}
+
+.satoshi-variable-italic {
+	font-family: "Satoshi-VariableItalic", sans-serif !important;
 }

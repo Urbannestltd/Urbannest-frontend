@@ -53,9 +53,9 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             accessorKey: 'complaints',
             header: "Complaints",
             cell: ({ row }) => {
-                const complaint = complaints(0)
+                const complaint = complaints(row.original.openMaintenancePercent)
                 return (
-                    <Progress showValueText value={0} color={complaint} info={complaint} />
+                    <Progress showValueText value={row.original.openMaintenancePercent} color={complaint} info={complaint} />
                 )
             }
         },

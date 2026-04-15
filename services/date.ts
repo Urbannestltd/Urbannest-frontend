@@ -113,3 +113,52 @@ export const diffInDays = (
 	const ms = end.getTime() - start.getTime()
 	return formatDaysToYears(Math.ceil(ms / (1000 * 60 * 60 * 24)))
 }
+export const getDateRange = (filter: string) => {
+	const now = new Date()
+	switch (filter) {
+		case "today": {
+			const start = new Date()
+			start.setHours(0, 0, 0, 0)
+
+			return {
+				startDate: start.toISOString(),
+				endDate: now.toISOString(),
+			}
+		}
+
+		case "this_week": {
+			const start = new Date()
+			const day = start.getDay()
+			const diff = start.getDate() - day + (day === 0 ? -6 : 1)
+
+			start.setDate(diff)
+			start.setHours(0, 0, 0, 0)
+
+			return {
+				startDate: start.toISOString(),
+				endDate: now.toISOString(),
+			}
+		}
+
+		case "this_month": {
+			const start = new Date(now.getFullYear(), now.getMonth(), 1)
+
+			return {
+				startDate: start.toISOString(),
+				endDate: now.toISOString(),
+			}
+		}
+
+		case "this_year": {
+			const start = new Date(now.getFullYear(), 0, 1)
+
+			return {
+				startDate: start.toISOString(),
+				endDate: now.toISOString(),
+			}
+		}
+
+		default:
+			return {}
+	}
+}

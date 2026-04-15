@@ -25,19 +25,28 @@ export interface financials {
 		id: string
 	}
 }
+export interface filters {
+	propertyId?: string
+	tenantId?: string
+	startDate?: string
+	endDate?: string
+	type?: string
+}
 interface FinancialStore {
 	financials: financials[]
 	loading: boolean
-	fetchFinancials: () => void
+	fetchFinancials: (filters?: filters) => void
 }
 
 export const useFinancialStore = create<FinancialStore>((set) => ({
 	financials: [],
 	loading: false,
-	fetchFinancials: async () => {
+	fetchFinancials: async (filters) => {
 		set({ loading: true })
 		try {
-			const financials = await http.get(adminEndpoints.fetchFinancials)
+			const financials = await http.get(adminEndpoints.fetchFinancials, {
+				params: filters,
+			})
 			set({ financials: financials.data.data })
 			console.log("✅ Financials set in store:", financials.data.data)
 		} catch (e) {
