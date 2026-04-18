@@ -11,11 +11,21 @@ import { LuUser } from "react-icons/lu"
 import { useTicketColumns } from "./ticket-columns"
 import { Modal } from "@/components/ui/dialog"
 import { TenantMaintenanceModal } from "@/app/tenant/maintenance/modal"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useTicketStore } from "@/store/admin/tickets"
 
-export const Tickets = () => {
+export const Tickets = ({ propertyId }: { propertyId: string }) => {
+
     const { control, handleSubmit } = useForm()
     const columns = useTicketColumns()
+    const tickets = useTicketStore(state => state.ticketsPerProperty)
+    const fetchAllTickets = useTicketStore(state => state.fetchTicketPerProperty)
+
+    useEffect(() => {
+        if (!propertyId) return
+        fetchAllTickets(propertyId)
+    }, [propertyId])
+
     const [openModal, setOpenModal] = useState(false)
     return (
         <>
@@ -29,7 +39,7 @@ export const Tickets = () => {
                     </Flex>
                 </HStack>
             </SectionBox>
-            <DataTable data={TickettData} onRowClick={() => setOpenModal(true)} columns={columns} />
+            <DataTable data={tickets} onRowClick={() => setOpenModal(true)} columns={columns} />
             <Modal size={'cover'} className="w-[800px] h-fit" open={openModal} onOpenChange={setOpenModal} modalContent={<TenantMaintenanceModal />} />
         </>
     )

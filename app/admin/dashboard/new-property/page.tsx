@@ -19,30 +19,27 @@ import {
 } from "@chakra-ui/react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { FaCross, FaPlus } from "react-icons/fa"
-import { LuCross, LuDelete, LuPlus, LuX } from "react-icons/lu"
-import { MdDelete } from "react-icons/md"
-import Page from "../[id]/page"
+import { LuPlus, LuX } from "react-icons/lu"
 import { UploadGallery } from "@/components/ui/gallery-upload"
 import { StoreFile } from "@/services/tenant/maintenance"
 import { useMutation } from "@tanstack/react-query"
 import { addProperty, AddPropertyPayload } from "@/services/admin/property"
 import toast from "react-hot-toast"
-import { da } from "zod/v4/locales"
 import { useRouter } from "next/navigation"
-import { set } from "lodash"
 
 export default function NewProperty() {
     const { control, reset, handleSubmit, formState } = useForm<addPropertyFormData>()
     const [input, setInput] = useState("")
+    const suggestions = ['Swimming Pool', 'Gym', 'Parking', '24/7 Security', 'Elevator', 'CCTV surveillance', 'Fire sprinklers', 'Cleaning services', 'Central HVAC', 'Backup power', 'Pantry/kitchenette', 'Parking Garage']
     const [amenities, setAmenities] = useState<string[]>([])
     const [files, setFiles] = useState<File[] | null>(null);
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
 
-    const handleAdd = () => {
-        const item = input.trim()
-        if (!item) return
+
+    const handleAdd = (value: string) => {
+        const item = value.trim()
+        if (!item || amenities.includes(item)) return
         setAmenities([item, ...amenities])
         setInput("")
     }
@@ -240,12 +237,45 @@ export default function NewProperty() {
                         </SectionBox>
                         <SectionBox w={"728px"} mt={"34px"} p={4}>
                             <PageTitle title="Amenities" fontSize={"18px"} />
-                            <Flex gap={4} mt={6}>
-                                <Flex gap={2} mb={3}>
-                                    <Flex gap={2} wrap={'wrap'}>
-                                        {amenities.map((item, index) => (
+                            <Flex gap={4} my={4} >
+                                <Flex gap={2} wrap={'wrap'}>
+                                    {amenities.map((item, index) => (
+                                        <Flex
+                                            key={index}
+                                            align="center"
+                                            gap={1}
+                                            px={3}
+                                            position={'relative'}
+                                            py={1}
+                                            border="1px solid #D0D5DD"
+                                            borderRadius="full"
+                                            fontSize="14px"
+                                        >
+                                            <Text>{item}</Text>
+                                            <Center
+                                                position={"absolute"}
+                                                zIndex={'popover'}
+                                                cursor={"pointer"}
+                                                top={-2}
+                                                right={-1}
+                                                rounded={"full"}
+                                                boxSize={"fit"}
+                                                color={"white"}
+                                                overflow={'hidden'}
+                                                p={0.5}
+                                                bg={"red.500"}
+                                                onClick={() => setAmenities(amenities.filter((_, i) => i !== index))}
+                                            >
+                                                <LuX color="'white" size={12} />
+                                            </Center>
+                                        </Flex>
+                                    ))}
+                                    {suggestions
+                                        .filter(s => !amenities.includes(s))
+                                        .map((suggestion) => (
                                             <Flex
-                                                key={index}
+                                                key={suggestion}
+                                                onClick={() => handleAdd(suggestion)}
                                                 align="center"
                                                 gap={1}
                                                 px={3}
@@ -253,28 +283,15 @@ export default function NewProperty() {
                                                 py={1}
                                                 border="1px solid #D0D5DD"
                                                 borderRadius="full"
+                                                cursor={'pointer'}
                                                 fontSize="14px"
+                                                _hover={{
+                                                    border: '0.94px solid #CFAA67'
+                                                }}
                                             >
-                                                <Text>{item}</Text>
-                                                <Center
-                                                    position={"absolute"}
-                                                    zIndex={'popover'}
-                                                    cursor={"pointer"}
-                                                    top={-2}
-                                                    right={-1}
-                                                    rounded={"full"}
-                                                    boxSize={"fit"}
-                                                    color={"white"}
-                                                    overflow={'hidden'}
-                                                    p={0.5}
-                                                    bg={"red.500"}
-                                                    onClick={() => setAmenities(amenities.filter((_, i) => i !== index))}
-                                                >
-                                                    <LuX color="'white" size={12} />
-                                                </Center>
+                                                <Text>{suggestion}</Text>
                                             </Flex>
                                         ))}
-                                    </Flex>
                                     <Group
                                         className="relative"
                                         border={"1px solid #D9D9D9"}
@@ -288,7 +305,7 @@ export default function NewProperty() {
                                             type="text"
                                             value={input}
                                             onChange={(e) => setInput(e.target.value)}
-                                            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+                                            onKeyDown={(e) => e.key === "Enter" && handleAdd(input)}
                                             placeholder="Add"
                                             size={"sm"}
                                             fontSize={'14px'}
@@ -306,7 +323,7 @@ export default function NewProperty() {
                                             boxSize={"fit"}
                                             color={"white"}
                                             overflow={'hidden'}
-                                            onClick={handleAdd}
+                                            onClick={() => handleAdd(input)}
                                             p={0.5}
                                             bg={"#14AE5C"}
                                         >

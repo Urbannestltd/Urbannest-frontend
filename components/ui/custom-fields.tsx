@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Control, FieldPath, FieldValues, Controller, useController, RegisterOptions } from 'react-hook-form';
-import { Field, Select, Portal, Text, Input, NumberInput, Textarea, Box, useSelectContext, Flex, RadioGroup, Fieldset, Stack, Checkbox, CheckboxGroup, CheckboxRootProps, Switch, SelectRootProps, Icon, HStack } from '@chakra-ui/react';
+import { Field, Select, Portal, Text, Input, NumberInput, Textarea, Box, useSelectContext, Flex, RadioGroup, Fieldset, Stack, Checkbox, CheckboxGroup, CheckboxRootProps, Switch, SelectRootProps, Icon, HStack, Editable, EditableInput } from '@chakra-ui/react';
 import { Avatar } from './avatar';
 import { InputGroup } from './input-group';
+import { cn } from '@/utils/lib';
 
 const isMobile = window.innerWidth < 500;
 type BaseProps<T extends FieldValues> = {
@@ -62,6 +63,25 @@ type InputProps<T extends FieldValues> = BaseProps<T> & {
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
     borderColor?: string
 };
+type EditableProps<T extends FieldValues> = BaseProps<T> & {
+    type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
+    rules?: RegisterOptions<T>
+    editableProps?: Omit<
+        React.ComponentProps<typeof EditableInput>,
+        'name' | 'value' | 'onChange' | 'onBlur' | 'ref'
+    >;
+    height?: string | number;
+    readOnly?: boolean;
+    value?: any;
+    description?: string;
+    textSize?: string | number;
+    textBold?: boolean
+    textAlign?: string
+    setValue?: (value: any) => void
+    pattern?: RegisterOptions<T>['pattern']
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+
+}
 
 type TextareaProps<T extends FieldValues> = BaseProps<T> & {
     textareaProps?: Omit<
@@ -318,6 +338,87 @@ export function CustomSelect<T extends FieldValues>({
         />
     );
 }
+
+export function CustomEditable<T extends FieldValues>({
+    name,
+    control,
+    rules,
+    label,
+    placeholder,
+    disabled,
+    fieldProps,
+    trimOnBlur,
+    required,
+    type = 'text',
+    editableProps,
+    height = '40px',
+    pattern,
+    width,
+    readOnly,
+    value,
+    setValue,
+    textBold = false,
+    textSize,
+    textAlign,
+    orientation = 'vertical', onKeyDown
+}: EditableProps<T>) {
+    const { field, fieldState, } = useController({
+        name, control, rules: {
+            ...rules,
+            required: required ? `${label ?? name} is required` : false,
+            pattern: pattern
+        },
+    });
+    return (
+        <Field.Root orientation={orientation} w={'fit'} justifyContent={'end'} invalid={!!fieldState.error} {...fieldProps}>
+            <Editable.Root
+                activationMode='click'
+                onValueChange={(e) => {
+                    field.onChange(e.value);
+                    setValue?.(e.value)
+                }}
+                disabled={disabled}
+                placeholder={placeholder}
+                readOnly={readOnly}
+                size={'sm'}
+                fontSize={'14px'}
+                name={field.name}
+                defaultValue={String(field.value ?? value ?? '')} >
+                <Editable.Preview fontSize={textSize} className={textBold ? 'satoshi-bold' : 'satoshi-medium'} />
+                <Editable.Input
+                    {...editableProps}
+                    type={type}
+                    name={field.name}
+                    width={'full'}
+                    ref={field.ref}
+                    value={field.value ?? value}
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                        if (type === 'date' || type === 'time') {
+                            e.currentTarget.showPicker()
+                        }
+                    }}
+                    onBlur={(e) => {
+                        if (trimOnBlur) {
+                            const v = String(e.target.value ?? '').trim()
+                            if (v !== field.value) field.onChange(v)
+                        }
+                        field.onBlur()
+                    }}
+                    _active={{ outline: 'none' }}
+                    _focus={{ outline: 'none' }}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    textAlign={textAlign ?? 'end'}
+                    color={'black'}
+                    readOnly={readOnly}
+                    className={textBold ? 'satoshi-bold' : 'satoshi-medium'}
+                    fontSize={textSize ?? '14px'} />
+            </Editable.Root>
+            {fieldState.error?.message && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
+        </Field.Root>
+    );
+}
+
 
 
 export function CustomInput<T extends FieldValues>({

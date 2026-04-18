@@ -74,8 +74,11 @@ const adminEndpoints = {
 
 	//Property endpoints
 	fetchProperties: `/admin/dashboard/properties/overview`,
+	createProperty: `/admin/properties`,
 	fetchProperty: (id: string) => `/admin/properties/${id}`,
+	deleteProperty: (id: string) => `/admin/properties/${id}`,
 	fetchUnits: (id: string) => `/admin/units/${id}/units`,
+	deleteUnit: (id: string) => `/admin/units/${id}`,
 	fetchTenant: (id: string) => `/admin/units/${id}`,
 	uploadLease: `/admin/leases`,
 
@@ -83,9 +86,17 @@ const adminEndpoints = {
 	fetchFinancials: `/admin/payments`,
 	exportFinancials: `/admin/payments/export`,
 	createExpense: `/admin/expenses`,
+	fetchFinancialDashboard: `/admin/payments/metrics`,
 	//MEmebr
 	addMember: `/admin/create-user`,
 	removeMember: (id: string) => `/admin/properties/${id}/members/remove`,
+
+	//Tickets
+	fetchAllTickets: `/admin/properties/tickets`,
+	fetchTicketsPerProperty: (id: string) => `/admin/properties/${id}/tickets`,
+	fetchTicket: (id: string) => `/admin/properties/tickets/${id}`,
+	updateStatus: (id: string) => `/admin/properties/tickets/${id}/status`,
+	postComments: (id: string) => `/admin/properties/tickets/${id}/comments`,
 }
 
 export { adminEndpoints }

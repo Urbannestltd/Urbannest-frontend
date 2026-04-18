@@ -34,11 +34,25 @@ export interface filters {
 }
 interface FinancialStore {
 	financials: financials[]
+	dashboard: financialDashboard | null
+	fetchFinancialDashboard: () => void
 	loading: boolean
 	fetchFinancials: (filters?: filters) => void
 }
+interface financialDashboard {
+	totalExpectedRevenue: 0
+	totalCollected: 0
+	outstandingAmount: 0
+	defaultingTenants: 0
+	collectedBreakdown: {
+		utilityBills: 0
+		serviceCharge: 0
+		rent: 0
+	}
+}
 
 export const useFinancialStore = create<FinancialStore>((set) => ({
+	dashboard: null,
 	financials: [],
 	loading: false,
 	fetchFinancials: async (filters) => {
@@ -52,6 +66,19 @@ export const useFinancialStore = create<FinancialStore>((set) => ({
 		} catch (e) {
 			set({ financials: [] })
 			console.error("❌ Failed to fetch financials", e)
+		} finally {
+			set({ loading: false })
+		}
+	},
+	fetchFinancialDashboard: async () => {
+		set({ loading: true })
+		try {
+			const dashboard = await http.get(adminEndpoints.fetchFinancialDashboard)
+			set({ dashboard: dashboard.data.data })
+			console.log("✅ Dashboard set in store:", dashboard.data.data)
+		} catch (e) {
+			set({ dashboard: null })
+			console.error("❌ Failed to fetch dashboard", e)
 		} finally {
 			set({ loading: false })
 		}

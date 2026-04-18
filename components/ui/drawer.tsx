@@ -30,7 +30,7 @@ export const Drawers = ({
     open,
     onOpenChange,
     size = 'lg',
-    placement = 'start',
+    placement = 'end',
 }: DrawerProps) => {
     const base = 'bg-white rounded-[12px] shadow-xs'
     return (

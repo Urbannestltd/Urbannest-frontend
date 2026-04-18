@@ -11,11 +11,20 @@ import { LuCalendar, LuDownload } from "react-icons/lu"
 import { useTicketColumns } from "../dashboard/[id]/ticket-columns"
 import { TickettData } from "@/utils/data"
 import { useRouter } from "next/navigation"
+import { useTicketStore } from "@/store/admin/tickets"
+import { use, useEffect } from "react"
 
 export default function Maintenance() {
     const { control } = useForm<searchMaintenanceFormData>()
     const columns = useTicketColumns()
+    const tickets = useTicketStore(state => state.tickets)
+    const fetchAllTickets = useTicketStore(state => state.fetchAllTickets)
+    const isLoading = useTicketStore(state => state.isLoading)
     const router = useRouter()
+
+    useEffect(() => {
+        fetchAllTickets()
+    }, [])
     return (
         <div>
             <PageTitle mb={6} title="Maintenance & Issues" />
@@ -32,7 +41,7 @@ export default function Maintenance() {
                     <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
                 </HStack>
             </form>
-            <DataTable data={TickettData} tableName="Tickets" onRowClick={(row) => router.push(`/admin/maintenance-and-issues/${row.id}`)} columns={columns} />
+            <DataTable data={tickets} loading={isLoading} tableName="Tickets" onRowClick={(row) => router.push(`/admin/maintenance-and-issues/${row.id}`)} columns={columns} />
 
         </div>
     )

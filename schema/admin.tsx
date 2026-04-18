@@ -18,6 +18,12 @@ export const addPropertySchema = z.object({
     amenities: selectArrayField("Amenities is required"),
 })
 
+export const editPropertySchema = z.object({
+    price: number("Property price is required"),
+    noOfFloors: number("Number of floors is required"),
+    noOfUnits: number("Number of units per floor is required"),
+})
+
 export const AddUnitSchema = z.object({
     name: inputField("Unit name is required"),
     type: selectArrayField("Unit type is required"),
@@ -51,6 +57,7 @@ export const filterSchema = z.object({
 
 
 export type addPropertyFormData = z.infer<typeof addPropertySchema>
+export type editPropertyFormData = z.infer<typeof editPropertySchema>
 export type addUnitFormData = z.infer<typeof AddUnitSchema>
 export type addExpenseFormData = z.infer<typeof addExpenseSchema>
 export type searchMaintenanceFormData = z.infer<typeof searchMaintenanceSchema>

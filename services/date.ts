@@ -162,3 +162,16 @@ export const getDateRange = (filter: string) => {
 			return {}
 	}
 }
+
+export const convertMinutes = (totalMinutes: number) => {
+	if (!totalMinutes) {
+		return "-"
+	}
+	const totalSeconds = totalMinutes * 60
+
+	const days = Math.floor(totalSeconds / (24 * 3600))
+	const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600)
+	const minutes = Math.floor((totalSeconds % 3600) / 60)
+
+	return `${days}d ${hours}h ${minutes}m `
+}

@@ -8,9 +8,10 @@ import CleaningIcon from '@/app/assets/icons/maintenance-icons/cleaning.svg'
 import HvacIcon from '@/app/assets/icons/maintenance-icons/hvc-ac.svg'
 import BuildingIcon from '@/app/assets/icons/maintenance-icons/building.svg'
 import { Avatar } from "@/components/ui/avatar"
-import { formatDate } from "@/services/date"
+import { convertMinutes, formatDate } from "@/services/date"
+import { Tickets } from "@/store/admin/tickets"
 
-export const useTicketColumns = (): ColumnDef<PropertyTicket, any>[] => {
+export const useTicketColumns = (): ColumnDef<Tickets, any>[] => {
 
     const Status = [
         {
@@ -21,7 +22,7 @@ export const useTicketColumns = (): ColumnDef<PropertyTicket, any>[] => {
             borderColor: '#F4F4F4'
         },
         {
-            value: 'IN_PROGRESS',
+            value: 'PENDING',
             label: 'In Progress',
             bgColor: '#EFF6FF',
             textColor: '#1D4ED8',
@@ -63,12 +64,12 @@ export const useTicketColumns = (): ColumnDef<PropertyTicket, any>[] => {
 
     return [
         {
-            accessorFn: (row) => row.propertyName,
+            accessorFn: (row) => row.property?.name + ' (' + row.unit?.name + ')',
             header: "Property & Unit",
             cell: ({ row }) =>
                 <Stack>
-                    <Text fontWeight={'bold'}>{row.original.propertyName}</Text>
-                    <Text fontSize={'12px'}>{row.original.propertyUnit}</Text>
+                    <Text fontWeight={'bold'}>{row.original.property?.name}</Text>
+                    <Text fontSize={'12px'}>{row.original.unit?.name}</Text>
                 </Stack>
         },
         {
@@ -138,11 +139,11 @@ export const useTicketColumns = (): ColumnDef<PropertyTicket, any>[] => {
         },
         {
 
-            accessorKey: 'facilityManager',
+            accessorFn: (row) => row.assignedTo.name,
             header: "FM Assigned",
             cell: ({ row }) => <Flex align={'center'}>
-                <Avatar size={'sm'} name={row.original.facilityManager} />
-                <Text ml={2}>{row.original.facilityManager}</Text>
+                <Avatar size={'sm'} name={row.original.assignedTo?.name ?? 'N/A'} />
+                <Text ml={2}>{row.original.assignedTo?.name ?? 'N/A'}</Text>
             </Flex>
         },
         {
@@ -151,9 +152,9 @@ export const useTicketColumns = (): ColumnDef<PropertyTicket, any>[] => {
             cell: ({ row }) => <Text>{formatDate(row.original.dateSubmitted)}</Text>
         },
         {
-            accessorKey: 'response',
+            accessorKey: 'responseTimeMinutes',
             header: 'Response',
-            cell: ({ row }) => <Text>{row.original.response}</Text>
+            cell: ({ row }) => <Text color={row.original.isResponseLate ? '#DC2626' : '#303030'}>{convertMinutes(row.original.responseTimeMinutes)}</Text>
         }
     ]
 }

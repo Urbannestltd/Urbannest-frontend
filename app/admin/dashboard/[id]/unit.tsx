@@ -32,7 +32,7 @@ export const Unit = ({ property }: { property?: Property | null }) => {
         setSelectedRow(row)
         setShowTenant(true)
     }
-    const columns = useUnitColumns(handleTenantClick)
+    const columns = useUnitColumns(handleTenantClick, property?.id ?? '')
 
     //const FirstFloorUnits = units?.grouped.Unassigned.find((unit) => unit.floor === 1)
 
@@ -51,7 +51,7 @@ export const Unit = ({ property }: { property?: Property | null }) => {
                 <HStack justify={'space-between'}>
                     <SearchInput />
                     <Flex>
-                        <Modal open={showAddUnit} onOpenChange={setShowAddUnit} triggerIcon={<LuUser />} triggerContent="Add Unit" modalContent={<AddUnit onClose={() => setShowAddUnit(false)} propertyId={property?.id ?? ''} propertyName={property?.name ?? ''} />} />
+                        <Modal open={showAddUnit} onOpenChange={setShowAddUnit} triggerIcon={<LuUser />} triggerContent="Add Unit" modalContent={<AddUnit onClose={() => setShowAddUnit(false)} propertyId={property?.id ?? ''} floors={property?.noOfFloors} propertyName={property?.name ?? ''} />} />
                     </Flex>
                 </HStack>
             </SectionBox>

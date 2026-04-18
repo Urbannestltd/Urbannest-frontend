@@ -15,6 +15,20 @@ export interface AddPropertyPayload {
 	noOfFloors: number
 	noOfUnitsPerFloor: number
 }
+export interface EditPropertyPayload {
+	id: string
+	name?: string
+	type?: string
+	price?: number
+	address?: string
+	state?: string
+	city?: string
+	zip?: string
+	amenities?: string[]
+	images?: string[]
+	noOfFloors?: number
+	noOfUnitsPerFloor?: number
+}
 
 export interface UploadLeasePayload {
 	tenantId: string
@@ -59,8 +73,20 @@ export interface addUnitPayload {
 }
 
 export const addProperty = async (payload: AddPropertyPayload) => {
-	const response = await http.post(adminEndpoints.fetchProperties, payload)
+	const response = await http.post(adminEndpoints.createProperty, payload)
 	return response.data.data as Promise<Property>
+}
+
+export const editProperty = async (payload: EditPropertyPayload) => {
+	const response = await http.put(
+		adminEndpoints.fetchProperty(payload.id),
+		payload,
+	)
+	return response.data.data as Promise<Property>
+}
+export const deleteProperty = async (Id: string) => {
+	const response = await http.delete(adminEndpoints.deleteProperty(Id))
+	return response.data
 }
 export const addUnit = async (payload: addUnitPayload) => {
 	const response = await http.post(
@@ -68,6 +94,10 @@ export const addUnit = async (payload: addUnitPayload) => {
 		payload.data,
 	)
 	return response.data.data as Promise<Property>
+}
+export const deleteUnit = async (unitId: string) => {
+	const response = await http.delete(adminEndpoints.deleteUnit(unitId))
+	return response.data
 }
 
 export const uploadLease = async (payload: UploadLeasePayload) => {

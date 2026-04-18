@@ -5,13 +5,22 @@ import { addUnitFormData } from "@/schema/admin"
 import { addUnit, addUnitPayload } from "@/services/admin/property"
 import { Box, createListCollection, Flex, HStack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { on } from "events"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 
-export const AddUnit = ({ propertyId, propertyName, onClose }: { propertyId: string, propertyName: string, onClose: () => void }) => {
+export const AddUnit = ({ propertyId, propertyName, onClose, floors }: { propertyId: string, propertyName: string, onClose: () => void, floors?: number }) => {
     const { control, reset, handleSubmit, formState } =
         useForm<addUnitFormData>()
+
+
+    const Flooors = createListCollection({
+        items: [...Array(floors).keys()].map((floor) => {
+            return {
+                value: floor + 1,
+                label: `Floor ${floor + 1}`
+            }
+        })
+    })
 
     const mutation = useMutation({
         mutationFn: (payload: addUnitPayload) => {
@@ -111,20 +120,5 @@ const unitType = createListCollection({
         { value: 'TWO_BEDROOM', label: 'Two Bedroom' },
         { value: 'THREE_BEDROOM', label: 'Three Bedroom' },
         { value: 'FOUR_BEDROOM', label: 'Four Bedroom' },
-    ],
-})
-
-const Flooors = createListCollection({
-    items: [
-        { value: '1', label: "1" },
-        { value: '2', label: "2" },
-        { value: '3', label: "3" },
-        { value: '4', label: "4" },
-        { value: '5', label: "5" },
-        { value: '6', label: "6" },
-        { value: '7', label: "7" },
-        { value: '8', label: "8" },
-        { value: '9', label: "9" },
-        { value: '10', label: "10" },
     ],
 })

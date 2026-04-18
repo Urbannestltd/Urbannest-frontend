@@ -14,47 +14,59 @@ import { DataTable } from "@/components/ui/data-table"
 import { useColumns } from "./columns"
 import { useFinancialStore } from "@/store/admin/financial"
 import { useEffect, useState } from "react"
-import { Modal } from "@/components/ui/dialog"
 import { AddExpense } from "./add-expense"
 import { Drawers } from "@/components/ui/drawer"
 import { exportExpenses } from "@/services/admin/financial"
 import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import { filterFormData } from "@/schema/admin"
-import { getDateRange } from "@/services/date"
+import { formatNumber, getDateRange } from "@/services/date"
+import { format } from "path"
+import { usePropertyStore } from "@/store/admin/properties"
 
 export default function Financials() {
-    const { control } = useForm<filterFormData>()
+    const { control, watch } = useForm<filterFormData>()
     const columns = useColumns()
     const financials = useFinancialStore(state => state.financials)
     const loading = useFinancialStore(state => state.loading)
     const fetchFinancials = useFinancialStore(state => state.fetchFinancials)
+    const dashboard = useFinancialStore(state => state.dashboard)
+    const fetchFinancialDashboard = useFinancialStore(state => state.fetchFinancialDashboard)
+    const properties = usePropertyStore(state => state.properties)
+    const fetchProperties = usePropertyStore(state => state.fetchProperties)
     const [closeModal, setCloseModal] = useState(false)
 
     useEffect(() => {
         fetchFinancials()
+        fetchFinancialDashboard()
+        fetchProperties()
     }, [])
+
+
+    const propertyTypes = createListCollection({
+        items: [{ label: 'All Properties', value: 'all' }, ...properties.map((item) => ({ label: item.propertyName, value: item.propertyId }))]
+    })
 
     const cardData: CardData[] = [
         {
             title: 'Total Expected Revenue',
-            data: '₦245,000.00',
-            emptyMessage: '12% from last month',
+            data: formatNumber(dashboard?.totalExpectedRevenue),
+            // emptyMessage: '12% from last month',
         },
         {
             title: 'Total Collected',
-            data: '₦198,450.00',
+            data: formatNumber(dashboard?.totalCollected),
             progress: 50,
         },
         {
             title: 'Outstanding Amount',
-            data: '₦46,550.00',
+            data: formatNumber(dashboard?.outstandingAmount),
             titleColor: '#9F403D',
-            emptyMessage: '14 pending invoices ',
+            //emptyMessage: '14 pending invoices ',
         },
         {
             title: 'Defaulting Tenants',
-            data: 8,
+            data: dashboard?.defaultingTenants || 0,
             attentionRequired: true,
         }
     ]
@@ -75,20 +87,20 @@ export default function Financials() {
         mutation.mutate()
     }
 
-    const selectFilter = (value: string) => {
-        const { startDate, endDate } = getDateRange(value[0])
-        console.log(value[0])
+    const selectFilter = () => {
+        const formValues = watch()
+        const { startDate, endDate } = getDateRange(formValues.dateRange[0])
+
+        console.log(formValues)
+
         fetchFinancials({
+            type: formValues.paymentMethod[0],
+            propertyId: formValues.property[0] === 'all' ? undefined : formValues.property[0],
             startDate: startDate,
             endDate: endDate
         })
     }
 
-    const selectStatus = (value: string) => {
-        fetchFinancials({
-            type: value[0]
-        })
-    }
 
 
 
@@ -106,7 +118,7 @@ export default function Financials() {
                 <Flex align={'center'} >
 
                     <Span mb={1} mr={4}>
-                        <CustomSelect name="property" control={control} icon={HiOutlineBuildingOffice2} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="All Types" collection={propertyTypes} />
+                        <CustomSelect name="property" control={control} onChange={selectFilter} icon={HiOutlineBuildingOffice2} size={'xs'} triggerHeight='20px' width={'fit'} value={'all'} placeholder="All Types" collection={propertyTypes} />
                     </Span>
                     <SearchInput width={'356px'} />
                 </Flex>
@@ -115,10 +127,10 @@ export default function Financials() {
                         <CustomSelect name='dateRange' control={control} onChange={selectFilter} icon={LuCalendar} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Today" collection={dateFilter} />
                     </Flex>
                     <Flex>
-                        <CustomSelect name='paymentMethod' control={control} onChange={selectStatus} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Payment Types" collection={paymentFilter} />
+                        <CustomSelect name='paymentMethod' control={control} onChange={selectFilter} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Payment Types" collection={paymentFilter} />
                     </Flex>
                     <Flex>
-                        <CustomSelect name='status' control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="All Types" collection={propertyTypes} />
+                        <CustomSelect name='status' control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Status" collection={propertyTypes} />
                     </Flex>
                     <MdRefresh color="#94A3B8" className=" size-4" />
                 </Flex>
@@ -129,23 +141,6 @@ export default function Financials() {
 }
 
 
-const propertyTypes = createListCollection({
-    items: [
-        {
-            label: 'All Properties',
-            value: 'all'
-        },
-        {
-            label: 'Residential',
-            value: 'residential'
-        },
-        {
-            label: 'Commercial',
-            value: 'commercial'
-        }
-
-    ]
-})
 
 const dateFilter = createListCollection({
     items: [

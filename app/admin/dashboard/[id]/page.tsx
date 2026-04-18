@@ -6,8 +6,14 @@ import { MainButton } from "@/components/ui/button";
 import { FiEdit } from "react-icons/fi";
 import { PropertyTabs } from "./tabs";
 import { usePropertyStore } from "@/store/admin/properties";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
+import { editPropertyFormData } from "@/schema/admin";
+import { CustomEditable } from "@/components/ui/custom-fields";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { editProperty, EditPropertyPayload } from "@/services/admin/property";
+import toast from "react-hot-toast";
 
 
 
@@ -16,13 +22,59 @@ export default function Page() {
     const id = params?.id as string;
 
     const property = usePropertyStore((state) => state.property)
+    const properties = usePropertyStore((state) => state.properties)
     const fetchProperty = usePropertyStore((state) => state.fetchProperty)
     const isLoading = usePropertyStore((state) => state.isLoading)
     const [selectedTab, setSelectedTab] = useState('Overview')
+    const [editMode, setEditMode] = useState(false)
+    const { control, watch, reset, getValues } = useForm<{ name: string, address: string, state: string, }>()
+
+    const prop = properties?.find((property) => property.propertyId === id)
 
     useEffect(() => {
         fetchProperty(id)
     }, [id])
+
+    useEffect(() => {
+        if (property) {
+            reset({
+                name: property.name,
+                address: property.address,
+                state: 'Lagos'
+            })
+        }
+    }, [property])
+
+    const mutation = useMutation({
+        mutationFn: (payload: EditPropertyPayload) => {
+            return editProperty(payload)
+        },
+        onSuccess: () => {
+            toast.success('Property updated successfully')
+            fetchProperty(id)
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+
+    const overviewRef = useRef<{ handleSave: () => void }>(null)
+    const handleSave = async (data: { amenities: string[], images: string[], formValues: editPropertyFormData }) => {
+        const pageValues = getValues()
+
+        const payload: EditPropertyPayload = {
+            id: id,
+            ...data.formValues,
+            ...pageValues,
+            amenities: data.amenities,
+            images: data.images,
+        }
+
+        console.log(payload)
+        mutation.mutate(payload)
+        setEditMode(false)
+
+    }
 
 
     return (<div>
@@ -49,21 +101,34 @@ export default function Page() {
                     <SkeletonText w={{ base: '200px', md: '400px' }} noOfLines={1} h={'20px'} />
                 </Box> :
                     <Box>
-                        <Text className="satoshi-bold text-[20px] md:text-[24px]"> {property?.name}</Text>
-                        <HStack>
-                            <Image alt="location-icon" src={locateIcon.src} />
-                            <Text className="satoshi-medium text-[12px] lg:text-[14px]  mt-0 ">
-                                {property?.address}
-                            </Text>
-                        </HStack>
-                        <Text className="satoshi-medium text-sm">Last Updated: 1 March, 2026</Text>
+                        {editMode ? (
+                            <Box>
+                                <CustomEditable control={control} textBold textAlign="start" textSize={'20px'} name='name' value={property?.name} />
+                                <HStack>
+                                    <Image alt="location-icon" src={locateIcon.src} />
+                                    <CustomEditable control={control} textAlign="start" textSize={'14px'} name='address' value={property?.address} />,
+                                    <CustomEditable control={control} textAlign="start" textSize={'14px'} name='state' value={'Lagos'} />
+                                </HStack>
+                            </Box>
+                        ) : (
+                            <Box>
+                                <Text className="satoshi-bold text-[20px] md:text-[24px]">{property?.name}</Text>
+                                <HStack>
+                                    <Image alt="location-icon" src={locateIcon.src} />
+                                    <Text className="satoshi-medium text-[12px] lg:text-[14px] mt-0">{property?.address}</Text>
+                                </HStack>
+                            </Box>
+                        )}
                     </Box>
                 }
 
             </HStack>
-            <MainButton icon={<FiEdit />} children="Edit" />
+            {editMode ? <Flex gap={1}>
+                <MainButton variant='outline' onClick={() => setEditMode(false)} children="Cancel" />
+                <MainButton onClick={() => overviewRef.current?.handleSave()} children="Save" />
+            </Flex> : <MainButton icon={<FiEdit />} onClick={() => setEditMode(true)} children="Edit" />}
         </Flex>
-        <PropertyTabs setTab={setSelectedTab} property={property} />
+        <PropertyTabs ref={overviewRef} edit={editMode} onSave={handleSave} setTab={setSelectedTab} property={property} />
     </div >
     )
 }
