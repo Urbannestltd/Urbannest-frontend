@@ -13,6 +13,7 @@ import { Modal } from "@/components/ui/dialog"
 import { TenantMaintenanceModal } from "@/app/tenant/maintenance/modal"
 import { useEffect, useState } from "react"
 import { useTicketStore } from "@/store/admin/tickets"
+import TicketPage from "../../maintenance-and-issues/[id]/page"
 
 export const Tickets = ({ propertyId }: { propertyId: string }) => {
 
@@ -28,7 +29,7 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
 
     const [openModal, setOpenModal] = useState(false)
     return (
-        <>
+        <>{openModal ? < >gggg</> : <>
             <SectionBox>
                 <PageTitle title="Maintenance Tickets" fontSize={'18px'} />
                 <HStack mt={6} justify={'space-between'}>
@@ -38,9 +39,8 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
                         <MainButton size='lg' className="h-[34px]" icon={<LuUser />}>Add Unit</MainButton>
                     </Flex>
                 </HStack>
-            </SectionBox>
-            <DataTable data={tickets} onRowClick={() => setOpenModal(true)} columns={columns} />
-            <Modal size={'cover'} className="w-[800px] h-fit" open={openModal} onOpenChange={setOpenModal} modalContent={<TenantMaintenanceModal />} />
+            </SectionBox >
+            <DataTable data={tickets} onRowClick={() => setOpenModal(true)} columns={columns} /> </>}
         </>
     )
 }

@@ -55,9 +55,9 @@ export const Unit = ({ property }: { property?: Property | null }) => {
                     </Flex>
                 </HStack>
             </SectionBox>
-                {Object.entries(units?.grouped ?? {}).map(([floorName, floorUnits]) => (<SectionBox my={4}>
-                    <PageTitle title={floorName} />
-                    <DataTable tableName="Units" data={floorUnits as Row[] ?? null} emptyDetails={{ title: 'No Units Found', description: 'No Units Found', icon: '' }} columns={columns} />
+                {units?.grouped.map((floor) => (<SectionBox key={floor.floor} my={4}>
+                    <PageTitle title={floor.floor} />
+                    <DataTable tableName="Units" data={floor.units ?? null} emptyDetails={{ title: 'No Units Found', description: 'No Units Found', icon: '' }} columns={columns} />
                 </SectionBox>))}</>}
         </>
     )

@@ -1,4 +1,4 @@
-import { remove } from "lodash"
+import { remove, update } from "lodash"
 import { uploadLease } from "./admin/property"
 
 const endpoints = {
@@ -80,7 +80,10 @@ const adminEndpoints = {
 	fetchUnits: (id: string) => `/admin/units/${id}/units`,
 	deleteUnit: (id: string) => `/admin/units/${id}`,
 	fetchTenant: (id: string) => `/admin/units/${id}`,
+	fetchLease: (id: string) => `/admin/leases/${id}`,
+	updateLease: (id: string) => `/admin/leases/${id}`,
 	uploadLease: `/admin/leases`,
+	renewLease: (id: string) => `/admin/leases/${id}/renew`,
 
 	//Financial Endpoint
 	fetchFinancials: `/admin/payments`,
@@ -97,6 +100,9 @@ const adminEndpoints = {
 	fetchTicket: (id: string) => `/admin/properties/tickets/${id}`,
 	updateStatus: (id: string) => `/admin/properties/tickets/${id}/status`,
 	postComments: (id: string) => `/admin/properties/tickets/${id}/comments`,
+
+	//Users
+	fetchUsers: `/admin/users`,
 }
 
 export { adminEndpoints }

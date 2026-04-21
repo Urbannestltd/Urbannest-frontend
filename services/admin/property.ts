@@ -41,6 +41,18 @@ export interface UploadLeasePayload {
 	documentUrl: string
 }
 
+export interface UpdateLeasePayload {
+	tenantId?: string
+	unitId?: string
+	rentAmount?: number
+	serviceCharge?: number
+	startDate?: string
+	endDate?: string
+	moveOutNotice?: string
+	documentUrl?: string
+	leaseId: string
+}
+
 export interface addMemberPayload {
 	userEmail: string
 	unitId?: string
@@ -102,6 +114,14 @@ export const deleteUnit = async (unitId: string) => {
 
 export const uploadLease = async (payload: UploadLeasePayload) => {
 	const response = await http.post(adminEndpoints.uploadLease, payload)
+	return response.data.data as Promise<Property>
+}
+
+export const updateLease = async (payload: UpdateLeasePayload) => {
+	const response = await http.put(
+		adminEndpoints.updateLease(payload.leaseId),
+		payload,
+	)
 	return response.data.data as Promise<Property>
 }
 

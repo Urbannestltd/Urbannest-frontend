@@ -3,27 +3,41 @@ import { MainButton } from "@/components/ui/button"
 import { CustomInput, CustomSelect } from "@/components/ui/custom-fields"
 import { PageTitle } from "@/components/ui/page-title"
 import { TenantLeaseFormData } from "@/schema"
-import { uploadLease, UploadLeasePayload } from "@/services/admin/property"
+import { updateLease, UpdateLeasePayload, uploadLease, UploadLeasePayload } from "@/services/admin/property"
 import { StoreFile } from "@/services/tenant/maintenance"
+import { usePropertyStore } from "@/store/admin/properties"
 import { Box, createListCollection, Flex, HStack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { error } from "console"
-import { useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
+import { string } from "zod"
 
-const UploadDocuments = ({ formData, onComplete, tenantId, unitId }: {
+const UploadDocuments = ({ formData, onComplete, tenantId, unitId, activeId }: {
     formData: TenantLeaseFormData,
     onComplete: () => void,
     tenantId: string,
-    unitId: string
+    unitId: string,
+    activeId?: string
 }) => {
     const [files, setFiles] = useState<File | null>(null)
 
-    const mutate = useMutation({
+    const newmutate = useMutation({
         mutationFn: (payload: UploadLeasePayload) => uploadLease(payload),
         onSuccess: () => {
             toast.success('Property added successfully')
+            onComplete()
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+
+    const updatemutate = useMutation({
+        mutationFn: (payload: UpdateLeasePayload) => updateLease(payload),
+        onSuccess: () => {
+            toast.success('Property updated successfully')
             onComplete()
         },
         onError: (error) => {
@@ -42,24 +56,50 @@ const UploadDocuments = ({ formData, onComplete, tenantId, unitId }: {
             moveOutNotice: formData.moveOutNotice[0],
             documentUrl: await StoreFile({ file: files!, folder: 'leases' }),
         }
-        mutate.mutate(payload)
-
+        if (!activeId) {
+            newmutate.mutate(payload)
+        } else {
+            updatemutate.mutate({ ...payload, leaseId: activeId })
+        }
     }
 
     return (
         < >
             <PageTitle title="Upload Documents" mb={7.5} fontSize={'18px'} />
             <DragAndDrop width={'full'} accept={'application/*'} onFileChange={setFiles} />
-            <MainButton size="lg" className="my-4" loading={mutate.isPending} disabled={!files} onClick={handleSubmit}>
+            <MainButton size="lg" className="my-4" loading={newmutate.isPending || updatemutate.isPending} disabled={!files} onClick={handleSubmit}>
                 Continue
             </MainButton>
         </>
     )
 }
 
-const LeaseForm = ({ onNext }: { onNext: (next: boolean, data?: TenantLeaseFormData) => void }) => {
+const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: TenantLeaseFormData) => void, activeId?: string }) => {
+    const lease = usePropertyStore((state) => state.lease)
+    const fetchLease = usePropertyStore((state) => state.fetchLease)
     const { control, reset, watch, handleSubmit, setValue, formState } =
         useForm<TenantLeaseFormData>()
+
+    useEffect(() => {
+        if (activeId) {
+            fetchLease(activeId)
+            reset({
+                rentAmount: lease?.rentAmount,
+                leaseStartDate: lease?.startDate,
+                leaseEndDate: lease?.endDate,
+                moveOutNotice: lease?.moveOutNotice,
+                serviceCharge: lease?.serviceCharge
+            })
+            if (lease) {
+                setValue('rentAmount', lease.rentAmount)
+                setValue('leaseStartDate', lease.startDate)
+                setValue('leaseEndDate', lease.endDate)
+                setValue('moveOutNotice', lease.moveOutNotice)
+                setValue('serviceCharge', lease.serviceCharge)
+            }
+        }
+    }, [activeId])
+
 
     const onSubmit = (data: TenantLeaseFormData) => {
         onNext(true, data)
@@ -140,7 +180,7 @@ const LeaseForm = ({ onNext }: { onNext: (next: boolean, data?: TenantLeaseFormD
     )
 }
 
-export const LeaseInfo = ({ tenantId, unitId }: { tenantId: string, unitId: string }) => {
+export const LeaseInfo = ({ tenantId, unitId, activeId }: { tenantId: string, unitId: string, activeId?: string }) => {
     const [next, setNext] = useState(false)
     const [formData, setFormData] = useState<TenantLeaseFormData>()
 
@@ -149,10 +189,11 @@ export const LeaseInfo = ({ tenantId, unitId }: { tenantId: string, unitId: stri
         {next ?
             <UploadDocuments
                 tenantId={tenantId}
+                activeId={activeId}
                 unitId={unitId}
                 formData={formData!}
                 onComplete={() => { }} /> :
-            <LeaseForm onNext={(next, payload) => { setNext(next); setFormData(payload) }} />}</Box>
+            <LeaseForm activeId={activeId} onNext={(next, payload) => { setNext(next); setFormData(payload) }} />}</Box>
 }
 
 const moveOutNotice = createListCollection({

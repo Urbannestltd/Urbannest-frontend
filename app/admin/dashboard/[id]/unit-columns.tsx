@@ -12,21 +12,21 @@ import { DeletePopUp } from "./tabs"
 
 export interface Row {
     complaints: {
-        percentage: number
+        openPercent: number
+        openCount: number
         total: number
-        unresolved: number
     }
-    floor: string
-    id: string
     members: number
+    leaseExpiry: string
     moveInDate: string
-    leaseExpiry: string,
-    name: string
-    rentAmount: number
-    tenantId: string
-    status: string
-    tenantName: string
     tenantProfilePic: string
+    tenantName: string
+    tenantId: string
+    rentAmount: number
+    status: string
+    floor: string
+    name: string
+    id: string
 }
 
 
@@ -49,6 +49,13 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: st
         if (row >= 0 && row <= 29) { return '#14AE5C' }
         if (row >= 30 && row <= 59) { return '#E8B931' }
         if (row >= 69) { return '#EC221F' }
+        return ''
+    }
+
+    const leaseExpiry = (row: number) => {
+        if (row >= 0 && row <= 40) { return '#14AE5C' }
+        if (row >= 41 && row <= 70) { return '#E8B931' }
+        if (row >= 71) { return '#EC221F' }
         return ''
     }
 
@@ -96,16 +103,16 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: st
             accessorKey: 'leaseExpiry',
             header: 'Lease Expiry',
             cell({ row }) {
-                return <ProgressCircle showValueText value={stringToNumber(row.original.leaseExpiry)} thickness={2} cap={'round'} color={'green'} size={'xs'} />
+                return <ProgressCircle showValueText value={stringToNumber(row.original.leaseExpiry)} thickness={2} cap={'round'} color={leaseExpiry(stringToNumber(row.original.leaseExpiry))} size={'xs'} />
             },
         },
         {
-            accessorFn: (row) => row.complaints.percentage,
+            accessorFn: (row) => row.complaints.openPercent,
             header: 'Complaints',
             cell: ({ row }) => {
-                const complaint = complaints(row.original.complaints.percentage)
+                const complaint = complaints(row.original.complaints.openPercent)
                 return (
-                    <Progress showValueText value={row.original.complaints.percentage} color={complaint} info={complaint} />
+                    <Progress showValueText value={row.original.complaints.openPercent} color={complaint} info={complaint} />
                 )
             }
         },

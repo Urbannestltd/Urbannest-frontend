@@ -68,11 +68,11 @@ export function DataTable<TData, TValue>({
     const totalPages = Math.ceil((data?.length ?? 0) / pageSize);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const currentData = useMemo(() =>
-        data?.slice((currentPage - 1) * pageSize, currentPage * pageSize) ?? [],
-        [data, currentPage, pageSize]
-    );
+    const currentData = useMemo(() => {
+        if (!Array.isArray(data)) return [];
 
+        return data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    }, [data, currentPage, pageSize]);
 
     const tableData = (currentData ?? []);
 

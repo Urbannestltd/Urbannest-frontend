@@ -55,8 +55,35 @@ export interface Property {
 }
 
 export interface Unit {
-	grouped: {}
+	grouped: {
+		units: Row[]
+		floor: string
+	}[]
 	totalUnits: number
+}
+
+export interface Lease {
+	id: string
+	status: string
+	rentAmount: number
+	serviceCharge: number
+	startDate: string
+	endDate: string
+	moveOutNotice: string
+	documentUrl: string
+	tenant: {
+		phone: string
+		name: string
+		id: string
+	}
+	unit: {
+		name: string
+		id: string
+	}
+	property: {
+		name: string
+		id: string
+	}
 }
 
 interface PropertyStore {
@@ -64,8 +91,10 @@ interface PropertyStore {
 	property: Property | null
 	isLoading: boolean
 	units: Unit | null
+	lease: Lease | null
 	fetchProperties: () => Promise<void>
 	fetchProperty: (id: string) => Promise<void>
+	fetchLease: (id: string) => Promise<void>
 	setProperties: (properties: Properties[]) => void
 	fetchUnits: (id: string) => Promise<void>
 	selectedProperty: Property | null
@@ -77,6 +106,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 	property: null,
 	isLoading: false,
 	units: null,
+	lease: null,
 	fetchProperties: async () => {
 		set({ isLoading: true })
 		try {
@@ -113,6 +143,19 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 		} catch (e) {
 			set({ units: null })
 			console.error("❌ Failed to fetch units", e)
+		} finally {
+			set({ isLoading: false })
+		}
+	},
+	fetchLease: async (id: string) => {
+		set({ isLoading: true })
+		try {
+			const lease = await http.get(adminEndpoints.fetchLease(id))
+			set({ lease: lease.data.data })
+			console.log("✅ Lease set in store:", lease.data.data)
+		} catch (e) {
+			set({ lease: null })
+			console.error("❌ Failed to fetch lease", e)
 		} finally {
 			set({ isLoading: false })
 		}

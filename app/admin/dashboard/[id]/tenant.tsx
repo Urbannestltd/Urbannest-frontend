@@ -105,11 +105,25 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
         }
 
     ]
+    const leaseExpiry = (row: number) => {
+        if (row >= 0 && row <= 40) { return '#14AE5C' }
+        if (row >= 41 && row <= 70) { return '#E8B931' }
+        if (row >= 71) { return '#EC221F' }
+        return ''
+    }
 
     const stringToNumber = (val: string | number | undefined) => {
         if (val === undefined || val === null) return 0
         return parseFloat(String(val).replace('%', '')) || 0
     }
+
+    const activeLease = () => {
+        if (tenants?.status === 'Active Lease') {
+            return tenants.id
+        }
+        return ''
+    }
+
 
     if (!tenants) return <Flex h={'50vh'} justify={'center'} align={'center'}>
         <Text fontSize={'24px'} className="satoshi-bold">No Tenant Info Found</Text>
@@ -152,7 +166,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                 <SectionBox mt={6} w={'728px'}>
                     <HStack justify={'space-between'}>
                         <PageTitle mt={2} fontSize={'18px'} title="Lease Information" />
-                        <Modal size={'cover'} className="h-fit w-[700px]" triggerElement={<FiEdit cursor={'pointer'} size={16} />} modalContent={<LeaseInfo tenantId={tenants.id} unitId={tenant.id} />} />
+                        <Modal size={'cover'} className="h-fit w-[700px]" triggerElement={<FiEdit cursor={'pointer'} size={16} />} modalContent={<LeaseInfo tenantId={tenants.id} unitId={tenant.id} activeId={activeLease()} />} />
 
                     </HStack>
                     <Box mt={6}>
@@ -163,7 +177,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                             </Box>
                             <Box w={'50%'}>
                                 <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Lease Expiry</Text>
-                                <ProgressCircle showValueText thickness={2} cap={'round'} value={stringToNumber(tenants?.currentLease?.leaseExpiryPercentage)} color={'red'} size={'xs'} />
+                                <ProgressCircle showValueText thickness={2} cap={'round'} value={stringToNumber(tenants?.currentLease?.leaseExpiryPercentage)} color={leaseExpiry(stringToNumber(tenants?.currentLease?.leaseExpiryPercentage))} size={'xs'} />
                             </Box>
                         </HStack>
                         <Divider />
@@ -190,28 +204,29 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                 <SectionBox w={'376px'}>
                     <PageTitle title={'Cohabitants'} fontSize={'16px'} />
                     {
-                        tenants?.cohabitants?.map((contact, index) => (
-                            <Box key={index}>
-                                <HStack justify={'space-between'}>
-                                    <Flex mt={2} justify={'start'}>
-                                        <Avatar size={'lg'} src={contact.photoUrl} name={contact.name} />
-                                        <Box ml={'11px'} w={'full'}>
-                                            <Box >
-                                                <Text className="satoshi-bold">{contact.name}</Text>
-                                                <Text mt={1} color={'#010F0D'}>{contact.email}</Text>
-                                            </Box>
-                                            <Flex mt={3} gap={2}>
-                                                <MainButton size='lg' icon={<LuPhone />}>Contact</MainButton>
-                                                <MainButton size='lg' variant="outline" icon={<LuMail />}>Send Email</MainButton>
-                                            </Flex>
+                        tenants?.cohabitants?.length === 0 && <Text className="text-[14px] my-4 satoshi-medium text-center text-[#757575]">No cohabitants found</Text>}
+                    {tenants?.cohabitants?.map((contact, index) => (
+                        <Box key={index}>
+                            <HStack justify={'space-between'}>
+                                <Flex mt={2} justify={'start'}>
+                                    <Avatar size={'lg'} src={contact.photoUrl} name={contact.name} />
+                                    <Box ml={'11px'} w={'full'}>
+                                        <Box >
+                                            <Text className="satoshi-bold">{contact.name}</Text>
+                                            <Text mt={1} color={'#010F0D'}>{contact.email}</Text>
                                         </Box>
-                                    </Flex>
-                                    <LuEllipsisVertical />
-                                </HStack>
+                                        <Flex mt={3} gap={2}>
+                                            <MainButton size='lg' icon={<LuPhone />}>Contact</MainButton>
+                                            <MainButton size='lg' variant="outline" icon={<LuMail />}>Send Email</MainButton>
+                                        </Flex>
+                                    </Box>
+                                </Flex>
+                                <LuEllipsisVertical />
+                            </HStack>
 
-                                {index !== 1 && <Divider my={4} />}
-                            </Box>
-                        ))
+                            {index !== 1 && <Divider my={4} />}
+                        </Box>
+                    ))
                     }
                 </SectionBox>
                 <SectionBox mt={6}>
@@ -235,6 +250,9 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                         ))}
                     </HStack>
                     <Box mt={6}>
+                        {
+                            tenants?.visitorHistory?.length === 0 && <Text className="text-[14px] my-4 satoshi-medium text-center text-[#757575]">No visitors found</Text>}
+
                         {tenants?.visitorHistory?.map((row, index) => {
                             const status = Status.find((status) => status.value === (row?.status ?? 'CHECKED_IN'))
 
@@ -287,6 +305,9 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                 <SectionBox mt={6}>
                     <PageTitle title="Payment History" fontSize={'16px'} />
                     <Box>
+                        {
+                            tenants?.paymentHistory?.length === 0 && <Text className="text-[14px] my-4 satoshi-medium text-center text-[#757575]">No payments found</Text>}
+
                         {tenants?.paymentHistory?.map((item, index) => (
                             <><Flex p={2} key={index}>
                                 <Box>

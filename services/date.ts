@@ -41,6 +41,11 @@ export const formatNumber = (number: number | string | undefined) => {
 	})
 }
 
+export const formatNumberRegular = (value: string | number) => {
+	if (!value) return ""
+	return value.toString().replace(/\B(?=(\d{4})+(?!\d))/g, " ")
+}
+
 export const formatDateTime = (dateStr: string | undefined) => {
 	if (!dateStr) {
 		return ""
