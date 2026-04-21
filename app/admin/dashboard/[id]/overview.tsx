@@ -305,7 +305,7 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                 <SectionBox mt={6} pb={7} w={"748px"}>
                     <PageTitle title="Amenities" fontSize={"16px"} />
                     <Flex gap={2} mt={4} wrap={"wrap"}>
-                        {Property?.amenities.length === 0 && !edit && (
+                        {Property?.amenities.length === 0 && !edit && !isLoading && (
                             <Text className="satoshi-bold text-center w-full place-self-center text-[#5A5A5A]">
                                 No Amenities Listed
                             </Text>

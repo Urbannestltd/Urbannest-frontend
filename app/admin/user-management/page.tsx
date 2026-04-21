@@ -10,12 +10,14 @@ import { useForm } from "react-hook-form"
 import { searchUsersFormData } from "@/schema/admin"
 import { MainButton } from "@/components/ui/button"
 import { LuCalendar, LuDownload } from "react-icons/lu"
+import { useRouter } from "next/navigation"
 
 export default function Page() {
     const columns = useColumns()
     const users = useUserStore(state => state.users)
     const fetchUsers = useUserStore(state => state.fetchUsers)
     const { control } = useForm<searchUsersFormData>()
+    const router = useRouter()
 
     useEffect(() => {
         fetchUsers()
@@ -32,7 +34,7 @@ export default function Page() {
                 </Flex>
                 <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
             </HStack>
-            <DataTable data={users} columns={columns} tableName="Users" />
+            <DataTable data={users} onRowClick={(row) => router.push(`/admin/user-management/${row.id}`)} columns={columns} tableName="Users" />
         </div>
     )
 
