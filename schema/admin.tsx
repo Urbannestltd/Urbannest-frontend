@@ -48,6 +48,12 @@ export const searchMaintenanceSchema = z.object({
     dateRange: selectArrayField("Date range is required"),
 })
 
+export const searchUsersSchema = z.object({
+    role: selectArrayField("Role is required"),
+    status: selectArrayField("Status is required"),
+    dateRange: selectArrayField("Date range is required"),
+})
+
 export const filterSchema = z.object({
     property: selectArrayField("Property is required"),
     status: selectArrayField("Status is required"),
@@ -61,4 +67,5 @@ export type editPropertyFormData = z.infer<typeof editPropertySchema>
 export type addUnitFormData = z.infer<typeof AddUnitSchema>
 export type addExpenseFormData = z.infer<typeof addExpenseSchema>
 export type searchMaintenanceFormData = z.infer<typeof searchMaintenanceSchema>
+export type searchUsersFormData = z.infer<typeof searchUsersSchema>
 export type filterFormData = z.infer<typeof filterSchema>
