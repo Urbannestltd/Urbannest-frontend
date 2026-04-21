@@ -37,9 +37,14 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
         items: properties.map((item) => ({ label: item.propertyName, value: item.propertyId }))
     })
     const unit = createListCollection({
-        items: Object.entries(units?.grouped ?? {}).flatMap(([floor, floorUnits]) => (floorUnits as Row[]).map((item) => ({ label: item.name, value: item.id })))
+        items:
+            units?.grouped?.flatMap((floorUnits) =>
+                floorUnits.units.map((item) => ({
+                    label: item.name,
+                    value: item.id,
+                }))
+            ) ?? [],
     })
-
     const mutation = useMutation({
         mutationFn: (payload: addExpensePayload) => addExpense(payload),
         onSuccess: () => {
