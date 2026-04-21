@@ -61,6 +61,13 @@ export const filterSchema = z.object({
     paymentMethod: selectArrayField("Payment method is required"),
 })
 
+export const permissionSchema = z.object({
+    tenantPortal: boolean("Tenant portal is required"),
+    payRent: boolean("Pay rent is required"),
+    requestMaintenance: boolean("Request maintenance is required"),
+    visitorAllowance: boolean("Visitor allowance is required"),
+})
+
 
 export type addPropertyFormData = z.infer<typeof addPropertySchema>
 export type editPropertyFormData = z.infer<typeof editPropertySchema>
@@ -69,3 +76,4 @@ export type addExpenseFormData = z.infer<typeof addExpenseSchema>
 export type searchMaintenanceFormData = z.infer<typeof searchMaintenanceSchema>
 export type searchUsersFormData = z.infer<typeof searchUsersSchema>
 export type filterFormData = z.infer<typeof filterSchema>
+export type permissionFormData = z.infer<typeof permissionSchema>

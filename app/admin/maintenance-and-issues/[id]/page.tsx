@@ -359,7 +359,7 @@ export default function TicketPage() {
                         <SectionBox rounded={"none"} border={"none"}>
                             <Timeline.Root variant={"subtle"}>
                                 {Ticket?.timeline.map((timeline) => {
-                                    return (<Timeline.Item w={"full"}>
+                                    return (<Timeline.Item w={"full"} >
                                         <Timeline.Connector>
                                             <Timeline.Separator border={"1px solid #F4F4F4"} />
                                             <Timeline.Indicator bg={"#F5F5F5"}>

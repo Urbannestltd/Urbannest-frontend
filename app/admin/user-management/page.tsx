@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation"
 export default function Page() {
     const columns = useColumns()
     const users = useUserStore(state => state.users)
+    const isLoading = useUserStore(state => state.isLoading)
     const fetchUsers = useUserStore(state => state.fetchUsers)
     const { control } = useForm<searchUsersFormData>()
     const router = useRouter()
@@ -34,7 +35,7 @@ export default function Page() {
                 </Flex>
                 <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
             </HStack>
-            <DataTable data={users} onRowClick={(row) => router.push(`/admin/user-management/${row.id}`)} columns={columns} tableName="Users" />
+            <DataTable data={users} loading={isLoading} onRowClick={(row) => router.push(`/admin/user-management/${row.id}`)} columns={columns} tableName="Users" />
         </div>
     )
 

@@ -152,6 +152,8 @@ type SwitchProps<T extends FieldValues> = BaseProps<T> & {
     triggerHeight?: string;
     errorTextFallback?: string;
     value?: any;
+    beforeColor?: string
+    afterColor?: string
 }
 
 export function CustomSelect<T extends FieldValues>({
@@ -833,24 +835,27 @@ export function CustomSwitch<T extends FieldValues>({
     onChange,
     readOnly,
     value,
-    orientation = 'vertical'
+    orientation = 'vertical',
+    beforeColor,
+    afterColor
 }: SwitchProps<T>) {
     const { field, fieldState } = useController({ name, control });
     const currentValue = field.value ?? value;
     return (
         <Stack mt={2} >
-            <Field.Root invalid={!!!fieldState.error}>
+            <Field.Root invalid={!!fieldState.error}>
                 <Switch.Root
                     name={field.name}
                     checked={currentValue}
+                    size={'md'}
                     colorPalette={'green'}
                     disabled={disabled}
                     readOnly={readOnly}
                     onCheckedChange={({ checked }) => { field.onChange(checked); onChange?.(checked); }}
                 >
                     <Switch.HiddenInput onBlur={field.onBlur} />
-                    <Switch.Control />
-                    <Switch.Label>{label}</Switch.Label>
+                    <Switch.Control bg={currentValue === true ? afterColor : beforeColor} />
+                    {label && <Switch.Label>{label}</Switch.Label>}
                 </Switch.Root>
                 {fieldState.error && <Field.ErrorText>{fieldState.error.message}</Field.ErrorText>}
             </Field.Root>

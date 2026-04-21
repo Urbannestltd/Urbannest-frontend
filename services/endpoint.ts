@@ -103,6 +103,8 @@ const adminEndpoints = {
 
 	//Users
 	fetchUsers: `/admin/users`,
+	fetchUser: (id: string) => `/admin/users/${id}`,
+	fetchActivities: (id: string) => `/admin/users/${id}/activity`,
 }
 
 export { adminEndpoints }

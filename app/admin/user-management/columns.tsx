@@ -1,11 +1,11 @@
 import { Avatar } from "@/components/ui/avatar";
 import { formatDate, formatNumberRegular } from "@/services/date";
-import { User } from "@/store/admin/user";
+import { Users } from "@/store/admin/user";
 import { Box, Circle, Flex, HStack, Menu, Text } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuEllipsisVertical } from "react-icons/lu";
 
-export const useColumns = (): ColumnDef<User, any>[] => {
+export const useColumns = (): ColumnDef<Users, any>[] => {
     const Status = [
         {
             value: 'ACTIVE',
