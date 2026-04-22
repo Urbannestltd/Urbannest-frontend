@@ -53,13 +53,10 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
     onSave,
 }, ref) => {
     const Property = usePropertyStore((state) => state.property)
-    const fetchProperty = usePropertyStore((state) => state.fetchProperty)
     const isLoading = usePropertyStore((state) => state.isLoading)
     const { control, reset, getValues, watch } = useForm<editPropertyFormData>({
         defaultValues: {
             price: property?.rentalPrice,
-            noOfFloors: property?.noOfFloors,
-            noOfUnits: property?.noOfUnits,
         }
     })
     const [amenities, setAmenities] = useState<string[]>([])
@@ -79,11 +76,6 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
         "Parking Garage",
     ]
 
-    useEffect(() => {
-        if (property?.id) {
-            fetchProperty(property.id)
-        }
-    }, [property?.id])
     const occupancy = (row: number | string) => {
         const value =
             typeof row === "string" ? parseFloat(row.replace("%", "")) : row
@@ -124,8 +116,6 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
         if (Property) {
             reset({
                 price: Property.rentalPrice,
-                noOfFloors: Property.noOfFloors,
-                noOfUnits: Property.noOfUnits,
                 // ...any other fields
             })
         }
@@ -147,7 +137,7 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
 
 
     const handleAdd = async (file: File) => {
-        const url = await StoreFile({ file, folder: 'property' })
+        const url = await StoreFile({ file, folder: 'support' })
         setImages([...images, url])
     }
 
@@ -223,16 +213,8 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                             justify={"space-between"}
                         >
                             <Text className="satoshi-medium">No of Floors</Text>
-                            {edit ? (
-                                <CustomEditable
-                                    key={`noOfFloors-${Property?.noOfFloors}`}
-                                    name="noOfFloors"
-                                    control={control}
-                                    value={property?.noOfFloors}
-                                />
-                            ) : (
-                                <Text>{Property?.noOfFloors}</Text>
-                            )}
+
+                            <Text>{Property?.noOfFloors}</Text>
                         </SectionFlex>
                         <SectionFlex
                             gap={2}
@@ -241,18 +223,10 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                             justify={"space-between"}
                         >
                             <Text className="satoshi-medium">No Of Units</Text>
-                            {edit ? (
-                                <CustomEditable
-                                    key={`noOfUnits-${Property?.noOfUnits}`}
-                                    name='noOfUnits'
-                                    control={control}
-                                    value={property?.noOfUnits}
-                                />
-                            ) : (
-                                <Text className="satoshi-variable font-semibold">
-                                    {Property?.noOfUnits}
-                                </Text>
-                            )}
+
+                            <Text className="satoshi-variable font-semibold">
+                                {Property?.noOfUnits}
+                            </Text>
                         </SectionFlex>
                         <SectionFlex
                             gap={2}

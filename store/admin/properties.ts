@@ -19,14 +19,19 @@ export interface Properties {
 		name: string
 		photoUrl: string
 	}
+	landlord: {
+		id: string
+		name: string
+		photoUrl: string
+	}
 	alerts: string[]
-	additionalProp1: {}
 }
 
 export interface Property {
 	id: string
 	name: string
 	address: string
+	state: string
 	lastUpdated: string
 	rentalPrice: number
 	noOfFloors: number

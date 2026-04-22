@@ -1,6 +1,4 @@
-import { property } from 'lodash';
 import * as z from 'zod'
-import { da } from 'zod/v4/locales';
 
 const selectArrayField = (msg: string) => z.array(z.string()).min(1, msg).default([]);
 const inputField = (msg: string) => z.string().min(1, msg);
@@ -20,8 +18,6 @@ export const addPropertySchema = z.object({
 
 export const editPropertySchema = z.object({
     price: number("Property price is required"),
-    noOfFloors: number("Number of floors is required"),
-    noOfUnits: number("Number of units per floor is required"),
 })
 
 export const AddUnitSchema = z.object({
@@ -68,6 +64,27 @@ export const permissionSchema = z.object({
     visitorAllowance: boolean("Visitor allowance is required"),
 })
 
+export const landlordPermissionSchema = z.object({
+    viewFinancialReports: boolean("View financial reports is required"),
+    manageProperties: boolean("Manage properties is required"),
+    viewTenantAndLease: boolean("View tenant and lease is required"),
+    viewMaintenanceTickets: boolean("View maintenance tickets is required"),
+    approveMajorMaintenance: boolean("Approve major maintenance is required"),
+})
+
+export const facilityManagerPermissionSchema = z.object({
+    manageTickets: boolean("Manage tickets is required"),
+    managePropertyAndUnits: boolean("Manage property and units is required"),
+    approveMinorMaintenance: boolean("Approve minor maintenance is required"),
+    viewTenantAndLease: boolean("View tenant and lease is required"),
+})
+
+export const adminPermissionSchema = z.object({
+    financials: boolean("Financials is required"),
+    properties: boolean("Properties is required"),
+    maintenance: boolean("Maintenance is required"),
+    userManagement: boolean("User management is required"),
+})
 
 export type addPropertyFormData = z.infer<typeof addPropertySchema>
 export type editPropertyFormData = z.infer<typeof editPropertySchema>
@@ -77,3 +94,6 @@ export type searchMaintenanceFormData = z.infer<typeof searchMaintenanceSchema>
 export type searchUsersFormData = z.infer<typeof searchUsersSchema>
 export type filterFormData = z.infer<typeof filterSchema>
 export type permissionFormData = z.infer<typeof permissionSchema>
+export type landlordPermissionFormData = z.infer<typeof landlordPermissionSchema>
+export type facilityManagerPermissionFormData = z.infer<typeof facilityManagerPermissionSchema>
+export type adminPermissionFormData = z.infer<typeof adminPermissionSchema>

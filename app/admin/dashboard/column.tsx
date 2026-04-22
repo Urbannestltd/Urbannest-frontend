@@ -34,8 +34,9 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             </HStack>
         },
         {
-            accessorKey: 'landlord',
+            accessorFn: (row) => row.landlord,
             header: "Owner Info",
+            cell: ({ row }) => row.original.landlord?.name ?? '-'
         },
         {
             accessorFn: (row) => row.occupancyPercent,

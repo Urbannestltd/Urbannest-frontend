@@ -1,3 +1,4 @@
+import { Properties } from "@/app/admin/user-management/[id]/landlord-columns"
 import { adminEndpoints } from "@/services/endpoint"
 import http from "@/services/https"
 import { create } from "zustand"
@@ -19,9 +20,9 @@ export interface Users {
 
 export interface User {
 	properties: {
-		asAgent: string
-		asFacilityManager: string
-		asLandlord: string
+		asAgent: Properties[]
+		asFacilityManager: Properties[]
+		asLandlord: Properties[]
 	}
 	createdAt: string
 	emergencyContact: string

@@ -62,7 +62,7 @@ export const formatDateTime = (dateStr: string | undefined) => {
 
 export const formatDate = (dateStr: string | undefined) => {
 	if (!dateStr) {
-		return ""
+		return null
 	}
 	const date = new Date(dateStr)
 	return date.toLocaleDateString("en-GB", {

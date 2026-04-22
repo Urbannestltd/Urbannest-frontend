@@ -22,17 +22,17 @@ export default function Page() {
     const id = params?.id as string;
 
     const property = usePropertyStore((state) => state.property)
-    const properties = usePropertyStore((state) => state.properties)
     const fetchProperty = usePropertyStore((state) => state.fetchProperty)
+    const fetchUnits = usePropertyStore((state) => state.fetchUnits)
     const isLoading = usePropertyStore((state) => state.isLoading)
     const [selectedTab, setSelectedTab] = useState('Overview')
     const [editMode, setEditMode] = useState(false)
-    const { control, watch, reset, getValues } = useForm<{ name: string, address: string, state: string, }>()
+    const { control, reset, getValues } = useForm<{ name: string, address: string, state: string, }>()
 
-    const prop = properties?.find((property) => property.propertyId === id)
 
     useEffect(() => {
         fetchProperty(id)
+        fetchUnits(id)
     }, [id])
 
     useEffect(() => {
@@ -115,7 +115,7 @@ export default function Page() {
                                 <Text className="satoshi-bold text-[20px] md:text-[24px]">{property?.name}</Text>
                                 <HStack>
                                     <Image alt="location-icon" src={locateIcon.src} />
-                                    <Text className="satoshi-medium text-[12px] lg:text-[14px] mt-0">{property?.address}</Text>
+                                    <Text className="satoshi-medium text-[12px] lg:text-[14px] mt-0">{property?.address}, {property?.state}</Text>
                                 </HStack>
                             </Box>
                         )}

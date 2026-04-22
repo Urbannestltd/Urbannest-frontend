@@ -20,11 +20,9 @@ export const Unit = ({ property }: { property?: Property | null }) => {
     const [selectedRow, setSelectedRow] = useState<Row | null>(null)
 
     const units = usePropertyStore(state => state.units)
-    const fetchUnits = usePropertyStore(state => state.fetchUnits)
     const loading = usePropertyStore(state => state.isLoading)
 
     useEffect(() => {
-        if (property?.id) { fetchUnits(property?.id) }
         setShowTenant(false)
     }, [property?.id])
 

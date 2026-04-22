@@ -105,6 +105,7 @@ const adminEndpoints = {
 	fetchUsers: `/admin/users`,
 	fetchUser: (id: string) => `/admin/users/${id}`,
 	fetchActivities: (id: string) => `/admin/users/${id}/activity`,
+	suspendUser: (id: string) => `/admin/users/${id}/suspend`,
 }
 
 export { adminEndpoints }
