@@ -56,7 +56,7 @@ export interface UpdateLeasePayload {
 export interface addMemberPayload {
 	userEmail: string
 	unitId?: string
-	propertyId: string
+	propertyId?: string
 	userRole: string
 }
 

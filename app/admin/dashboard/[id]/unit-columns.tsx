@@ -139,7 +139,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: st
                             </Menu.Positioner>
                         </Portal>
                     </Menu.Root>
-                    <Modal open={open} onOpenChange={setOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal unit unitId={row.original.tenantId} />} />
+                    <Modal open={open} onOpenChange={setOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal unit unitId={row.original.id} />} />
                     <Modal open={openDelete} onOpenChange={setOpenDelete} size={'xs'} className="h-fit" modalContent={<DeletePopUp onClose={() => setOpenDelete(false)} data={{ propertyId: propertyId, unit: true, unitId: row.original.id }} />} /></Flex>
 
             }

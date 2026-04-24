@@ -7,7 +7,6 @@ import { addMember, addMemberPayload, removeMember, removeMemberPayload } from "
 import { Box, Button, createListCollection, Flex, HStack, Input, InputGroup, Menu, Portal, Select, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { useState } from "react"
-import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { FiSearch } from "react-icons/fi"
 import { LuChevronDown } from "react-icons/lu"
@@ -73,8 +72,8 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
     })
     const onAddMember = () => {
         const payload: addMemberPayload = {
-            propertyId: propertyId ?? '',
-            unitId: unitId ?? '',
+            propertyId: propertyId,
+            unitId: unitId,
             userEmail: userId,
             userRole: inviteRole?.value.toUpperCase() ?? ''
         }
