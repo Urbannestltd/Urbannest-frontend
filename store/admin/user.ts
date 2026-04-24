@@ -26,6 +26,7 @@ export interface User {
 	}
 	createdAt: string
 	emergencyContact: string
+	permissions: string
 	employer: string
 	occupation: string
 	dateOfBirth: string

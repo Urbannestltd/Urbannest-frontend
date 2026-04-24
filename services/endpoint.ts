@@ -114,7 +114,7 @@ const adminEndpoints = {
 	//Settings endpoints
 	getNotifPreference: `/admin/settings/notifications`,
 	updateNotifPreference: `/admin/settings/notifications`,
-	changePassword: `/admin/settings/change-password`,
+	changePassword: `/admin/settings/password`,
 }
 
 export { adminEndpoints }

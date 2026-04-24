@@ -21,6 +21,6 @@ export const updateNotifPreferences = async (payload: NotificationFormData) => {
 }
 
 export const ChangePassword = async (payload: ChangePasswordPayload) => {
-	const response = await http.post(adminEndpoints.changePassword, payload)
+	const response = await http.patch(adminEndpoints.changePassword, payload)
 	return response.data
 }
