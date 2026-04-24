@@ -3,6 +3,7 @@ import { RequireAuth } from "../auth/require-auth"
 import { UserNav } from "./user-nav"
 import { SideBarSetup } from "./page"
 import { Box, Flex } from "@chakra-ui/react"
+import { PageContainer } from "@/components/ui/page-container"
 
 export const metadata: Metadata = {
     title: "Tenant Dashboard",
@@ -19,21 +20,12 @@ export default function DashboardLayout({
         <RequireAuth>
             <div className="flex h-screen">
                 <SideBarSetup />
-                <Flex
-                    position="absolute"
-                    justify={'center'}
-                    color="blue.900"
-                    top="0rem"
-                    left="15rem"
-                    p={{ base: 4, md: 8 }}
-                    w="calc(100vw - 15rem)"
-                    className="scrollbar-hide"
-                >
+                <PageContainer left={'15rem'} >
                     <div className=" w-full max-w-[1440px]">
                         <UserNav />
                         {children}
                     </div>
-                </Flex>
+                </PageContainer>
             </div>
         </RequireAuth>
     ) //<>{children}</RequireAuth></>;

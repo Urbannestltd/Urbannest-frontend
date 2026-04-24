@@ -46,25 +46,40 @@ export interface Activity {
 	userId: string
 	id: string
 }
+export interface metrics {
+	suspended: number
+	active: number
+	total: number
+}
+
+interface filter {
+	role?: string
+	status?: string
+	createdFrom?: string
+	createdTo?: string
+}
 
 interface UserStore {
+	metrics: metrics | null
 	users: Users[]
 	user: User | null
 	activities: Activity[]
 	isLoading: boolean
 	fetchUser: (id: string) => Promise<void>
-	fetchUsers: () => Promise<void>
+	fetchUsers: (filter?: filter) => Promise<void>
 	fetchActivities: (id: string) => Promise<void>
+	fetchMetrics: () => Promise<void>
 }
 
 export const useUserStore = create<UserStore>((set) => ({
+	metrics: null,
 	users: [],
 	user: null,
 	activities: [],
 	isLoading: false,
-	fetchUsers: async () => {
+	fetchUsers: async (filter) => {
 		set({ isLoading: true })
-		const users = await http.get(adminEndpoints.fetchUsers)
+		const users = await http.get(adminEndpoints.fetchUsers, { params: filter })
 		set({ users: users.data.data, isLoading: false })
 		console.log("✅ Users set in store:", users.data.data)
 	},
@@ -79,5 +94,11 @@ export const useUserStore = create<UserStore>((set) => ({
 		const activities = await http.get(adminEndpoints.fetchActivities(id))
 		set({ activities: activities.data.data, isLoading: false })
 		console.log("✅ Activities set in store:", activities.data.data)
+	},
+	fetchMetrics: async () => {
+		set({ isLoading: true })
+		const metrics = await http.get(adminEndpoints.fetchUserMetrics)
+		set({ metrics: metrics.data.data, isLoading: false })
+		console.log("✅ Metrics set in store:", metrics.data.data)
 	},
 }))

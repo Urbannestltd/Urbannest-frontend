@@ -45,6 +45,7 @@ interface AdminTenantState {
 		leaseExpiryPercentage: string
 		serviceCharge: number
 		rentAmount: number
+		leaseId: string
 	}
 	leaseHistory: leaseHistory[]
 	visitorHistory: visitorHistory[]

@@ -10,7 +10,7 @@ import { useAdminTenantStore } from "@/store/admin/tenant";
 import { useUserStore } from "@/store/admin/user";
 import { Box, Breadcrumb, Button, Center, Circle, Field, Flex, Grid, GridItem, HStack, Image, Link, Stack, Switch, Text, Timeline } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CgTrash } from "react-icons/cg";
 import { FiEdit } from "react-icons/fi";
 import { LeaseInfo } from "../../dashboard/[id]/lease-info";
@@ -21,16 +21,19 @@ import { CustomSwitch } from "@/components/ui/custom-fields";
 import { useForm } from "react-hook-form";
 import { permissionFormData } from "@/schema/admin";
 import { useMutation } from "@tanstack/react-query";
-import { suspendUser } from "@/services/admin/user";
+import { activateUser, suspendUser } from "@/services/admin/user";
 import toast from "react-hot-toast";
+import { SuspendPopUp } from "./page";
 
 export default function Tenant({ userId }: { userId: string }) {
     const user = useUserStore(state => state.user)
+    const fetchUser = useUserStore(state => state.fetchUser)
     const activities = useUserStore(state => state.activities)
     const tenant = useAdminTenantStore(state => state.tenant)
     const fetchTenant = useAdminTenantStore(state => state.fetchTenant)
     const { control } = useForm<permissionFormData>()
-
+    const [openSuspendModal, setOpenSuspendModal] = useState(false)
+    const isSuspened = user?.status === 'BLOCKED' || user?.status === 'SUSPENDED'
 
     useEffect(() => {
         if (!userId) return
@@ -115,12 +118,22 @@ export default function Tenant({ userId }: { userId: string }) {
         return ''
     }
 
-    const suspendUsers = useMutation({
-        mutationFn: () => suspendUser(user?.id ?? userId),
+
+    const activateUsers = useMutation({
+        mutationFn: () => activateUser(user?.id ?? userId),
         onSuccess: (response) => {
             toast.success(response.message)
+            fetchUser(user?.id ?? userId)
         }
     })
+
+    const handleSuspend = () => {
+        if (isSuspened) {
+            activateUsers.mutate()
+        } else {
+            setOpenSuspendModal(true)
+        }
+    }
 
     return (
         <div>
@@ -239,18 +252,19 @@ export default function Tenant({ userId }: { userId: string }) {
                         <MainButton
                             variant="outline"
                             iconPosition="right"
-                            iconColor="#DC2626"
+                            iconColor={isSuspened ? "#2A3348" : "#DC2626"}
                             icon={<LuChevronRight />}
+                            loading={activateUsers.isPending}
                             size="lg"
-                            onClick={() => suspendUsers.mutate()}
-                            className="h-[38px] my-3 justify-between rounded-full border-[#DC2626]  text-lg satoshi-bold"
+                            onClick={() => handleSuspend()}
+                            className={`h-[38px] my-3 justify-between rounded-full ${isSuspened ? 'border-[#2A3348]' : 'border-[#DC2626]'} text-lg satoshi-bold`}
                         >
-                            <Flex color={'#DC2626'} align={"center"}>
-                                <LuBan className="mr-2" size={14} />{" "}
-                                Suspend User Account
+                            <Flex color={isSuspened ? '#2A3348' : '#DC2626'} align={"center"}>
+                                {isSuspened ? "Activate User Account" : <><LuBan className="mr-2" size={14} />{" "}Suspend User Account</>}
                             </Flex>
                         </MainButton>
                     </SectionBox>
+                    <Modal size={'sm'} open={openSuspendModal} onOpenChange={(e) => setOpenSuspendModal(e)} className="w-[400px]" modalContent={<SuspendPopUp userId={user?.id ?? userId} onClose={() => setOpenSuspendModal(false)} />} />
                     <SectionBox p={4} mt={6} w={'full'}>
                         <Text
                             letterSpacing={"1.1px"}

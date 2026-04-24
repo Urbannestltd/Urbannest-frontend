@@ -56,7 +56,17 @@ interface Ticket {
 	]
 }
 
+interface metrics {
+	highPriorityOpenCount: number
+	avgResponseTimeMinutes: number
+	weeklyCompletionPercent: number
+	weeklyTicketsTotal: number
+	weeklyTicketsCompleted: number
+	maintenanceCostEstimate: number
+}
+
 interface TicketsStore {
+	metrics: metrics | null
 	tickets: Tickets[]
 	ticketsPerProperty: Tickets[]
 	ticket: Ticket | null
@@ -71,6 +81,7 @@ interface TicketsStore {
 	fetchAllTickets: () => Promise<void>
 	fetchTicketPerProperty: (id: string) => Promise<void>
 	fetchTicket: (id: string) => Promise<void>
+	fetchMetrics: () => Promise<void>
 	setComments: (comments: {
 		isSystemMessage: boolean
 		timestamp: string
@@ -82,6 +93,7 @@ interface TicketsStore {
 }
 
 export const useTicketStore = create<TicketsStore>((set) => ({
+	metrics: null,
 	tickets: [],
 	ticketsPerProperty: [],
 	ticket: null,
@@ -103,6 +115,11 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		const response = await http.get(adminEndpoints.fetchTicket(ticketId))
 		console.log("ticket", response.data.data)
 		set({ ticket: response.data.data, isLoading: false, newComments: null })
+	},
+	fetchMetrics: async () => {
+		set({ isLoading: true })
+		const response = await http.get(adminEndpoints.fetchTicketMetrics)
+		set({ metrics: response.data.data, isLoading: false })
 	},
 	setComments: (comment) => set({ newComments: comment }),
 	clearTickets: () => set({ tickets: [] }),

@@ -83,6 +83,7 @@ const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: Tenant
     useEffect(() => {
         if (activeId) {
             fetchLease(activeId)
+            console.log("lease", lease)
             reset({
                 rentAmount: lease?.rentAmount,
                 leaseStartDate: lease?.startDate,
@@ -90,13 +91,6 @@ const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: Tenant
                 moveOutNotice: lease?.moveOutNotice,
                 serviceCharge: lease?.serviceCharge
             })
-            if (lease) {
-                setValue('rentAmount', lease.rentAmount)
-                setValue('leaseStartDate', lease.startDate)
-                setValue('leaseEndDate', lease.endDate)
-                setValue('moveOutNotice', lease.moveOutNotice)
-                setValue('serviceCharge', lease.serviceCharge)
-            }
         }
     }, [activeId])
 

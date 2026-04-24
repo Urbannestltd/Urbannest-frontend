@@ -13,18 +13,47 @@ import { TickettData } from "@/utils/data"
 import { useRouter } from "next/navigation"
 import { useTicketStore } from "@/store/admin/tickets"
 import { use, useEffect } from "react"
+import { format } from "path"
+import { convertMinutes, formatDateTime, formatNumber } from "@/services/date"
 
 export default function Maintenance() {
     const { control } = useForm<searchMaintenanceFormData>()
     const columns = useTicketColumns()
     const tickets = useTicketStore(state => state.tickets)
     const fetchAllTickets = useTicketStore(state => state.fetchAllTickets)
+    const metrics = useTicketStore(state => state.metrics)
+    const fetchMetrics = useTicketStore(state => state.fetchMetrics)
     const isLoading = useTicketStore(state => state.isLoading)
     const router = useRouter()
 
     useEffect(() => {
         fetchAllTickets()
+        fetchMetrics()
     }, [])
+
+    const cardData: CardData[] = [
+        {
+            title: "Avg. Response Time",
+            data: convertMinutes(metrics?.avgResponseTimeMinutes ?? 0),
+            percentage: '14%',
+        },
+        {
+            title: 'High Priority Open',
+            data: metrics?.highPriorityOpenCount ?? 0,
+            tinyText: 'Current'
+        },
+        {
+            title: 'Weekly Completion',
+            data: metrics?.weeklyCompletionPercent ?? 0,
+            tinyText: 'Target 95%'
+        },
+        {
+            title: 'Maintenance Cost (MTD)',
+            data: formatNumber(metrics?.maintenanceCostEstimate),
+            tinyText: 'Est.'
+        }
+    ]
+
     return (
         <div>
             <PageTitle mb={6} title="Maintenance & Issues" />
@@ -47,28 +76,7 @@ export default function Maintenance() {
     )
 }
 
-const cardData: CardData[] = [
-    {
-        title: "Avg. Response Time",
-        data: '14m 22s',
-        percentage: '14%',
-    },
-    {
-        title: 'High Priority Open',
-        data: 8,
-        tinyText: 'Current'
-    },
-    {
-        title: 'Weekly Completion',
-        data: '92%',
-        tinyText: 'Target 95%'
-    },
-    {
-        title: 'Maintenance Cost (MTD)',
-        data: '$12,480',
-        tinyText: 'Est.'
-    }
-]
+
 
 const propertyTypes = createListCollection({
     items: [

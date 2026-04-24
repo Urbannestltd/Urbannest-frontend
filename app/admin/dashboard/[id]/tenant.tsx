@@ -119,7 +119,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
 
     const activeLease = () => {
         if (tenants?.status === 'Active Lease') {
-            return tenants.id
+            return tenants.currentLease.leaseId
         }
         return ''
     }

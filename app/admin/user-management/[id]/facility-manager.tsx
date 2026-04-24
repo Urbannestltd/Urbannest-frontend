@@ -25,15 +25,23 @@ import { AddMemberModal } from "../../dashboard/[id]/add-modal"
 import { DataTable } from "@/components/ui/data-table"
 import { useColumns } from "./facility-columns"
 import { useMutation } from "@tanstack/react-query"
-import { suspendUser } from "@/services/admin/user"
+import { activateUser, suspendUser } from "@/services/admin/user"
 import toast from "react-hot-toast"
+import { SuspendPopUp } from "./page"
+import { useState } from "react"
 
 export const FacilityManager = ({ userId }: { userId: string }) => {
     const user = useUserStore((state) => state.user)
+
+    const fetchUser = useUserStore(state => state.fetchUser)
     const activities = useUserStore((state) => state.activities)
     const columns = useColumns()
 
     const { control } = useForm<facilityManagerPermissionFormData>()
+    const [openSuspendModal, setOpenSuspendModal] = useState(false)
+
+    const isSuspened = user?.status === "BLOCKED" || user?.status === 'SUSPENDED'
+
 
     const generalInfo = [
         {
@@ -72,12 +80,23 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
 
     const statusDeets = status.find((status) => status.value === user?.status)
 
-    const suspendUsers = useMutation({
-        mutationFn: () => suspendUser(user?.id ?? userId),
+
+    const activateUsers = useMutation({
+        mutationFn: () => activateUser(user?.id ?? userId),
         onSuccess: (response) => {
             toast.success(response.message)
+            fetchUser(user?.id ?? userId)
         }
     })
+
+    const handleSuspend = () => {
+        if (isSuspened) {
+            activateUsers.mutate()
+        } else {
+            setOpenSuspendModal(true)
+        }
+    }
+
 
     return (
         <div>
@@ -210,17 +229,20 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
                         <MainButton
                             variant="outline"
                             iconPosition="right"
-                            iconColor="#DC2626"
+                            iconColor={isSuspened ? "#2A3348" : "#DC2626"}
                             icon={<LuChevronRight />}
                             size="lg"
-                            onClick={() => suspendUsers.mutate()}
-                            className="h-[38px] my-3 justify-between rounded-full border-[#DC2626]  text-lg satoshi-bold"
+                            loading={activateUsers.isPending}
+                            onClick={() => handleSuspend()}
+                            className={`h-[38px] my-3 justify-between rounded-full ${isSuspened ? 'border-[#2A3348]' : 'border-[#DC2626]'} text-lg satoshi-bold`}
                         >
-                            <Flex color={"#DC2626"} align={"center"}>
-                                <LuBan className="mr-2" size={14} /> Suspend User Account
+                            <Flex color={isSuspened ? '#2A3348' : '#DC2626'} align={"center"}>
+                                {isSuspened ? "Activate User Account" : <><LuBan className="mr-2" size={14} />{" "}Suspend User Account</>}
                             </Flex>
                         </MainButton>
                     </SectionBox>
+                    <Modal size={'sm'} open={openSuspendModal} onOpenChange={(e) => setOpenSuspendModal(e)} className="w-[400px]" modalContent={<SuspendPopUp userId={user?.id ?? userId} onClose={() => setOpenSuspendModal(false)} />} />
+
                     <SectionBox p={4} mt={6} w={"full"}>
                         <Text
                             letterSpacing={"1.1px"}

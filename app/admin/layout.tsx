@@ -3,6 +3,7 @@ import { RequireAuth } from "../auth/require-auth"
 import { AdminNav } from "./admin-nav"
 import { AdminSideBarSetup } from "./dashboard/page"
 import { Box } from "@chakra-ui/react"
+import { PageContainer } from "@/components/ui/page-container"
 
 export const metadata: Metadata = {
     title: "Admin Dashboard",
@@ -17,22 +18,14 @@ export default function DashboardLayout({
 }) {
     return (
         <RequireAuth>
-            <div className="flex h-screen">
+            <div className="flex h-screen ">
                 <AdminSideBarSetup />
-                <Box
-                    position="absolute"
-                    color="blue.900"
-                    top="0rem"
-                    left="17rem"
-                    p={{ base: 4, md: 8 }}
-                    w="calc(100vw - 17rem)"
-                    className="scrollbar-hide"
-                >
+                <PageContainer left={'17rem'} >
                     <div className=" w-full max-w-[1440px]">
                         <AdminNav />
                         {children}
                     </div>
-                </Box>
+                </PageContainer>
             </div>
         </RequireAuth>
     ) //<>{children}</RequireAuth></>;

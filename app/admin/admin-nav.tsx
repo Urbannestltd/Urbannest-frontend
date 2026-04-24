@@ -27,10 +27,10 @@ export const AdminNav = () => {
     }
 
     return (
-        <HStack mb={4} bg={isSetting ? 'white' : 'transparent'} justify={"space-between"
+        <HStack mb={4} bg={'transparent'} justify={"space-between"
         }>
             {
-                isSetting ? <Image className='w-[185px] h-10 mt-4 cursor-pointer' onClick={() => router.push('/tenant/dashboard')} src={Logo} alt="logo" /> : <HStack>
+                isSetting ? <Image className='w-[185px] h-10 mt-4 cursor-pointer' onClick={() => router.push('/admin/dashboard')} src={Logo} alt="logo" /> : <HStack>
                     <Drawer.Root open={openDrawer} onOpenChange={(e) => setOpenDrawer(e.open)} placement={'start'}>
                         <Drawer.Trigger className="inline md:hidden">
                             <MdOutlineMenu className="mr-2 md:mr-0" size={24} />

@@ -1,5 +1,6 @@
 import { remove, update } from "lodash"
 import { uploadLease } from "./admin/property"
+import { activateUser } from "./admin/user"
 
 const endpoints = {
 	storeFile: "/storage/sign-url",
@@ -97,6 +98,7 @@ const adminEndpoints = {
 	//Tickets
 	fetchAllTickets: `/admin/properties/tickets`,
 	fetchTicketsPerProperty: (id: string) => `/admin/properties/${id}/tickets`,
+	fetchTicketMetrics: `/admin/properties/tickets/metrics`,
 	fetchTicket: (id: string) => `/admin/properties/tickets/${id}`,
 	updateStatus: (id: string) => `/admin/properties/tickets/${id}/status`,
 	postComments: (id: string) => `/admin/properties/tickets/${id}/comments`,
@@ -104,8 +106,15 @@ const adminEndpoints = {
 	//Users
 	fetchUsers: `/admin/users`,
 	fetchUser: (id: string) => `/admin/users/${id}`,
+	fetchUserMetrics: `/admin/users/metrics`,
 	fetchActivities: (id: string) => `/admin/users/${id}/activity`,
 	suspendUser: (id: string) => `/admin/users/${id}/suspend`,
+	activateUser: (id: string) => `/admin/users/${id}/activate`,
+
+	//Settings endpoints
+	getNotifPreference: `/admin/settings/notifications`,
+	updateNotifPreference: `/admin/settings/notifications`,
+	changePassword: `/admin/settings/change-password`,
 }
 
 export { adminEndpoints }
