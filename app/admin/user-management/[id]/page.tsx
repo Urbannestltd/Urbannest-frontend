@@ -85,7 +85,7 @@ export function SuspendPopUp({ userId, onClose }: { userId: string, onClose: () 
         <Flex direction={'column'} mt={4} p={4} align={'center'}>
             <Text fontSize={'18px'} mb={2} className="satoshi-bold capitalize">Suspend this user</Text>
             <Text w={'full'} textWrap={'wrap'} mb={4} color={'#303030'} textAlign={'center'}  >Are you sure you want to suspend this user? They will lose access to their account until reinstated</Text>
-            <Button h={'45px'} onClick={() => suspendUsers.mutate()} w={'full'} color={'white'} bg={'#C00F0C'}>Suspend User</Button>
+            <Button h={'45px'} onClick={() => suspendUsers.mutate()} loading={suspendUsers.isPending} w={'full'} color={'white'} bg={'#C00F0C'}>Suspend User</Button>
         </Flex>
     </>
 }

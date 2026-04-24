@@ -1,9 +1,10 @@
 'use client'
-import { Heading, Tabs } from "@chakra-ui/react"
+import { Button, Center, Heading, Tabs } from "@chakra-ui/react"
 import { NotifPref } from "./notif-pref"
 import { SecurityPrivacy } from "./security-privacy"
 import { useEffect } from "react"
 import { useSettingStore } from "@/store/tenant/settings"
+import { LuX } from "react-icons/lu"
 
 export default function Settings() {
     //const fetchSettings = useSettingStore((state) => state.fetchUserSettings);
@@ -26,6 +27,7 @@ export default function Settings() {
             <Tabs.Content mt={'116px'} ml={'96px'} w={'90%'} value={'security-privacy'}>
                 <SecurityPrivacy />
             </Tabs.Content>
+            <Center boxSize={'30px'} mt={'50px'} rounded={'full'} cursor={'pointer'} onClick={() => window.history.back()} p={1} bg={'#ECEDF0'} ><LuX size={20} /></Center>
         </Tabs.Root>
     )
 }

@@ -35,12 +35,26 @@ export default function Financials() {
     const properties = usePropertyStore(state => state.properties)
     const fetchProperties = usePropertyStore(state => state.fetchProperties)
     const [closeModal, setCloseModal] = useState(false)
+    const formValues = watch()
 
     useEffect(() => {
-        fetchFinancials()
         fetchFinancialDashboard()
         fetchProperties()
     }, [])
+
+    useEffect(() => {
+        const { startDate, endDate } = getDateRange(formValues.dateRange?.[0])
+
+        console.log(formValues)
+
+        fetchFinancials({
+            type: formValues.paymentMethod?.[0],
+            propertyId: formValues.property?.[0] === 'all' ? undefined : formValues.property?.[0],
+            startDate: startDate,
+            endDate: endDate,
+            status: formValues.status?.[0]
+        })
+    }, [formValues.paymentMethod, formValues.property, formValues.dateRange])
 
 
     const propertyTypes = createListCollection({
@@ -87,19 +101,6 @@ export default function Financials() {
         mutation.mutate()
     }
 
-    const selectFilter = () => {
-        const formValues = watch()
-        const { startDate, endDate } = getDateRange(formValues.dateRange[0])
-
-        console.log(formValues)
-
-        fetchFinancials({
-            type: formValues.paymentMethod[0],
-            propertyId: formValues.property[0] === 'all' ? undefined : formValues.property[0],
-            startDate: startDate,
-            endDate: endDate
-        })
-    }
 
 
 
@@ -118,19 +119,19 @@ export default function Financials() {
                 <Flex align={'center'} >
 
                     <Span mb={1} mr={4}>
-                        <CustomSelect name="property" control={control} onChange={selectFilter} icon={HiOutlineBuildingOffice2} size={'xs'} triggerHeight='20px' width={'fit'} value={'all'} placeholder="All Types" collection={propertyTypes} />
+                        <CustomSelect name="property" control={control} icon={HiOutlineBuildingOffice2} size={'xs'} triggerHeight='20px' width={'fit'} value={'all'} placeholder="All Types" collection={propertyTypes} />
                     </Span>
                     <SearchInput width={'356px'} />
                 </Flex>
                 <Flex gap={2} align={'center'}>
                     <Flex>
-                        <CustomSelect name='dateRange' control={control} onChange={selectFilter} icon={LuCalendar} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Today" collection={dateFilter} />
+                        <CustomSelect name='dateRange' control={control} icon={LuCalendar} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Today" collection={dateFilter} />
                     </Flex>
                     <Flex>
-                        <CustomSelect name='paymentMethod' control={control} onChange={selectFilter} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Payment Types" collection={paymentFilter} />
+                        <CustomSelect name='paymentMethod' control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Payment Types" collection={paymentFilter} />
                     </Flex>
                     <Flex>
-                        <CustomSelect name='status' control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Status" collection={propertyTypes} />
+                        <CustomSelect name='status' control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Status" collection={statusFilter} />
                     </Flex>
                     <MdRefresh color="#94A3B8" className=" size-4" />
                 </Flex>
@@ -157,5 +158,14 @@ const paymentFilter = createListCollection({
         { label: 'Maintenance', value: 'UTILITY_TOKEN' },
         { label: 'Utility', value: 'UTILITY_BILL' },
         { label: 'Service', value: 'SERVICE_CHARGE' }
+    ]
+})
+
+const statusFilter = createListCollection({
+    items: [
+        { label: 'Paid', value: 'PAID' },
+        { label: 'Pending', value: 'PENDING' },
+        { label: 'Overdue', value: 'OVERDUE' },
+        { label: 'Failed', value: 'FAILED' },
     ]
 })

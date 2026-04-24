@@ -8,7 +8,7 @@ import { SectionBox } from "@/components/ui/section-box";
 import { formatDate, formatNumber } from "@/services/date";
 import { useAdminTenantStore } from "@/store/admin/tenant";
 import { useUserStore } from "@/store/admin/user";
-import { Box, Breadcrumb, Button, Center, Circle, Field, Flex, Grid, GridItem, HStack, Image, Link, Stack, Switch, Text, Timeline } from "@chakra-ui/react";
+import { Box, Breadcrumb, Button, Center, Circle, Field, Flex, Grid, GridItem, HStack, Icon, Image, Link, Stack, Switch, Text, Timeline } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CgTrash } from "react-icons/cg";
@@ -34,6 +34,10 @@ export default function Tenant({ userId }: { userId: string }) {
     const { control } = useForm<permissionFormData>()
     const [openSuspendModal, setOpenSuspendModal] = useState(false)
     const isSuspened = user?.status === 'BLOCKED' || user?.status === 'SUSPENDED'
+    const [viewFullHistory, setViewFullHistory] = useState(false)
+
+    const allActivities = viewFullHistory ? activities : activities.slice(0, 4)
+
 
     useEffect(() => {
         if (!userId) return
@@ -198,8 +202,8 @@ export default function Tenant({ userId }: { userId: string }) {
                     </SectionBox>
                     <SectionBox mt={6} w={'728px'}>
                         <PageTitle mt={2} mb={2} fontSize={'18px'} title="System Activity Log" />
-                        <Timeline.Root showLastSeparator>
-                            {activities.map((activity, index) => (
+                        <Timeline.Root maxH={viewFullHistory ? '400px' : '200px'} overflow={'scroll'} showLastSeparator>
+                            {allActivities.map((activity, index) => (
                                 <Timeline.Item position={'relative'} key={index} title={activity.action} >
                                     <Timeline.Connector>
                                         <Timeline.Separator border={"1px solid #F4F4F4"} />
@@ -226,7 +230,8 @@ export default function Tenant({ userId }: { userId: string }) {
                                 </Timeline.Item>
                             ))}
                         </Timeline.Root>
-                        <MainButton className="mt-4 bg-[#F8FAFC] text-blue-950 hover:text-white border-none" size="lg" variant='primary' >See All Activity</MainButton>
+                        {activities.length > 4 && (
+                            <MainButton onClick={() => setViewFullHistory(prev => !prev)} className="mt-4 bg-[#F8FAFC] text-blue-950 hover:text-white border-none" size="lg" variant='primary' >{viewFullHistory ? 'Show Less' : 'View Full'} History</MainButton>)}
                     </SectionBox>
                 </Box>
                 <Box w={'376px'}>
@@ -249,20 +254,19 @@ export default function Tenant({ userId }: { userId: string }) {
                                 <LuUserSearch className="mr-2" /> Assign / Reassign
                             </Flex>
                         </MainButton>} modalContent={<AddMemberModal />} />
-                        <MainButton
+
+                        <Button
                             variant="outline"
-                            iconPosition="right"
-                            iconColor={isSuspened ? "#2A3348" : "#DC2626"}
-                            icon={<LuChevronRight />}
                             loading={activateUsers.isPending}
-                            size="lg"
+                            color={isSuspened ? '#2A3348' : '#DC2626'} _hover={{ color: 'white' }}
                             onClick={() => handleSuspend()}
-                            className={`h-[38px] my-3 justify-between rounded-full ${isSuspened ? 'border-[#2A3348]' : 'border-[#DC2626]'} text-lg satoshi-bold`}
+                            className={`h-[38px] my-3 justify-between items-center rounded-full text-sm border ${isSuspened ? 'border-[#2A3348] hover:bg-[#2A3348]' : 'border-[#DC2626] hover:bg-[#DC2626]'} w-full px-3 py-5 satoshi-bold`}
                         >
-                            <Flex color={isSuspened ? '#2A3348' : '#DC2626'} align={"center"}>
-                                {isSuspened ? "Activate User Account" : <><LuBan className="mr-2" size={14} />{" "}Suspend User Account</>}
+                            <Flex align={"center"}>
+                                {isSuspened ? "Activate User Account" : <><Icon as={LuBan} className="mr-2" size={'sm'} />{" "}Suspend User Account</>}
                             </Flex>
-                        </MainButton>
+                            <Icon as={LuChevronRight} size={'sm'} />
+                        </Button>
                     </SectionBox>
                     <Modal size={'sm'} open={openSuspendModal} onOpenChange={(e) => setOpenSuspendModal(e)} className="w-[400px]" modalContent={<SuspendPopUp userId={user?.id ?? userId} onClose={() => setOpenSuspendModal(false)} />} />
                     <SectionBox p={4} mt={6} w={'full'}>

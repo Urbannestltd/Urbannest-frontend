@@ -20,7 +20,7 @@ export const useColumns = (): ColumnDef<Users, any>[] => {
             circleColor: '#E8B931'
         },
         {
-            value: 'SUSPENDED',
+            value: 'BLOCKED',
             label: 'Suspended',
             textColor: '#900B09',
             circleColor: '#EC221F'

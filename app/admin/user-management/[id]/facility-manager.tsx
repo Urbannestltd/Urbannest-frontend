@@ -42,6 +42,11 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
 
     const isSuspened = user?.status === "BLOCKED" || user?.status === 'SUSPENDED'
 
+    const [viewFullHistory, setViewFullHistory] = useState(false)
+
+    const allActivities = viewFullHistory ? activities : activities.slice(0, 4)
+
+
 
     const generalInfo = [
         {
@@ -154,7 +159,7 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
                             fontSize={"18px"}
                             title="System Activity Log"
                         />
-                        <Timeline.Root showLastSeparator>
+                        <Timeline.Root maxH={viewFullHistory ? '400px' : '300px'} overflowY={'scroll'} showLastSeparator>
                             {activities.length === 0 && (
                                 <Flex justify={"center"} align={"center"} h={"200px"}>
                                     <Text className="text-[16px] satoshi-medium">
@@ -162,7 +167,7 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
                                     </Text>
                                 </Flex>
                             )}
-                            {activities.map((activity, index) => (
+                            {allActivities.map((activity, index) => (
                                 <Timeline.Item
                                     position={"relative"}
                                     key={index}
@@ -192,13 +197,9 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
                                 </Timeline.Item>
                             ))}
                         </Timeline.Root>
-                        <MainButton
-                            className="mt-4 bg-[#F8FAFC] text-blue-950 hover:text-white border-none"
-                            size="lg"
-                            variant="primary"
-                        >
-                            See All Activity
-                        </MainButton>
+                        {activities.length > 4 && (
+                            <MainButton onClick={() => setViewFullHistory(prev => !prev)} className="mt-4 bg-[#F8FAFC] text-blue-950 hover:text-white border-none" size="lg" variant='primary' >{viewFullHistory ? 'Show Less' : 'View Full'} History</MainButton>)}
+
                     </SectionBox>
                 </Box>
                 <Box w={"376px"}>

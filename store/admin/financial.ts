@@ -31,6 +31,7 @@ export interface filters {
 	startDate?: string
 	endDate?: string
 	type?: string
+	status?: string
 }
 interface FinancialStore {
 	financials: financials[]

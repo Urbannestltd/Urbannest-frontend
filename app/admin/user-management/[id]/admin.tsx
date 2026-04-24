@@ -10,12 +10,17 @@ import { Box, Center, Circle, Flex, Grid, GridItem, HStack, Text, Timeline } fro
 import { useForm } from "react-hook-form";
 import { CgTrash } from "react-icons/cg";
 import { useColumns } from "./landlord-columns";
+import { useState } from "react";
+import { set } from "lodash";
 
 
 export const Admin = ({ userId }: { userId: string }) => {
     const user = useUserStore(state => state.user)
     const activities = useUserStore(state => state.activities)
     const columns = useColumns()
+    const [viewFullHistory, setViewFullHistory] = useState(false)
+
+    const allActivities = viewFullHistory ? activities : activities.slice(0, 4)
 
     const { control } = useForm<adminPermissionFormData>()
 
@@ -81,13 +86,13 @@ export const Admin = ({ userId }: { userId: string }) => {
                     </SectionBox>
                     <SectionBox mt={6} w={'728px'}>
                         <PageTitle mt={2} mb={2} fontSize={'18px'} title="System Activity Log" />
-                        <Timeline.Root showLastSeparator>
+                        <Timeline.Root maxH={viewFullHistory ? '400px' : '300px'} overflowY={'scroll'} showLastSeparator>
                             {activities.length === 0 && (
                                 <Flex justify={'center'} align={'center'} h={'200px'}>
                                     <Text className="text-[16px] satoshi-medium">No activity found</Text>
                                 </Flex>
                             )}
-                            {activities.map((activity, index) => (
+                            {allActivities.map((activity, index) => (
                                 <Timeline.Item position={'relative'} key={index} title={activity.action} >
                                     <Timeline.Connector>
                                         <Timeline.Separator border={"1px solid #F4F4F4"} />
@@ -114,11 +119,12 @@ export const Admin = ({ userId }: { userId: string }) => {
                                 </Timeline.Item>
                             ))}
                         </Timeline.Root>
-                        <MainButton className="mt-4 bg-[#F8FAFC] text-blue-950 hover:text-white border-none" size="lg" variant='primary' >View Full History</MainButton>
+                        {activities.length > 4 && (
+                            <MainButton onClick={() => setViewFullHistory(prev => !prev)} className="mt-4 bg-[#F8FAFC] text-blue-950 hover:text-white border-none" size="lg" variant='primary' >{viewFullHistory ? 'Show Less' : 'View Full'} History</MainButton>)}
                     </SectionBox>
                 </Box>
                 <Box w={'376px'}>
-                    <SectionBox p={4} mt={6} w={'full'}>
+                    <SectionBox p={4} w={'full'}>
                         <HStack w={'full'} justify={'space-between'}>
                             <Text
                                 letterSpacing={"1.1px"}

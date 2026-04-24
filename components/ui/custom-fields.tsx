@@ -40,7 +40,7 @@ type CustomSelectProps<T extends FieldValues> = BaseProps<T> & {
     alignCenter?: boolean
     size?: SelectRootProps['size']
     borderColor?: string
-    onChange?: (value: any) => void
+    onChange?: (value?: any) => void
 };
 
 type InputProps<T extends FieldValues> = BaseProps<T> & {

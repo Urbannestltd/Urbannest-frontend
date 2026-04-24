@@ -20,13 +20,26 @@ export default function Page() {
     const fetchUsers = useUserStore(state => state.fetchUsers)
     const metrics = useUserStore(state => state.metrics)
     const fetchMetrics = useUserStore(state => state.fetchMetrics)
-    const { control, watch } = useForm<searchUsersFormData>()
+    const { control, watch, getValues } = useForm<searchUsersFormData>()
     const router = useRouter()
+    const watchedValues = watch()
 
     useEffect(() => {
-        fetchUsers()
         fetchMetrics()
     }, [])
+
+    useEffect(() => {
+        const { startDate, endDate } = getDateRange(watchedValues.dateRange?.[0])
+
+        fetchUsers({
+            role: watchedValues.role?.[0] === 'all' ? undefined : watchedValues.role?.[0],
+            status: watchedValues.status?.[0] === 'all' ? undefined : watchedValues.status?.[0],
+            createdFrom: startDate,
+            createdTo: endDate
+        })
+    }, [watchedValues.role, watchedValues.status, watchedValues.dateRange])
+
+
 
     const cardData: CardData[] = [
         {
@@ -45,19 +58,6 @@ export default function Page() {
             percentage: '12% from last month'
         },
     ]
-    const selectFilter = () => {
-        const formValues = watch()
-        const { startDate, endDate } = getDateRange(formValues.dateRange[0])
-
-        console.log(formValues)
-
-        fetchUsers({
-            role: formValues.role[0] === 'all' ? undefined : formValues.role[0],
-            status: formValues.status[0] === 'all' ? undefined : formValues.status[0],
-            createdFrom: startDate,
-            createdTo: endDate
-        })
-    }
 
 
     return (
@@ -65,9 +65,9 @@ export default function Page() {
             <DashboardCard data={cardData} />
             <HStack mt={9} justify={'space-between'} >
                 <Flex w={'70%'} gap={5}>
-                    <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Roles" label="Role" name='role' collection={roles} onChange={selectFilter} />
-                    <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Statuses" label="Status" name="status" collection={statuses} onChange={selectFilter} />
-                    <CustomSelect name='dateRange' control={control} borderColor="#F4F4F4" placeholder="Last 30 Days" icon={LuCalendar} label="Date Range" collection={dateFilter} onChange={selectFilter} />
+                    <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Roles" label="Role" name='role' collection={roles} />
+                    <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Statuses" label="Status" name="status" collection={statuses} />
+                    <CustomSelect name='dateRange' control={control} borderColor="#F4F4F4" placeholder="Last 30 Days" icon={LuCalendar} label="Date Range" collection={dateFilter} />
                 </Flex>
                 <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
             </HStack>
