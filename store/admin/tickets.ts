@@ -48,12 +48,28 @@ interface Ticket {
 		timeToResolutionMinutes: number
 		timeToFirstResponseMinutes: number
 	}
+	unit: {
+		name: string
+		id: string
+	}
+	property: {
+		name: string
+		id: string
+	}
+	tenant: {
+		phone: string
+		name: string
+	}
 	timeline: [
 		{
 			timestamp: string
 			event: string
 		},
 	]
+	budget: number
+	quotedCost: number
+	approvalStatus: string
+	rebuttalNote: string
 }
 
 interface metrics {

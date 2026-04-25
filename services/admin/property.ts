@@ -118,7 +118,7 @@ export const uploadLease = async (payload: UploadLeasePayload) => {
 }
 
 export const updateLease = async (payload: UpdateLeasePayload) => {
-	const response = await http.put(
+	const response = await http.patch(
 		adminEndpoints.updateLease(payload.leaseId),
 		payload,
 	)

@@ -5,22 +5,43 @@ import { addUnitFormData } from "@/schema/admin"
 import { addUnit, addUnitPayload } from "@/services/admin/property"
 import { Box, createListCollection, Flex, HStack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
+import { use, useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
+import { int } from "zod"
 
-export const AddUnit = ({ propertyId, propertyName, onClose, floors }: { propertyId: string, propertyName: string, onClose: () => void, floors?: number }) => {
+interface editprops {
+    editUnitId?: string,
+    editUnitName?: string
+    floor?: string
+}
+
+export const AddUnit = ({ propertyId, propertyName, onClose, floors, edit }: { propertyId: string, propertyName: string, onClose: () => void, floors?: number, edit?: editprops }) => {
     const { control, reset, handleSubmit, formState } =
         useForm<addUnitFormData>()
 
+    const Flooors = useMemo(() => createListCollection({
+        items: [...Array(floors).keys()].map((floor) => ({
+            value: (floor + 1).toString(), // ✅ string from the start
+            label: `Floor ${floor + 1}`
+        }))
+    }), [floors])
 
-    const Flooors = createListCollection({
-        items: [...Array(floors).keys()].map((floor) => {
-            return {
-                value: floor + 1,
-                label: `Floor ${floor + 1}`
-            }
+    useEffect(() => {
+        const floort = Flooors.items.find((floor) => floor.label === edit?.floor)?.value
+        console.log(Flooors.items.find((floor) => floor.label === edit?.floor)?.value)
+        console.log('edit.floor:', edit?.floor)
+        console.log('floor labels:', Flooors.items.map(f => f.label))
+        reset({
+            name: edit?.editUnitName,
+            property: propertyName,
+            floor: [(floort ?? 0).toString()],
         })
-    })
+    }, [edit, propertyName, Flooors.items])
+
+
+
+
 
     const mutation = useMutation({
         mutationFn: (payload: addUnitPayload) => {
@@ -35,6 +56,7 @@ export const AddUnit = ({ propertyId, propertyName, onClose, floors }: { propert
             toast.error(error?.message)
         }
     })
+
     const stringtoNumber = (val: string | number | undefined) => {
         if (val === undefined || val === null) return 0
         return parseFloat(String(val).replace('%', '')) || 0
@@ -99,6 +121,7 @@ export const AddUnit = ({ propertyId, propertyName, onClose, floors }: { propert
                         width={"full"}
                         collection={Flooors}
                         required
+                        readOnly={edit?.floor ? true : false}
                         control={control}
                         label="Floor"
                         placeholder="Floor"

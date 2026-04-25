@@ -59,7 +59,7 @@ export const PropertyTabs = React.forwardRef<{ handleSave: () => void }, Props>(
                 <Overview ref={ref} edit={edit} onSave={onSave} property={property} />
             </Tabs.Content>
             <Tabs.Content value="units">
-                <Unit property={property} />
+                <Unit />
             </Tabs.Content>
             <Tabs.Content value="tickets">
                 <Tickets propertyId={property?.id || ''} />

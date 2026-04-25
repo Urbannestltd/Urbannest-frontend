@@ -62,6 +62,7 @@ type InputProps<T extends FieldValues> = BaseProps<T> & {
     pattern?: RegisterOptions<T>['pattern']
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
     borderColor?: string
+    rounded?: string
 };
 type EditableProps<T extends FieldValues> = BaseProps<T> & {
     type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
@@ -444,7 +445,7 @@ export function CustomInput<T extends FieldValues>({
     setValue,
     pattern,
     labelBold = false,
-    orientation = 'vertical', onKeyDown
+    orientation = 'vertical', onKeyDown, rounded
 }: InputProps<T>) {
     const { field, fieldState, } = useController({
         name, control, rules: {
@@ -490,9 +491,11 @@ export function CustomInput<T extends FieldValues>({
                     h={height}
                     w={width}
                     border={'1px solid #B2B2B2'}
-                    rounded={'6px'}
+                    rounded={rounded ?? '6px'}
                     fontSize={"14px"}
-                    className=''
+                    className={cn(
+                        rounded ? 'satoshi-bold' : 'satoshi',
+                    )}
                     _active={{
                         border: 'none',
                     }}
@@ -527,7 +530,7 @@ export function CustomInput<T extends FieldValues>({
                     h={height}
                     w={width}
                     border={'1px solid #B2B2B2'}
-                    rounded={'6px'}
+                    rounded={rounded ?? '6px'}
                     readOnly={readOnly}
                     fontSize={"14px"}
                     className=''

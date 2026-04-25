@@ -14,6 +14,26 @@ export interface sendCommentPayload {
 	id: string
 }
 
+export interface rejectCostPayload {
+	reason: string
+	id: string
+}
+
+export interface offerRebuttalPayload {
+	data: {
+		message: string
+		suggestedAmount: number
+	}
+	id: string
+}
+export interface updateBudgetPayload {
+	data: {
+		budget: number
+		quotedCost: number
+	}
+	id: string
+}
+
 export const updateTicketStatus = async (
 	payload: updateTicketStatusPayload,
 ) => {
@@ -27,6 +47,34 @@ export const updateTicketStatus = async (
 export const sendComment = async (payload: sendCommentPayload) => {
 	const response = await http.post(
 		adminEndpoints.postComments(payload.id),
+		payload.data,
+	)
+	return response.data
+}
+
+export const rejectCost = async (payload: rejectCostPayload) => {
+	const response = await http.put(adminEndpoints.rejectCost(payload.id), {
+		reason: payload.reason,
+	})
+	return response.data
+}
+
+export const approveCost = async (id: string) => {
+	const response = await http.put(adminEndpoints.approveCost(id))
+	return response.data
+}
+
+export const offerRebuttal = async (payload: offerRebuttalPayload) => {
+	const response = await http.put(
+		adminEndpoints.offerRebuttal(payload.id),
+		payload.data,
+	)
+	return response.data
+}
+
+export const updateBudget = async (payload: updateBudgetPayload) => {
+	const response = await http.patch(
+		adminEndpoints.updateBudget(payload.id),
 		payload.data,
 	)
 	return response.data

@@ -53,6 +53,7 @@ import { sendComment, sendCommentPayload, updateTicketStatus, updateTicketStatus
 import toast from "react-hot-toast"
 import useAuthStore from "@/store/auth"
 import { RiFileList3Line, RiLock2Fill } from "react-icons/ri";
+import { ExpenseTracking } from "./expense-tracking"
 
 const Status = [
     {
@@ -105,13 +106,13 @@ export default function TicketPage() {
     const Info = [
         {
             label: "Property & Unit",
-            value: "N/A",
-            bottom: "Downtown District",
+            value: Ticket?.unit.name,
+            bottom: Ticket?.property.name,
         },
         {
             label: "Tenant",
-            value: "Alexandru Voinea",
-            bottom: "+1 (555) 012-3456",
+            value: Ticket?.tenant.name,
+            bottom: Ticket?.tenant.phone,
         },
         {
             label: "Issue Type",
@@ -120,29 +121,6 @@ export default function TicketPage() {
     ]
 
 
-    const expenseStatus: { borderColor: string, label: string, value: string, color: string, bgColor: string }[] = [
-        {
-            label: "Approved",
-            value: 'APPROVED',
-            borderColor: '#BBF7D0',
-            bgColor: '#F0FDF4',
-            color: '#15803D'
-        },
-        {
-            label: "Rejected",
-            value: 'REJECTED',
-            borderColor: '#FEE2E2',
-            bgColor: '#FEF2F2',
-            color: '#DC2626'
-        },
-        {
-            label: "Pending Approval",
-            value: 'PENDING',
-            borderColor: '#FED7AA',
-            bgColor: '#FFEDD5',
-            color: '#C2410C'
-        }
-    ]
 
     const status = Status.find((item) => item.value === updateStatus)
 
@@ -628,29 +606,8 @@ export default function TicketPage() {
                             </MainButton>
                         </Flex>
                     </SectionBox>
-                    <SectionBox mt={8} p={6} w={"298px"}>
-                        <HStack mb={6} justify={'space-between'}>
-                            <Text
-                                letterSpacing={"1.1px"}
+                    <ExpenseTracking />
 
-                                className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                            >
-                                Expense TRACKING
-                            </Text>
-                            <Center bg={expenseStatus[0].bgColor} rounded={'full'} className="text-[10px] satoshi-bold" p={1} px={2} color={expenseStatus[0].color} border={`1px solid ${expenseStatus[0].borderColor}`}>{expenseStatus[0].label}</Center>
-                        </HStack>
-                        <Box>
-                            <HStack justify={'space-between'} className="text-sm">
-                                <Text>Budget Limit</Text>
-                                <Text className="satoshi-bold">₦250.00</Text>
-                            </HStack>
-                            <HStack justify={'space-between'} mt={3} className="text-sm">
-                                <Text>Expenses Recorded</Text>
-                                <Text className="satoshi-bold">₦0.00</Text>
-                            </HStack>
-                        </Box>
-                        <Button border={'2px dashed #F4F4F4'} fontSize={'12px'} mt={3} px={2} w={'full'} letterSpacing={'1.2px'} className="satoshi-bold uppercase" rounded={'12px'} color={'#757575'}>Add Expense Entry</Button>
-                    </SectionBox>
                 </Box>
             </Flex>
         </div>

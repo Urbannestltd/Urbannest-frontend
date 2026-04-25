@@ -102,7 +102,10 @@ const adminEndpoints = {
 	fetchTicket: (id: string) => `/admin/properties/tickets/${id}`,
 	updateStatus: (id: string) => `/admin/properties/tickets/${id}/status`,
 	postComments: (id: string) => `/admin/properties/tickets/${id}/comments`,
-
+	updateBudget: (id: string) => `/admin/properties/tickets/${id}/budget`,
+	approveCost: (id: string) => `/admin/properties/tickets/${id}/approve`,
+	rejectCost: (id: string) => `/admin/properties/tickets/${id}/reject`,
+	offerRebuttal: (id: string) => `/admin/properties/tickets/${id}/rebuttal`,
 	//Users
 	fetchUsers: `/admin/users`,
 	fetchUser: (id: string) => `/admin/users/${id}`,
@@ -110,6 +113,7 @@ const adminEndpoints = {
 	fetchActivities: (id: string) => `/admin/users/${id}/activity`,
 	suspendUser: (id: string) => `/admin/users/${id}/suspend`,
 	activateUser: (id: string) => `/admin/users/${id}/activate`,
+	updatePermissions: (id: string) => `/admin/users/${id}/permissions`,
 
 	//Settings endpoints
 	getNotifPreference: `/admin/settings/notifications`,

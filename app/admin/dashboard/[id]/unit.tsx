@@ -13,13 +13,14 @@ import { Modal } from "@/components/ui/dialog"
 import { AddUnit } from "./add-unit"
 import { set } from "lodash"
 
-export const Unit = ({ property }: { property?: Property | null }) => {
+export const Unit = () => {
     const [showTenant, setShowTenant] = useState(false)
     const [showAddUnit, setShowAddUnit] = useState(false)
 
     const [selectedRow, setSelectedRow] = useState<Row | null>(null)
 
     const units = usePropertyStore(state => state.units)
+    const property = usePropertyStore(state => state.property)
     const loading = usePropertyStore(state => state.isLoading)
 
     useEffect(() => {
@@ -30,7 +31,7 @@ export const Unit = ({ property }: { property?: Property | null }) => {
         setSelectedRow(row)
         setShowTenant(true)
     }
-    const columns = useUnitColumns(handleTenantClick, property?.id ?? '')
+    const columns = useUnitColumns(handleTenantClick, property?.id ?? '', property?.name ?? '')
 
     //const FirstFloorUnits = units?.grouped.Unassigned.find((unit) => unit.floor === 1)
 
