@@ -106,6 +106,7 @@ const adminEndpoints = {
 	approveCost: (id: string) => `/admin/properties/tickets/${id}/approve`,
 	rejectCost: (id: string) => `/admin/properties/tickets/${id}/reject`,
 	offerRebuttal: (id: string) => `/admin/properties/tickets/${id}/rebuttal`,
+	createBudget: `/admin/settings/system`,
 	//Users
 	fetchUsers: `/admin/users`,
 	fetchUser: (id: string) => `/admin/users/${id}`,

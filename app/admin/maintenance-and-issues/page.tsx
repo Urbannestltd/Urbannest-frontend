@@ -12,9 +12,11 @@ import { useTicketColumns } from "../dashboard/[id]/ticket-columns"
 import { TickettData } from "@/utils/data"
 import { useRouter } from "next/navigation"
 import { useTicketStore } from "@/store/admin/tickets"
-import { use, useEffect } from "react"
+import { use, useEffect, useState } from "react"
 import { format } from "path"
 import { convertMinutes, formatDateTime, formatNumber } from "@/services/date"
+import { AddBudget } from "./add-budget"
+import { Drawers } from "@/components/ui/drawer"
 
 export default function Maintenance() {
     const { control } = useForm<searchMaintenanceFormData>()
@@ -25,6 +27,7 @@ export default function Maintenance() {
     const fetchMetrics = useTicketStore(state => state.fetchMetrics)
     const isLoading = useTicketStore(state => state.isLoading)
     const router = useRouter()
+    const [openDrawer, setOpenDrawer] = useState(false)
 
     useEffect(() => {
         fetchAllTickets()
@@ -67,7 +70,10 @@ export default function Maintenance() {
                         <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Types" label="Issue Type" name="issue" collection={IssueType} />
                         <CustomSelect name='dateRange' control={control} borderColor="#F4F4F4" placeholder="Last 30 Days" icon={LuCalendar} label="Date Range" collection={dateFilter} />
                     </Flex>
-                    <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
+                    <Flex w={'25%'} gap={2}>
+                        <MainButton size='lg' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
+                        <Drawers open={openDrawer} onOpenChange={setOpenDrawer} triggerContent="Set Budget" className="w-[350px] py-2 px-5" modalContent={<AddBudget onClose={() => setOpenDrawer(false)} />} triggerSize='lg' />
+                    </Flex>
                 </HStack>
             </form>
             <DataTable data={tickets} loading={isLoading} tableName="Tickets" onRowClick={(row) => router.push(`/admin/maintenance-and-issues/${row.id}`)} columns={columns} />

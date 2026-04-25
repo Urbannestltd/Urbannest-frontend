@@ -34,6 +34,10 @@ export interface updateBudgetPayload {
 	id: string
 }
 
+export interface createBudgetPayload {
+	defaultMaintenanceBudget: number
+}
+
 export const updateTicketStatus = async (
 	payload: updateTicketStatusPayload,
 ) => {
@@ -77,5 +81,10 @@ export const updateBudget = async (payload: updateBudgetPayload) => {
 		adminEndpoints.updateBudget(payload.id),
 		payload.data,
 	)
+	return response.data
+}
+
+export const createBudget = async (payload: createBudgetPayload) => {
+	const response = await http.patch(adminEndpoints.createBudget, payload)
 	return response.data
 }
