@@ -4,9 +4,10 @@ import { CustomSelect } from "@/components/ui/custom-fields"
 import { Modal } from "@/components/ui/dialog"
 import { PageTitle } from "@/components/ui/page-title"
 import { addMember, addMemberPayload, removeMember, removeMemberPayload } from "@/services/admin/property"
+import { useUserStore } from "@/store/admin/user"
 import { Box, Button, createListCollection, Flex, HStack, Input, InputGroup, Menu, Portal, Select, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FiSearch } from "react-icons/fi"
 import { LuChevronDown } from "react-icons/lu"
@@ -14,6 +15,14 @@ import { LuChevronDown } from "react-icons/lu"
 export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, propertyId?: string, unit?: boolean }) => {
     const [userId, setUserId] = useState('')
     const [inviteRole, setInviteRole] = useState<{ value: string, label: string } | null>(null)
+
+    const users = useUserStore(state => state.users)
+    const isLoading = useUserStore(state => state.isLoading)
+    const fetchUsers = useUserStore(state => state.fetchUsers)
+
+    useEffect(() => {
+        fetchUsers()
+    }, [])
 
     const [memberRoles, setMemberRoles] = useState<Record<number, { value: string, label: string }>>({});
     const [deleteTarget, setDeleteTarget] = useState<{
@@ -34,27 +43,16 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
             ]
     })
 
-    const Members = unit ? [
-        {
-            name: "Ade Adeyemi",
-            role: "TENANT",
-            email: 'adeadeyemi@gmailcom',
-        },
-        {
-            name: 'kunle adeyemi',
-            role: "TENANT",
-            email: 'kunle@gmailcom',
-        }
-    ] : [{
-        name: 'Ibrahim Adeyemi',
-        role: "FACILITY_MANAGER",
-        email: 'ibrahim@gmailcom',
-    },
-    {
-        name: 'John Doe',
-        role: "LANDLORD",
-        email: 'john@gmailcom',
-    },]
+    const Members: { name: string, role: string, email: string }[] = users
+        .filter(user => unit
+            ? user.role === "TENANT"
+            : user.role === "FACILITY_MANAGER" || user.role === "LANDLORD"
+        )
+        .map(user => ({
+            name: user.fullName,
+            role: user.role,
+            email: user.email
+        }))
     const handleRoleChange = (memberIndex: number, role: { value: string, label: string }) => {
         setMemberRoles(prev => ({ ...prev, [memberIndex]: role }))
     }
