@@ -139,7 +139,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                 <Text pb={2} w={'fit'} borderBottom={'2px solid #000000'}>Members ({Members.length})</Text>
             </Box>
 
-            <Box>
+            <Box maxH={'200px'} overflowY={'scroll'}>
                 {Members.map((member, memberIndex) => {
                     const currentRole = memberRoles[memberIndex]
                     const initialRole = roles.items.find(role => role.value === member.role)

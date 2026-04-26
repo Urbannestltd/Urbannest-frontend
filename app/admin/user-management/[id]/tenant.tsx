@@ -21,9 +21,11 @@ import { CustomSwitch } from "@/components/ui/custom-fields";
 import { useForm } from "react-hook-form";
 import { permissionFormData } from "@/schema/admin";
 import { useMutation } from "@tanstack/react-query";
-import { activateUser, suspendUser } from "@/services/admin/user";
+import { activateUser, suspendUser, updatePermissions, updatePermissionsPayload } from "@/services/admin/user";
 import toast from "react-hot-toast";
 import { SuspendPopUp } from "./page";
+
+
 
 export default function Tenant({ userId }: { userId: string }) {
     const user = useUserStore(state => state.user)
@@ -31,18 +33,55 @@ export default function Tenant({ userId }: { userId: string }) {
     const activities = useUserStore(state => state.activities)
     const tenant = useAdminTenantStore(state => state.tenant)
     const fetchTenant = useAdminTenantStore(state => state.fetchTenant)
-    const { control } = useForm<permissionFormData>()
+    const { control, reset, handleSubmit } = useForm<permissionFormData>()
     const [openSuspendModal, setOpenSuspendModal] = useState(false)
     const isSuspened = user?.status === 'BLOCKED' || user?.status === 'SUSPENDED'
     const [viewFullHistory, setViewFullHistory] = useState(false)
 
+
     const allActivities = viewFullHistory ? activities : activities.slice(0, 4)
 
+    const getPermissions = (permissions: string[]): permissionFormData => ({
+        ACCESS_TENANT_PORTAL: permissions.includes('ACCESS_TENANT_PORTAL'),
+        PAY_RENT_ONLINE: permissions.includes('PAY_RENT_ONLINE'),
+        REQUEST_MAINTENANCE: permissions.includes('REQUEST_MAINTENANCE'),
+        VISITOR_ALLOWANCE: permissions.includes('VISITOR_ALLOWANCE')
+    }
+    )
 
     useEffect(() => {
         if (!userId) return
         fetchTenant(userId)
+        reset(getPermissions(user?.permissions ?? []))
     }, [userId])
+
+    const toPermissionsArray = (data: permissionFormData): string[] => {
+        return Object.entries(data)
+            .filter(([_, value]) => value === true)
+            .map(([key]) => key)
+    }
+
+    const mutation = useMutation({
+        mutationFn: (data: updatePermissionsPayload) => {
+            return updatePermissions(data)
+        },
+        onSuccess: () => {
+            toast.success('Permissions updated successfully')
+        },
+        onError: () => {
+            toast.error('Failed to update permissions')
+        }
+    })
+
+    const onSubmit = (data: permissionFormData) => {
+        const permissions = toPermissionsArray(data)
+        const payload: updatePermissionsPayload = {
+            id: user?.id as string,
+            permissions
+        }
+        // permissions = ['VIEW_FINANCIALS_AND_REPORTS', ...]
+        mutation.mutate(payload)
+    }
 
     const status = [
         {
@@ -171,7 +210,7 @@ export default function Tenant({ userId }: { userId: string }) {
                     <SectionBox mt={6} w={'728px'}>
                         <HStack justify={'space-between'}>
                             <PageTitle mt={2} fontSize={'18px'} title="Lease Information" />
-                            <Modal size={'cover'} className="h-fit w-[700px]" triggerElement={<FiEdit cursor={'pointer'} size={16} />} modalContent={<LeaseInfo tenantId={tenant?.id ?? ''} unitId={tenant?.id ?? ''} activeId={activeLease()} />} />
+                            <Modal size={'cover'} className="h-fit w-[700px]" triggerElement={<FiEdit cursor={'pointer'} size={16} />} modalContent={<LeaseInfo tenantId={tenant?.id ?? ''} onComplete={() => fetchTenant(userId)} unitId={tenant?.id ?? ''} activeId={activeLease()} />} />
 
                         </HStack>
                         <Box mt={6}>
@@ -281,20 +320,20 @@ export default function Tenant({ userId }: { userId: string }) {
                             <HStack justify={'space-between'} mb={4} gap={2}>
                                 <PageTitle title="Tenant Portal" fontSize={'14px'} subText="Allow user to log into the mobile/web
 app." subFontSize={'14px'} spacing={0} />
-                                <CustomSwitch name="tenantPortal" control={control} beforeColor="#E2E8F0" afterColor="#2A3348" />
+                                <CustomSwitch name='ACCESS_TENANT_PORTAL' control={control} onChange={() => handleSubmit(onSubmit)()} beforeColor="#E2E8F0" afterColor="#2A3348" />
                             </HStack>
                             <HStack justify={'space-between'} mb={4} gap={2}>
                                 <PageTitle title="Pay Rent Online" fontSize={'14px'} subText="Enable digital payment processing for
 this user." subFontSize={'14px'} spacing={0} />
-                                <CustomSwitch name='payRent' control={control} beforeColor="#E2E8F0" afterColor="#2A3348" />
+                                <CustomSwitch name='PAY_RENT_ONLINE' control={control} onChange={() => handleSubmit(onSubmit)()} beforeColor="#E2E8F0" afterColor="#2A3348" />
                             </HStack>
                             <HStack justify={'space-between'} mb={4} gap={2}>
                                 <PageTitle title="Request Maintenance" fontSize={'14px'} subText="Allow submission of new work orders." subFontSize={'14px'} spacing={0} />
-                                <CustomSwitch name='requestMaintenance' control={control} beforeColor="#E2E8F0" afterColor="#2A3348" />
+                                <CustomSwitch name='REQUEST_MAINTENANCE' control={control} onChange={() => handleSubmit(onSubmit)()} beforeColor="#E2E8F0" afterColor="#2A3348" />
                             </HStack>
                             <HStack justify={'space-between'} mb={4} gap={2}>
                                 <PageTitle title="Visitor Allowance" fontSize={'14px'} subText="Allow user schedule visitors ahead of time." subFontSize={'14px'} spacing={0} />
-                                <CustomSwitch name='visitorAllowance' control={control} beforeColor="#E2E8F0" afterColor="#2A3348" />
+                                <CustomSwitch name='VISITOR_ALLOWANCE' control={control} onChange={() => handleSubmit(onSubmit)()} beforeColor="#E2E8F0" afterColor="#2A3348" />
                             </HStack>
 
                         </Box>

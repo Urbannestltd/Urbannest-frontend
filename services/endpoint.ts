@@ -1,6 +1,7 @@
 import { remove, update } from "lodash"
-import { uploadLease } from "./admin/property"
+import { deleteFloor, uploadLease } from "./admin/property"
 import { activateUser } from "./admin/user"
+import { exportTickets } from "./admin/maintenance"
 
 const endpoints = {
 	storeFile: "/storage/sign-url",
@@ -80,11 +81,13 @@ const adminEndpoints = {
 	deleteProperty: (id: string) => `/admin/properties/${id}`,
 	fetchUnits: (id: string) => `/admin/units/${id}/units`,
 	deleteUnit: (id: string) => `/admin/units/${id}`,
+	editUnit: (id: string) => `/admin/units/unit/${id}`,
 	fetchTenant: (id: string) => `/admin/units/${id}`,
 	fetchLease: (id: string) => `/admin/leases/${id}`,
 	updateLease: (id: string) => `/admin/leases/${id}`,
 	uploadLease: `/admin/leases`,
 	renewLease: (id: string) => `/admin/leases/${id}/renew`,
+	deleteFloor: (id: string) => `/admin/units/${id}/floor`,
 
 	//Financial Endpoint
 	fetchFinancials: `/admin/payments`,
@@ -100,6 +103,7 @@ const adminEndpoints = {
 	fetchTicketsPerProperty: (id: string) => `/admin/properties/${id}/tickets`,
 	fetchTicketMetrics: `/admin/properties/tickets/metrics`,
 	fetchTicket: (id: string) => `/admin/properties/tickets/${id}`,
+	exportTickets: `/admin/properties/tickets/export`,
 	updateStatus: (id: string) => `/admin/properties/tickets/${id}/status`,
 	postComments: (id: string) => `/admin/properties/tickets/${id}/comments`,
 	updateBudget: (id: string) => `/admin/properties/tickets/${id}/budget`,
@@ -107,6 +111,7 @@ const adminEndpoints = {
 	rejectCost: (id: string) => `/admin/properties/tickets/${id}/reject`,
 	offerRebuttal: (id: string) => `/admin/properties/tickets/${id}/rebuttal`,
 	createBudget: `/admin/settings/system`,
+
 	//Users
 	fetchUsers: `/admin/users`,
 	fetchUser: (id: string) => `/admin/users/${id}`,

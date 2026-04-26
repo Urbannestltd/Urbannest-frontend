@@ -22,7 +22,9 @@ export interface Tenant {
 	phone: string
 	address: string
 	leaseDuration: string
-	status: "ACTIVE"
+	status: string
+	unitId: string
+	propertyId: string
 }
 interface DashStore {
 	dashboard: AdminDashboard | null

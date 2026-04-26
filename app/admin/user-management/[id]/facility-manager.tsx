@@ -9,12 +9,14 @@ import { formatDate } from "@/services/date"
 import { useUserStore } from "@/store/admin/user"
 import {
     Box,
+    Button,
     Center,
     Circle,
     Flex,
     Grid,
     GridItem,
     HStack,
+    Icon,
     Text,
     Timeline,
 } from "@chakra-ui/react"
@@ -25,10 +27,10 @@ import { AddMemberModal } from "../../dashboard/[id]/add-modal"
 import { DataTable } from "@/components/ui/data-table"
 import { useColumns } from "./facility-columns"
 import { useMutation } from "@tanstack/react-query"
-import { activateUser, suspendUser } from "@/services/admin/user"
+import { activateUser, updatePermissions, updatePermissionsPayload } from "@/services/admin/user"
 import toast from "react-hot-toast"
 import { SuspendPopUp } from "./page"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export const FacilityManager = ({ userId }: { userId: string }) => {
     const user = useUserStore((state) => state.user)
@@ -37,7 +39,7 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
     const activities = useUserStore((state) => state.activities)
     const columns = useColumns()
 
-    const { control } = useForm<facilityManagerPermissionFormData>()
+    const { control, reset, handleSubmit } = useForm<facilityManagerPermissionFormData>()
     const [openSuspendModal, setOpenSuspendModal] = useState(false)
 
     const isSuspened = user?.status === "BLOCKED" || user?.status === 'SUSPENDED'
@@ -46,6 +48,44 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
 
     const allActivities = viewFullHistory ? activities : activities.slice(0, 4)
 
+    const getPermissions = (permissions: string[]): facilityManagerPermissionFormData => ({
+        MANAGE_TICKETS: permissions.includes('MANAGE_TICKETS'),
+        MANAGE_PROPERTIES_AND_UNITS: permissions.includes('MANAGE_PROPERTIES_AND_UNITS'),
+        VIEW_TENANTS_AND_LEASES: permissions.includes('VIEW_TENANTS_AND_LEASES'),
+        APPROVE_MINOR_MAINTENANCE: permissions.includes('APPROVE_MINOR_MAINTENANCE'),
+    }
+    )
+
+    useEffect(() => {
+        reset(getPermissions(user?.permissions ?? []))
+    }, [user?.permissions])
+
+    const toPermissionsArray = (data: facilityManagerPermissionFormData): string[] => {
+        return Object.entries(data)
+            .filter(([_, value]) => value === true)
+            .map(([key]) => key)
+    }
+
+    const mutation = useMutation({
+        mutationFn: (data: updatePermissionsPayload) => {
+            return updatePermissions(data)
+        },
+        onSuccess: () => {
+            toast.success('Permissions updated successfully')
+        }, onError: () => {
+            toast.error('Failed to update permissions')
+        }
+    })
+
+    const onSubmit = (data: facilityManagerPermissionFormData) => {
+        const permissions = toPermissionsArray(data)
+        const payload: updatePermissionsPayload = {
+            id: user?.id as string,
+            permissions
+        }
+        // permissions = ['VIEW_FINANCIALS_AND_REPORTS', ...]
+        mutation.mutate(payload)
+    }
 
 
     const generalInfo = [
@@ -227,20 +267,18 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
                             }
                             modalContent={<AddMemberModal />}
                         />
-                        <MainButton
+                        <Button
                             variant="outline"
-                            iconPosition="right"
-                            iconColor={isSuspened ? "#2A3348" : "#DC2626"}
-                            icon={<LuChevronRight />}
-                            size="lg"
                             loading={activateUsers.isPending}
+                            color={isSuspened ? '#2A3348' : '#DC2626'} _hover={{ color: 'white' }}
                             onClick={() => handleSuspend()}
-                            className={`h-[38px] my-3 justify-between rounded-full ${isSuspened ? 'border-[#2A3348]' : 'border-[#DC2626]'} text-lg satoshi-bold`}
+                            className={`h-[38px] my-3 justify-between items-center rounded-full text-sm border ${isSuspened ? 'border-[#2A3348] hover:bg-[#2A3348]' : 'border-[#DC2626] hover:bg-[#DC2626]'} w-full px-3 py-5 satoshi-bold`}
                         >
-                            <Flex color={isSuspened ? '#2A3348' : '#DC2626'} align={"center"}>
-                                {isSuspened ? "Activate User Account" : <><LuBan className="mr-2" size={14} />{" "}Suspend User Account</>}
+                            <Flex align={"center"}>
+                                {isSuspened ? "Activate User Account" : <><Icon as={LuBan} className="mr-2" size={'sm'} />{" "}Suspend User Account</>}
                             </Flex>
-                        </MainButton>
+                            <Icon as={LuChevronRight} size={'sm'} />
+                        </Button>
                     </SectionBox>
                     <Modal size={'sm'} open={openSuspendModal} onOpenChange={(e) => setOpenSuspendModal(e)} className="w-[400px]" modalContent={<SuspendPopUp userId={user?.id ?? userId} onClose={() => setOpenSuspendModal(false)} />} />
 
@@ -262,8 +300,9 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
                                     spacing={0}
                                 />
                                 <CustomSwitch
-                                    name='manageTickets'
+                                    name='MANAGE_TICKETS'
                                     control={control}
+                                    onChange={() => handleSubmit(onSubmit)()}
                                     beforeColor="#E2E8F0"
                                     afterColor="#2A3348"
                                 />
@@ -277,8 +316,9 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
                                     spacing={0}
                                 />
                                 <CustomSwitch
-                                    name='managePropertyAndUnits'
+                                    name='MANAGE_PROPERTIES_AND_UNITS'
                                     control={control}
+                                    onChange={() => handleSubmit(onSubmit)()}
                                     beforeColor="#E2E8F0"
                                     afterColor="#2A3348"
                                 />
@@ -292,8 +332,9 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
                                     spacing={0}
                                 />
                                 <CustomSwitch
-                                    name="viewTenantAndLease"
+                                    name='VIEW_TENANTS_AND_LEASES'
                                     control={control}
+                                    onChange={() => handleSubmit(onSubmit)()}
                                     beforeColor="#E2E8F0"
                                     afterColor="#2A3348"
                                 />
@@ -307,8 +348,9 @@ export const FacilityManager = ({ userId }: { userId: string }) => {
                                     spacing={0}
                                 />
                                 <CustomSwitch
-                                    name="approveMinorMaintenance"
+                                    name='APPROVE_MINOR_MAINTENANCE'
                                     control={control}
+                                    onChange={() => handleSubmit(onSubmit)()}
                                     beforeColor="#E2E8F0"
                                     afterColor="#2A3348"
                                 />

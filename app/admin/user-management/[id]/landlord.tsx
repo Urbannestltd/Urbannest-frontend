@@ -7,7 +7,7 @@ import { SectionBox } from "@/components/ui/section-box";
 import { landlordPermissionFormData } from "@/schema/admin";
 import { formatDate } from "@/services/date"
 import { useUserStore } from "@/store/admin/user"
-import { Box, Center, Circle, Flex, Grid, GridItem, HStack, Text, Timeline } from "@chakra-ui/react";
+import { Box, Button, Center, Circle, Flex, Grid, GridItem, HStack, Icon, Text, Timeline } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { CgTrash } from "react-icons/cg";
 import { LuBan, LuChevronRight, LuUserSearch } from "react-icons/lu";
@@ -16,9 +16,9 @@ import { Progress } from "@/components/ui/progress-bar";
 import { DataTable } from "@/components/ui/data-table";
 import { useColumns } from "./landlord-columns";
 import { useMutation } from "@tanstack/react-query";
-import { activateUser, suspendUser } from "@/services/admin/user";
+import { activateUser, suspendUser, updatePermissions, updatePermissionsPayload } from "@/services/admin/user";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SuspendPopUp } from "./page";
 
 
@@ -34,7 +34,47 @@ export const Landlord = ({ userId }: { userId: string }) => {
     const allActivities = viewFullHistory ? activities : activities.slice(0, 4)
 
 
-    const { control } = useForm<landlordPermissionFormData>()
+    const { control, reset, handleSubmit } = useForm<landlordPermissionFormData>()
+
+    const getPermissions = (permissions: string[]): landlordPermissionFormData => ({
+        APPROVE_MAJOR_MAINTENANCE: permissions.includes('APPROVE_MAJOR_MAINTENANCE'),
+        MANAGE_PROPERTIES_AND_UNITS: permissions.includes('MANAGE_PROPERTIES_AND_UNITS'),
+        VIEW_FINANCIALS_AND_REPORTS: permissions.includes('VIEW_FINANCIALS_AND_REPORTS'),
+        VIEW_MAINTENANCE_TICKETS: permissions.includes('VIEW_MAINTENANCE_TICKETS'),
+        VIEW_TENANTS_AND_LEASES: permissions.includes('VIEW_TENANTS_AND_LEASES'),
+    }
+    )
+
+    useEffect(() => {
+        reset(getPermissions(user?.permissions ?? []))
+    }, [user?.permissions])
+
+    const toPermissionsArray = (data: landlordPermissionFormData): string[] => {
+        return Object.entries(data)
+            .filter(([_, value]) => value === true)
+            .map(([key]) => key)
+    }
+
+    const mutation = useMutation({
+        mutationFn: (data: updatePermissionsPayload) => {
+            return updatePermissions(data)
+        },
+        onSuccess: () => {
+            toast.success('Permissions updated successfully')
+        }, onError: () => {
+            toast.error('Failed to update permissions')
+        }
+    })
+
+    const onSubmit = (data: landlordPermissionFormData) => {
+        const permissions = toPermissionsArray(data)
+        const payload: updatePermissionsPayload = {
+            id: user?.id as string,
+            permissions
+        }
+        // permissions = ['VIEW_FINANCIALS_AND_REPORTS', ...]
+        mutation.mutate(payload)
+    }
 
     const generalInfo = [
         {
@@ -183,20 +223,18 @@ export const Landlord = ({ userId }: { userId: string }) => {
                                 <LuUserSearch className="mr-2" /> Assign / Reassign
                             </Flex>
                         </MainButton>} modalContent={<AddMemberModal />} />
-                        <MainButton
+                        <Button
                             variant="outline"
-                            iconPosition="right"
-                            iconColor={isSuspened ? "#2A3348" : "#DC2626"}
-                            icon={<LuChevronRight />}
                             loading={activateUsers.isPending}
-                            size="lg"
+                            color={isSuspened ? '#2A3348' : '#DC2626'} _hover={{ color: 'white' }}
                             onClick={() => handleSuspend()}
-                            className={`h-[38px] my-3 justify-between rounded-full ${isSuspened ? 'border-[#2A3348]' : 'border-[#DC2626]'} text-lg satoshi-bold`}
+                            className={`h-[38px] my-3 justify-between items-center rounded-full text-sm border ${isSuspened ? 'border-[#2A3348] hover:bg-[#2A3348]' : 'border-[#DC2626] hover:bg-[#DC2626]'} w-full px-3 py-5 satoshi-bold`}
                         >
-                            <Flex color={isSuspened ? '#2A3348' : '#DC2626'} align={"center"}>
-                                {isSuspened ? "Activate User Account" : <><LuBan className="mr-2" size={14} />{" "}Suspend User Account</>}
+                            <Flex align={"center"}>
+                                {isSuspened ? "Activate User Account" : <><Icon as={LuBan} className="mr-2" size={'sm'} />{" "}Suspend User Account</>}
                             </Flex>
-                        </MainButton>
+                            <Icon as={LuChevronRight} size={'sm'} />
+                        </Button>
 
                     </SectionBox>
                     <Modal size={'sm'} open={openSuspendModal} onOpenChange={(e) => setOpenSuspendModal(e)} className="w-[400px]" modalContent={<SuspendPopUp userId={user?.id ?? userId} onClose={() => setOpenSuspendModal(false)} />} />
@@ -247,23 +285,23 @@ export const Landlord = ({ userId }: { userId: string }) => {
                         <Box>
                             <HStack justify={'space-between'} mb={4} gap={2}>
                                 <PageTitle title="View Financials & Reports" fontSize={'14px'} subText="Allow user to view payment records, tenant balances, and export reports" subFontSize={'14px'} spacing={0} />
-                                <CustomSwitch name='viewFinancialReports' control={control} beforeColor="#E2E8F0" afterColor="#2A3348" />
+                                <CustomSwitch name='VIEW_FINANCIALS_AND_REPORTS' control={control} onChange={() => handleSubmit(onSubmit)()} beforeColor="#E2E8F0" afterColor="#2A3348" />
                             </HStack>
                             <HStack justify={'space-between'} mb={4} gap={2}>
                                 <PageTitle title="Manage Properties & Units" fontSize={'14px'} subText="Allow user to view and update property details and manage units" subFontSize={'14px'} spacing={0} />
-                                <CustomSwitch name='manageProperties' control={control} beforeColor="#E2E8F0" afterColor="#2A3348" />
+                                <CustomSwitch name='MANAGE_PROPERTIES_AND_UNITS' control={control} onChange={() => handleSubmit(onSubmit)()} beforeColor="#E2E8F0" afterColor="#2A3348" />
                             </HStack>
                             <HStack justify={'space-between'} mb={4} gap={2}>
                                 <PageTitle title="View Tenants & Leases" fontSize={'14px'} subText="Allow user to view tenant details and lease agreements" subFontSize={'14px'} spacing={0} />
-                                <CustomSwitch name='viewTenantAndLease' control={control} beforeColor="#E2E8F0" afterColor="#2A3348" />
+                                <CustomSwitch name='VIEW_TENANTS_AND_LEASES' control={control} onChange={() => handleSubmit(onSubmit)()} beforeColor="#E2E8F0" afterColor="#2A3348" />
                             </HStack>
                             <HStack justify={'space-between'} mb={4} gap={2}>
                                 <PageTitle title="View Maintenance Tickets" fontSize={'14px'} subText="Allow user to view and comment on maintenance tickets" subFontSize={'14px'} spacing={0} />
-                                <CustomSwitch name='viewMaintenanceTickets' control={control} beforeColor="#E2E8F0" afterColor="#2A3348" />
+                                <CustomSwitch name='VIEW_MAINTENANCE_TICKETS' control={control} onChange={() => handleSubmit(onSubmit)()} beforeColor="#E2E8F0" afterColor="#2A3348" />
                             </HStack>
                             <HStack justify={'space-between'} mb={4} gap={2}>
                                 <PageTitle title="Approve Major Maintenance" fontSize={'14px'} subText="Allow user to approve or reject high-cost maintenance requests" subFontSize={'14px'} spacing={0} />
-                                <CustomSwitch name='approveMajorMaintenance' control={control} beforeColor="#E2E8F0" afterColor="#2A3348" />
+                                <CustomSwitch name='APPROVE_MAJOR_MAINTENANCE' control={control} onChange={() => handleSubmit(onSubmit)()} beforeColor="#E2E8F0" afterColor="#2A3348" />
                             </HStack>
 
                         </Box>

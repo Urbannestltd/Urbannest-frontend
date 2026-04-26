@@ -14,20 +14,23 @@ import { MainButton } from "@/components/ui/button"
 import { LuEllipsisVertical, LuMail, LuPhone } from "react-icons/lu"
 import { Divider } from "@/components/ui/divider"
 import { useEffect, useState } from "react"
-import { formatDate } from "@/services/date"
+import { formatDate, formatNumber } from "@/services/date"
 import { Modal } from "@/components/ui/dialog"
 import { LeaseInfo } from "./lease-info"
 import { useAdminTenantStore } from "@/store/admin/tenant"
+import { useSearchParams } from "next/navigation"
 
 export const Tenant = ({ tenant }: { tenant: Row }) => {
+    const searchParams = useSearchParams()
+    const tenantId = searchParams.get('tenantId')
     const [maintenanceFilter, setMaintenanceFilter] = useState(7)
     const tenants = useAdminTenantStore((state) => state.tenant)
     const fetchTenant = useAdminTenantStore((state) => state.fetchTenant)
     const isLoading = useAdminTenantStore((state) => state.isLoading)
 
     useEffect(() => {
-        fetchTenant(tenant.tenantId)
-    }, [tenant.id])
+        fetchTenant(tenantId ? tenantId : tenant.tenantId)
+    }, [tenant?.id, tenantId])
     const status = [
         {
             value: 'AVAILABLE',
@@ -166,14 +169,14 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                 <SectionBox mt={6} w={'728px'}>
                     <HStack justify={'space-between'}>
                         <PageTitle mt={2} fontSize={'18px'} title="Lease Information" />
-                        <Modal size={'cover'} className="h-fit w-[700px]" triggerElement={<FiEdit cursor={'pointer'} size={16} />} modalContent={<LeaseInfo tenantId={tenants.id} unitId={tenant.id} activeId={activeLease()} />} />
+                        <Modal size={'cover'} className="h-fit w-[700px]" triggerElement={<FiEdit cursor={'pointer'} size={16} />} modalContent={<LeaseInfo tenantId={tenants.id} unitId={tenantId ? tenantId : tenant?.id} onComplete={() => fetchTenant(tenantId ? tenantId : tenant?.tenantId)} activeId={activeLease()} />} />
 
                     </HStack>
                     <Box mt={6}>
                         <HStack>
                             <Box w={'50%'} pb={1.5}>
                                 <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Current Rent Amount</Text>
-                                <Text className="satoshi-bold text-2xl">{tenants?.currentLease?.rentAmount}</Text>
+                                <Text className="satoshi-bold text-2xl">{formatNumber(tenants?.currentLease?.rentAmount)}</Text>
                             </Box>
                             <Box w={'50%'}>
                                 <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Lease Expiry</Text>

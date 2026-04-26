@@ -81,9 +81,22 @@ interface metrics {
 	maintenanceCostEstimate: number
 }
 
+interface filter {
+	propertyId?: string
+	propertyType?: string
+	status?: string
+	priority?: string
+	category?: string
+	dateFrom?: string
+	dateTo?: string
+}
+
 interface TicketsStore {
 	metrics: metrics | null
 	tickets: Tickets[]
+	globalBudget: {
+		defaultMaintenanceBudget: number
+	} | null
 	ticketsPerProperty: Tickets[]
 	ticket: Ticket | null
 	isLoading: boolean
@@ -94,7 +107,7 @@ interface TicketsStore {
 		senderName: string
 		id: string
 	} | null
-	fetchAllTickets: () => Promise<void>
+	fetchAllTickets: (filter?: filter) => Promise<void>
 	fetchTicketPerProperty: (id: string) => Promise<void>
 	fetchTicket: (id: string) => Promise<void>
 	fetchMetrics: () => Promise<void>
@@ -105,6 +118,7 @@ interface TicketsStore {
 		senderName: string
 		id: string
 	}) => void
+	fetchBudget: () => Promise<void>
 	clearTickets: () => void
 }
 
@@ -113,11 +127,14 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 	tickets: [],
 	ticketsPerProperty: [],
 	ticket: null,
+	globalBudget: null,
 	newComments: null,
 	isLoading: false,
-	fetchAllTickets: async () => {
+	fetchAllTickets: async (filter) => {
 		set({ isLoading: true })
-		const response = await http.get(adminEndpoints.fetchAllTickets)
+		const response = await http.get(adminEndpoints.fetchAllTickets, {
+			params: filter,
+		})
 		console.log("tickets", response.data.data)
 		set({ tickets: response.data.data, isLoading: false })
 	},
@@ -136,6 +153,11 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		set({ isLoading: true })
 		const response = await http.get(adminEndpoints.fetchTicketMetrics)
 		set({ metrics: response.data.data, isLoading: false })
+	},
+	fetchBudget: async () => {
+		set({ isLoading: true })
+		const property = await http.get(adminEndpoints.createBudget)
+		set({ globalBudget: property.data.data })
 	},
 	setComments: (comment) => set({ newComments: comment }),
 	clearTickets: () => set({ tickets: [] }),

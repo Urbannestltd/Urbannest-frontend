@@ -33,7 +33,7 @@ export interface Row {
 
 
 
-export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: string, propertyName: string): ColumnDef<Row, any>[] => {
+export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: string, propertyName: string, onEdit?: (id: string) => void): ColumnDef<Row, any>[] => {
 
     const status = [
         {
@@ -121,35 +121,36 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: st
         {
             accessorKey: 'action',
             header: 'Action',
-            cell: ({ row }) => {
-                const [open, setOpen] = useState(false)
-                const [openDelete, setOpenDelete] = useState(false)
-                const [openEdit, setOpenEdit] = useState(false)
-                return <Flex
-                    justify={'center'}
-                >
-                    <Menu.Root >
-                        <Menu.Trigger>
-                            <LuEllipsisVertical size={20} />
-                        </Menu.Trigger>
-                        <Portal>
-                            <Menu.Positioner>
-                                <Menu.Content>
-                                    <Menu.Item value="edit-unit" onClick={() => setOpenEdit(true)} className="satoshi-medium">Edit Unit</Menu.Item>
-                                    <Menu.Item value="assign-tenant" onClick={() => setOpen(true)} className="satoshi-medium">Assign Tenant</Menu.Item>
-                                    <Menu.Item value="remove-tenant" className="satoshi-medium">Remove Tenant</Menu.Item>
-                                    <Menu.Item value="delete-unit" onClick={() => setOpenDelete(true)} className="satoshi-medium" color={'#C00F0C'}>Delete Unit</Menu.Item>
-                                </Menu.Content>
-                            </Menu.Positioner>
-                        </Portal>
-                    </Menu.Root>
-                    <Modal open={openEdit} onOpenChange={setOpenEdit} modalContent={<AddUnit onClose={() => setOpenEdit(false)}
-                        propertyId={propertyId} propertyName={propertyName} edit={{ editUnitName: row.original.name, floor: row.original.floor, editUnitId: row.original.id }} />} />
-                    <Modal open={open} onOpenChange={setOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal unit unitId={row.original.id} />} />
-                    <Modal open={openDelete} onOpenChange={setOpenDelete} size={'xs'} className="h-fit" modalContent={<DeletePopUp onClose={() => setOpenDelete(false)} data={{ propertyId: propertyId, unit: true, unitId: row.original.id }} />} /></Flex>
-
-            }
+            cell: ({ row }) => <ActionCell onEdit={onEdit} row={row} propertyId={propertyId} propertyName={propertyName} />
         }
 
     ]
+}
+
+export const ActionCell = ({ row, propertyId, propertyName, onEdit }: { row: any, propertyId: string, propertyName: string, onEdit?: (id: string) => void }) => {
+    const [open, setOpen] = useState(false)
+    const [openDelete, setOpenDelete] = useState(false)
+
+
+    return (
+        <Flex justify={'center'}>
+            <Menu.Root>
+                <Menu.Trigger>
+                    <LuEllipsisVertical size={20} />
+                </Menu.Trigger>
+                <Portal>
+                    <Menu.Positioner>
+                        <Menu.Content>
+                            <Menu.Item value="edit-unit" onClick={() => onEdit?.(row.original.id)} className="satoshi-medium">Edit Unit</Menu.Item>
+                            <Menu.Item value="assign-tenant" onClick={() => setOpen(true)} className="satoshi-medium">Assign Tenant</Menu.Item>
+                            <Menu.Item value="remove-tenant" className="satoshi-medium">Remove Tenant</Menu.Item>
+                            <Menu.Item value="delete-unit" onClick={() => setOpenDelete(true)} className="satoshi-medium" color={'#C00F0C'}>Delete Unit</Menu.Item>
+                        </Menu.Content>
+                    </Menu.Positioner>
+                </Portal>
+            </Menu.Root>
+            <Modal open={open} onOpenChange={setOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal unit unitId={row.original.id} />} />
+            <Modal open={openDelete} onOpenChange={setOpenDelete} size={'xs'} className="h-fit" modalContent={<DeletePopUp onClose={() => setOpenDelete(false)} data={{ propertyId: propertyId, unit: true, unitId: row.original.id }} />} />
+        </Flex>
+    )
 }

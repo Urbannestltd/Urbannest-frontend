@@ -58,25 +58,25 @@ export const filterSchema = z.object({
 })
 
 export const permissionSchema = z.object({
-    tenantPortal: boolean("Tenant portal is required"),
-    payRent: boolean("Pay rent is required"),
-    requestMaintenance: boolean("Request maintenance is required"),
-    visitorAllowance: boolean("Visitor allowance is required"),
+    ACCESS_TENANT_PORTAL: boolean("Access tenant portal is required"),
+    PAY_RENT_ONLINE: boolean("Pay rent online is required"),
+    REQUEST_MAINTENANCE: boolean("Request maintenance is required"),
+    VISITOR_ALLOWANCE: boolean("Visitor allowance is required"),
 })
 
 export const landlordPermissionSchema = z.object({
-    viewFinancialReports: boolean("View financial reports is required"),
-    manageProperties: boolean("Manage properties is required"),
-    viewTenantAndLease: boolean("View tenant and lease is required"),
-    viewMaintenanceTickets: boolean("View maintenance tickets is required"),
-    approveMajorMaintenance: boolean("Approve major maintenance is required"),
+    VIEW_FINANCIALS_AND_REPORTS: boolean('View financials and reports'),
+    MANAGE_PROPERTIES_AND_UNITS: boolean('Manage properties and units'),
+    VIEW_TENANTS_AND_LEASES: boolean('View tenants and leases'),
+    VIEW_MAINTENANCE_TICKETS: boolean('View maintenance tickets'),
+    APPROVE_MAJOR_MAINTENANCE: boolean('Approve major maintenance'),
 })
 
 export const facilityManagerPermissionSchema = z.object({
-    manageTickets: boolean("Manage tickets is required"),
-    managePropertyAndUnits: boolean("Manage property and units is required"),
-    approveMinorMaintenance: boolean("Approve minor maintenance is required"),
-    viewTenantAndLease: boolean("View tenant and lease is required"),
+    MANAGE_TICKETS: boolean('Manage tickets'),
+    MANAGE_PROPERTIES_AND_UNITS: boolean('Manage properties and units'),
+    APPROVE_MINOR_MAINTENANCE: boolean('Approve minor maintenance'),
+    VIEW_TENANTS_AND_LEASES: boolean('View tenants and leases'),
 })
 
 export const adminPermissionSchema = z.object({

@@ -84,6 +84,25 @@ export interface addUnitPayload {
 	}
 }
 
+export interface editUnitPayload {
+	propertyId: string
+	data: {
+		name: string
+		floor: string
+		baseRent?: number
+		bedrooms?: number
+		bathrooms?: number
+		type?: string
+		status?: string
+	}
+}
+
+export interface deleteFloorPayload {
+	propertyId: string
+
+	floor: string
+}
+
 export const addProperty = async (payload: AddPropertyPayload) => {
 	const response = await http.post(adminEndpoints.createProperty, payload)
 	return response.data.data as Promise<Property>
@@ -107,8 +126,27 @@ export const addUnit = async (payload: addUnitPayload) => {
 	)
 	return response.data.data as Promise<Property>
 }
+export const editUnit = async (payload: editUnitPayload) => {
+	const response = await http.patch(
+		adminEndpoints.deleteUnit(payload.propertyId),
+		payload.data,
+	)
+	return response.data.data as Promise<Property>
+}
 export const deleteUnit = async (unitId: string) => {
 	const response = await http.delete(adminEndpoints.deleteUnit(unitId))
+	return response.data
+}
+
+export const deleteFloor = async (payload: deleteFloorPayload) => {
+	const response = await http.delete(
+		adminEndpoints.deleteFloor(payload.propertyId),
+		{
+			params: {
+				floor: payload.floor,
+			},
+		},
+	)
 	return response.data
 }
 

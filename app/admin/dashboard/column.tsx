@@ -1,5 +1,5 @@
 import { Progress } from "@/components/ui/progress-bar"
-import { formatDateRegular } from "@/services/date"
+import { formatDate, formatDateRegular } from "@/services/date"
 import { Center, HStack, Image, Text } from "@chakra-ui/react"
 import { ColumnDef } from "@tanstack/react-table"
 import { LuEllipsisVertical } from "react-icons/lu"
@@ -29,7 +29,7 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             accessorKey: 'name',
             header: "Name",
             cell: ({ row }) => <HStack>
-                <Image src={rentImage.src} alt="profile" className="rounded-lg" width={74} height={47} />
+                <Image src={row.original.propertyImages[0] ?? rentImage.src} alt="profile" className="rounded-lg" width={74} height={47} />
                 <Text>{row.original.propertyName}</Text>
             </HStack>
         },
@@ -63,7 +63,7 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
         {
             accessorKey: 'date',
             header: "Date Listed",
-            cell: ({ row }) => <Text>{formatDateRegular('12-06-23')}</Text>
+            cell: ({ row }) => <Text>{formatDate(row.original.dateListed)}</Text>
         },
         {
             accessorKey: 'actions',

@@ -14,6 +14,8 @@ export interface Properties {
 	arrears: number
 	openMaintenance: number
 	openMaintenancePercent: number
+	propertyImages: string[]
+	dateListed: string
 	facilityManager: {
 		id: string
 		name: string
@@ -51,12 +53,10 @@ export interface Property {
 		email: string
 		name: string
 	}
-	rentalRevenue: [
-		{
-			revenue: number
-			month: string
-		},
-	]
+	rentalRevenue: {
+		revenue: number
+		month: string
+	}[]
 }
 
 export interface Unit {
@@ -65,6 +65,68 @@ export interface Unit {
 		floor: string
 	}[]
 	totalUnits: number
+}
+
+export interface UnitDetail {
+	maintenanceRequests: {
+		createdAt: string
+		priority: string
+		status: string
+		subject: string
+		id: string
+	}[]
+	complaints: {
+		openPercent: number
+		openCount: number
+		total: number
+	}
+	leaseHistory: {
+		agreementUrl: string
+		endDate: string
+		startDate: string
+		rentAmount: number
+		status: string
+		leaseId: string
+	}[]
+
+	currentLease: {
+		agreementUrl: string
+		moveOutNotice: string
+		leaseExpiryPercentage: string
+		leaseLength: string
+		endDate: string
+		startDate: string
+		serviceCharge: number
+		rentAmount: number
+		leaseId: string
+	}
+	currentTenant: {
+		phone: string
+		email: string
+		profilePic: string
+		fullName: string
+		tenantId: string
+	}
+	property: {
+		images: string[]
+		amenities: string[]
+		city: string
+		state: string
+		address: string
+		name: string
+		type: string
+		id: string
+	}
+	updatedAt: string
+	createdAt: string
+	baseRent: number
+	type: string
+	bathrooms: number
+	bedrooms: number
+	status: string
+	floor: string
+	name: string
+	id: string
 }
 
 export interface Lease {
@@ -96,12 +158,15 @@ interface PropertyStore {
 	property: Property | null
 	isLoading: boolean
 	units: Unit | null
+	unit: UnitDetail | null
 	lease: Lease | null
 	fetchProperties: () => Promise<void>
 	fetchProperty: (id: string) => Promise<void>
 	fetchLease: (id: string) => Promise<void>
 	setProperties: (properties: Properties[]) => void
 	fetchUnits: (id: string) => Promise<void>
+	fetchUnit: (id: string) => Promise<void>
+	clearUnit: () => void
 	selectedProperty: Property | null
 	setSelectedProperty: (property: Property) => void
 }
@@ -111,6 +176,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 	property: null,
 	isLoading: false,
 	units: null,
+	unit: null,
 	lease: null,
 	fetchProperties: async () => {
 		set({ isLoading: true })
@@ -152,6 +218,20 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 			set({ isLoading: false })
 		}
 	},
+	fetchUnit: async (id: string) => {
+		set({ isLoading: true })
+		try {
+			const unit = await http.get(adminEndpoints.editUnit(id))
+			set({ unit: unit.data.data })
+			console.log("✅ Unit set in store:", unit.data.data)
+		} catch (e) {
+			set({ unit: null })
+			console.error("❌ Failed to fetch unit", e)
+		} finally {
+			set({ isLoading: false })
+		}
+	},
+	clearUnit: () => set({ unit: null }),
 	fetchLease: async (id: string) => {
 		set({ isLoading: true })
 		try {

@@ -7,7 +7,7 @@ import { SectionBox } from "@/components/ui/section-box";
 import { landlordPermissionFormData } from "@/schema/admin";
 import { formatDate } from "@/services/date"
 import { useUserStore } from "@/store/admin/user"
-import { Box, Center, Circle, Flex, Grid, GridItem, HStack, Text, Timeline } from "@chakra-ui/react";
+import { Box, Button, Center, Circle, Flex, Grid, GridItem, HStack, Icon, Text, Timeline } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { CgTrash } from "react-icons/cg";
 import { LuBan, LuChevronRight, LuUserSearch } from "react-icons/lu";
@@ -179,20 +179,18 @@ export const Agent = ({ userId }: { userId: string }) => {
                                 <LuUserSearch className="mr-2" /> Assign / Reassign
                             </Flex>
                         </MainButton>} modalContent={<AddMemberModal />} />
-                        <MainButton
+                        <Button
                             variant="outline"
-                            iconPosition="right"
-                            iconColor={isSuspened ? "#2A3348" : "#DC2626"}
-                            icon={<LuChevronRight />}
                             loading={activateUsers.isPending}
-                            size="lg"
+                            color={isSuspened ? '#2A3348' : '#DC2626'} _hover={{ color: 'white' }}
                             onClick={() => handleSuspend()}
-                            className={cn('h-[38px] my-3 justify-between rounded-full', isSuspened ? ' border-[#2A3348] hover:bg-[#2A3348] hover:text-white ' : ' border-[#DC2626] hover:bg-[#DC2626] hover:text-white ', ' text-lg satoshi-bold')}
+                            className={`h-[38px] my-3 justify-between items-center rounded-full text-sm border ${isSuspened ? 'border-[#2A3348] hover:bg-[#2A3348]' : 'border-[#DC2626] hover:bg-[#DC2626]'} w-full px-3 py-5 satoshi-bold`}
                         >
-                            <Flex color={isSuspened ? '#2A3348' : '#DC2626'} align={"center"}>
-                                {isSuspened ? "Activate User Account" : <><LuBan className="mr-2" size={14} />{" "}Suspend User Account</>}
+                            <Flex align={"center"}>
+                                {isSuspened ? "Activate User Account" : <><Icon as={LuBan} className="mr-2" size={'sm'} />{" "}Suspend User Account</>}
                             </Flex>
-                        </MainButton>
+                            <Icon as={LuChevronRight} size={'sm'} />
+                        </Button>
                     </SectionBox>
                     <Modal size={'sm'} open={openSuspendModal} onOpenChange={(e) => setOpenSuspendModal(e)} className="w-[400px]" modalContent={<SuspendPopUp userId={user?.id ?? userId} onClose={() => setOpenSuspendModal(false)} />} />
 

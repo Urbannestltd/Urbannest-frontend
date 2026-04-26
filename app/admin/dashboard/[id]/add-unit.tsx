@@ -2,44 +2,57 @@ import { MainButton } from "@/components/ui/button"
 import { CustomInput, CustomSelect } from "@/components/ui/custom-fields"
 import { PageTitle } from "@/components/ui/page-title"
 import { addUnitFormData } from "@/schema/admin"
-import { addUnit, addUnitPayload } from "@/services/admin/property"
+import { addUnit, addUnitPayload, editUnit, editUnitPayload } from "@/services/admin/property"
+import { usePropertyStore } from "@/store/admin/properties"
 import { Box, createListCollection, Flex, HStack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { use, useEffect, useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { int } from "zod"
 
-interface editprops {
-    editUnitId?: string,
-    editUnitName?: string
-    floor?: string
-}
 
-export const AddUnit = ({ propertyId, propertyName, onClose, floors, edit }: { propertyId: string, propertyName: string, onClose: () => void, floors?: number, edit?: editprops }) => {
+
+export const AddUnit = ({ propertyId, propertyName, onClose, floors, editUnitId, isOpen }: { propertyId: string, isOpen?: boolean, propertyName: string, onClose: () => void, floors?: number, editUnitId?: string }) => {
     const { control, reset, handleSubmit, formState } =
         useForm<addUnitFormData>()
+    const unit = usePropertyStore((state) => state.unit)
+    const fetchUnit = usePropertyStore((state) => state.fetchUnit)
+    const clearUnit = usePropertyStore((state) => state.clearUnit)
+
+
+
+    if (!floors) floors = 100
 
     const Flooors = useMemo(() => createListCollection({
         items: [...Array(floors).keys()].map((floor) => ({
-            value: (floor + 1).toString(), // ✅ string from the start
+            value: (floor + 1).toString(),
             label: `Floor ${floor + 1}`
         }))
     }), [floors])
-
+    // Effect 1: fetch when modal opens
     useEffect(() => {
-        const floort = Flooors.items.find((floor) => floor.label === edit?.floor)?.value
-        console.log(Flooors.items.find((floor) => floor.label === edit?.floor)?.value)
-        console.log('edit.floor:', edit?.floor)
-        console.log('floor labels:', Flooors.items.map(f => f.label))
+        if (!editUnitId || !isOpen) return
+        fetchUnit(editUnitId)
+    }, [isOpen, editUnitId])
+
+    // Effect 2: reset form once unit is loaded
+    useEffect(() => {
+        if (!unit || !isOpen || !editUnitId) return
+        const floort = Flooors.items.find((floor) => floor.label === unit?.floor)?.value
         reset({
-            name: edit?.editUnitName,
-            property: propertyName,
-            floor: [(floort ?? 0).toString()],
+            name: unit?.name,
+            floor: [floort as string],
+            type: [unit?.type as string]
         })
-    }, [edit, propertyName, Flooors.items])
+    }, [unit])
 
-
+    // Effect 3: clear on close
+    useEffect(() => {
+        if (!isOpen) {
+            reset({})
+            clearUnit()
+        }
+    }, [isOpen])
 
 
 
@@ -57,15 +70,28 @@ export const AddUnit = ({ propertyId, propertyName, onClose, floors, edit }: { p
         }
     })
 
+    const editMutation = useMutation({
+        mutationFn: (payload: editUnitPayload) => {
+            return editUnit(payload)
+        },
+        onSuccess: () => {
+            toast.success('Property edited successfully')
+            onClose()
+            reset()
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+
     const stringtoNumber = (val: string | number | undefined) => {
         if (val === undefined || val === null) return 0
         return parseFloat(String(val).replace('%', '')) || 0
     }
 
     const onSubmit = (data: addUnitFormData) => {
-
         const payload: addUnitPayload = {
-            propertyId: propertyId,
+            propertyId: editUnitId ? editUnitId : propertyId,
             data: {
                 name: data.name,
                 floor: data.floor[0],
@@ -73,7 +99,11 @@ export const AddUnit = ({ propertyId, propertyName, onClose, floors, edit }: { p
             }
 
         }
-        mutation.mutate(payload)
+        if (editUnitId) {
+            editMutation.mutate(payload)
+        } else {
+            mutation.mutate(payload)
+        }
     }
 
 
@@ -121,7 +151,7 @@ export const AddUnit = ({ propertyId, propertyName, onClose, floors, edit }: { p
                         width={"full"}
                         collection={Flooors}
                         required
-                        readOnly={edit?.floor ? true : false}
+                        readOnly={unit?.floor ? true : false}
                         control={control}
                         label="Floor"
                         placeholder="Floor"
@@ -129,7 +159,7 @@ export const AddUnit = ({ propertyId, propertyName, onClose, floors, edit }: { p
                 </HStack>
                 <Flex mt={10} align={"center"} w={"full"}>
                     <MainButton size="lg" loading={mutation.isPending} type="submit">
-                        Add Unit
+                        {editUnitId ? 'Edit' : 'Add'} Unit
                     </MainButton>
                 </Flex>
             </form>

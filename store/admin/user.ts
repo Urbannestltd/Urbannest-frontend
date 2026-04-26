@@ -4,8 +4,24 @@ import http from "@/services/https"
 import { create } from "zustand"
 
 export interface Users {
+	currentUnit: {
+		dateMovedIn: string
+		dateListed: string
+		propertyImages: string
+		propertyName: string
+		propertyId: string
+		unitFloor: string
+		unitName: string
+		unitId: string
+	}
+	properties: {
+		asAgent: Properties[]
+		asFacilityManager: Properties[]
+		asLandlord: Properties[]
+	}
 	createdAt: string
 	emergencyContact: string
+	permissions: string[]
 	employer: string
 	occupation: string
 	dateOfBirth: string
@@ -19,6 +35,16 @@ export interface Users {
 }
 
 export interface User {
+	currentUnit: {
+		dateMovedIn: string
+		dateListed: string
+		propertyImages: string
+		propertyName: string
+		propertyId: string
+		unitFloor: string
+		unitName: string
+		unitId: string
+	}
 	properties: {
 		asAgent: Properties[]
 		asFacilityManager: Properties[]
@@ -26,7 +52,7 @@ export interface User {
 	}
 	createdAt: string
 	emergencyContact: string
-	permissions: string
+	permissions: string[]
 	employer: string
 	occupation: string
 	dateOfBirth: string

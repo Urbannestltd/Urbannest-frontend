@@ -11,7 +11,7 @@ import { AddMemberModal } from "./add-modal"
 import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import { deleteProperty, deleteUnit } from "@/services/admin/property"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { editPropertyFormData } from "@/schema/admin"
 
 interface Props {
@@ -29,8 +29,13 @@ export const PropertyTabs = React.forwardRef<{ handleSave: () => void }, Props>(
     const [isOpen, setIsOpen] = useState(false)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
+    const searchParams = useSearchParams()
+    const tab = searchParams.get('tab')
+    const [activeTab, setActiveTab] = useState(tab ?? 'overview')
+
+
     return (
-        <Tabs.Root variant={'line'} defaultValue="overview">
+        <Tabs.Root variant={'line'} value={activeTab} onValueChange={(tab) => setActiveTab(tab.value)} defaultValue={activeTab}>
             <Flex justify={'space-between'}>
                 <Tabs.List gap={10}>
                     <Tabs.Trigger value="overview" onClick={() => setTab('Overview')}>Overview</Tabs.Trigger>

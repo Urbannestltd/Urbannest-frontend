@@ -174,7 +174,7 @@ const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: Tenant
     )
 }
 
-export const LeaseInfo = ({ tenantId, unitId, activeId }: { tenantId: string, unitId: string, activeId?: string }) => {
+export const LeaseInfo = ({ tenantId, unitId, activeId, onComplete }: { tenantId: string, unitId: string, activeId?: string, onComplete: () => void }) => {
     const [next, setNext] = useState(false)
     const [formData, setFormData] = useState<TenantLeaseFormData>()
 
@@ -186,7 +186,7 @@ export const LeaseInfo = ({ tenantId, unitId, activeId }: { tenantId: string, un
                 activeId={activeId}
                 unitId={unitId}
                 formData={formData!}
-                onComplete={() => { }} /> :
+                onComplete={() => onComplete()} /> :
             <LeaseForm activeId={activeId} onNext={(next, payload) => { setNext(next); setFormData(payload) }} />}</Box>
 }
 

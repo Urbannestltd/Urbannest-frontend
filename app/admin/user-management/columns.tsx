@@ -39,7 +39,15 @@ export const useColumns = (): ColumnDef<Users, any>[] => {
                     <Text className="satoshi-bold">
                         {row.original.fullName ?? 'N/A'}
                     </Text>
-                    <Text color={'#757575'} fontSize={'12px'}>Unit -</Text>
+                    {
+                        row.original.role === 'TENANT' && (
+                            <>
+                                <Text fontSize={'11px'} color={'#757575'}>{row.original.currentUnit?.propertyName ?? null}</Text>
+                                <Text fontSize={'11px'} color={'#757575'}>{row.original.currentUnit?.unitName ?? null}</Text>
+                            </>
+
+                        )
+                    }
                 </Box>
             </HStack>
         },

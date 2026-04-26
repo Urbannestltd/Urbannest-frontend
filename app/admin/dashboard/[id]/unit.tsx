@@ -3,37 +3,99 @@ import { PageTitle } from "@/components/ui/page-title"
 import { SearchInput } from "@/components/ui/search-input"
 import { SectionBox } from "@/components/ui/section-box"
 import { Property, usePropertyStore } from "@/store/admin/properties"
-import { Flex, HStack, Skeleton, Text } from "@chakra-ui/react"
-import { use, useEffect, useState } from "react"
-import { LuArrowLeft, LuUser } from "react-icons/lu"
+import { Box, Flex, HStack, Menu, Portal, Skeleton, Text } from "@chakra-ui/react"
+import { use, useEffect, useRef, useState } from "react"
+import { LuArrowLeft, LuEllipsisVertical, LuUser } from "react-icons/lu"
 import { Row, useUnitColumns } from "./unit-columns"
 import { DataTable } from "@/components/ui/data-table"
 import { Tenant } from "./tenant"
 import { Modal } from "@/components/ui/dialog"
 import { AddUnit } from "./add-unit"
 import { set } from "lodash"
+import { useMutation } from "@tanstack/react-query"
+import { addUnit, addUnitPayload, deleteFloor, deleteFloorPayload } from "@/services/admin/property"
+import toast from "react-hot-toast"
+import { useSearchParams } from "next/navigation"
 
 export const Unit = () => {
-    const [showTenant, setShowTenant] = useState(false)
+    const searchParams = useSearchParams()
+    const tenantId = searchParams.get('tenantId')
+    const [showTenant, setShowTenant] = useState(!!tenantId)
     const [showAddUnit, setShowAddUnit] = useState(false)
+    const [showEditUnit, setShowEditUnit] = useState(false)
+    const [editId, setEditId] = useState<string>()
 
     const [selectedRow, setSelectedRow] = useState<Row | null>(null)
 
     const units = usePropertyStore(state => state.units)
     const property = usePropertyStore(state => state.property)
+    const fetchUnits = usePropertyStore(state => state.fetchUnits)
     const loading = usePropertyStore(state => state.isLoading)
+    const ref = useRef<HTMLDivElement>(null)
+
 
     useEffect(() => {
-        setShowTenant(false)
+        setShowTenant(!!tenantId)
     }, [property?.id])
 
     const handleTenantClick = (row: Row) => {
         setSelectedRow(row)
         setShowTenant(true)
     }
-    const columns = useUnitColumns(handleTenantClick, property?.id ?? '', property?.name ?? '')
 
-    //const FirstFloorUnits = units?.grouped.Unassigned.find((unit) => unit.floor === 1)
+    const handleEdit = (id: string) => {
+        setEditId(id)
+        setShowEditUnit(true)
+    }
+    const columns = useUnitColumns(handleTenantClick, property?.id ?? '', property?.name ?? '', handleEdit)
+
+    const mutation = useMutation({
+        mutationFn: (payload: addUnitPayload) => {
+            return addUnit(payload)
+        },
+        onSuccess: () => {
+            toast.success('Floor added successfully')
+            fetchUnits(property?.id ?? '')
+            ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+
+    const deleteFloorMutation = useMutation({
+        mutationFn: (data: deleteFloorPayload) => {
+            return deleteFloor(data)
+        },
+        onSuccess: () => {
+            toast.success('Floor deleted successfully')
+            fetchUnits(property?.id ?? '')
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+
+    const handleDelete = (floor: string) => {
+        const payload: deleteFloorPayload = {
+            propertyId: property?.id ?? '',
+            floor: floor
+        }
+        deleteFloorMutation.mutate(payload)
+    }
+
+    const onSubmit = () => {
+        const payload: addUnitPayload = {
+            propertyId: property?.id ?? '',
+            data: {
+                name: '',
+                floor: `${property?.noOfFloors as number + 1}`,
+                type: 'ONE_BEDROOM',
+            }
+        }
+        mutation.mutate(payload)
+    }
 
 
 
@@ -49,15 +111,34 @@ export const Unit = () => {
                 <PageTitle title={`Total ${units?.totalUnits} Units`} />
                 <HStack justify={'space-between'}>
                     <SearchInput />
-                    <Flex>
-                        <Modal open={showAddUnit} onOpenChange={setShowAddUnit} triggerIcon={<LuUser />} triggerContent="Add Unit" modalContent={<AddUnit onClose={() => setShowAddUnit(false)} propertyId={property?.id ?? ''} floors={property?.noOfFloors} propertyName={property?.name ?? ''} />} />
+                    <Flex gap={2}>
+                        <Modal open={showAddUnit} onOpenChange={setShowAddUnit} triggerSize="sm" triggerIcon={<LuUser />} triggerContent="Add Unit" modalContent={<AddUnit onClose={() => { setShowAddUnit(false); fetchUnits(property?.id ?? '') }} propertyId={property?.id ?? ''} floors={units?.grouped.length} propertyName={property?.name ?? ''} />} />
+                        <MainButton variant="outline" size="sm" onClick={() => onSubmit()}>Add Floor</MainButton>
                     </Flex>
                 </HStack>
             </SectionBox>
-                {units?.grouped.map((floor) => (<SectionBox key={floor.floor} my={4}>
-                    <PageTitle title={floor.floor} />
-                    <DataTable tableName="Units" data={floor.units ?? null} emptyDetails={{ title: 'No Units Found', description: 'No Units Found', icon: '' }} columns={columns} />
-                </SectionBox>))}</>}
+                {units?.grouped.map((floor, index) => (<SectionBox key={floor.floor} my={4}>
+                    <Box ref={index === units?.grouped.length - 1 ? ref : null}>
+                        <HStack justify={'space-between'}>
+                            <PageTitle title={floor.floor} />
+                            <Menu.Root>
+                                <Menu.Trigger>
+                                    <LuEllipsisVertical size={20} />
+                                </Menu.Trigger>
+                                <Portal>
+                                    <Menu.Positioner>
+                                        <Menu.Content>
+                                            <Menu.Item value="delete-floor" className="satoshi-medium" onClick={() => handleDelete(floor.floor)} color={'#C00F0C'}>Delete Floor</Menu.Item>
+                                        </Menu.Content>
+                                    </Menu.Positioner>
+                                </Portal>
+                            </Menu.Root>
+                        </HStack>
+                        <DataTable tableName="Units" data={floor.units ?? null} emptyDetails={{ title: 'No Units Found', description: 'No Units Found', icon: '' }} columns={columns} />
+                    </Box> </SectionBox>))}
+                <Modal open={showEditUnit} onOpenChange={setShowEditUnit} modalContent={<AddUnit isOpen={showEditUnit} onClose={() => { setShowEditUnit(false); fetchUnits(property?.id as string) }} propertyId={property?.id as string} propertyName={property?.name as string} editUnitId={editId} />} />
+
+            </>}
         </>
     )
 }

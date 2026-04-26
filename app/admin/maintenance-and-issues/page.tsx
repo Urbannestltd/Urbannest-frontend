@@ -14,25 +14,43 @@ import { useRouter } from "next/navigation"
 import { useTicketStore } from "@/store/admin/tickets"
 import { use, useEffect, useState } from "react"
 import { format } from "path"
-import { convertMinutes, formatDateTime, formatNumber } from "@/services/date"
+import { convertMinutes, formatDateTime, formatNumber, getDateRange } from "@/services/date"
 import { AddBudget } from "./add-budget"
 import { Drawers } from "@/components/ui/drawer"
+import { useMutation } from "@tanstack/react-query"
+import toast from "react-hot-toast"
+import { exportTickets, filter } from "@/services/admin/maintenance"
 
 export default function Maintenance() {
-    const { control } = useForm<searchMaintenanceFormData>()
+    const { control, watch, getValues } = useForm<searchMaintenanceFormData>()
     const columns = useTicketColumns()
     const tickets = useTicketStore(state => state.tickets)
     const fetchAllTickets = useTicketStore(state => state.fetchAllTickets)
+    const fetchBudget = useTicketStore(state => state.fetchBudget)
+
     const metrics = useTicketStore(state => state.metrics)
     const fetchMetrics = useTicketStore(state => state.fetchMetrics)
     const isLoading = useTicketStore(state => state.isLoading)
     const router = useRouter()
     const [openDrawer, setOpenDrawer] = useState(false)
+    const watchedValues = watch()
 
     useEffect(() => {
-        fetchAllTickets()
         fetchMetrics()
+        fetchBudget()
     }, [])
+
+    useEffect(() => {
+        const { startDate, endDate } = getDateRange(watchedValues.dateRange?.[0])
+        fetchAllTickets({
+            propertyType: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
+            status: watchedValues.status?.[0] === 'all' ? undefined : watchedValues.status?.[0],
+            category: watchedValues.issue?.[0] === 'all' ? undefined : watchedValues.issue?.[0],
+            priority: watchedValues.priority?.[0] === 'all' ? undefined : watchedValues.priority?.[0],
+            dateFrom: startDate,
+            dateTo: endDate
+        })
+    }, [watchedValues.status, watchedValues.dateRange, watchedValues.priority, watchedValues.issue, watchedValues.property])
 
     const cardData: CardData[] = [
         {
@@ -57,6 +75,33 @@ export default function Maintenance() {
         }
     ]
 
+    const mutation = useMutation({
+        mutationFn: (data?: filter) => {
+            return exportTickets(data)
+        },
+        onSuccess: () => {
+            toast.success('Expenses exported successfully')
+        },
+        onError: (error) => {
+            toast.error(error?.message)
+        }
+    })
+
+    const exportTicketFile = () => {
+        const { startDate, endDate } = getDateRange(watchedValues.dateRange?.[0])
+
+        const payload: filter = {
+            propertyType: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
+            status: watchedValues.status?.[0] === 'all' ? undefined : watchedValues.status?.[0],
+            category: watchedValues.issue?.[0] === 'all' ? undefined : watchedValues.issue?.[0],
+            priority: watchedValues.priority?.[0] === 'all' ? undefined : watchedValues.priority?.[0],
+            dateFrom: startDate,
+            dateTo: endDate
+        }
+        mutation.mutate(payload)
+    }
+
+
     return (
         <div>
             <PageTitle mb={6} title="Maintenance & Issues" />
@@ -71,7 +116,7 @@ export default function Maintenance() {
                         <CustomSelect name='dateRange' control={control} borderColor="#F4F4F4" placeholder="Last 30 Days" icon={LuCalendar} label="Date Range" collection={dateFilter} />
                     </Flex>
                     <Flex w={'25%'} gap={2}>
-                        <MainButton size='lg' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
+                        <MainButton size='lg' onClick={exportTicketFile} variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
                         <Drawers open={openDrawer} onOpenChange={setOpenDrawer} triggerContent="Set Budget" className="w-[350px] py-2 px-5" modalContent={<AddBudget onClose={() => setOpenDrawer(false)} />} triggerSize='lg' />
                     </Flex>
                 </HStack>
@@ -92,11 +137,11 @@ const propertyTypes = createListCollection({
         },
         {
             label: 'Residential',
-            value: 'residential'
+            value: 'RESIDENTIAL'
         },
         {
             label: 'Commercial',
-            value: 'commercial'
+            value: 'COMMERCIAL'
         }
 
     ]
@@ -110,15 +155,19 @@ const statuses = createListCollection({
         },
         {
             label: 'Open',
-            value: 'open'
+            value: 'PENDING'
+        },
+        {
+            label: 'In Progress',
+            value: 'IN_PROGRESS'
         },
         {
             label: 'Closed',
-            value: 'closed'
+            value: 'RESOLVED'
         },
         {
             label: 'Escalated',
-            value: 'escalated'
+            value: 'ESCALATED'
         }
     ]
 })
@@ -131,15 +180,15 @@ const Priorities = createListCollection({
         },
         {
             label: 'High',
-            value: 'high'
+            value: 'HIGH'
         },
         {
             label: 'Medium',
-            value: 'medium'
+            value: 'MEDIUM'
         },
         {
             label: 'Low',
-            value: 'low'
+            value: 'LOW'
         }
     ]
 })
@@ -147,22 +196,25 @@ const Priorities = createListCollection({
 const IssueType = createListCollection({
     items: [
         {
-            label: 'Plumbing',
-            value: 'plumbing'
+            label: 'All',
+            value: 'all'
         },
-        {
-            label: 'Electrical',
-            value: 'electrical'
-        },
-        {
-            label: 'HVAC',
-            value: 'hvac'
-        },
+        { value: 'ELECTRICAL', label: 'Electrical', },
+        { value: 'PLUMBING', label: 'Plumbing' },
+        { value: 'SECURITY', label: 'Security' },
+        { value: 'CLEANING', label: 'Cleaning' },
+        { value: 'HVAC', label: 'HVC/AC' },
+        { value: 'BUILDING', label: 'Building (Walls, Doors, Windows, Ceiling)' },
+        { value: 'SAFETY', label: 'Safety & Security' },
     ]
 })
 
 const dateFilter = createListCollection({
     items: [
+        {
+            label: 'None',
+            value: 'all'
+        },
         { label: 'Today', value: 'today' },
         { label: 'This Week', value: 'this_week' },
         { label: 'This Month', value: 'this_month' },
