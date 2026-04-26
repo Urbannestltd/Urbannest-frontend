@@ -117,7 +117,7 @@ export default function Maintenance() {
                     </Flex>
                     <Flex w={'25%'} gap={2}>
                         <MainButton size='lg' onClick={exportTicketFile} variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
-                        <Drawers open={openDrawer} onOpenChange={setOpenDrawer} triggerContent="Set Budget" className="w-[350px] py-2 px-5" modalContent={<AddBudget onClose={() => setOpenDrawer(false)} />} triggerSize='lg' />
+                        <Drawers open={openDrawer} onOpenChange={setOpenDrawer} triggerContent="Set Budget" className="w-[350px] py-2 px-5" modalContent={<AddBudget onClose={() => { setOpenDrawer(false); fetchBudget() }} />} triggerSize='lg' />
                     </Flex>
                 </HStack>
             </form>

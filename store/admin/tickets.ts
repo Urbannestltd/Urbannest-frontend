@@ -100,6 +100,7 @@ interface TicketsStore {
 	ticketsPerProperty: Tickets[]
 	ticket: Ticket | null
 	isLoading: boolean
+	loadingBudget: boolean
 	newComments: {
 		isSystemMessage: boolean
 		timestamp: string
@@ -130,6 +131,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 	globalBudget: null,
 	newComments: null,
 	isLoading: false,
+	loadingBudget: false,
 	fetchAllTickets: async (filter) => {
 		set({ isLoading: true })
 		const response = await http.get(adminEndpoints.fetchAllTickets, {
@@ -155,9 +157,9 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		set({ metrics: response.data.data, isLoading: false })
 	},
 	fetchBudget: async () => {
-		set({ isLoading: true })
+		set({ loadingBudget: true })
 		const property = await http.get(adminEndpoints.createBudget)
-		set({ globalBudget: property.data.data })
+		set({ globalBudget: property.data.data, loadingBudget: false })
 	},
 	setComments: (comment) => set({ newComments: comment }),
 	clearTickets: () => set({ tickets: [] }),

@@ -28,7 +28,6 @@ export const AddBudget = ({ onClose }: { onClose: () => void }) => {
             propertySelected: ['all'],
             amount: existingBudget
         })
-        console.log(existingBudget)
     }, [])
 
 
@@ -41,7 +40,6 @@ export const AddBudget = ({ onClose }: { onClose: () => void }) => {
         mutationFn: (payload: createBudgetPayload) => createBudget(payload),
         onSuccess: (response) => {
             toast.success(response.message)
-            fetchBudget()
             onClose()
         }
     })
