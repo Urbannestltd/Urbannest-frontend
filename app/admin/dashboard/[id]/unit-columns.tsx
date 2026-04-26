@@ -11,6 +11,7 @@ import { ProgressCircle } from "@/components/ui/progress-circle"
 import { DeletePopUp } from "./tabs"
 import { AddUnit } from "./add-unit"
 import { set } from "lodash"
+import { usePropertyStore } from "@/store/admin/properties"
 
 export interface Row {
     complaints: {
@@ -131,6 +132,8 @@ export const ActionCell = ({ row, propertyId, propertyName, onEdit }: { row: any
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
 
+    const fetchUnits = usePropertyStore((state) => state.fetchUnits)
+
 
     return (
         <Flex justify={'center'}>
@@ -150,7 +153,7 @@ export const ActionCell = ({ row, propertyId, propertyName, onEdit }: { row: any
                 </Portal>
             </Menu.Root>
             <Modal open={open} onOpenChange={setOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal unit unitId={row.original.id} />} />
-            <Modal open={openDelete} onOpenChange={setOpenDelete} size={'xs'} className="h-fit" modalContent={<DeletePopUp onClose={() => setOpenDelete(false)} data={{ propertyId: propertyId, unit: true, unitId: row.original.id }} />} />
+            <Modal open={openDelete} onOpenChange={setOpenDelete} size={'xs'} className="h-fit" modalContent={<DeletePopUp onClose={() => { setOpenDelete(false); fetchUnits(propertyId) }} data={{ propertyId: propertyId, unit: true, unitId: row.original.id }} />} />
         </Flex>
     )
 }
