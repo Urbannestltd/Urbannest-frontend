@@ -16,7 +16,7 @@ import { LuUserPlus } from "react-icons/lu";
 import { ListCard } from "@/components/ui/list-card";
 import USerImage from "@/app/assets/images/user-avatar.png";
 import { useAdminDashboardStore } from "@/store/admin/dashboard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { formatNumber } from "@/services/date";
 import { Property, usePropertyStore } from "@/store/admin/properties";
 
@@ -30,6 +30,7 @@ export default function AdminDashboard() {
     const isLoading = useAdminDashboardStore((state) => state.isLoadingDashboard)
     const properties = usePropertyStore((state) => state.properties)
     const fetchProperties = usePropertyStore((state) => state.fetchProperties)
+    const [search, setSearch] = useState('')
 
 
     useEffect(() => {
@@ -37,6 +38,13 @@ export default function AdminDashboard() {
         fetchTenantStatus()
         fetchProperties()
     }, [])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (search) fetchProperties(search)
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [search])
 
     const cardData = [
         {
@@ -81,7 +89,10 @@ export default function AdminDashboard() {
             <Box bg={'white'} my={8} p={6} rounded={'8px'} border={'1px solid #F4F4F4'}>
                 <PageTitle title="All Properties" fontSize={'20px'} />
                 <HStack my={2} justify={'space-between'}>
-                    <SearchInput />
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        onSearch={(val) => fetchProperties(val)} />
                     <MainButton icon={<LuUserPlus />} onClick={() => router.push('/admin/dashboard/new-property')} className="h-[35px]" size='sm'>Add Property</MainButton>
                 </HStack>
                 <DataTable data={properties} loading={isLoading} my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.propertyId}`)} columns={columns} />

@@ -21,11 +21,19 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
     const columns = useTicketColumns()
     const tickets = useTicketStore(state => state.ticketsPerProperty)
     const fetchAllTickets = useTicketStore(state => state.fetchTicketPerProperty)
+    const [search, setSearch] = useState('')
 
     useEffect(() => {
         if (!propertyId) return
         fetchAllTickets(propertyId)
     }, [propertyId])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (search) fetchAllTickets(propertyId, search)
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [search])
 
     const [openModal, setOpenModal] = useState(false)
     return (
@@ -33,7 +41,11 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
             <SectionBox>
                 <PageTitle title="Maintenance Tickets" fontSize={'18px'} />
                 <HStack mt={6} justify={'space-between'}>
-                    <SearchInput width={'308px'} />
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        onSearch={(val) => fetchAllTickets(propertyId, val)}
+                        width={'308px'} />
                     <Flex justify={'center'} gap={2.5} align={'center'}>
                         <CustomSelect control={control} size={'sm'} name="status" width={'97px'} placeholder="All Types" collection={items} />
                         <MainButton size='lg' className="h-[34px]" icon={<LuUser />}>Add Unit</MainButton>

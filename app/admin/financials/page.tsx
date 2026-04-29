@@ -35,27 +35,33 @@ export default function Financials() {
     const properties = usePropertyStore(state => state.properties)
     const fetchProperties = usePropertyStore(state => state.fetchProperties)
     const [closeModal, setCloseModal] = useState(false)
+    const [search, setSearch] = useState('')
     const formValues = watch()
+
 
     useEffect(() => {
         fetchFinancialDashboard()
         fetchProperties()
     }, [])
 
+
+
     useEffect(() => {
-        const { startDate, endDate } = getDateRange(formValues.dateRange?.[0])
+        const timer = setTimeout(() => {
+            const { startDate, endDate } = getDateRange(formValues.dateRange?.[0])
 
-        console.log(formValues)
+            fetchFinancials({
+                search,
+                type: formValues.paymentMethod?.[0],
+                propertyId: formValues.property?.[0] === 'all' ? undefined : formValues.property?.[0],
+                startDate,
+                endDate,
+                status: formValues.status?.[0]
+            })
+        }, search ? 500 : 0)
 
-        fetchFinancials({
-            type: formValues.paymentMethod?.[0],
-            propertyId: formValues.property?.[0] === 'all' ? undefined : formValues.property?.[0],
-            startDate: startDate,
-            endDate: endDate,
-            status: formValues.status?.[0]
-        })
-    }, [formValues.paymentMethod, formValues.property, formValues.dateRange])
-
+        return () => clearTimeout(timer)
+    }, [formValues.paymentMethod, formValues.property, formValues.dateRange, formValues.status, search])
 
     const propertyTypes = createListCollection({
         items: [{ label: 'All Properties', value: 'all' }, ...properties.map((item) => ({ label: item.propertyName, value: item.propertyId }))]
@@ -121,7 +127,22 @@ export default function Financials() {
                     <Span mb={1} mr={4}>
                         <CustomSelect name="property" control={control} icon={HiOutlineBuildingOffice2} size={'xs'} triggerHeight='20px' width={'fit'} value={'all'} placeholder="All Types" collection={propertyTypes} />
                     </Span>
-                    <SearchInput width={'356px'} />
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        onSearch={(val) => {
+                            const { startDate, endDate } = getDateRange(formValues.dateRange?.[0])
+
+                            fetchFinancials({
+                                search: val,
+                                type: formValues.paymentMethod?.[0],
+                                propertyId: formValues.property?.[0] === 'all' ? undefined : formValues.property?.[0],
+                                startDate,
+                                endDate,
+                                status: formValues.status?.[0]
+                            })
+                        }}
+                        width={'356px'} />
                 </Flex>
                 <Flex gap={2} align={'center'}>
                     <Flex>

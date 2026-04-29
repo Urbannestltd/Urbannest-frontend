@@ -13,11 +13,7 @@ export const storeUserToken = (
 	CookieApi.set("x-auth-token", token, options)
 }
 export const getRefreshToken = (): string | null => {
-	const cookies = document.cookie.split(";")
-	const refreshTokenCookie = cookies.find((c) =>
-		c.trim().startsWith("refreshToken="),
-	)
-	return refreshTokenCookie ? refreshTokenCookie.split("=")[1] : null
+	return CookieApi.get("x-refresh-token") ?? null
 }
 
 export const storeRefreshToken = (
@@ -29,9 +25,7 @@ export const storeRefreshToken = (
 }
 
 export const getUserToken = () => {
-	const cookies = document.cookie.split(";")
-	const tokenCookie = cookies.find((c) => c.trim().startsWith("token="))
-	return tokenCookie ? tokenCookie.split("=")[1] : null
+	return CookieApi.get("x-auth-token") ?? null
 }
 
 export const clearAuthTokens = (): void => {

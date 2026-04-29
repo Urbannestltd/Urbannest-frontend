@@ -109,7 +109,7 @@ interface TicketsStore {
 		id: string
 	} | null
 	fetchAllTickets: (filter?: filter) => Promise<void>
-	fetchTicketPerProperty: (id: string) => Promise<void>
+	fetchTicketPerProperty: (id: string, search?: string) => Promise<void>
 	fetchTicket: (id: string) => Promise<void>
 	fetchMetrics: () => Promise<void>
 	setComments: (comments: {
@@ -140,9 +140,14 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		console.log("tickets", response.data.data)
 		set({ tickets: response.data.data, isLoading: false })
 	},
-	fetchTicketPerProperty: async (id: string) => {
+	fetchTicketPerProperty: async (id, search) => {
 		set({ isLoading: true })
-		const response = await http.get(adminEndpoints.fetchTicketsPerProperty(id))
+		const response = await http.get(
+			adminEndpoints.fetchTicketsPerProperty(id),
+			{
+				params: { search: search },
+			},
+		)
 		set({ ticketsPerProperty: response.data.data, isLoading: false })
 	},
 	fetchTicket: async (ticketId: string) => {

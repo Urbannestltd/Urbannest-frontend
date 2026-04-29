@@ -24,6 +24,7 @@ export const Unit = () => {
     const [showAddUnit, setShowAddUnit] = useState(false)
     const [showEditUnit, setShowEditUnit] = useState(false)
     const [editId, setEditId] = useState<string>()
+    const [search, setSearch] = useState('')
 
     const [selectedRow, setSelectedRow] = useState<Row | null>(null)
 
@@ -37,6 +38,13 @@ export const Unit = () => {
     useEffect(() => {
         setShowTenant(!!tenantId)
     }, [property?.id])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (search) fetchUnits(property?.id ?? '', search)
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [search])
 
     const handleTenantClick = (row: Row) => {
         setSelectedRow(row)
@@ -109,11 +117,14 @@ export const Unit = () => {
                 Back
             </Flex><Tenant tenant={selectedRow as Row} /></> : <> <SectionBox mb={4}>
                 <PageTitle title={`Total ${units?.totalUnits ?? 0} Units`} />
-                <HStack justify={'space-between'}>
-                    <SearchInput />
+                <HStack mt={2} justify={'space-between'}>
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        onSearch={(val) => fetchUnits(property?.id as string, val)} />
                     <Flex gap={2}>
                         <Modal open={showAddUnit} onOpenChange={setShowAddUnit} triggerSize="sm" triggerIcon={<LuUser />} triggerContent="Add Unit" modalContent={<AddUnit onClose={() => { setShowAddUnit(false); fetchUnits(property?.id ?? '') }} propertyId={property?.id ?? ''} floors={units?.grouped.length} propertyName={property?.name ?? ''} />} />
-                        <MainButton variant="outline" size="sm" onClick={() => onSubmit()}>Add Floor</MainButton>
+                        <MainButton variant="outline" size="sm" loading={mutation.isPending} onClick={() => onSubmit()}>Add Floor</MainButton>
                     </Flex>
                 </HStack>
             </SectionBox>

@@ -184,12 +184,13 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                         mt={4}
                         fontSize={"14px"}
                         w={"full"}
-                        color={edit ? "#2A3348" : "#5A5A5A"}
+                        color={"#5A5A5A"}
                     >
                         <SectionFlex
                             gap={2}
                             h={"50px"}
                             align={"center"}
+                            borderColor={edit ? "#2A3348" : '#F4F4F4'}
                             justify={"space-between"}
                         >
                             <Text className="satoshi-medium">Rental Price</Text>

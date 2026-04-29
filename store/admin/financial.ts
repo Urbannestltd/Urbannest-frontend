@@ -30,6 +30,7 @@ export interface financials {
 	}
 }
 export interface filters {
+	search?: string
 	propertyId?: string
 	tenantId?: string
 	startDate?: string

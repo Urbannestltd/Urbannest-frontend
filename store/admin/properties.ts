@@ -160,11 +160,11 @@ interface PropertyStore {
 	units: Unit | null
 	unit: UnitDetail | null
 	lease: Lease | null
-	fetchProperties: () => Promise<void>
+	fetchProperties: (search?: string) => Promise<void>
 	fetchProperty: (id: string) => Promise<void>
 	fetchLease: (id: string) => Promise<void>
 	setProperties: (properties: Properties[]) => void
-	fetchUnits: (id: string) => Promise<void>
+	fetchUnits: (id: string, search?: string) => Promise<void>
 	fetchUnit: (id: string) => Promise<void>
 	clearUnit: () => void
 	selectedProperty: Property | null
@@ -178,10 +178,12 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 	units: null,
 	unit: null,
 	lease: null,
-	fetchProperties: async () => {
+	fetchProperties: async (search) => {
 		set({ isLoading: true })
 		try {
-			const properties = await http.get(adminEndpoints.fetchProperties)
+			const properties = await http.get(adminEndpoints.fetchProperties, {
+				params: { search: search },
+			})
 			set({ properties: properties.data.data.properties })
 			console.log("✅ Properties set in store:", properties.data.data)
 		} catch (e) {
@@ -205,10 +207,12 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 			set({ isLoading: false })
 		}
 	},
-	fetchUnits: async (id: string) => {
+	fetchUnits: async (id, search) => {
 		set({ isLoading: true })
 		try {
-			const units = await http.get(adminEndpoints.fetchUnits(id))
+			const units = await http.get(adminEndpoints.fetchUnits(id), {
+				params: { search: search },
+			})
 			set({ units: units.data.data })
 			console.log("✅ Units set in store:", units.data.data)
 		} catch (e) {
