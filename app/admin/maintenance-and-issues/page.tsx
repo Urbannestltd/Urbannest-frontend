@@ -20,9 +20,10 @@ import { Drawers } from "@/components/ui/drawer"
 import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import { exportTickets, filter } from "@/services/admin/maintenance"
+import { MdOutlineFilterListOff } from "react-icons/md"
 
 export default function Maintenance() {
-    const { control, watch, getValues } = useForm<searchMaintenanceFormData>()
+    const { control, watch, getValues, reset } = useForm<searchMaintenanceFormData>()
     const columns = useTicketColumns()
     const tickets = useTicketStore(state => state.tickets)
     const fetchAllTickets = useTicketStore(state => state.fetchAllTickets)
@@ -116,6 +117,8 @@ export default function Maintenance() {
                         <CustomSelect name='dateRange' control={control} borderColor="#F4F4F4" placeholder="Last 30 Days" icon={LuCalendar} label="Date Range" collection={dateFilter} />
                     </Flex>
                     <Flex w={'25%'} gap={2}>
+                        {watchedValues.dateRange.length > 0 && watchedValues.issue.length > 0 && watchedValues.priority.length > 0 && watchedValues.status.length > 0 && watchedValues.property.length > 0 ?
+                            < MdOutlineFilterListOff cursor={'pointer'} onClick={() => reset()} /> : null}
                         <MainButton size='lg' onClick={exportTicketFile} variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
                         <Drawers open={openDrawer} onOpenChange={setOpenDrawer} triggerContent="Set Budget" className="w-[350px] py-2 px-5" modalContent={<AddBudget onClose={() => { setOpenDrawer(false); fetchBudget() }} />} triggerSize='lg' />
                     </Flex>

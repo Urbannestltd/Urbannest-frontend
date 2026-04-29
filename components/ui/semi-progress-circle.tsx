@@ -11,6 +11,7 @@ type SemiProgressCircleProps = {
     trackColor?: string;
     needleColor?: string;
     expectedValue?: number
+    collectedPercent?: number
 };
 
 export const SemiProgressCircle = ({
@@ -20,7 +21,8 @@ export const SemiProgressCircle = ({
     color = "#CFAA67",
     trackColor = "#E7EEF5",
     needleColor = "#CFAA67",
-    expectedValue
+    expectedValue,
+    collectedPercent
 }: SemiProgressCircleProps) => {
     const [animatedValue, setAnimatedValue] = useState(0)
 

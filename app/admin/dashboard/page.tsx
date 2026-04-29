@@ -62,11 +62,11 @@ export default function AdminDashboard() {
                 <Flex direction={'column'} justify={'center'} p={6} bg={'white'} w={'40%'} h={'full'} rounded={'8px'} border={'1px solid #F4F4F4'}>
                     <Text className="satoshi-medium text-[#5A5A5A]" mb={'20px'}>Expected Income</Text>
                     <Flex direction={'column'} justify={'center'}>
-                        <Text className="satoshi-bold text-[30px] mb-0" textAlign={'center'}>30%</Text>
+                        <Text className="satoshi-bold text-[30px] mb-0" textAlign={'center'}>{dashboard?.revenue.collectedPercent}%</Text>
                         <Text textAlign={'center'} className="satoshi-medium mb-2 text-sm" color={'#5A5A5A'}>Collected</Text>
                     </Flex>
                     <Flex w={'full'} justify={'center'}>
-                        <SemiProgressCircle expectedValue={dashboard?.revenue.expectedIncome} value={30} />
+                        <SemiProgressCircle expectedValue={dashboard?.revenue.expectedIncome} value={dashboard?.revenue.collectedPercent ?? 0} />
                     </Flex>
                     <HStack mb={1} mt={6} >
                         <Circle size={'6px'} bg={'#E7EEF5'} />
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
             </Box>
             <Box bg={'white'} my={8} p={3} rounded={'8px'} border={'1px solid #F4F4F4'}>
                 <PageTitle title="Tenant Status" mb={4} fontSize={'20px'} />
-                <ListCard cardData={tenants} />
+                <ListCard cardData={(tenants?.expired && tenants.latest) ?? []} />
             </Box>
 
         </>

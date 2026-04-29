@@ -5,7 +5,7 @@ import { formatDate, formatNumber } from "@/services/date"
 import { Center, Flex, Menu, Portal, Text } from "@chakra-ui/react"
 import { ColumnDef } from "@tanstack/react-table"
 import { LuEllipsisVertical } from "react-icons/lu"
-import { AddMemberModal } from "./add-modal"
+import { AddMemberModal, DeleteTenantPopUp } from "./add-modal"
 import { useState } from "react"
 import { ProgressCircle } from "@/components/ui/progress-circle"
 import { DeletePopUp } from "./tabs"
@@ -131,6 +131,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: st
 export const ActionCell = ({ row, propertyId, propertyName, onEdit }: { row: any, propertyId: string, propertyName: string, onEdit?: (id: string) => void }) => {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
+    const [removeTenant, setRemoveTenant] = useState(false)
 
     const fetchUnits = usePropertyStore((state) => state.fetchUnits)
 
@@ -146,12 +147,13 @@ export const ActionCell = ({ row, propertyId, propertyName, onEdit }: { row: any
                         <Menu.Content>
                             <Menu.Item value="edit-unit" onClick={() => onEdit?.(row.original.id)} className="satoshi-medium">Edit Unit</Menu.Item>
                             <Menu.Item value="assign-tenant" onClick={() => setOpen(true)} className="satoshi-medium">Assign Tenant</Menu.Item>
-                            <Menu.Item value="remove-tenant" className="satoshi-medium">Remove Tenant</Menu.Item>
+                            <Menu.Item value="remove-tenant" onClick={() => setRemoveTenant(true)} className="satoshi-medium">Remove Tenant</Menu.Item>
                             <Menu.Item value="delete-unit" onClick={() => setOpenDelete(true)} className="satoshi-medium" color={'#C00F0C'}>Delete Unit</Menu.Item>
                         </Menu.Content>
                     </Menu.Positioner>
                 </Portal>
             </Menu.Root>
+            <Modal open={removeTenant} onOpenChange={setRemoveTenant} size={'xs'} className="h-fit" modalContent={<DeleteTenantPopUp data={{ unitId: row.original.id, propertyId: propertyId, role: 'TENANT', userId: row.original.tenantId }} onClose={() => { setRemoveTenant(false); fetchUnits(propertyId) }} />} />
             <Modal open={open} onOpenChange={setOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal unit unitId={row.original.id} />} />
             <Modal open={openDelete} onOpenChange={setOpenDelete} size={'xs'} className="h-fit" modalContent={<DeletePopUp onClose={() => { setOpenDelete(false); fetchUnits(propertyId) }} data={{ propertyId: propertyId, unit: true, unitId: row.original.id }} />} />
         </Flex>

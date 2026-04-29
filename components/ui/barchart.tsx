@@ -5,7 +5,7 @@ import leaseImages from '@/app/assets/images/lease-image.png'
 import { useState } from "react"
 
 
-export const Demo = ({ chartData, loading }: { chartData: { month: string; count: number }[], loading: boolean }) => {
+export const Demo = ({ chartData, loading }: { chartData: { property: string; count: number }[], loading: boolean }) => {
     const allData = {
         perProperty: [
             { label: "Property 1", value: 1200 },
@@ -65,7 +65,7 @@ export const Demo = ({ chartData, loading }: { chartData: { month: string; count
                         strokeDasharray="4 4"
                         stroke="#E5E7EB"
                     />
-                    <XAxis dataKey='month' axisLine={false} tickLine={false} />
+                    <XAxis dataKey='property' axisLine={false} tickLine={false} />
 
                     <YAxis
                         axisLine={false}

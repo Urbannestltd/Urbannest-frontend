@@ -1,5 +1,5 @@
-import { useFileUploadContext, FileUpload } from "@chakra-ui/react"
-import { LuUpload, LuImage } from "react-icons/lu"
+import { useFileUploadContext, FileUpload, Circle } from "@chakra-ui/react"
+import { LuUpload, LuImage, LuX } from "react-icons/lu"
 import { MainButton } from "@/components/ui/button"
 import { Box, Flex, HStack, Grid } from "@chakra-ui/react"
 
@@ -27,15 +27,21 @@ const GalleryItem = () => {
 
     return (
         <Box w={'full'}>
-
-            <Box w="full" h="177px" borderRadius="8px" overflow="hidden" mb={3}>
+            <Box w="full" h="177px" borderRadius="8px" mb={3} position="relative">
                 {getFile(0) ? (
-                    <FileUpload.ItemGroup className="">
-                        <FileUpload.Item w="full" h="full" p={0} file={getFile(0)!}>
-                            <FileUpload.ItemPreviewImage
-                                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }}
-                                alt="Main preview"
-                            />
+                    <FileUpload.ItemGroup>
+                        <FileUpload.Item w="full" h="177px" p={0} file={getFile(0)!} position="relative">
+                            <Box w="full" h="full" borderRadius="8px" overflow="hidden">
+                                <FileUpload.ItemPreviewImage
+                                    style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }}
+                                    alt="Main preview"
+                                />
+                            </Box>
+                            <FileUpload.ItemDeleteTrigger position={'absolute'} top={'-8px'} right={'-8px'} zIndex={10}>
+                                <Circle cursor={'pointer'} size={'20px'} bg={'red.700'}>
+                                    <LuX color={'white'} />
+                                </Circle>
+                            </FileUpload.ItemDeleteTrigger>
                         </FileUpload.Item>
                     </FileUpload.ItemGroup>
                 ) : (
@@ -43,16 +49,24 @@ const GalleryItem = () => {
                 )}
             </Box>
 
-            <FileUpload.ItemGroup className="">
+            {/* Small images */}
+            <FileUpload.ItemGroup>
                 <HStack gap={3} mb={3}>
                     {[1, 2, 3].map((i) => (
-                        <Box key={i} w="full" h="93px" borderRadius="8px" overflow="hidden">
+                        <Box key={i} position="relative" w="full" h="93px" mb={3}>
                             {getFile(i) ? (
-                                <FileUpload.Item w="full" h="full" p={0} file={getFile(i)!}>
-                                    <FileUpload.ItemPreviewImage
-                                        style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }}
-                                        alt={`Preview ${i + 1}`}
-                                    />
+                                <FileUpload.Item w="full" h="full" p={0} file={getFile(i)!} position="relative">
+                                    <Box w="full" h="full" borderRadius="8px" overflow="hidden">
+                                        <FileUpload.ItemPreviewImage
+                                            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }}
+                                            alt={`Preview ${i + 1}`}
+                                        />
+                                    </Box>
+                                    <FileUpload.ItemDeleteTrigger position={'absolute'} cursor={'pointer'} top={'-8px'} right={'-8px'} zIndex={10}>
+                                        <Circle size={'20px'} bg={'red.700'}>
+                                            <LuX color={'white'} />
+                                        </Circle>
+                                    </FileUpload.ItemDeleteTrigger>
                                 </FileUpload.Item>
                             ) : (
                                 <PlaceholderBox />

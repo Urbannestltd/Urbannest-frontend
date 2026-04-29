@@ -202,18 +202,18 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                 className="w-[350px] h-fit"
                 open={!!deleteTarget}
                 onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}
-                modalContent={<DeletePopUp data={deleteTarget?.data ?? { userId: '', role: '', unitId: '', propertyId: '' }} />}
+                modalContent={<DeleteTenantPopUp data={deleteTarget?.data ?? { userId: '', role: '', unitId: '', propertyId: '' }} />}
             />
         </Box>
     )
 }
-const DeletePopUp = ({ data }: {
+export const DeleteTenantPopUp = ({ data, onClose }: {
     data: {
         userId: string,
         role: string,
         unitId: string,
         propertyId: string
-    }
+    }, onClose?: () => void
 }) => {
 
     const mutate = useMutation({
@@ -222,6 +222,7 @@ const DeletePopUp = ({ data }: {
         },
         onSuccess: () => {
             toast.success('Member removed successfully')
+            onClose?.()
         },
         onError: () => {
             toast.error('Failed to remove member')

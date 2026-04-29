@@ -165,7 +165,7 @@ export default function NewProperty() {
                                     name="propertyPrice"
                                     width={"full"}
                                     required
-                                    label="Property Price"
+                                    label='Default Rent'
                                     control={control}
                                     onKeyDown={(e) => {
                                         const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "+"]
@@ -176,7 +176,7 @@ export default function NewProperty() {
                                         value: /^[0-9]+$/,
                                         message: "Enter a valid price",
                                     }}
-                                    placeholder="Property Price"
+                                    placeholder="Default Rent"
                                 />
                             </Flex>
                             <Flex gap={4} mt={6}>

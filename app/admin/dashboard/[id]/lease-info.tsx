@@ -83,16 +83,24 @@ const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: Tenant
     useEffect(() => {
         if (activeId) {
             fetchLease(activeId)
-            console.log("lease", lease)
-            reset({
-                rentAmount: lease?.rentAmount,
-                leaseStartDate: lease?.startDate ? new Date(lease?.startDate).toISOString().split('T')[0] : '',
-                leaseEndDate: lease?.endDate ? new Date(lease?.endDate).toISOString().split('T')[0] : '',
-                moveOutNotice: lease?.moveOutNotice,
-                serviceCharge: lease?.serviceCharge
-            })
         }
     }, [activeId])
+
+    useEffect(() => {
+        if (lease) {
+            reset({
+                rentAmount: lease.rentAmount,
+                leaseStartDate: lease.startDate
+                    ? new Date(lease.startDate).toISOString().split('T')[0]
+                    : '',
+                leaseEndDate: lease.endDate
+                    ? new Date(lease.endDate).toISOString().split('T')[0]
+                    : '',
+                moveOutNotice: lease.moveOutNotice,
+                serviceCharge: lease.serviceCharge
+            })
+        }
+    }, [lease])
 
 
     const onSubmit = (data: TenantLeaseFormData) => {

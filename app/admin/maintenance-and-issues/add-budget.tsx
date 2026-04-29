@@ -57,7 +57,7 @@ export const AddBudget = ({ onClose }: { onClose: () => void }) => {
 
             <Flex direction={'column'} gap={4}>
                 <CustomSelect control={control} readOnly label="Property" name="propertySelected" collection={PropertiesList} />
-                <CustomInput control={control} label="Amount ($)" name="amount" />
+                <CustomInput control={control} label="Amount (₦)" name="amount" />
             </Flex>
             <Flex gap={2}>
                 <MainButton size="lg" type="submit" loading={mutation.isPending} onClick={handleSubmit(onSubmit)} >{existingBudget ? 'Update' : 'Save'} Budget</MainButton>

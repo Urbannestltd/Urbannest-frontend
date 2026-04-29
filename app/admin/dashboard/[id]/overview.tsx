@@ -184,7 +184,7 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                         mt={4}
                         fontSize={"14px"}
                         w={"full"}
-                        color={"#5A5A5A"}
+                        color={edit ? "#2A3348" : "#5A5A5A"}
                     >
                         <SectionFlex
                             gap={2}
@@ -499,7 +499,7 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                     ))}
                 </SectionBox>
             </Box>
-        </Flex>
+        </Flex >
     )
 })
 

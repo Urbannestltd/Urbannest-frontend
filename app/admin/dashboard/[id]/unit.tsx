@@ -108,7 +108,7 @@ export const Unit = () => {
                 <LuArrowLeft size={18} color="#CFAA67" />
                 Back
             </Flex><Tenant tenant={selectedRow as Row} /></> : <> <SectionBox mb={4}>
-                <PageTitle title={`Total ${units?.totalUnits} Units`} />
+                <PageTitle title={`Total ${units?.totalUnits ?? 0} Units`} />
                 <HStack justify={'space-between'}>
                     <SearchInput />
                     <Flex gap={2}>

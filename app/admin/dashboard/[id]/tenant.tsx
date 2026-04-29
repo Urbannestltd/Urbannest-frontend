@@ -314,12 +314,12 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                         {tenants?.paymentHistory?.map((item, index) => (
                             <><Flex p={2} key={index}>
                                 <Box>
-                                    <Text className="satoshi-bold">{item.amount}</Text>
+                                    <Text className="satoshi-bold capitalize">{item.type.toLocaleLowerCase()}</Text>
                                     <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'} >{formatDate(item.date)}</Text>
                                 </Box>
                                 <Box className={`text-end ${item.status ? 'text-success-400' : 'text-error-400'}`} ml={'auto'}>
-                                    <Text className="satoshi-bold">{item.amount}</Text>
-                                    <Text fontSize={'12px'}>Payment{' '}{item.status}</Text>
+                                    <Text className="satoshi-bold">{formatNumber(item.amount)}</Text>
+                                    <Text className=" capitalize" fontSize={'12px'}>{item.status.toLowerCase()}</Text>
                                 </Box>
                             </Flex>
                                 {index !== tenants.paymentHistory.length - 1 && <Divider my={4} />}

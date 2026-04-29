@@ -3,15 +3,16 @@ import http from "@/services/https"
 import { create } from "zustand"
 
 interface AdminDashboard {
-	totalProperties: 0
-	totalTenants: 0
-	defaultingTenants: 0
+	totalProperties: number
+	totalTenants: number
+	defaultingTenants: number
 	revenue: {
-		amountCollected: 0
-		expectedIncome: 0
+		amountCollected: number
+		expectedIncome: number
+		collectedPercent: number
 	}
 	maintenanceChart: {
-		month: string
+		property: string
 		count: number
 	}[]
 }
@@ -26,9 +27,14 @@ export interface Tenant {
 	unitId: string
 	propertyId: string
 }
+
+export interface TenantStatus {
+	expired: Tenant[]
+	latest: Tenant[]
+}
 interface DashStore {
 	dashboard: AdminDashboard | null
-	tenants: Tenant[]
+	tenants: TenantStatus | null
 	isLoadingDashboard: boolean
 	isLoadingTenants: boolean
 	fetchDashboard: () => Promise<void>
@@ -38,7 +44,7 @@ interface DashStore {
 
 export const useAdminDashboardStore = create<DashStore>((set) => ({
 	dashboard: null,
-	tenants: [],
+	tenants: null,
 	isLoadingDashboard: false,
 	isLoadingTenants: false,
 	fetchDashboard: async () => {
@@ -61,7 +67,7 @@ export const useAdminDashboardStore = create<DashStore>((set) => ({
 			set({ tenants: tenants.data.data })
 			console.log("✅ Admin Dashboard set in store:", tenants.data.data)
 		} catch (e) {
-			set({ tenants: [] })
+			set({ tenants: null })
 			console.error("❌ Failed to fetch tenants", e)
 		} finally {
 			set({ isLoadingTenants: false })

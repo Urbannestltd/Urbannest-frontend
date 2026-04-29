@@ -3,13 +3,17 @@ import http from "@/services/https"
 import { create } from "zustand"
 
 export interface financials {
+	recordType: string
 	id: string
 	reference: string
 	amount: number
 	status: string
-	type: string
+	category: string
 	dueDate: string
 	paidDate: string
+	date: string
+	paymentType: string
+	description: string
 	createdAt: string
 	tenant: {
 		email: string

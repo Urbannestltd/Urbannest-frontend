@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form"
 import { LuCalendar, LuDownload, LuPlus } from "react-icons/lu"
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { SearchInput } from "@/components/ui/search-input"
-import { MdRefresh } from "react-icons/md"
+import { MdOutlineFilterListOff, MdRefresh } from "react-icons/md"
 import { DataTable } from "@/components/ui/data-table"
 import { useColumns } from "./columns"
 import { useFinancialStore } from "@/store/admin/financial"
@@ -25,7 +25,7 @@ import { format } from "path"
 import { usePropertyStore } from "@/store/admin/properties"
 
 export default function Financials() {
-    const { control, watch } = useForm<filterFormData>()
+    const { control, watch, reset } = useForm<filterFormData>()
     const columns = useColumns()
     const financials = useFinancialStore(state => state.financials)
     const loading = useFinancialStore(state => state.loading)
@@ -133,6 +133,8 @@ export default function Financials() {
                     <Flex>
                         <CustomSelect name='status' control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Status" collection={statusFilter} />
                     </Flex>
+                    {formValues.paymentMethod?.length > 0 || formValues.dateRange?.length > 0 || formValues.property?.length > 0 || formValues.status?.length > 0 ?
+                        <MdOutlineFilterListOff cursor={'pointer'} onClick={() => reset()} /> : null}
                     <MdRefresh color="#94A3B8" className=" size-4" />
                 </Flex>
             </SectionFlex>

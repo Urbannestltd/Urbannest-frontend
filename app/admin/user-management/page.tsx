@@ -12,6 +12,7 @@ import { MainButton } from "@/components/ui/button"
 import { LuCalendar, LuDownload } from "react-icons/lu"
 import { useRouter } from "next/navigation"
 import { getDateRange } from "@/services/date"
+import { MdOutlineFilterListOff } from "react-icons/md"
 
 export default function Page() {
     const columns = useColumns()
@@ -20,7 +21,7 @@ export default function Page() {
     const fetchUsers = useUserStore(state => state.fetchUsers)
     const metrics = useUserStore(state => state.metrics)
     const fetchMetrics = useUserStore(state => state.fetchMetrics)
-    const { control, watch, getValues } = useForm<searchUsersFormData>()
+    const { control, watch, getValues, reset } = useForm<searchUsersFormData>()
     const router = useRouter()
     const watchedValues = watch()
 
@@ -69,7 +70,11 @@ export default function Page() {
                     <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Statuses" label="Status" name="status" collection={statuses} />
                     <CustomSelect name='dateRange' control={control} borderColor="#F4F4F4" placeholder="Last 30 Days" icon={LuCalendar} label="Date Range" collection={dateFilter} />
                 </Flex>
-                <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
+                <Flex>
+                    {watchedValues.dateRange.length > 0 && watchedValues.role.length > 0 && watchedValues.status.length > 0 ?
+                        <MdOutlineFilterListOff cursor={'pointer'} onClick={() => reset()} /> : null}
+                    <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
+                </Flex>
             </HStack>
             <DataTable data={users} loading={isLoading} onRowClick={(row) => router.push(`/admin/user-management/${row.id}`)} columns={columns} tableName="Users" />
         </div>

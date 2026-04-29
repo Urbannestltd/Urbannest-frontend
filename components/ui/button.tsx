@@ -3,7 +3,7 @@ import { Icon } from '@chakra-ui/react';
 import { CgSpinner } from 'react-icons/cg';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'outlineGhost' | 'darkGhost';
-export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl' | 'auto';
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'auto';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
@@ -35,9 +35,10 @@ const variantStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
+    xs: 'w-[141px] h-[32px]',
     sm: 'w-[141px] h-[35px]',
-    md: 'w-[219px]',
-    lg: 'w-full',
+    md: 'w-[219px] h-[45px]',
+    lg: 'w-full [h-45px]',
     xl: 'w-[288px] h-[72px] flex justify-start',
     auto: 'w-auto',
 };
@@ -55,7 +56,7 @@ export const MainButton = React.forwardRef<HTMLButtonElement, ButtonProps>(funct
     ...props
 }, ref) {
     const base =
-        'cursor-pointer inline-flex items-center justify-center px-4 py-2 h-[45px] text-sm font-semibold rounded-[6px] border tracking-wide transition-colors duration-200 focus:outline-none focus:ring-0 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed';
+        'cursor-pointer inline-flex items-center justify-center px-4 py-2  text-sm font-semibold rounded-[6px] border tracking-wide transition-colors duration-200 focus:outline-none focus:ring-0 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed';
 
     const combinedClassName = [base, variantStyles[variant], sizeStyles[size], props.className]
         .filter(Boolean)

@@ -26,12 +26,20 @@ export const useColumns = (): ColumnDef<financials, any>[] => {
             label: 'Overdue',
             color: '#752121',
             bg: '#FE898333'
-        }
+        },
+        {
+            value: 'FAILED',
+            label: 'Failed',
+            color: '#752121',
+            bg: '#FE898333'
+        },
     ]
 
     const type = [
         { value: "RENT", label: "Rent" },
         { value: "UTILITY_BILL", label: "Utility Bill" },
+        { value: "UTILITIES", label: "Utilities" },
+        { value: 'MAINTENANCE', label: "Maintenance" },
         { value: "UTILITY_TOKEN", label: "Utility Token" },
         { value: "SERVICE_CHARGE", label: "Service Charge" },
     ]
@@ -40,12 +48,12 @@ export const useColumns = (): ColumnDef<financials, any>[] => {
         {
             accessorKey: 'createdAt',
             header: "Date",
-            cell: ({ row }) => <Text>{row.original.dueDate ? 'Due on' + ' ' + formatDate(row.original.dueDate) : formatDate(row.original.createdAt)}</Text>
+            cell: ({ row }) => <Text>{row.original.dueDate ? row.original.paidDate ? 'Paid on' + ' ' + formatDate(row.original.paidDate) : 'Due on' + ' ' + formatDate(row.original.dueDate) : formatDate(row.original.date)}</Text>
         },
         {
-            accessorFn: (row) => row.tenant.name,
+            accessorFn: (row) => row.tenant?.name,
             header: "Tenant Name",
-            cell: ({ row }) => <Text>{row.original.tenant.name}</Text>
+            cell: ({ row }) => <Text>{row.original.tenant?.name}</Text>
         },
         {
             accessorFn: (row) => row.property.name ?? '',
@@ -58,10 +66,10 @@ export const useColumns = (): ColumnDef<financials, any>[] => {
             cell: ({ row }) => <Text>{row.original.unit?.name}</Text>
         },
         {
-            accessorKey: 'type',
+            accessorFn: (row) => row.category ?? row.paymentType,
             header: "Type",
             cell: ({ row }) => {
-                const typeItem = type.find((item) => item.value === row.original.type)
+                const typeItem = type.find((item) => item.value === (row.original.category ?? row.original.paymentType))
                 return <Text>{typeItem?.label}</Text>
             }
         },
