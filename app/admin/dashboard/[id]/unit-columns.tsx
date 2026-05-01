@@ -56,9 +56,9 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: st
     }
 
     const leaseExpiry = (row: number) => {
-        if (row >= 0 && row <= 40) { return '#EC221F' }
+        if (row >= 0 && row <= 40) { return '#14AE5C' }
         if (row >= 41 && row <= 70) { return '#E8B931' }
-        if (row >= 71) { return '#14AE5C' }
+        if (row >= 71) { return '#EC221F' }
         return ''
     }
 
@@ -104,7 +104,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: st
         },
         {
             accessorKey: 'leaseExpiry',
-            header: 'Lease Expiry',
+            header: 'Lease Left',
             cell({ row }) {
                 return <ProgressCircle showValueText value={stringToNumber(row.original.leaseExpiry)} thickness={2} cap={'round'} color={leaseExpiry(stringToNumber(row.original.leaseExpiry))} size={'xs'} />
             },

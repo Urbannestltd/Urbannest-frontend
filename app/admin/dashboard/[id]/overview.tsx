@@ -426,21 +426,27 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                             ))}
                         </HStack>
                         {edit && images.length < 4 ? (
-                            <MainButton variant="outline" size="lg" icon={<LuImage />}>
-                                <label style={{ cursor: "pointer" }}>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        style={{ display: "none" }}
-                                        onChange={(e) => {
-                                            const file = e.target.files?.[0]
-                                            if (file) handleAdd(file)
-                                        }}
-                                    />
 
-
-                                    Add Image</label>
-                            </MainButton>
+                            <>
+                                <input
+                                    id="image-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: "none" }}
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) handleAdd(file);
+                                    }}
+                                />
+                                <MainButton
+                                    variant="outline"
+                                    size="lg"
+                                    icon={<LuImage />}
+                                    onClick={() => document.getElementById("image-upload")?.click()}
+                                >
+                                    Add Image
+                                </MainButton>
+                            </>
 
                         ) : (
                             <MainButton icon={<LuImage />} size="lg" variant="outline">

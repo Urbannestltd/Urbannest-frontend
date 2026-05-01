@@ -109,9 +109,9 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
 
     ]
     const leaseExpiry = (row: number) => {
-        if (row >= 0 && row <= 40) { return '#EC221F' }
+        if (row >= 0 && row <= 40) { return '#14AE5C' }
         if (row >= 41 && row <= 70) { return '#E8B931' }
-        if (row >= 71) { return '#14AE5C' }
+        if (row >= 71) { return '#EC221F' }
         return ''
     }
 
@@ -179,7 +179,7 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
                                 <Text className="satoshi-bold text-2xl">{formatNumber(tenants?.currentLease?.rentAmount)}</Text>
                             </Box>
                             <Box w={'50%'}>
-                                <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Lease Expiry</Text>
+                                <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'}>Lease Left</Text>
                                 <ProgressCircle showValueText thickness={2} cap={'round'} value={stringToNumber(tenants?.currentLease?.leaseExpiryPercentage)} color={leaseExpiry(stringToNumber(tenants?.currentLease?.leaseExpiryPercentage))} size={'xs'} />
                             </Box>
                         </HStack>
