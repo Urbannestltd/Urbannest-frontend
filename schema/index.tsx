@@ -89,7 +89,7 @@ export const TenantLeaseSchema = z.object({
     leaseLength: inputField("Lease length is required"),
     leaseStartDate: inputField("Start date is required"),
     leaseEndDate: inputField("End date is required"),
-    moveOutNotice: inputField("Move out notice is required"),
+    moveOutNotice: selectArrayField("Move out notice is required"),
     serviceCharge: number("Service charge is required"),
 })
 

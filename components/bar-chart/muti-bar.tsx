@@ -45,8 +45,8 @@ export const MultiBar = ({ chartData, loading }: { chartData: { revenue: number;
             <HStack justify={'space-between'}>
                 <Text className="satoshi-medium text-[#5A5A5A]" mb={'40px'}>Rental Revenue</Text>
                 <select
-                    value={[filter]}
-                    //onChange={(e) => setFilter(e.target.value as keyof typeof allData)}
+                    value={filter}
+                    // onChange={(e) => setFilter(e.target.value as keyof typeof allData)}
                     className="w-[150px] border border-[#D9D9D9] satoshi text-sm text-[#1E1E1E] rounded-lg p-1 mb-4"
                 >
                     <option value='perProperty'>Per Property</option>

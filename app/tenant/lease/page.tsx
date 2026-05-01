@@ -217,8 +217,8 @@ export default function Lease() {
                                                 <Text className="satoshi-bold">{item.description}</Text>
                                                 <Text fontSize={'12px'} mb={0.5} className="satoshi-bold" color={'#757575'} >{formatDate(item.date)}</Text>
                                             </Box>
-                                            <Box className={`text-end ${item.status ? 'text-success-400' : 'text-error-400'}`} ml={'auto'}>
-                                                <Text className="satoshi-bold">{item.amount}</Text>
+                                            <Box className={`text-end ${item.status === 'PAID' ? 'text-success-400' : 'text-error-400'}`} ml={'auto'}>
+                                                <Text className="satoshi-bold">{formatNumber(item.amount)}</Text>
                                                 <Text fontSize={'12px'}>Payment{' '}{item.status === 'PAID' ? 'Successful' : 'Failed'}</Text>
                                             </Box>
                                         </Flex>

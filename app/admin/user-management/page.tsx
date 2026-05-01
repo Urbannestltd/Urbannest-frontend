@@ -71,7 +71,7 @@ export default function Page() {
                     <CustomSelect name='dateRange' control={control} borderColor="#F4F4F4" placeholder="Last 30 Days" icon={LuCalendar} label="Date Range" collection={dateFilter} />
                 </Flex>
                 <Flex>
-                    {watchedValues.dateRange.length > 0 && watchedValues.role.length > 0 && watchedValues.status.length > 0 ?
+                    {watchedValues.dateRange?.length > 0 && watchedValues.role.length > 0 && watchedValues.status.length > 0 ?
                         <MdOutlineFilterListOff cursor={'pointer'} onClick={() => reset()} /> : null}
                     <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
                 </Flex>

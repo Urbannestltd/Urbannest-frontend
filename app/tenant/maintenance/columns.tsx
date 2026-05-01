@@ -35,7 +35,7 @@ export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
             textColor: '#1976D2'
         },
         {
-            value: 'FIXED',
+            value: 'RESOLVED',
             label: 'Fixed',
             bgColor: '#CFF7D3',
             textColor: '#02542D'

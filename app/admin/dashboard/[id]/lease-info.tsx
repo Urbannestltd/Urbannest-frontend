@@ -96,7 +96,7 @@ const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: Tenant
                 leaseEndDate: lease.endDate
                     ? new Date(lease.endDate).toISOString().split('T')[0]
                     : '',
-                moveOutNotice: lease.moveOutNotice,
+                moveOutNotice: [lease.moveOutNotice],
                 serviceCharge: lease.serviceCharge
             })
         }
