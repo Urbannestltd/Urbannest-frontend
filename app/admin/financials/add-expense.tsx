@@ -49,6 +49,7 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
         mutationFn: (payload: addExpensePayload) => addExpense(payload),
         onSuccess: () => {
             toast.success('Expense added successfully')
+            onClose()
             reset()
         },
         onError: (error) => {
@@ -108,7 +109,7 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
                     <CustomTextarea name='description' control={control} labelBold label="Description" />
                     <Flex mt={4} gap={2}>
                         <MainButton type="submit" size='lg'>Submit</MainButton>
-                        <MainButton size="sm" variant='outline'>Cancel</MainButton>
+                        <MainButton size="sm" onClick={onClose} variant='outline'>Cancel</MainButton>
                     </Flex>
                 </Stack> </form>
         </Box>
