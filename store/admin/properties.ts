@@ -157,6 +157,7 @@ interface PropertyStore {
 	properties: Properties[]
 	property: Property | null
 	isLoading: boolean
+	isLoadingUnits: boolean
 	units: Unit | null
 	unit: UnitDetail | null
 	lease: Lease | null
@@ -175,6 +176,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 	properties: [],
 	property: null,
 	isLoading: false,
+	isLoadingUnits: false,
 	units: null,
 	unit: null,
 	lease: null,
@@ -208,7 +210,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 		}
 	},
 	fetchUnits: async (id, search) => {
-		set({ isLoading: true })
+		set({ isLoadingUnits: true })
 		try {
 			const units = await http.get(adminEndpoints.fetchUnits(id), {
 				params: { search: search },
@@ -219,7 +221,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 			set({ units: null })
 			console.error("❌ Failed to fetch units", e)
 		} finally {
-			set({ isLoading: false })
+			set({ isLoadingUnits: false })
 		}
 	},
 	fetchUnit: async (id: string) => {

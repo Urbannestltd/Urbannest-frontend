@@ -37,13 +37,15 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
         items: properties.map((item) => ({ label: item.propertyName, value: item.propertyId }))
     })
     const unit = createListCollection({
-        items:
-            units?.grouped?.flatMap((floorUnits) =>
+        items: [
+            { label: 'All Units', value: 'all' },
+            ...units?.grouped?.flatMap((floorUnits) =>
                 floorUnits.units.map((item) => ({
                     label: item.name,
                     value: item.id,
                 }))
             ) ?? [],
+        ]
     })
     const mutation = useMutation({
         mutationFn: (payload: addExpensePayload) => addExpense(payload),
@@ -60,14 +62,14 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
     const onSubmit = (data: addExpenseFormData) => {
         const payload: addExpensePayload = {
             propertyId: data.property[0],
-            unitId: data.unit[0],
+            unitId: data.unit?.[0] === 'all' ? undefined : data.unit?.[0],
             date: data.date,
             amount: data.amount,
             category: selected.value,
             description: data.description
         }
         mutation.mutate(payload)
-        // console.log(payload)
+        console.log(payload)
     }
 
     return (
@@ -78,7 +80,7 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
             <Divider />
             <form onSubmit={handleSubmit(onSubmit)} className="p-4">
                 <Stack gap={2}>
-                    <CustomSelect name='property' control={control} labelBold label="Property Selection" collection={props} />
+                    <CustomSelect name='property' required control={control} labelBold label="Property Selection" collection={props} />
                     <CustomSelect name='unit' control={control} labelBold label="Unit Selection" isLoading={!units} collection={unit} />
                     <CustomSelect name='paymentMethod' control={control} labelBold label="Payment Method" collection={method} />
                     <HStack>
@@ -108,7 +110,7 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
                     </Grid>
                     <CustomTextarea name='description' control={control} labelBold label="Description" />
                     <Flex mt={4} gap={2}>
-                        <MainButton type="submit" size='lg'>Submit</MainButton>
+                        <MainButton type="submit" loading={mutation.isPending} size='lg'>Submit</MainButton>
                         <MainButton size="sm" onClick={onClose} variant='outline'>Cancel</MainButton>
                     </Flex>
                 </Stack> </form>

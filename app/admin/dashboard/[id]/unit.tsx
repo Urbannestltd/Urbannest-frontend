@@ -31,7 +31,7 @@ export const Unit = () => {
     const units = usePropertyStore(state => state.units)
     const property = usePropertyStore(state => state.property)
     const fetchUnits = usePropertyStore(state => state.fetchUnits)
-    const loading = usePropertyStore(state => state.isLoading)
+    const loading = usePropertyStore(state => state.isLoadingUnits)
     const ref = useRef<HTMLDivElement>(null)
 
 
@@ -41,8 +41,8 @@ export const Unit = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (search) fetchUnits(property?.id ?? '', search)
-        }, 500)
+            fetchUnits(property?.id ?? '', search || undefined)
+        }, 100)
         return () => clearTimeout(timer)
     }, [search])
 
@@ -122,9 +122,9 @@ export const Unit = () => {
                         value={search}
                         onChange={setSearch}
                         onSearch={(val) => fetchUnits(property?.id as string, val)} />
-                    <Flex gap={2}>
-                        <Modal open={showAddUnit} onOpenChange={setShowAddUnit} triggerSize="sm" triggerIcon={<LuUser />} triggerContent="Add Unit" modalContent={<AddUnit onClose={() => { setShowAddUnit(false); fetchUnits(property?.id ?? '') }} propertyId={property?.id ?? ''} floors={units?.grouped.length} propertyName={property?.name ?? ''} />} />
-                        <MainButton variant="outline" size="sm" loading={mutation.isPending} onClick={() => onSubmit()}>Add Floor</MainButton>
+                    <Flex w={'300px'} gap={2}>
+                        <Modal open={showAddUnit} onOpenChange={setShowAddUnit} triggerSize="md" triggerIcon={<LuUser />} triggerContent="Add Unit" modalContent={<AddUnit onClose={() => { setShowAddUnit(false); fetchUnits(property?.id ?? '') }} propertyId={property?.id ?? ''} floors={units?.grouped.length} propertyName={property?.name ?? ''} />} />
+                        <MainButton variant="outline" size="md" loading={mutation.isPending} onClick={() => onSubmit()}>Add Floor</MainButton>
                     </Flex>
                 </HStack>
             </SectionBox>

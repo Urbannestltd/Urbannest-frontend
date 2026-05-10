@@ -30,8 +30,8 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (search) fetchAllTickets(propertyId, search)
-        }, 500)
+            fetchAllTickets(propertyId, search || undefined)
+        }, 100)
         return () => clearTimeout(timer)
     }, [search])
 
@@ -40,19 +40,19 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
         <>{openModal ? < >gggg</> : <>
             <SectionBox>
                 <PageTitle title="Maintenance Tickets" fontSize={'18px'} />
-                <HStack mt={6} justify={'space-between'}>
+                <HStack mt={4} justify={'space-between'}>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
                         onSearch={(val) => fetchAllTickets(propertyId, val)}
                         width={'308px'} />
-                    <Flex justify={'center'} gap={2.5} align={'center'}>
+                    <Flex justify={'center'} gap={2.5} align={'end'}>
                         <CustomSelect control={control} size={'sm'} name="status" width={'97px'} placeholder="All Types" collection={items} />
-                        <MainButton size='lg' className="h-[34px]" icon={<LuUser />}>Add Unit</MainButton>
+                        <MainButton size='lg' className="h-[43px]" icon={<LuUser />}>Add Unit</MainButton>
                     </Flex>
                 </HStack>
             </SectionBox >
-            <DataTable data={tickets} onRowClick={() => setOpenModal(true)} columns={columns} /> </>}
+            <DataTable data={tickets} tableName="Tickets" onRowClick={() => setOpenModal(true)} columns={columns} /> </>}
         </>
     )
 }

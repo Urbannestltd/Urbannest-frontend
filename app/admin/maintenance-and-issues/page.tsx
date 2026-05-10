@@ -108,7 +108,7 @@ export default function Maintenance() {
             <PageTitle mb={6} title="Maintenance & Issues" />
             <DashboardCard data={cardData} />
             <form>
-                <HStack mt={9} justify={'space-between'} >
+                <HStack mt={9} align={'end'} justify={'space-between'} >
                     <Flex w={'70%'} gap={5}>
                         <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Properties" label="Property Type" name='property' collection={propertyTypes} />
                         <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Statuses" label="Status" name="status" collection={statuses} />
@@ -116,11 +116,11 @@ export default function Maintenance() {
                         <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Types" label="Issue Type" name="issue" collection={IssueType} />
                         <CustomSelect name='dateRange' control={control} borderColor="#F4F4F4" placeholder="Last 30 Days" icon={LuCalendar} label="Date Range" collection={dateFilter} />
                     </Flex>
-                    <Flex w={'25%'} gap={2}>
-                        {watchedValues.dateRange?.length > 0 && watchedValues.issue.length > 0 && watchedValues.priority.length > 0 && watchedValues.status.length > 0 && watchedValues.property.length > 0 ?
-                            < MdOutlineFilterListOff cursor={'pointer'} onClick={() => reset()} /> : null}
-                        <MainButton size='lg' onClick={exportTicketFile} variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
-                        <Drawers open={openDrawer} onOpenChange={setOpenDrawer} triggerContent="Set Budget" className="w-[350px] py-2 px-5" modalContent={<AddBudget onClose={() => { setOpenDrawer(false); fetchBudget() }} />} triggerSize='lg' />
+                    <Flex w={'25%'} justify={'center'} align={'center'} gap={2}>
+                        {watchedValues.dateRange?.length > 0 || watchedValues.issue?.length > 0 || watchedValues.priority?.length > 0 || watchedValues.status?.length > 0 || watchedValues.property?.length > 0 ?
+                            < MdOutlineFilterListOff cursor={'pointer'} size={30} onClick={() => reset()} /> : null}
+                        <MainButton size='md' className="h-[45px]" onClick={exportTicketFile} variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
+                        <Drawers open={openDrawer} onOpenChange={setOpenDrawer} triggerContent="Set Budget" className="w-[350px] py-2 px-5" modalContent={<AddBudget onClose={() => { setOpenDrawer(false); fetchBudget() }} />} triggerSize='md' />
                     </Flex>
                 </HStack>
             </form>

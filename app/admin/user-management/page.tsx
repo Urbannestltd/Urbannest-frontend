@@ -64,16 +64,16 @@ export default function Page() {
     return (
         <div>
             <DashboardCard data={cardData} />
-            <HStack mt={9} justify={'space-between'} >
+            <HStack mt={9} align={'end'} justify={'space-between'} >
                 <Flex w={'70%'} gap={5}>
                     <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Roles" label="Role" name='role' collection={roles} />
                     <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Statuses" label="Status" name="status" collection={statuses} />
                     <CustomSelect name='dateRange' control={control} borderColor="#F4F4F4" placeholder="Last 30 Days" icon={LuCalendar} label="Date Range" collection={dateFilter} />
                 </Flex>
-                <Flex>
-                    {watchedValues.dateRange?.length > 0 && watchedValues.role.length > 0 && watchedValues.status.length > 0 ?
-                        <MdOutlineFilterListOff cursor={'pointer'} onClick={() => reset()} /> : null}
-                    <MainButton size='sm' variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
+                <Flex align={'center'} gap={4}>
+                    {watchedValues.dateRange?.length > 0 || watchedValues.role?.length > 0 || watchedValues.status?.length > 0 ?
+                        <MdOutlineFilterListOff cursor={'pointer'} size={20} onClick={() => reset()} /> : null}
+                    <MainButton size='sm' className="h-[45px]" variant='outline' icon={<LuDownload />} type="submit">Export</MainButton>
                 </Flex>
             </HStack>
             <DataTable data={users} loading={isLoading} onRowClick={(row) => router.push(`/admin/user-management/${row.id}`)} columns={columns} tableName="Users" />

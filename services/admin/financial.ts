@@ -7,7 +7,7 @@ export interface addExpensePayload {
 	description: string
 	date: string
 	propertyId: string
-	unitId?: string
+	unitId?: string | null
 }
 
 export const addExpense = async (payload: addExpensePayload) => {

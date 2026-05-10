@@ -41,8 +41,8 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (search) fetchProperties(search)
-        }, 500)
+            fetchProperties(search || undefined)
+        }, 300)
         return () => clearTimeout(timer)
     }, [search])
 
@@ -93,9 +93,9 @@ export default function AdminDashboard() {
                         value={search}
                         onChange={setSearch}
                         onSearch={(val) => fetchProperties(val)} />
-                    <MainButton icon={<LuUserPlus />} onClick={() => router.push('/admin/dashboard/new-property')} className="h-[35px]" size='sm'>Add Property</MainButton>
+                    <MainButton icon={<LuUserPlus />} onClick={() => router.push('/admin/dashboard/new-property')} className="h-[35px] w-[140px]" size='md'>Add Property</MainButton>
                 </HStack>
-                <DataTable data={properties} loading={isLoading} my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.propertyId}`)} columns={columns} />
+                <DataTable data={properties} loading={isLoading} tableName="Properties" my={5} onRowClick={(row) => router.push(`/admin/dashboard/${row.propertyId}`)} columns={columns} />
             </Box>
             <Box bg={'white'} my={8} p={3} rounded={'8px'} border={'1px solid #F4F4F4'}>
                 <PageTitle title="Tenant Status" mb={4} fontSize={'20px'} />

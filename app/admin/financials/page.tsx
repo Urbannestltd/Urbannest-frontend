@@ -58,7 +58,7 @@ export default function Financials() {
                 endDate,
                 status: formValues.status?.[0]
             })
-        }, search ? 500 : 0)
+        }, search ? 100 : 0)
 
         return () => clearTimeout(timer)
     }, [formValues.paymentMethod, formValues.property, formValues.dateRange, formValues.status, search])

@@ -1,6 +1,7 @@
 import { Input } from '@chakra-ui/react';
 import { InputGroup } from './input-group';
 import { FiSearch } from 'react-icons/fi';
+import { LuX } from 'react-icons/lu';
 
 type SearchInputProps = {
     width?: string | number
@@ -12,7 +13,7 @@ type SearchInputProps = {
 
 export const SearchInput = ({ width, value, onChange, onSearch, placeholder }: SearchInputProps) => {
     return (
-        <InputGroup w={width} startElement={<FiSearch color='#B3B3B3' size='16px' />}>
+        <InputGroup w={width} startElement={<FiSearch color='#B3B3B3' size='16px' />} endElement={value && <LuX color='#B3B3B3' size='16px' cursor='pointer' onClick={() => onChange?.('')} />}>
             <Input
                 h='34px'
                 rounded='full'
