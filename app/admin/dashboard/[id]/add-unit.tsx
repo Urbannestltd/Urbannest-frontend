@@ -61,7 +61,7 @@ export const AddUnit = ({ propertyId, propertyName, onClose, floors, editUnitId,
             return addUnit(payload)
         },
         onSuccess: () => {
-            toast.success('Property added successfully')
+            toast.success('Unit added successfully')
             onClose()
             reset()
         },
@@ -75,7 +75,7 @@ export const AddUnit = ({ propertyId, propertyName, onClose, floors, editUnitId,
             return editUnit(payload)
         },
         onSuccess: () => {
-            toast.success('Property edited successfully')
+            toast.success('Unit updated successfully')
             onClose()
             reset()
         },

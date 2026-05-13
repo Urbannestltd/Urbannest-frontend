@@ -28,7 +28,7 @@ export const NotifPref = () => {
     const mutation = useMutation({
         mutationFn: (payload: NotificationFormData) => updateNotifPreferences(payload),
         onSuccess: () => {
-            toast.success('Updated successfully', {
+            toast.success('Notification preferences updated', {
                 position: 'top-right',
                 duration: 3000,
                 style: {

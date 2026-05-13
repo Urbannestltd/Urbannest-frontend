@@ -39,7 +39,7 @@ export const Login = () => {
         },
 
         onSuccess: async (response, variables: loginFormData) => {
-            toast.success('Logged in')
+            toast.success('Logged in successfully')
             const remember = !!variables.rememberMe;
             console.log(response)
 
@@ -94,7 +94,7 @@ export const Login = () => {
         },
 
         onError: (error) => {
-            toast.error(`Error logging in please try again: ${error?.message}`)
+            toast.error(`Login failed: ${error?.message}`)
         }
     })
 

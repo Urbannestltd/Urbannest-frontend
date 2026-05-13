@@ -22,7 +22,6 @@ export const AdminNav = () => {
     const handleLogout = () => {
         logoutUser()
         toast.success('Logged out')
-        console.log('logged out')
         router.push('/auth')
     }
 

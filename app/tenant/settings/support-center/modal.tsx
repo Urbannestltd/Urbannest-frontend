@@ -28,7 +28,7 @@ export const NeedHelp = () => {
     const mutation = useMutation({
         mutationFn: (payload: createTicketPayload) => createTicket(payload),
         onSuccess: () => {
-            toast.success('Submitted successfully', {
+            toast.success('Support ticket submitted', {
                 position: 'top-right',
                 duration: 3000,
                 style: {

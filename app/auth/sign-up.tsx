@@ -70,7 +70,7 @@ export const SignUp = () => {
             router.push("/tenant/dashboard")
         },
         onError: (error) => {
-            toast.error(`Error logging in please try again: ${error?.message}`)
+            toast.error(`Sign-up failed: ${error?.message}`)
         },
     })
     return (

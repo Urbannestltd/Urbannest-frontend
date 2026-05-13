@@ -60,7 +60,7 @@ export default function Lease() {
         },
 
         onError: (error) => {
-            toast.error(`Error logging in please try again: ${error?.message}`)
+            toast.error(`Payment failed: ${error?.message}`)
         }
     })
     const downloadLease = async () => {
@@ -106,7 +106,7 @@ export default function Lease() {
             trigger()
         },
         onError: (error) => {
-            toast.error(`Error logging in please try again: ${error?.message}`)
+            toast.error(`Payment verification failed: ${error?.message}`)
         }
     })
 

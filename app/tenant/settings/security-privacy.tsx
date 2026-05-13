@@ -21,7 +21,7 @@ export const SecurityPrivacy = () => {
         mutationFn: (data: ChangePasswordPayload) => ChangePassword(data),
 
         onSuccess: () => {
-            toast.success('Password Reset Successfully')
+            toast.success('Password changed successfully')
             reset({
                 oldPassword: '',
                 newPassword: '',
@@ -38,14 +38,14 @@ export const SecurityPrivacy = () => {
         if (twofa) {
             try {
                 await Enable2fa();
-                toast.success('2FA Enabled Successfully')
+                toast.success('Two-factor authentication enabled')
             } catch {
                 toast.error('Something went wrong')
             }
         } else {
             try {
                 await Disable2fa();
-                toast.success('2FA Disabled Successfully')
+                toast.success('Two-factor authentication disabled')
             } catch {
                 toast.error('Something went wrong')
             }

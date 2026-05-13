@@ -26,7 +26,7 @@ export function ResetPasswordFunc() {
         mutationFn: (data: ResetPasswordPayload) => resetPassword(data),
 
         onSuccess: () => {
-            toast.success('Password Reset Successfully')
+            toast.success('Password reset successfully')
             setIsSucessful(true)
         },
 
