@@ -109,9 +109,9 @@ export const Tenant = ({ tenant }: { tenant: Row }) => {
 
     ]
     const leaseExpiry = (row: number) => {
-        if (row >= 0 && row <= 40) { return '#14AE5C' }
+        if (row >= 0 && row <= 40) { return '#EC221F' }
         if (row >= 41 && row <= 70) { return '#E8B931' }
-        if (row >= 71) { return '#EC221F' }
+        if (row >= 71) { return '#14AE5C' }
         return ''
     }
 

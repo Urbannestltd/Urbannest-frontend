@@ -94,7 +94,7 @@ export const Login = () => {
         },
 
         onError: (error) => {
-            toast.error(`Login failed: ${error?.message}`)
+            toast.error(`Login failed, Please try again`)
         }
     })
 
