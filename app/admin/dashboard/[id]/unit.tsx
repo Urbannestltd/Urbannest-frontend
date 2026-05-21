@@ -1,4 +1,5 @@
 import { MainButton } from "@/components/ui/button"
+import { AxiosError } from "axios"
 import { PageTitle } from "@/components/ui/page-title"
 import { SearchInput } from "@/components/ui/search-input"
 import { SectionBox } from "@/components/ui/section-box"
@@ -67,8 +68,8 @@ export const Unit = () => {
             ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 
@@ -80,8 +81,8 @@ export const Unit = () => {
             toast.success('Floor deleted successfully')
             fetchUnits(property?.id ?? '')
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 

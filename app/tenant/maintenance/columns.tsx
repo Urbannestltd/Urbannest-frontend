@@ -65,8 +65,8 @@ export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
             toast.success('Maintenance request deleted successfully'),
                 fetchMaintenance()
         },
-        onError: () => {
-            toast.error('Something went wrong')
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Something went wrong')
         }
     })
 

@@ -7,7 +7,7 @@ import { adminEndpoints } from "@/services/endpoint"
 import http from "@/services/https"
 import { usePropertyStore } from "@/store/admin/properties"
 import { useTicketStore } from "@/store/admin/tickets"
-import { Box, createListCollection, Flex } from "@chakra-ui/react"
+import { Box, createListCollection, Flex, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { use, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -56,12 +56,13 @@ export const AddBudget = ({ onClose }: { onClose: () => void }) => {
         <Flex h={'95%'} direction={'column'} mt={8} justify={'space-between'}>
 
             <Flex direction={'column'} gap={4}>
-                <CustomSelect control={control} readOnly label="Property" name="propertySelected" collection={PropertiesList} />
+                <Text className="satoshi-medium -mb-1 leading-none ">Property</Text>
+                <Flex align={'center'} p={2} mt={0} w={'full'} border={'1px solid #A0A0A0'} rounded={'md'} h={'40px'}>All Properties</Flex>
                 <CustomInput control={control} label="Amount (₦)" name="amount" />
             </Flex>
             <Flex gap={2}>
                 <MainButton size="lg" type="submit" loading={mutation.isPending} onClick={handleSubmit(onSubmit)} >{existingBudget ? 'Update' : 'Save'} Budget</MainButton>
-                <MainButton size='sm' variant='outline' onClick={() => onClose}>Cancel</MainButton>
+                <MainButton size='sm' variant='outline' onClick={onClose}>Cancel</MainButton>
             </Flex>
 
         </Flex>

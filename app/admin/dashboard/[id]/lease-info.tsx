@@ -1,4 +1,5 @@
 import { DragAndDrop } from "@/components/ui/add-image"
+import { AxiosError } from "axios"
 import { MainButton } from "@/components/ui/button"
 import { CustomInput, CustomSelect } from "@/components/ui/custom-fields"
 import { PageTitle } from "@/components/ui/page-title"
@@ -8,11 +9,9 @@ import { StoreFile } from "@/services/tenant/maintenance"
 import { usePropertyStore } from "@/store/admin/properties"
 import { Box, createListCollection, Flex, HStack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { error } from "console"
-import { use, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { string } from "zod"
 
 const UploadDocuments = ({ formData, onComplete, tenantId, unitId, activeId }: {
     formData: TenantLeaseFormData,
@@ -29,8 +28,8 @@ const UploadDocuments = ({ formData, onComplete, tenantId, unitId, activeId }: {
             toast.success('Property added successfully')
             onComplete()
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 
@@ -40,8 +39,8 @@ const UploadDocuments = ({ formData, onComplete, tenantId, unitId, activeId }: {
             toast.success('Property updated successfully')
             onComplete()
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 
@@ -77,8 +76,8 @@ const UploadDocuments = ({ formData, onComplete, tenantId, unitId, activeId }: {
 const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: TenantLeaseFormData) => void, activeId?: string }) => {
     const lease = usePropertyStore((state) => state.lease)
     const fetchLease = usePropertyStore((state) => state.fetchLease)
-    const { control, reset, watch, handleSubmit, setValue, formState } =
-        useForm<TenantLeaseFormData>()
+    const { control, reset, watch, handleSubmit, setValue } =
+        useForm<TenantLeaseFormData>({ mode: 'onChange' })
 
     useEffect(() => {
         if (activeId) {
@@ -102,6 +101,29 @@ const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: Tenant
         }
     }, [lease])
 
+    const rentRaw = watch('rentAmount')
+    const serviceChargeRaw = watch('serviceCharge')
+
+    useEffect(() => {
+        const s = String(rentRaw ?? '').replace(/[^0-9.]/g, '')
+        if (rentRaw !== undefined && String(rentRaw) !== s) {
+            setValue('rentAmount', s as any, { shouldValidate: true })
+        }
+    }, [rentRaw])
+
+    useEffect(() => {
+        const s = String(serviceChargeRaw ?? '').replace(/[^0-9.]/g, '')
+        if (serviceChargeRaw !== undefined && String(serviceChargeRaw) !== s) {
+            setValue('serviceCharge', s as any, { shouldValidate: true })
+        }
+    }, [serviceChargeRaw])
+
+    const blockNonNumeric = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', '.']
+        if (!allowed.includes(e.key) && !/[0-9]/.test(e.key)) {
+            e.preventDefault()
+        }
+    }
 
     const onSubmit = (data: TenantLeaseFormData) => {
         onNext(true, data)
@@ -126,6 +148,13 @@ const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: Tenant
                         control={control}
                         label="Rent Amount"
                         placeholder="Rent Amount"
+                        onKeyDown={blockNonNumeric}
+                        rules={{
+                            pattern: {
+                                value: /^[0-9]+(\.[0-9]+)?$/,
+                                message: 'Enter a valid amount'
+                            }
+                        }}
                     />
                     <CustomInput
                         name="leaseLength"
@@ -170,6 +199,13 @@ const LeaseForm = ({ onNext, activeId }: { onNext: (next: boolean, data?: Tenant
                         control={control}
                         label="Service Charge"
                         placeholder="Service Charge"
+                        onKeyDown={blockNonNumeric}
+                        rules={{
+                            pattern: {
+                                value: /^[0-9]+(\.[0-9]+)?$/,
+                                message: 'Enter a valid amount'
+                            }
+                        }}
                     />
                 </HStack>
                 <Flex mt={10} align={"center"} w={"full"}>

@@ -42,7 +42,7 @@ export const Drawers = ({
             </Drawer.Trigger>
             <Drawer.Backdrop />
             <Drawer.Positioner >
-                <Drawer.Content roundedLeft={'none'} className={`${base} ${className ?? ''}`}>
+                <Drawer.Content rounded={'none'} className={`${base} ${className ?? ''}`}>
                     <Drawer.CloseTrigger p={2}>
                         <LuX color="black" size={20} />
                     </Drawer.CloseTrigger>

@@ -23,13 +23,15 @@ export function middleware(req: NextRequest) {
 
 		if (decoded.exp && decoded.exp * 1000 < Date.now()) {
 			const response = NextResponse.redirect(new URL("/auth", req.url))
-			response.cookies.delete("access_token")
+			response.cookies.delete("x-auth-token")
 			return response
 		}
 
 		role = decoded.role
 	} catch {
-		return NextResponse.redirect(new URL("/auth", req.url))
+		const response = NextResponse.redirect(new URL("/auth", req.url))
+		response.cookies.delete("x-auth-token")
+		return response
 	}
 
 	if (pathname.startsWith("/admin") && role !== "ADMIN") {

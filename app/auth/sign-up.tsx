@@ -1,4 +1,5 @@
 import { registerFormData, registerSchema } from "@/schema"
+import { AxiosError } from "axios"
 import { loginUserApi, registerUser } from "@/services/auth"
 import useAuthStore from "@/store/auth"
 import { Button, Field, Grid, Input, InputGroup } from "@chakra-ui/react"
@@ -70,7 +71,7 @@ export const SignUp = () => {
             router.push("/tenant/dashboard")
         },
         onError: (error) => {
-            toast.error(`Sign-up failed: ${error?.message}`)
+            toast.error(`Sign-up failed: ${error.response?.data?.message ?? error?.message}`)
         },
     })
     return (

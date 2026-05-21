@@ -1,4 +1,5 @@
 import { AddImage } from "@/components/ui/add-image"
+import { AxiosError } from "axios"
 import { MainButton } from "@/components/ui/button"
 import { CustomInput, CustomSelect, CustomTextarea } from "@/components/ui/custom-fields"
 import { Divider } from "@/components/ui/divider"
@@ -66,8 +67,8 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
             // Submit?.()
             reset()
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
     const onSubmit = async (data: MaintenanceRequestFormData) => {
@@ -96,8 +97,8 @@ export const TenantMaintenanceModal = ({ row }: { row?: MaintenaceResponse }) =>
             // Submit?.()
             reset()
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
     const onSave = async (data: MaintenanceRequestFormData) => {

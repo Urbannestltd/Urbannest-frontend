@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/ui/avatar"
+import { AxiosError } from "axios"
 import { MainButton } from "@/components/ui/button"
 import { CustomSelect } from "@/components/ui/custom-fields"
 import { Modal } from "@/components/ui/dialog"
@@ -64,8 +65,8 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
             setUserId('')
             setInviteRole(null)
         },
-        onError: () => {
-            toast.error('Failed to add member')
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to add member')
         }
     })
     const onAddMember = () => {
@@ -224,8 +225,8 @@ export const DeleteTenantPopUp = ({ data, onClose }: {
             toast.success('Member removed successfully')
             onClose?.()
         },
-        onError: () => {
-            toast.error('Failed to remove member')
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to remove member')
         }
     })
 

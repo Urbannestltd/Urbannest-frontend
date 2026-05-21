@@ -4,6 +4,7 @@ import { clearStoredCredentials, getStoredCredentials, loginUserApi, saveCredent
 import useAuthStore from "@/store/auth"
 import { useDashboardStore } from "@/store/tenant/dashboard"
 import { useLeaseStore } from "@/store/tenant/lease"
+import { AxiosError } from "axios"
 import { Button, Field, Grid, Input, InputGroup, Text } from "@chakra-ui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
@@ -34,9 +35,7 @@ export const Login = () => {
     const router = useRouter()
 
     const mutation = useMutation({
-        mutationFn: (data: loginFormData) => {
-            return loginUserApi(data)
-        },
+        mutationFn: (data: loginFormData) => loginUserApi(data),
 
         onSuccess: async (response, variables: loginFormData) => {
             toast.success('Logged in successfully')
@@ -93,8 +92,9 @@ export const Login = () => {
             }
         },
 
-        onError: (error) => {
-            toast.error(`Login failed, Please try again`)
+        onError: (error: AxiosError<{ message: string }>) => {
+            const message = error.response?.data?.message ?? 'Login failed, please try again'
+            toast.error(message)
         }
     })
 

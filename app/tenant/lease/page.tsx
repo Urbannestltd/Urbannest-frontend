@@ -1,4 +1,5 @@
 'use client'
+import { AxiosError } from "axios"
 import { PageTitle } from "@/components/ui/page-title";
 import { Box, Flex, Grid, HStack, Image, Text, Link, Skeleton, SkeletonText, Heading } from "@chakra-ui/react";
 import rentImage from '@/app/assets/images/lease-image.png'
@@ -59,8 +60,8 @@ export default function Lease() {
             window.location.href = response.data.url
         },
 
-        onError: (error) => {
-            toast.error(`Payment failed: ${error?.message}`)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(`Payment failed: ${error.response?.data?.message ?? error?.message}`)
         }
     })
     const downloadLease = async () => {
@@ -105,8 +106,8 @@ export default function Lease() {
             }
             trigger()
         },
-        onError: (error) => {
-            toast.error(`Payment verification failed: ${error?.message}`)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(`Payment verification failed: ${error.response?.data?.message ?? error?.message}`)
         }
     })
 

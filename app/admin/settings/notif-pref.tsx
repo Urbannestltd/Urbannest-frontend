@@ -40,8 +40,8 @@ export const NotifPref = () => {
                 }
             })
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 

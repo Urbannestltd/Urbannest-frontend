@@ -1,4 +1,5 @@
 import { Divider } from "@/components/ui/divider"
+import { AxiosError } from "axios"
 import { Button, Flex, Menu, Portal, Tabs, Text } from "@chakra-ui/react"
 import { Overview } from "./overview"
 import { Property, usePropertyStore } from "@/store/admin/properties"
@@ -94,8 +95,8 @@ export const DeletePopUp = ({ data, onClose }: {
             router.push('/admin/dashboard')
 
         },
-        onError: () => {
-            toast.error('Failed to remove property')
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to remove property')
         }
     })
 
@@ -108,8 +109,8 @@ export const DeletePopUp = ({ data, onClose }: {
             onClose?.()
             fetchUnits(data.propertyId)
         },
-        onError: () => {
-            toast.error('Failed to remove unit')
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to remove unit')
         }
     })
 

@@ -22,6 +22,7 @@ import toast from "react-hot-toast"
 import { filterFormData } from "@/schema/admin"
 import { formatNumber, getDateRange } from "@/services/date"
 import { usePropertyStore } from "@/store/admin/properties"
+import { AxiosError } from "axios"
 
 export default function Financials() {
     const { control, watch, reset } = useForm<filterFormData>()
@@ -97,8 +98,8 @@ export default function Financials() {
         onSuccess: () => {
             toast.success('Expenses exported successfully')
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 

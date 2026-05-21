@@ -96,6 +96,7 @@ type TextareaProps<T extends FieldValues> = BaseProps<T> & {
     labelWidth?: string | number;
     labelBold?: boolean
     borderColor?: string
+    rules?: RegisterOptions<T>
 };
 
 type NumberInputProps<T extends FieldValues> = BaseProps<T> & {
@@ -261,7 +262,7 @@ export function CustomSelect<T extends FieldValues>({
 
                         <Field.Label
                             className={labelBold ? 'satoshi-bold' : `satoshi-medium`}
-                        >{label}
+                        >{label}{label && required && '*'}
                         </Field.Label>
 
                         <Select.Root
@@ -490,7 +491,7 @@ export function CustomInput<T extends FieldValues>({
                     p={3}
                     h={height}
                     w={width}
-                    border={'1px solid #B2B2B2'}
+                    border={fieldState.error ? '1px solid #F04438' : '1px solid #B2B2B2'}
                     rounded={rounded ?? '6px'}
                     fontSize={"14px"}
                     className={cn(
@@ -529,7 +530,7 @@ export function CustomInput<T extends FieldValues>({
                     p={3}
                     h={height}
                     w={width}
-                    border={'1px solid #B2B2B2'}
+                    border={fieldState.error ? '1px solid #F04438' : '1px solid #B2B2B2'}
                     rounded={rounded ?? '6px'}
                     readOnly={readOnly}
                     fontSize={"14px"}
@@ -557,13 +558,15 @@ export function CustomTextarea<T extends FieldValues>({
     textareaProps,
     minH = '100px',
     labelBold,
+    rules,
+    required,
     width,
     description,
     readOnly,
     orientation = 'vertical',
     borderColor
 }: TextareaProps<T>) {
-    const { field, fieldState } = useController({ name, control });
+    const { field, fieldState } = useController({ name, control, rules: { required: `${label ?? name} is required` } });
     return (
         <div>
             <Field.Root orientation={orientation} invalid={!!fieldState.error} {...fieldProps}>
@@ -575,7 +578,7 @@ export function CustomTextarea<T extends FieldValues>({
                         alignItems={'flex-start'}
                         flexDirection={'column'}
                     >
-                        <Text className={labelBold ? 'satoshi-bold' : 'satoshi-medium'}>{label}</Text>
+                        <Text className={labelBold ? 'satoshi-bold' : 'satoshi-medium'}>  {label}{label && required && '*'}</Text>
                         <Text fontWeight={'normal'} w={orientation === 'horizontal' ? !isMobile ? '15vw' : 'full' : 'full'} fontSize={'14px'} color={'#475467'}>
                             {description}
                         </Text>

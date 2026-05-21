@@ -21,6 +21,7 @@ import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import { exportTickets, filter } from "@/services/admin/maintenance"
 import { MdOutlineFilterListOff } from "react-icons/md"
+import { AxiosError } from "axios"
 
 export default function Maintenance() {
     const { control, watch, getValues, reset } = useForm<searchMaintenanceFormData>()
@@ -83,8 +84,8 @@ export default function Maintenance() {
         onSuccess: () => {
             toast.success('Expenses exported successfully')
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 

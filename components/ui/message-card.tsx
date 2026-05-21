@@ -1,4 +1,5 @@
 import { Box, Flex, Text } from "@chakra-ui/react"
+import { AxiosError } from "axios"
 import { Avatar } from "./avatar"
 import { formatDateTime } from "@/services/date"
 import { MessageCardProps } from "@/utils/model"
@@ -40,8 +41,8 @@ export const MessageCard = ({ cardData, ticketId }: Message) => {
             })
         },
 
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 

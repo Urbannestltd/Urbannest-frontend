@@ -1,4 +1,5 @@
 import { PageTitle } from "@/components/ui/page-title"
+import { AxiosError } from "axios"
 import { Box, Checkbox, Field, Flex, HStack, Text } from "@chakra-ui/react"
 import Image from "next/image"
 import ElectricityIcon from '@/app/assets/icons/electricity-utility.svg'
@@ -21,8 +22,8 @@ export const UtilitiesModal = () => {
             localStorage.setItem("payment_reference", response.reference)
             if (response.url) return window.location.href = response.url
         },
-        onError: (error: any) => {
-            toast.error(error.message);
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message);
         },
     });
     const onSubmit = (data: UtilitiesFormData) => {

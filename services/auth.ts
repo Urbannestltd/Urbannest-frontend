@@ -12,7 +12,7 @@ interface LoginPayload {
 	rememberMe?: boolean
 }
 
-interface LoginResponse {
+export interface LoginResponse {
 	data: {
 		user: User
 		refreshToken: string

@@ -17,7 +17,7 @@ import {
     Tag,
     Text,
 } from "@chakra-ui/react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { LuPlus, LuX } from "react-icons/lu"
 import { UploadGallery } from "@/components/ui/gallery-upload"
@@ -26,9 +26,10 @@ import { useMutation } from "@tanstack/react-query"
 import { addProperty, AddPropertyPayload } from "@/services/admin/property"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
+import { AxiosError } from "axios"
 
 export default function NewProperty() {
-    const { control, reset, handleSubmit, formState } = useForm<addPropertyFormData>()
+    const { control, reset, handleSubmit, formState, setValue, watch } = useForm<addPropertyFormData>({ mode: 'onChange' })
     const [input, setInput] = useState("")
     const suggestions = ['Swimming Pool', 'Gym', 'Parking', '24/7 Security', 'Elevator', 'CCTV surveillance', 'Fire sprinklers', 'Cleaning services', 'Central HVAC', 'Backup power', 'Pantry/kitchenette', 'Parking Garage']
     const [amenities, setAmenities] = useState<string[]>([])
@@ -36,6 +37,30 @@ export default function NewProperty() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
 
+    const priceRaw = watch('propertyPrice')
+    const floorsRaw = watch('noOfFloors')
+    const unitsRaw = watch('noOfUnitsPerFloor')
+
+    useEffect(() => {
+        const s = String(priceRaw ?? '').replace(/[^0-9]/g, '')
+        if (priceRaw !== undefined && String(priceRaw) !== s) {
+            setValue('propertyPrice', s as any, { shouldValidate: true })
+        }
+    }, [priceRaw])
+
+    useEffect(() => {
+        const s = String(floorsRaw ?? '').replace(/[^0-9]/g, '')
+        if (floorsRaw !== undefined && String(floorsRaw) !== s) {
+            setValue('noOfFloors', s as any, { shouldValidate: true })
+        }
+    }, [floorsRaw])
+
+    useEffect(() => {
+        const s = String(unitsRaw ?? '').replace(/[^0-9]/g, '')
+        if (unitsRaw !== undefined && String(unitsRaw) !== s) {
+            setValue('noOfUnitsPerFloor', s as any, { shouldValidate: true })
+        }
+    }, [unitsRaw])
 
     const handleAdd = (value: string) => {
         const item = value.trim()
@@ -61,9 +86,9 @@ export default function NewProperty() {
             reset()
             router.push('/admin/dashboard')
         },
-        onError: () => {
+        onError: (error: AxiosError<{ message: string }>) => {
             setIsLoading(false)
-            toast.error('Something went wrong')
+            toast.error(error.response?.data?.message ?? 'Something went wrong')
         }
     })
 

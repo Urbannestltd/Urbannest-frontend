@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/ui/avatar";
+import { AxiosError } from "axios"
 import { MainButton } from "@/components/ui/button";
 import { CustomSwitch } from "@/components/ui/custom-fields";
 import { Modal } from "@/components/ui/dialog";
@@ -61,8 +62,8 @@ export const Landlord = ({ userId }: { userId: string }) => {
         },
         onSuccess: () => {
             toast.success('Permissions updated successfully')
-        }, onError: () => {
-            toast.error('Failed to update permissions')
+        }, onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to update permissions')
         }
     })
 

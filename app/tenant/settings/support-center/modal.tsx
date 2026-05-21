@@ -1,4 +1,5 @@
 import { AddImage } from "@/components/ui/add-image"
+import { AxiosError } from "axios"
 import { MainButton } from "@/components/ui/button"
 import { CustomSelect, CustomTextarea } from "@/components/ui/custom-fields"
 import { PageTitle } from "@/components/ui/page-title"
@@ -40,8 +41,8 @@ export const NeedHelp = () => {
                 }
             })
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 

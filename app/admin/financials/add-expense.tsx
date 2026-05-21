@@ -1,4 +1,5 @@
 import { CustomInput, CustomSelect, CustomTextarea } from "@/components/ui/custom-fields"
+import { AxiosError } from "axios"
 import { PageTitle } from "@/components/ui/page-title"
 import { addExpenseFormData } from "@/schema/admin"
 import { usePropertyStore } from "@/store/admin/properties"
@@ -54,8 +55,8 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
             onClose()
             reset()
         },
-        onError: (error) => {
-            toast.error(error?.message)
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? error?.message)
         }
     })
 
@@ -73,7 +74,7 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
     }
 
     return (
-        <Box>
+        <Box className=" max-h-[99%] overflow-y-scroll" >
             <Box m={4}>
                 <PageTitle title="Add New Expense" fontSize={'18px'} subFontSize={'14px'} spacing={0} subText="Log a new operational expense for a property" />
             </Box>
@@ -81,13 +82,13 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
             <form onSubmit={handleSubmit(onSubmit)} className="p-4">
                 <Stack gap={2}>
                     <CustomSelect name='property' required control={control} labelBold label="Property Selection" collection={props} />
-                    <CustomSelect name='unit' control={control} labelBold label="Unit Selection" isLoading={!units} collection={unit} />
-                    <CustomSelect name='paymentMethod' control={control} labelBold label="Payment Method" collection={method} />
+                    <CustomSelect name='unit' required control={control} labelBold label="Unit Selection" isLoading={!units} collection={unit} />
+                    <CustomSelect name='paymentMethod' required control={control} labelBold label="Payment Method" collection={method} />
                     <HStack>
-                        <CustomInput name='date' control={control} labelBold label="Date" type="date" />
-                        <CustomInput name='amount' control={control} labelBold label="Amount(₦)" type="number" />
+                        <CustomInput name='date' required control={control} labelBold label="Date" type="date" />
+                        <CustomInput name='amount' required control={control} labelBold label="Amount(₦)" type="number" />
                     </HStack>
-                    <Text className="satoshi-bold">Category</Text>
+                    <Text className="satoshi-bold">Category*</Text>
                     <Grid templateColumns='repeat(2, 1fr)' gap={2}>
                         {options.map((option) => (
                             <Button
@@ -108,7 +109,7 @@ export const AddExpense = ({ onClose }: { onClose: () => void }) => {
                             </Button>
                         ))}
                     </Grid>
-                    <CustomTextarea name='description' control={control} labelBold label="Description" />
+                    <CustomTextarea name='description' required control={control} labelBold label="Description" />
                     <Flex mt={4} gap={2}>
                         <MainButton type="submit" loading={mutation.isPending} size='lg'>Submit</MainButton>
                         <MainButton size="sm" onClick={onClose} variant='outline'>Cancel</MainButton>
