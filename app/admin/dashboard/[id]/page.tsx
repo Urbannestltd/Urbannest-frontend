@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { editProperty, EditPropertyPayload } from "@/services/admin/property";
 import toast from "react-hot-toast";
+import { AxiosError } from "axios";
 
 
 

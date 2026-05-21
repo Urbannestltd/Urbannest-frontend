@@ -8,6 +8,7 @@ import { ChangePassword, ChangePasswordPayload, Disable2fa, Enable2fa } from "@/
 import useAuthStore from "@/store/auth"
 import { Box, Flex, HStack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
+import { AxiosError } from "axios"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"

@@ -14,6 +14,7 @@ import { InviteVisitor, InviteVisitorPayload } from "@/services/tenant/visitors"
 import { formatDateToIso } from "@/services/date"
 import dayjs from "dayjs"
 import { useVistorsStore, Visitor } from "@/store/tenant/visitors"
+import { AxiosError } from "axios"
 
 interface addVisitorProps {
     Submit: () => void

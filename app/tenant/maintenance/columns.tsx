@@ -17,6 +17,7 @@ import { use } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useMaintenanceStore } from "@/store/tenant/maintenance";
+import { AxiosError } from "axios";
 
 export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
     const fetchMaintenance = useMaintenanceStore((state) => state.fetchMaintenance)

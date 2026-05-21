@@ -13,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { resetPassword, ResetPasswordPayload } from "@/services/auth";
 import toast from "react-hot-toast";
 import Logo from '@/app/assets/urbannest-logo.png'
+import { AxiosError } from "axios";
 
 export function ResetPasswordFunc() {
     const { control, register, handleSubmit, reset, formState: { errors } } = useForm<{ password: string }>();

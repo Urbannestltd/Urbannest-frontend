@@ -10,6 +10,7 @@ import { UpdateUserProfile, UserProfilePayload } from "@/services/tenant/setting
 import { useSettingStore } from "@/store/tenant/settings"
 import { Box, Flex, Grid, HStack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
+import { AxiosError } from "axios"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"

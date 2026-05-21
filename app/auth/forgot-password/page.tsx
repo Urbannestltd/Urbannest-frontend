@@ -13,6 +13,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { forgotPassword } from "@/services/auth";
+import { AxiosError } from "axios";
 
 export default function ForgotPassword() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<{ email: string }>();

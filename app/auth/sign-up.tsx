@@ -70,7 +70,7 @@ export const SignUp = () => {
 
             router.push("/tenant/dashboard")
         },
-        onError: (error) => {
+        onError: (error: AxiosError<{ message: string }>) => {
             toast.error(`Sign-up failed: ${error.response?.data?.message ?? error?.message}`)
         },
     })

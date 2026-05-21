@@ -14,6 +14,7 @@ import dayjs from "dayjs"
 import { useMutation } from "@tanstack/react-query"
 import { useVistorsStore, Visitor } from "@/store/tenant/visitors"
 import { CgUserAdd } from "react-icons/cg"
+import { AxiosError } from "axios"
 
 interface addVisitorProps {
     Submit: () => void

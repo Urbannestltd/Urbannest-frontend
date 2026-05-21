@@ -24,6 +24,7 @@ import { useMutation } from "@tanstack/react-query";
 import { activateUser, suspendUser, updatePermissions, updatePermissionsPayload } from "@/services/admin/user";
 import toast from "react-hot-toast";
 import { SuspendPopUp } from "./page";
+import { AxiosError } from "axios";
 
 
 
