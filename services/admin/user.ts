@@ -23,3 +23,8 @@ export const updatePermissions = async (payload: updatePermissionsPayload) => {
 	)
 	return response.data
 }
+
+export const deleteUser = async (id: string) => {
+	const response = await http.delete(adminEndpoints.deleteUser(id))
+	return response.data
+}

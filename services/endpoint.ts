@@ -120,6 +120,7 @@ const adminEndpoints = {
 	suspendUser: (id: string) => `/admin/users/${id}/suspend`,
 	activateUser: (id: string) => `/admin/users/${id}/activate`,
 	updatePermissions: (id: string) => `/admin/users/${id}/permissions`,
+	deleteUser: (id: string) => `/admin/users/${id}`,
 
 	//Settings endpoints
 	getNotifPreference: `/admin/settings/notifications`,
