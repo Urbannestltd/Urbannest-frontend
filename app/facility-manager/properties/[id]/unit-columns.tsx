@@ -4,14 +4,7 @@ import { Progress } from "@/components/ui/progress-bar"
 import { formatDate, formatNumber } from "@/services/date"
 import { Center, Flex, Menu, Portal, Text } from "@chakra-ui/react"
 import { ColumnDef } from "@tanstack/react-table"
-import { LuEllipsisVertical } from "react-icons/lu"
-import { AddMemberModal, DeleteTenantPopUp } from "./add-modal"
-import { useState } from "react"
 import { ProgressCircle } from "@/components/ui/progress-circle"
-import { DeletePopUp } from "./tabs"
-import { AddUnit } from "./add-unit"
-import { set } from "lodash"
-import { usePropertyStore } from "@/store/admin/properties"
 
 export interface Row {
     complaints: {
@@ -34,7 +27,7 @@ export interface Row {
 
 
 
-export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: string, propertyName: string, onEdit?: (id: string) => void): ColumnDef<Row, any>[] => {
+export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row, any>[] => {
 
     const status = [
         {
@@ -119,43 +112,8 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void, propertyId: st
                 )
             }
         },
-        {
-            accessorKey: 'action',
-            header: 'Action',
-            cell: ({ row }) => <ActionCell onEdit={onEdit} row={row} propertyId={propertyId} propertyName={propertyName} />
-        }
+
 
     ]
 }
 
-export const ActionCell = ({ row, propertyId, propertyName, onEdit }: { row: any, propertyId: string, propertyName: string, onEdit?: (id: string) => void }) => {
-    const [open, setOpen] = useState(false)
-    const [openDelete, setOpenDelete] = useState(false)
-    const [removeTenant, setRemoveTenant] = useState(false)
-
-    const fetchUnits = usePropertyStore((state) => state.fetchUnits)
-
-
-    return (
-        <Flex justify={'center'}>
-            <Menu.Root>
-                <Menu.Trigger>
-                    <LuEllipsisVertical size={20} />
-                </Menu.Trigger>
-                <Portal>
-                    <Menu.Positioner>
-                        <Menu.Content>
-                            <Menu.Item value="edit-unit" onClick={() => onEdit?.(row.original.id)} className="satoshi-medium">Edit Unit</Menu.Item>
-                            <Menu.Item value="assign-tenant" onClick={() => setOpen(true)} className="satoshi-medium">Assign Tenant</Menu.Item>
-                            <Menu.Item value="remove-tenant" onClick={() => setRemoveTenant(true)} className="satoshi-medium">Remove Tenant</Menu.Item>
-                            <Menu.Item value="delete-unit" onClick={() => setOpenDelete(true)} className="satoshi-medium" color={'#C00F0C'}>Delete Unit</Menu.Item>
-                        </Menu.Content>
-                    </Menu.Positioner>
-                </Portal>
-            </Menu.Root>
-            <Modal open={removeTenant} onOpenChange={setRemoveTenant} size={'xs'} className="h-fit" modalContent={<DeleteTenantPopUp data={{ unitId: row.original.id, propertyId: propertyId, role: 'TENANT', userId: row.original.tenantId }} onClose={() => { setRemoveTenant(false); fetchUnits(propertyId) }} />} />
-            <Modal open={open} onOpenChange={setOpen} size={'cover'} className="w-[700px] h-fit" modalContent={<AddMemberModal unit unitId={row.original.id} />} />
-            <Modal open={openDelete} onOpenChange={setOpenDelete} size={'xs'} className="h-fit" modalContent={<DeletePopUp onClose={() => { setOpenDelete(false); fetchUnits(propertyId) }} data={{ propertyId: propertyId, unit: true, unitId: row.original.id }} />} />
-        </Flex>
-    )
-}

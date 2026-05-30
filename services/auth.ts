@@ -135,3 +135,8 @@ export const resetPassword = async (payload: ResetPasswordPayload) => {
 	const response = await http.post(endpoints.resetPassword, payload)
 	return response.data
 }
+
+export const validateToken = async (token: string) => {
+	const response = await http.post(endpoints.validateToken, { token })
+	return response.data
+}

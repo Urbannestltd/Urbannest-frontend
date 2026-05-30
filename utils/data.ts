@@ -5,6 +5,8 @@ import visitorIcon from "@/app/assets/icons/tenant-sidebar-icons/vistor-icon.svg
 import financialIcon from "@/app/assets/icons/admin-sidebar-icons/financials.svg"
 import userIcon from "@/app/assets/icons/admin-sidebar-icons/user-management-icon.svg"
 import leaseImage from "@/app/assets/images/lease-image.png"
+import propertiesIcon from "@/app/assets/icons/facilty-icons/properties.svg"
+import tenantsIcon from "@/app/assets/icons/facilty-icons/tenants.svg"
 import {
 	LeaseAgreement,
 	Maintance,
@@ -67,6 +69,39 @@ export const adminSidebarLinks = [
 		value: "user-management",
 	},
 ]
+export const fmSidebarLinks = [
+	{
+		title: "Dashboard",
+		href: "/facility-manager/dashboard",
+		icon: dashboardIcon,
+		value: "dashboard",
+	},
+	{
+		title: "Properties",
+		href: "/facility-manager/properties",
+		icon: propertiesIcon,
+		value: "properties",
+	},
+	{
+		title: "Maintenance & Issues",
+		href: "/facility-manager/maintenance-and-issues",
+		icon: maintenanceIcon,
+		value: "maintenance-and-issues",
+	},
+
+	{
+		title: "Tenants",
+		href: "/facility-manager/tenants",
+		icon: tenantsIcon,
+		value: "tenants",
+	},
+	{
+		title: "Visitor Management",
+		href: "/facility-manager/visitor-management",
+		icon: visitorIcon,
+		value: "visitor-management",
+	},
+]
 export const VistorData: userData = {
 	id: 1,
 	firstName: "John",
@@ -81,7 +116,10 @@ export const VistorData: userData = {
 			visitorPhone: "08123456789",
 			status: "checked-out",
 			access: "one-off",
+			property: "Skyview Towers",
 			timeIn: "10:00 AM",
+			isAgent: true,
+			type: "inspection",
 			timeOut: "12:00 PM",
 		},
 		{
@@ -91,7 +129,10 @@ export const VistorData: userData = {
 			visitorPhone: "08123456789",
 			status: "checked-in",
 			access: "one-off",
+			property: "Marlowe Plaza",
 			timeIn: "10:00 AM",
+			isAgent: false,
+			type: "regular",
 			timeOut: "12:00 PM",
 		},
 		{
@@ -101,7 +142,51 @@ export const VistorData: userData = {
 			visitorPhone: "08123456789",
 			status: "checked-in",
 			access: "one-off",
+			property: "Urban Loft A",
 			timeIn: "10:00 AM",
+			isAgent: true,
+			type: "request",
+			timeOut: "12:00 PM",
+		},
+	],
+	visitor2: [
+		{
+			id: 1,
+			visitorName: "John Doe",
+			email: "lVjRt@example.com",
+			visitorPhone: "08123456789",
+			status: "checked-out",
+			access: "one-off",
+			property: "Skyview Towers",
+			timeIn: "10:00 AM",
+			isAgent: false,
+			type: "regular",
+			timeOut: "12:00 PM",
+		},
+		{
+			id: 2,
+			visitorName: "Rose Doe",
+			email: "lVjRt@example.com",
+			visitorPhone: "08123456789",
+			status: "checked-in",
+			access: "one-off",
+			property: "Marlowe Plaza",
+			timeIn: "10:00 AM",
+			isAgent: false,
+			type: "regular",
+			timeOut: "12:00 PM",
+		},
+		{
+			id: 3,
+			visitorName: "Temi Kalaro",
+			email: "lVjRt@example.com",
+			visitorPhone: "08123456789",
+			status: "checked-in",
+			access: "one-off",
+			property: "Urban Loft A",
+			timeIn: "10:00 AM",
+			isAgent: false,
+			type: "regular",
 			timeOut: "12:00 PM",
 		},
 	],

@@ -9,8 +9,10 @@ import { cn } from '@/utils/lib';
 import { Table, TableBody, TableCell, TableEmpty, TableHead, TableHeader, TableRow } from './table';
 
 import { Paginator } from './paginator';
-import { Box, Skeleton, Text } from '@chakra-ui/react';
-import Image from 'next/image';
+import { Box, Flex, HStack, Link, Skeleton, Text } from '@chakra-ui/react';
+import Image, { StaticImageData } from 'next/image';
+import { min } from 'lodash';
+import { LuArrowRight } from 'react-icons/lu';
 
 
 export type EmptyDetails = {
@@ -47,6 +49,9 @@ interface DataTableProps<TData, TValue> {
     borderRadius?: any
     px?: any
     my?: any
+    miniTable?: boolean
+    bordered?: boolean
+
 }
 
 export function DataTable<TData, TValue>({
@@ -61,7 +66,9 @@ export function DataTable<TData, TValue>({
     borderRadius,
     headerColor,
     px,
-    my
+    my,
+    miniTable,
+    bordered
 }: DataTableProps<TData, TValue>) {
 
     const pageSize = pagination?.pageSize || 10;
@@ -125,10 +132,10 @@ export function DataTable<TData, TValue>({
                         ) : (
                             <>
                                 {isDataEmpty ? (
-                                    <TableEmpty colSpan={columns.length} className=''>
+                                    <TableEmpty colSpan={columns.length} className='py-20 bg-white border border-[#F4F4F4] '>
                                         <div className='flex flex-col items-center justify-center space-y-6'>
                                             <div className='flex items-center justify-center'>
-                                                {emptyDetails?.icon ? <Image src={emptyDetails?.icon} alt="" /> : <Box rounded={'full'} className='bg-primary-gold' boxSize={'40px'} />}
+                                                {emptyDetails?.icon ? <Image src={emptyDetails?.icon} width={40} height={40} alt="" /> : <Box rounded={'full'} className='bg-primary-gold' boxSize={'40px'} />}
                                             </div>
 
                                             <div className='flex flex-col items-center justify-center space-y-2'>
@@ -145,7 +152,9 @@ export function DataTable<TData, TValue>({
                                             key={row.id}
                                             onClick={() => onRowClick?.(row.original)}
                                             data-state={row.getIsSelected() && 'selected'}
+                                            style={{ cursor: onRowClick ? 'pointer' : 'auto', }}
                                             className={cn(
+                                                bordered && 'border-b border-[#F4F4F4]',
                                                 'data-[state=selected]:bg-[#F1FCF6]',
                                             )}
                                         >
@@ -161,15 +170,17 @@ export function DataTable<TData, TValue>({
                         )}
                     </TableBody>
                 </Table>
-                <div className="mt-3 px-4 sm:mt-6">
-                    <Text fontSize={'14px'}>Showing 1-{currentData?.length} of {data?.length} {tableName}</Text>
-                    <Paginator
-                        current={currentPage}
-                        total={totalPages}
-                        onChange={(page) => setCurrentPage(page)}
-                    />
-
-                </div>
+                {!isDataEmpty && (miniTable ?
+                    <div>
+                        <HStack className='my-3 satoshi-bold text-[#2A3348] text-sm px-4 sm:mt-6' justify='end'>View all {tableName} <LuArrowRight /></HStack>
+                    </div> : <div className="mt-3 px-4 sm:mt-6">
+                        <Text fontSize={'14px'}>Showing 1-{currentData?.length} of {data?.length} {tableName}</Text>
+                        <Paginator
+                            current={currentPage}
+                            total={totalPages}
+                            onChange={(page) => setCurrentPage(page)}
+                        />
+                    </div>)}
             </div >
         </>
     );

@@ -4,11 +4,13 @@ import { getUserToken } from "@/services/cookies";
 import useAuthStore from "@/store/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useInactivityTimer } from "@/hooks/useInactivityTimer";
 
 export function RequireAuth({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const { user, isHydrated } = useAuthStore();
+    useInactivityTimer();
 
     useEffect(() => {
         setMounted(true);

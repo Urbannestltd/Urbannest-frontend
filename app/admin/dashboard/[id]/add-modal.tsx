@@ -133,7 +133,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                             </Menu.Positioner>
                         </Portal>
                     </Menu.Root></Box>
-                <MainButton className="h-[34px] " onClick={onAddMember} size='sm'>Invite Member</MainButton>
+                <MainButton className="h-[35px] " disabled={!userId || !inviteRole} loading={mutation.isPending} onClick={onAddMember} size='sm'>Invite Member</MainButton>
             </HStack>
 
             <Box borderBottom={'1px solid #F5F5F5'}>

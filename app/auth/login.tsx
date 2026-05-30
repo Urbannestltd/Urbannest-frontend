@@ -5,20 +5,21 @@ import useAuthStore from "@/store/auth"
 import { useDashboardStore } from "@/store/tenant/dashboard"
 import { useLeaseStore } from "@/store/tenant/lease"
 import { AxiosError } from "axios"
-import { Button, Field, Grid, Input, InputGroup, Text } from "@chakra-ui/react"
+import { Box, Button, Field, Flex, Grid, Input, InputGroup, Text } from "@chakra-ui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { LuEye, LuEyeOff, LuLock, LuMail } from "react-icons/lu"
+import { LuCheck, LuEye, LuEyeOff, LuLock, LuMail, LuX } from "react-icons/lu"
 
 export const Login = () => {
     const {
         register,
         handleSubmit,
         setValue,
+        watch,
         formState: { errors },
     } = useForm<loginFormData>({
         resolver: zodResolver(loginSchema),
@@ -76,6 +77,10 @@ export const Login = () => {
                     toast.success("Redirecting to tenant dashboard")
                     fetchLease()
                     router.replace("/tenant/dashboard")
+                } else if (role === "facility-manager" || role === "FACILITY_MANAGER") {
+                    console.log("→ Redirecting to facility manager dashboard");
+                    toast.success("Redirecting to facility manager dashboard")
+                    router.replace("/facility-manager/dashboard")
                 }
                 return;
             } else {

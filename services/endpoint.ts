@@ -10,6 +10,7 @@ const endpoints = {
 	createUser: "/admin/create-user",
 	forgotPassword: "/auth/forgot-password",
 	resetPassword: "/auth/reset-password",
+	validateToken: "/auth/validate-token",
 	//payment verification
 
 	paymentVerification: `/payments/verify`,
@@ -129,3 +130,24 @@ const adminEndpoints = {
 }
 
 export { adminEndpoints }
+
+const FmEndpoints = {
+	//Dashboard
+	fetchDashboardSummary: `/facility-manager/dashboard/summary`,
+	fetchDashboardVisitors: `/facility-manager/dashboard/visitors`,
+	fetchDashboardTickets: `/facility-manager/dashboard/tickets`,
+
+	//Properties
+	fetchProperties: `/facility-manager/properties`,
+	fetchProperty: (id: string) => `/facility-manager/properties/${id}`,
+	fetchUnits: (id: string) => `/facility-manager/properties/${id}/units`,
+	fetchTenant: (id: string, tenantId: string) =>
+		`/facility-manager/properties/${id}/tenants/${tenantId}`,
+
+	//Tickets
+	fetchAllTickets: `/facility-manager/tickets`,
+	fetchTicketsPerProperty: (id: string) => `/facility-manager/${id}/tickets`,
+	fetchTicket: (id: string) => `/facility-manager/tickets/${id}`,
+}
+
+export { FmEndpoints }

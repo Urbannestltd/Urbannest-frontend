@@ -19,6 +19,19 @@ export interface UserLoginResponse {
 	require2fa: boolean
 	message: string
 }
+export interface DummyVisitor {
+	id: number
+	visitorName: string
+	email: string
+	visitorPhone: string
+	isAgent: boolean
+	property: string
+	type: string
+	status: string
+	access: string
+	timeIn: string
+	timeOut: string
+}
 
 export interface userData {
 	id: number
@@ -26,16 +39,8 @@ export interface userData {
 	lastName: string
 	email: string
 	rent: string
-	visitors: {
-		id: number
-		visitorName: string
-		email: string
-		visitorPhone: string
-		status: string
-		access: string
-		timeIn: string
-		timeOut: string
-	}[]
+	visitors: DummyVisitor[]
+	visitor2: DummyVisitor[]
 }
 
 export interface notification {

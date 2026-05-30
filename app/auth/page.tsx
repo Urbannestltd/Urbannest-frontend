@@ -13,20 +13,45 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import { SignUp } from "./sign-up"
 import { Login } from "./login"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Logo from '@/app/assets/urbannest-logo.png'
 import { Suspense } from "react";
+import { useMutation } from "@tanstack/react-query"
+import { validateToken } from "@/services/auth"
+import { AxiosError } from "axios"
+import toast from "react-hot-toast"
 
 function SignIn() {
     const searchParams = useSearchParams();
+    const token = searchParams.get("token") || "";
     const [isSignUp, setIsSignUp] = useState(false);
+    const [isValidToken, setIsValidToken] = useState(false)
+    const router = useRouter()
+
+    const mutate = useMutation({
+        mutationFn: (payload: string) => {
+            return validateToken(payload)
+        },
+        onSuccess: () => {
+            setIsValidToken(true)
+        },
+        onError: (error: AxiosError<{ message: string }>) => {
+            router.push(`/auth/${token}/invalid`)
+        }
+    })
 
     useEffect(() => {
         const token = searchParams.get("token") || "";
         if (token) {
-            setIsSignUp(true);
+            mutate.mutate(token)
+            if (isValidToken) {
+                setIsSignUp(true)
+            }
         }
     }, [searchParams]);
+
+
+
 
     return (
         <Flex align={'center'} h={'87vh'} justify={"center"} p={2} >

@@ -58,7 +58,7 @@ export const PropertyTabs = React.forwardRef<{ handleSave: () => void }, Props>(
                     </Portal>
                 </Menu.Root>
                 <Modal open={isDeleteOpen} onOpenChange={setIsDeleteOpen} size={'xs'} className="h-fit" modalContent={<DeletePopUp data={{ propertyId: property?.id || '' }} />} />
-                <Modal open={isOpen} onOpenChange={setIsOpen} size={'cover'} className="w-[600px] h-fit" modalContent={<AddMemberModal propertyId={property?.id} />} />
+                <Modal open={isOpen} onOpenChange={setIsOpen} size={'cover'} className="w-[700px] h-fit" modalContent={<AddMemberModal propertyId={property?.id} />} />
             </Flex>
             <Divider my={0} />
             <Tabs.Content value="overview">

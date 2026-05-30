@@ -2,7 +2,7 @@ import { registerFormData, registerSchema } from "@/schema"
 import { AxiosError } from "axios"
 import { loginUserApi, registerUser } from "@/services/auth"
 import useAuthStore from "@/store/auth"
-import { Button, Field, Grid, Input, InputGroup } from "@chakra-ui/react"
+import { Box, Button, Circle, Field, Flex, Grid, Input, InputGroup, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -10,12 +10,15 @@ import { useForm } from "react-hook-form"
 import { useSearchParams } from "next/navigation";
 
 import {
+    LuCheck,
+    LuCircleCheck,
     LuEye,
     LuEyeOff,
     LuLock,
     LuMail,
     LuPhone,
     LuUser,
+    LuX,
 } from "react-icons/lu"
 import toast from "react-hot-toast"
 
@@ -24,6 +27,7 @@ export const SignUp = () => {
         register,
         handleSubmit,
         setValue,
+        watch,
         formState: { errors },
     } = useForm<registerFormData>({
         defaultValues: {
@@ -35,6 +39,17 @@ export const SignUp = () => {
         },
     })
     const [showPassword, setShowPassword] = useState(false)
+    const [passwordFocused, setPasswordFocused] = useState(false)
+    const passwordValue = watch('userPassword') ?? ""
+
+    const passwordRequirements = [
+        { label: "Minimum 8 characters", met: passwordValue.length >= 8 },
+        { label: "Must have a number", met: /\d/.test(passwordValue) },
+        { label: "Must have a special character", met: /[^a-zA-Z0-9]/.test(passwordValue) },
+    ]
+
+    const { ref: passwordRef, onBlur: passwordOnBlur, ...passwordRegister } = register('userPassword')
+
 
     const searchParams = useSearchParams();
     const token = searchParams.get("token") || "";
@@ -109,11 +124,31 @@ export const SignUp = () => {
                         }
                     >
                         <Input
-                            {...register("userPassword")}
+                            {...passwordRegister}
+                            ref={passwordRef}
                             type={showPassword ? "text" : "password"}
                             placeholder="Password"
+                            onFocus={() => setPasswordFocused(true)}
+                            onBlur={(e) => { setPasswordFocused(false); passwordOnBlur(e) }}
+
                         />
                     </InputGroup>
+                    {passwordFocused && (
+                        <Box mt={2} w="full">
+                            {passwordRequirements.map((req) => (
+                                <Flex key={req.label} align="center" gap={2} mb={1}>
+                                    <Text fontSize="xs" color={'#B3B3B3'}>
+                                        {req.label}
+                                    </Text>
+                                    <Circle bg={req.met ? '#EBFFEE' : '#FEE9E7'}>{req.met
+                                        ? <LuCircleCheck size={13} color="green" />
+                                        : <LuX size={13} color="red" />
+                                    }</Circle>
+
+                                </Flex>
+                            ))}
+                        </Box>
+                    )}
                     <Field.ErrorText>{errors.userPassword?.message}</Field.ErrorText>
                 </Field.Root>
                 <Field.Root my={{ base: 2, md: 4 }}>
