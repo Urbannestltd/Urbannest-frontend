@@ -25,7 +25,6 @@ function SignIn() {
     const searchParams = useSearchParams();
     const token = searchParams.get("token") || "";
     const [isSignUp, setIsSignUp] = useState(false);
-    const [isValidToken, setIsValidToken] = useState(false)
     const router = useRouter()
 
     const mutate = useMutation({
@@ -33,9 +32,9 @@ function SignIn() {
             return validateToken(payload)
         },
         onSuccess: () => {
-            setIsValidToken(true)
+            setIsSignUp(true)
         },
-        onError: (error: AxiosError<{ message: string }>) => {
+        onError: (_error: AxiosError<{ message: string }>) => {
             router.push(`/auth/${token}/invalid`)
         }
     })
@@ -44,14 +43,19 @@ function SignIn() {
         const token = searchParams.get("token") || "";
         if (token) {
             mutate.mutate(token)
-            if (isValidToken) {
-                setIsSignUp(true)
-            }
         }
     }, [searchParams]);
 
 
 
+
+    if (token && mutate.isPending) {
+        return (
+            <Flex align={'center'} h={'87vh'} justify={"center"}>
+                <Image src={Logo} alt="loader" />
+            </Flex>
+        )
+    }
 
     return (
         <Flex align={'center'} h={'87vh'} justify={"center"} p={2} >
@@ -65,7 +69,7 @@ function SignIn() {
                 bg={'transparent'}
             >
                 <Heading mt={{ base: 6 }} fontSize={{ base: "30px", md: "32px" }} mb={{ base: 4, md: 8 }} className="satoshi-bold">
-                    {isSignUp ? "Let’s Get Started" : "Welcome Back"}
+                    {isSignUp ? "Let's Get Started" : "Welcome Back"}
                 </Heading>
 
                 {isSignUp ? <SignUp /> : <Login />}
