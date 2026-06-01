@@ -48,6 +48,15 @@ export interface ResetPasswordPayload {
 	newPassword: string
 }
 
+export interface validateTokenResponse {
+	success: true
+	data: {
+		status: string
+		email?: string
+		role?: string
+	}
+}
+
 const REMEMBER_ME_KEY = "remember_user"
 
 export const saveCredentials = (email: string, password: string) => {
@@ -137,6 +146,13 @@ export const resetPassword = async (payload: ResetPasswordPayload) => {
 }
 
 export const validateToken = async (token: string) => {
-	const response = await http.post(endpoints.validateToken, { token })
-	return response.data
+	const response = await http.get<validateTokenResponse>(
+		endpoints.validateToken,
+		{
+			params: {
+				token,
+			},
+		},
+	)
+	return response.data.data
 }

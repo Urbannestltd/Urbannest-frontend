@@ -93,7 +93,7 @@ export const ExpenseTracking = () => {
             ) : EditBudget ? (
                 <EditBudgetPage onClose={() => setEditBudget(false)} />
             ) : (
-                <SectionBox mt={8} p={6} w={"298px"}>
+                <SectionBox mt={8} p={6} w={"full"}>
                     <HStack mb={6} justify={"space-between"}>
                         <Text
                             letterSpacing={"1.1px"}
@@ -285,7 +285,7 @@ const RejectionPage = ({ onClose }: { onClose: () => void }) => {
     }
 
     return (
-        <SectionBox mt={8} p={6} w={"298px"}>
+        <SectionBox mt={8} p={6} w={"full"}>
             <Flex color={"#DC2626"}>
                 <IoWarningOutline size={16} color="#DC2626" />
                 <Text
@@ -376,7 +376,7 @@ const RebuttalPage = ({ onClose }: { onClose: () => void }) => {
 
 
     return (
-        <SectionBox mt={8} p={6} w={"298px"}>
+        <SectionBox mt={8} p={6} w={"full"}>
             <HStack justify={"space-between"} align={"center"}>
                 <Text
                     letterSpacing={"1.1px"}
@@ -511,7 +511,7 @@ const EditBudgetPage = ({ onClose }: { onClose: () => void }) => {
 
     }
     return (
-        <SectionBox mt={8} p={6} w={"298px"}>
+        <SectionBox mt={8} p={6} w={"full"}>
             <Text
                 letterSpacing={"1.1px"}
                 className="satoshi-bold uppercase text-[#757575] text-[10px]"

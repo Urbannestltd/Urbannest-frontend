@@ -42,7 +42,7 @@ export default function ForgotPassword() {
                             <LuMail size={40} color={"#CFAA67"} />
                         </Center>
                         <Heading textAlign={'center'} className="satoshi-bold text-[28px] mb-2.5">Check your inbox!</Heading>
-                        <Text textAlign={'center'} className="satoshi-medium">We’ve sent a password reset link to your email.</Text>
+                        <Text textAlign={'center'} className="satoshi-medium">If an account exists for that email, we’ve sent a reset link.</Text>
                         <Text className="satoshi-medium text-center mt-8 mb-3.5">Didn’t receive the email? <Span className="text-primary-gold">Resend</Span></Text>
                         <Link href={'/auth'} className="flex justify-center items-center"><LuArrowLeft size={18} color="#CFAA67" /><Text className="text-primary-gold satoshi-medium ml-2.5">Back to log in</Text></Link>
                     </Box>

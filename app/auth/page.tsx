@@ -19,11 +19,12 @@ import { Suspense } from "react";
 import { useMutation } from "@tanstack/react-query"
 import { validateToken } from "@/services/auth"
 import { AxiosError } from "axios"
-import toast from "react-hot-toast"
+
 
 function SignIn() {
     const searchParams = useSearchParams();
     const token = searchParams.get("token") || "";
+
     const [isSignUp, setIsSignUp] = useState(false);
     const router = useRouter()
 
@@ -31,8 +32,15 @@ function SignIn() {
         mutationFn: (payload: string) => {
             return validateToken(payload)
         },
-        onSuccess: () => {
-            setIsSignUp(true)
+        onSuccess: (response) => {
+            if (response.status === "expired") {
+                router.push(`/auth/${token}/expired`)
+            }
+            else if (response.status === "valid") {
+                setIsSignUp(true)
+            }
+
+
         },
         onError: (_error: AxiosError<{ message: string }>) => {
             router.push(`/auth/${token}/invalid`)

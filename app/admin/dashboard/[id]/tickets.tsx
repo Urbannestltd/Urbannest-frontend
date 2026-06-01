@@ -7,13 +7,14 @@ import { SectionBox } from "@/components/ui/section-box"
 import { TickettData } from "@/utils/data"
 import { createListCollection, Flex, HStack } from "@chakra-ui/react"
 import { useForm } from "react-hook-form"
-import { LuUser } from "react-icons/lu"
+import { LuArrowLeft, LuUser } from "react-icons/lu"
 import { useTicketColumns } from "./ticket-columns"
 import { Modal } from "@/components/ui/dialog"
 import { TenantMaintenanceModal } from "@/app/tenant/maintenance/modal"
 import { useEffect, useState } from "react"
 import { useTicketStore } from "@/store/admin/tickets"
-import TicketPage from "../../maintenance-and-issues/[id]/page"
+import { TicketPage } from "./ticket"
+import emptyTicketIcon from '@/app/assets/icons/facilty-icons/ticket-empty.svg'
 
 export const Tickets = ({ propertyId }: { propertyId: string }) => {
 
@@ -21,6 +22,7 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
     const columns = useTicketColumns()
     const tickets = useTicketStore(state => state.ticketsPerProperty)
     const fetchAllTickets = useTicketStore(state => state.fetchTicketPerProperty)
+    const loading = useTicketStore(state => state.isLoadingPropertyTickets)
     const [search, setSearch] = useState('')
 
     useEffect(() => {
@@ -36,8 +38,12 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
     }, [search])
 
     const [openModal, setOpenModal] = useState(false)
+    const [id, setId] = useState<string>()
     return (
-        <>{openModal ? < >gggg</> : <>
+        <>{openModal && id ? <><Flex align={'center'} mb={4} fontSize={'12px'} color="#CFAA67" cursor={'pointer'} onClick={() => { setId(undefined); setOpenModal(false) }}>
+            <LuArrowLeft size={18} color="#CFAA67" />
+            Back
+        </Flex> < TicketPage id={id} /></> : <>
             <SectionBox>
                 <PageTitle title="Maintenance Tickets" fontSize={'18px'} />
                 <HStack mt={4} justify={'space-between'}>
@@ -52,7 +58,7 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
                     </Flex>
                 </HStack>
             </SectionBox >
-            <DataTable data={tickets} tableName="Tickets" onRowClick={() => setOpenModal(true)} columns={columns} /> </>}
+            <DataTable data={tickets} loading={loading} tableName="Tickets" onRowClick={(row) => { setId(row.id); setOpenModal(true) }} emptyDetails={{ icon: emptyTicketIcon, title: 'No tickets', description: 'Maintenance tickets will appear here once requests are submitted.' }} columns={columns} /> </>}
         </>
     )
 }

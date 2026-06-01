@@ -46,15 +46,15 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
                 </div>
             </div>}
             {data.map((item) => {
-                //const issues = Issue.find((issue) => issue.value === item.category)
+                const issues = Issue.find((issue) => issue.value === item.category)
                 const priority = Priority.find((priority) => priority.value === item.priority)
 
                 return <SectionBox mt={4}>
                     <HStack color={'#717C82'} justify={'space-between'} fontSize={'12px'}>
-                        {/* <HStack>
-                             <Image src={issues?.icon.src} className="size-[14px] mr-[1px] " alt="" />
-                    <Text className="capitalize" children={issues?.label} />
-                        </HStack>*/}
+                        <HStack>
+                            <Image src={issues?.icon.src} className="size-[14px] mr-[1px] " alt="" />
+                            <Text className="capitalize" children={issues?.label} />
+                        </HStack>
                         <Flex
                             alignItems={'center'}
                             fontSize={'14px'}

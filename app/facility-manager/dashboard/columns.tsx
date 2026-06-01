@@ -74,7 +74,7 @@ export const useColumns = (): ColumnDef<DashboardTickets, any>[] => {
                     <Text fontSize={'12px'}>{row.original.unitName}</Text>
                 </Stack>
         },
-        /*
+        {
             accessorFn: (row) => row.subject + ' (' + row.category + ')',
             header: "Tenant & Issue Type",
             cell: ({ row }) => {
@@ -90,7 +90,7 @@ export const useColumns = (): ColumnDef<DashboardTickets, any>[] => {
                         </HStack>
                     </Box>)
             }
-        */
+        },
 
         {
             accessorKey: 'priority',

@@ -1,24 +1,12 @@
 "use client";
-import { Box, Button, Center, Field, Flex, Heading, Input, InputGroup, Text } from "@chakra-ui/react";
+import { Flex, Heading, Input, InputGroup, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import bgImage from '@/app/assets/images/forgot-password-bg.png'
-import KeyIcon from '@/app/assets/icons/keys-icon.svg'
-import { LuArrowLeft, LuCircleCheck, LuEye, LuEyeOff, LuLock, } from "react-icons/lu";
-import { useForm } from "react-hook-form";
-import Link from "next/link";
-import { Suspense, useState } from "react";
-import { MainButton } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import { resetPassword, ResetPasswordPayload, validateToken } from "@/services/auth";
-import toast from "react-hot-toast";
+import { Suspense, } from "react";
 import Logo from '@/app/assets/urbannest-logo.png'
 import InvalidIcon from "@/app/assets/icons/invalid-icon.svg";
-import { AxiosError } from "axios";
 
 export function InvalidPage() {
-
-
 
     return (
         <>

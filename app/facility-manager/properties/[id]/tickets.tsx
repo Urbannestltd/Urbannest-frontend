@@ -15,6 +15,7 @@ import { useEffect, useState } from "react"
 import { MobileTable } from "./ticket-mobile-table"
 import emptyTicketIcon from '@/app/assets/icons/facilty-icons/ticket-empty.svg'
 import { useTicketStore } from "@/store/fm/ticket"
+import { TicketPage } from "./ticket"
 
 export const Tickets = ({ propertyId }: { propertyId: string }) => {
 
@@ -38,8 +39,9 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
     }, [search])
 
     const [openModal, setOpenModal] = useState(false)
+    const [id, setId] = useState('')
     return (
-        <>{openModal ? < >gggg</> : <>
+        <>{openModal ? <TicketPage id={id} /> : <>
             <SectionBox>
                 <PageTitle title="Maintenance Tickets" fontSize={'18px'} />
                 <Stack direction={{ base: 'column', md: 'row' }} mt={4} justify={'space-between'}>
@@ -54,7 +56,7 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
                 </Stack>
             </SectionBox >
             {isMobile ?
-                <MobileTable data={tickets} tableName="Tickets" emptyDetails={{ icon: emptyTicketIcon.src, title: 'No tickets found', description: 'We couldn’t found any maintenance tickets that match your search.' }} /> : <DataTable data={tickets} tableName="Tickets" onRowClick={() => setOpenModal(true)} columns={columns} emptyDetails={{ icon: emptyTicketIcon.src, title: 'No tickets found', description: 'We couldn’t found any maintenance tickets that match your search.' }} />}</>}
+                <MobileTable data={tickets} tableName="Tickets" emptyDetails={{ icon: emptyTicketIcon.src, title: 'No tickets found', description: 'We couldn’t found any maintenance tickets that match your search.' }} /> : <DataTable data={tickets} tableName="Tickets" onRowClick={(row) => { setId(row.id); setOpenModal(true) }} columns={columns} emptyDetails={{ icon: emptyTicketIcon.src, title: 'No tickets found', description: 'We couldn’t found any maintenance tickets that match your search.' }} />}</>}
         </>
     )
 }

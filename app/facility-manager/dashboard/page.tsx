@@ -76,9 +76,9 @@ export default function Dashboard() {
                             {isMobile ? <Text className="satoshi-bold text-sm text-[#545F73]">View All</Text> : <CustomSelect control={control} name="type" triggerHeight="32px" placeholder="Priority" collection={createListCollection({ items: [{ value: 'all', label: 'All' }, { value: 'open', label: 'Open' }, { value: 'closed', label: 'Closed' }] })} />
                             }</div>
                     </SectionFlex>
-                    {isMobile ? <MobileTable data={tickets} loading={isLoadingTickets} /> : <SectionBox mt={'30px'} p={0}>
-                        <DataTable my={'0px'} miniTable tableName="tickets" loading={isLoadingTickets} emptyDetails={{ icon: emptyTicketIcon, title: 'No open tickets', description: 'Maintenance tickets will appear here once requests are submitted.' }} bordered borderRadius={'11px'} columns={columns} data={tickets} />
-                    </SectionBox>}
+                    {isMobile ? <MobileTable data={tickets} loading={isLoadingTickets} emptyDetails={{ icon: emptyTicketIcon.src, title: 'No open tickets', description: 'Maintenance tickets will appear here once requests are submitted.' }} /> : <Box rounded={4} mt={'30px'} p={0}>
+                        <DataTable my={'0px'} rounded headerColor="#000000" miniTable tableName="tickets" loading={isLoadingTickets} emptyDetails={{ icon: emptyTicketIcon, title: 'No open tickets', description: 'Maintenance tickets will appear here once requests are submitted.' }} bordered borderRadius={'11px'} columns={columns} data={tickets} />
+                    </Box>}
                 </Box>
                 <Box w={{ base: 'full', md: '50%' }}>
 
@@ -100,14 +100,14 @@ export default function Dashboard() {
                             <Tabs.Indicator bg={'transparent'} shadow={"none"} fontWeight={"bold"} />
                         </Tabs.List>
                         <Tabs.Content value="walk-in">
-                            {isMobile ? (<MobileTableVisitor data={WalkinVisitors ?? []} loading={isLoadingVisitors} tableName="visitors" emptyDetails={{ icon: emptyVisitorIcon.src, title: 'No visitors today', description: 'Visitors your tenants add will appear here for easy access and entry tracking.', }} />) : <SectionBox mt={{ base: '10px', md: '27px' }} p={0}>
-                                <DataTable my={'0px'} borderRadius={'11px'} columns={visitorColumns} data={WalkinVisitors ?? []} loading={isLoadingVisitors} miniTable bordered tableName="visitors" emptyDetails={{ icon: emptyVisitorIcon, title: 'No visitors today', description: 'Visitors your tenants add will appear here for easy access and entry tracking.', }} />
-                            </SectionBox>}
+                            {isMobile ? (<MobileTableVisitor data={WalkinVisitors ?? []} loading={isLoadingVisitors} tableName="visitors" emptyDetails={{ icon: emptyVisitorIcon.src, title: 'No visitors today', description: 'Visitors your tenants add will appear here for easy access and entry tracking.', }} />) : <Box mt={{ base: '10px', md: '0px' }} p={0}>
+                                <DataTable my={'0px'} borderRadius={'11px'} rounded columns={visitorColumns} data={WalkinVisitors ?? []} loading={isLoadingVisitors} miniTable bordered tableName="visitors" emptyDetails={{ icon: emptyVisitorIcon, title: 'No visitors today', description: 'Visitors your tenants add will appear here for easy access and entry tracking.', }} />
+                            </Box>}
                         </Tabs.Content>
                         <Tabs.Content value="scheduled">
-                            {isMobile ? (<MobileTableVisitor tableName="visitors" emptyDetails={{ icon: emptyVisitorIcon.src, title: 'No visitors today', description: 'Visitors your tenants add will appear here for easy access and entry tracking.', }} data={ScheduledVisitors ?? []} loading={isLoadingVisitors} />) : <SectionBox mt={{ base: '10px', md: '27px' }} p={0}>
-                                <DataTable my={'0px'} miniTable bordered tableName="visitors" emptyDetails={{ icon: emptyVisitorIcon, title: 'No visitors today', description: 'Visitors your tenants add will appear here for easy access and entry tracking.', }} borderRadius={'11px'} columns={visitorColumns} data={ScheduledVisitors ?? []} loading={isLoadingVisitors} />
-                            </SectionBox>}
+                            {isMobile ? (<MobileTableVisitor tableName="visitors" emptyDetails={{ icon: emptyVisitorIcon.src, title: 'No visitors today', description: 'Visitors your tenants add will appear here for easy access and entry tracking.', }} data={ScheduledVisitors ?? []} loading={isLoadingVisitors} />) : <Box mt={{ base: '10px', md: '0px' }} p={0}>
+                                <DataTable my={'0px'} miniTable bordered rounded tableName="visitors" emptyDetails={{ icon: emptyVisitorIcon, title: 'No visitors today', description: 'Visitors your tenants add will appear here for easy access and entry tracking.', }} borderRadius={'11px'} columns={visitorColumns} data={ScheduledVisitors ?? []} loading={isLoadingVisitors} />
+                            </Box>}
 
                         </Tabs.Content>
                     </Tabs.Root>

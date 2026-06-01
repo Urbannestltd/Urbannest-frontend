@@ -5,6 +5,8 @@ import { create } from "zustand"
 export interface Tickets {
 	approvalStatus: string
 	isFixLate: boolean
+	isResponseLate: boolean
+	responseTimeMinutes: number
 	tenantName: string
 	unitName: string
 	unitId: string
@@ -19,37 +21,9 @@ export interface Tickets {
 }
 
 interface Ticket {
-	id: string
-	subject: string
-	dateSubmitted: string
-	status: string
-	category: string
-	description: string
-	images: string[]
-	activity: [
-		{
-			isSystemMessage: boolean
-			timestamp: string
-			message: string
-			senderName: string
-			id: string
-		},
-	]
 	responseMetrics: {
 		timeToResolutionMinutes: number
 		timeToFirstResponseMinutes: number
-	}
-	unit: {
-		name: string
-		id: string
-	}
-	property: {
-		name: string
-		id: string
-	}
-	tenant: {
-		phone: string
-		name: string
 	}
 	timeline: [
 		{
@@ -57,10 +31,36 @@ interface Ticket {
 			event: string
 		},
 	]
-	budget: number
-	quotedCost: number
-	approvalStatus: string
+	activity: [
+		{
+			isSystemMessage: true
+			timestamp: string
+			message: string
+			senderName: string
+			id: string
+		},
+	]
 	rebuttalNote: string
+	approvalStatus: string
+	quotedCost: number
+	budget: number
+	tenant: {
+		phone: string
+		name: string
+		id: string
+	}
+	unitName: string
+	unitId: string
+	propertyName: string
+	propertyId: string
+	images: string[]
+	dateSubmitted: string
+	status: string
+	priority: string
+	category: string
+	description: string
+	subject: string
+	id: string
 }
 
 interface metrics {
@@ -92,18 +92,22 @@ interface TicketsStore {
 	ticket: Ticket | null
 	isLoading: boolean
 	isLoadingTicket: boolean
-	/*loadingBudget: boolean
+	isLoadingPropertyTickets: boolean
+	errorLoadingPropertyTickets: boolean
+	errorLoadingTickets: boolean
+	errorLoadingTicket: boolean
+	//loadingBudget: boolean
 	newComments: {
 		isSystemMessage: boolean
 		timestamp: string
 		message: string
 		senderName: string
 		id: string
-	} | null */
+	} | null
 	fetchAllTickets: (filter?: filter) => Promise<void>
 	fetchTicketPerProperty: (id: string, search?: string) => Promise<void>
 	fetchTicket: (id: string) => Promise<void>
-	/*fetchMetrics: () => Promise<void>
+	//fetchMetrics: () => Promise<void>
 	setComments: (comments: {
 		isSystemMessage: boolean
 		timestamp: string
@@ -111,7 +115,7 @@ interface TicketsStore {
 		senderName: string
 		id: string
 	}) => void
-	fetchBudget: () => Promise<void> */
+	//fetchBudget: () => Promise<void>
 	clearTickets: () => void
 }
 
@@ -121,33 +125,65 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 	ticketsPerProperty: [],
 	ticket: null,
 	//globalBudget: null,
-	//newComments: null,
+	newComments: null,
 	isLoading: false,
+	isLoadingPropertyTickets: false,
 	isLoadingTicket: false,
+	errorLoadingPropertyTickets: false,
+	errorLoadingTickets: false,
+	errorLoadingTicket: false,
 	//loadingBudget: false,
 	fetchAllTickets: async (filter) => {
-		set({ isLoading: true })
-		const response = await http.get(FmEndpoints.fetchAllTickets, {
-			params: filter,
-		})
-		console.log("tickets", response.data.data)
-		set({ tickets: response.data.data, isLoading: false })
+		try {
+			set({ isLoading: true, errorLoadingTickets: false })
+			const response = await http.get(FmEndpoints.fetchAllTickets, {
+				params: filter,
+			})
+			console.log("tickets", response.data.data)
+			set({
+				tickets: response.data.data,
+			})
+		} catch (e) {
+			set({ tickets: [], errorLoadingTickets: true })
+			console.error("❌ Failed to fetch tickets", e)
+		} finally {
+			set({ isLoading: false })
+		}
 	},
 	fetchTicketPerProperty: async (id, search) => {
-		set({ isLoading: true })
-		const response = await http.get(FmEndpoints.fetchTicketsPerProperty(id), {
-			params: { search: search },
-		})
-		set({ ticketsPerProperty: response.data.data, isLoading: false })
+		try {
+			set({
+				isLoadingPropertyTickets: true,
+				errorLoadingPropertyTickets: false,
+			})
+			const response = await http.get(FmEndpoints.fetchTicketsPerProperty(id), {
+				params: { search: search },
+			})
+			console.log("tickets", response.data.data.tickets)
+			set({
+				ticketsPerProperty: response.data.data.tickets,
+			})
+		} catch (e) {
+			set({ ticketsPerProperty: [], errorLoadingPropertyTickets: true })
+			console.error("❌ Failed to fetch tickets", e)
+		} finally {
+			set({ isLoadingPropertyTickets: false })
+		}
 	},
 	fetchTicket: async (ticketId: string) => {
-		set({ isLoading: true })
-		const response = await http.get(FmEndpoints.fetchTicket(ticketId))
-		console.log("ticket", response.data.data)
-		set({
-			ticket: response.data.data,
-			isLoading: false /* newComments: null */,
-		})
+		try {
+			set({ isLoadingTicket: true, errorLoadingTicket: false })
+			const response = await http.get(FmEndpoints.fetchTicket(ticketId))
+			console.log("ticket", response.data.data)
+			set({
+				ticket: response.data.data /* newComments: null */,
+			})
+		} catch (e) {
+			set({ ticket: null, errorLoadingTicket: true })
+			console.error("❌ Failed to fetch ticket", e)
+		} finally {
+			set({ isLoadingTicket: false })
+		}
 	},
 	/*fetchMetrics: async () => {
 		set({ isLoading: true })
@@ -158,7 +194,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		set({ loadingBudget: true })
 		const property = await http.get(adminEndpoints.createBudget)
 		set({ globalBudget: property.data.data, loadingBudget: false })
-	},
-	setComments: (comment) => set({ newComments: comment }),*/
+	},,*/
+	setComments: (comment) => set({ newComments: comment }),
 	clearTickets: () => set({ tickets: [] }),
 }))

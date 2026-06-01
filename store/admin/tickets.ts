@@ -100,6 +100,8 @@ interface TicketsStore {
 	ticketsPerProperty: Tickets[]
 	ticket: Ticket | null
 	isLoading: boolean
+	isLoadingTicket: boolean
+	isLoadingPropertyTickets: boolean
 	loadingBudget: boolean
 	newComments: {
 		isSystemMessage: boolean
@@ -131,6 +133,8 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 	globalBudget: null,
 	newComments: null,
 	isLoading: false,
+	isLoadingTicket: false,
+	isLoadingPropertyTickets: false,
 	loadingBudget: false,
 	fetchAllTickets: async (filter) => {
 		set({ isLoading: true })
@@ -141,20 +145,27 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		set({ tickets: response.data.data, isLoading: false })
 	},
 	fetchTicketPerProperty: async (id, search) => {
-		set({ isLoading: true })
+		set({ isLoadingPropertyTickets: true })
 		const response = await http.get(
 			adminEndpoints.fetchTicketsPerProperty(id),
 			{
 				params: { search: search },
 			},
 		)
-		set({ ticketsPerProperty: response.data.data, isLoading: false })
+		set({
+			ticketsPerProperty: response.data.data,
+			isLoadingPropertyTickets: false,
+		})
 	},
 	fetchTicket: async (ticketId: string) => {
-		set({ isLoading: true })
+		set({ isLoadingTicket: true })
 		const response = await http.get(adminEndpoints.fetchTicket(ticketId))
 		console.log("ticket", response.data.data)
-		set({ ticket: response.data.data, isLoading: false, newComments: null })
+		set({
+			ticket: response.data.data,
+			isLoadingTicket: false,
+			newComments: null,
+		})
 	},
 	fetchMetrics: async () => {
 		set({ isLoading: true })

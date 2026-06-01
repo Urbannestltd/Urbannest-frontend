@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { cn } from '@/utils/lib';
 
-const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
-    ({ className, ...props }, ref) => (
-        <div className='relative w-full overflow-auto'>
+const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement> & { wrapperClassName?: string }>(
+    ({ className, wrapperClassName, ...props }, ref) => (
+        <div className={cn('relative w-full overflow-auto', wrapperClassName)}>
             <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
         </div>
     ),
@@ -17,7 +17,7 @@ const TableHeader = React.forwardRef<
     <thead
         ref={ref}
         className={cn(
-            'hidden lg:table-header-group bg-[#F5F5F5]  [&_tr]:border-b-[#EAECF0]',
+            'hidden lg:table-header-group  bg-[#F5F5F5]  [&_tr]:border-b-[#EAECF0]',
             className,
         )}
         {...props}

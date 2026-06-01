@@ -82,7 +82,7 @@ export default function Maintenance() {
                     </Flex>
                 </HStack>
             </form>
-            <DataTable data={tickets} loading={isLoading} tableName="Tickets" onRowClick={(row) => router.push(`/admin/maintenance-and-issues/${row.id}`)} emptyDetails={{ icon: emptyTicketIcon, title: 'No tickets', description: 'Maintenance tickets will appear here once requests are submitted.' }} columns={columns} />
+            <DataTable data={tickets} loading={isLoading} tableName="Tickets" onRowClick={(row) => router.push(`/facility-manager/maintenance-and-issues/${row.id}`)} emptyDetails={{ icon: emptyTicketIcon, title: 'No tickets', description: 'Maintenance tickets will appear here once requests are submitted.' }} columns={columns} />
 
         </div>
     )

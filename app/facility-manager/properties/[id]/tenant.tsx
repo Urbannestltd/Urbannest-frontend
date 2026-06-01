@@ -139,9 +139,9 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
 
 
     return (
-        <Flex maxW={'full'} direction={{ base: 'column', md: 'row' }} justify={'center'} gap={8}>
-            <Box w={{ base: 'full', md: '728px' }}>
-                <SectionBox w={{ base: 'full', md: '728px' }}>
+        <Flex maxW={'full'} border={''} direction={{ base: 'column', md: 'row' }} gap={8}>
+            <Box w={{ base: 'full', md: '70%' }}>
+                <SectionBox w={{ base: 'full' }}>
                     <Flex align={'center'} gap={3}>
                         <Box boxSize={'90px'}>
                             <Avatar size='full' name={tenants?.fullName} src={tenants?.profilePic} />
@@ -163,7 +163,7 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
                         </Grid>
                     </Box>
                 </SectionBox>
-                <SectionBox mt={6} w={{ base: 'full', md: '728px' }}>
+                <SectionBox mt={6} w={{ base: 'full' }}>
                     <HStack justify={'space-between'}>
                         <PageTitle mt={2} fontSize={'18px'} title="Lease Information" />
                     </HStack>
@@ -267,8 +267,8 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
                     </Box>
                 </SectionBox>
             </Box>
-            <Box>
-                <SectionBox w={{ base: 'full', md: '376px' }}>
+            <Box w={{ base: 'full', md: "30%" }}>
+                <SectionBox w={{ base: 'full' }}>
                     <PageTitle title={'Cohabitants'} fontSize={'16px'} />
                     {
                         tenants?.cohabitants?.length === 0 && <Text className="text-[14px] my-4 satoshi-medium text-center text-[#757575]">No cohabitants found</Text>}

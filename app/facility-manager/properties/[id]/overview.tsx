@@ -110,7 +110,7 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
 
     return (
         <Flex direction={{ base: 'column', md: 'row' }} gap={8}>
-            <Box>
+            <Box w={{ base: 'full', md: "65%" }}>
                 {isMobile
                     ?
                     <Box spaceY={2}>
@@ -172,8 +172,9 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                         </SectionFlex>
                         <SectionFlex
                             gap={5}
-                            h={"50px"}
+                            h={"fit"}
                             align={"center"}
+                            direction={'column'}
                             justify={"space-between"}
                         >
                             <HStack w={'full'} justify={'space-between'}>
@@ -184,17 +185,19 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
 
                             </HStack>
 
-                            <Progress
-                                valueText={`${Property?.complaintsPercentage ?? 0}`}
-                                value={stringtoNumber(
-                                    String(Property?.complaintsPercentage ?? "0"),
-                                )}
-                                color={complaints(Property?.complaintsPercentage ?? 0)}
-                            />
+                            <div className="w-full">
+                                <Progress
+                                    valueText={`${Property?.complaintsPercentage ?? 0}`}
+                                    value={stringtoNumber(
+                                        String(Property?.complaintsPercentage ?? "0"),
+                                    )}
+                                    color={complaints(Property?.complaintsPercentage ?? 0)}
+                                />
+                            </div>
                         </SectionFlex>
 
                     </Box>
-                    : <SectionBox maxW={"748px"}>
+                    : <SectionBox maxW={"100%"}>
                         <PageTitle title="Property Details" fontSize={"16px"} />
                         <Grid
                             templateColumns={"repeat(3,1fr)"}
@@ -274,18 +277,20 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                                 justify={"space-between"}
                             >
                                 <Text className="satoshi-medium">Complaints</Text>
-                                <Progress
-                                    showValueText
-                                    valueText={`${Property?.complaintsPercentage ?? 0}`}
-                                    value={stringtoNumber(
-                                        String(Property?.complaintsPercentage ?? "0"),
-                                    )}
-                                    color={complaints(Property?.complaintsPercentage ?? 0)}
-                                />
+                                <div className="w-full">
+                                    <Progress
+                                        showValueText
+                                        valueText={`${Property?.complaintsPercentage ?? 0}`}
+                                        value={stringtoNumber(
+                                            String(Property?.complaintsPercentage ?? "0"),
+                                        )}
+                                        color={complaints(Property?.complaintsPercentage ?? 0)}
+                                    />
+                                </div>
                             </SectionFlex>
                         </Grid>
                     </SectionBox>}
-                <SectionBox mt={6} pb={7} w={{ base: 'full', md: "748px" }}>
+                <SectionBox mt={6} pb={7} w={{ base: 'full' }}>
                     <PageTitle title="Amenities" fontSize={"16px"} />
                     <Flex gap={2} mt={4} wrap={"wrap"}>
                         {Property?.amenities.length === 0 && !edit && !isLoading && (
@@ -335,7 +340,7 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                 </SectionBox>
 
             </Box>
-            <Box w={{ base: 'full', md: "376px" }}>
+            <Box w={{ base: 'full', md: "30%" }}>
                 <SectionBox w={"full"}>
                     <PageTitle title="Images" fontSize={"16px"} />
                     <Box w={"full"}>

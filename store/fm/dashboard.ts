@@ -26,6 +26,7 @@ export interface DashboardVisitor {
 
 export interface DashboardTickets {
 	createdAt: string
+	category: string
 	status: string
 	priority: string
 	tenantName: string

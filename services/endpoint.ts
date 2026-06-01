@@ -146,8 +146,14 @@ const FmEndpoints = {
 
 	//Tickets
 	fetchAllTickets: `/facility-manager/tickets`,
-	fetchTicketsPerProperty: (id: string) => `/facility-manager/${id}/tickets`,
+	fetchTicketsPerProperty: (id: string) =>
+		`/facility-manager/tickets/property/${id}`,
 	fetchTicket: (id: string) => `/facility-manager/tickets/${id}`,
+	updateStatus: (id: string) => `/facility-manager/tickets/${id}/status`,
+	updatePriority: (id: string) => `/facility-manager/tickets/${id}/priority`,
+	postComments: (id: string) => `/facility-manager/tickets/${id}/message`,
+	getExpenses: (id: string) => `/facility-manager/tickets/${id}/expenses`,
+	fetchBudget: (id: string) => `/facility-manager/tickets/${id}/budget`,
 }
 
 export { FmEndpoints }

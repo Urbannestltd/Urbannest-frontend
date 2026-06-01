@@ -51,6 +51,7 @@ interface DataTableProps<TData, TValue> {
     my?: any
     miniTable?: boolean
     bordered?: boolean
+    rounded?: boolean
 
 }
 
@@ -68,7 +69,8 @@ export function DataTable<TData, TValue>({
     px,
     my,
     miniTable,
-    bordered
+    bordered,
+    rounded
 }: DataTableProps<TData, TValue>) {
 
     const pageSize = pagination?.pageSize || 10;
@@ -102,14 +104,14 @@ export function DataTable<TData, TValue>({
                     height: '100%',
                     width: '100%',
                 }}
-                className={`h-full w-full ${px}  ${my ? `my-[${my}]` : 'my-10'} rounded-md  py-2 ${headerColor && `bg-[${headerColor}]`} sm:rounded-xl`}
+                className={`h-full w-full ${px}  ${my ? `my-[${my}]` : 'my-10'} rounded-md   py-2 ${headerColor && `bg-[${headerColor}]`} sm:rounded-xl`}
             >
-                <Table>
-                    <TableHeader className=' bg-[#F5F5F5] rounded-full'  >
+                <Table wrapperClassName={cn(rounded && 'rounded-xl overflow-hidden')}>
+                    <TableHeader className={cn(' bg-[#F5F5F5] ')}  >
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={tableName + headerGroup.id}>
+                            <TableRow className={'!font-semibold  !text-[#475467]'} key={tableName + headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={tableName + header.id} className='!font-semibold  !text-[#475467]'>
+                                    <TableHead key={tableName + header.id} className={'!font-semibold  !text-[#475467]'}>
                                         {!header.isPlaceholder &&
                                             flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
