@@ -39,6 +39,9 @@ function SignIn() {
             else if (response.status === "valid") {
                 setIsSignUp(true)
             }
+            else if (response.status === "used") {
+                router.push(`/auth/${token}/expired`)
+            }
 
 
         },

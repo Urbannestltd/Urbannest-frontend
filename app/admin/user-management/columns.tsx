@@ -7,6 +7,7 @@ import { Box, Button, Circle, Flex, HStack, Menu, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { LuEllipsisVertical } from "react-icons/lu";
@@ -111,6 +112,7 @@ const DeleteUser = ({ user, onClose }: {
     user: { id: string, name: string }, onClose?: () => void
 }) => {
     const fetchUsers = useUserStore((state) => state.fetchUsers)
+    const router = useRouter()
 
     const mutate = useMutation({
         mutationFn: (payload: string) => {
@@ -120,6 +122,8 @@ const DeleteUser = ({ user, onClose }: {
             toast.success('User deleted successfully')
             onClose?.()
             fetchUsers()
+            router.push('/admin/user-management')
+
         },
         onError: (error: AxiosError<{ message: string }>) => {
             toast.error(error.response?.data?.message ?? 'Failed to remove property')

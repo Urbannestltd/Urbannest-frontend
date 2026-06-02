@@ -95,26 +95,40 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
 export const MobileTableVisitor = ({ data, loading, emptyDetails, tableName }: { data: DashboardVisitor[], loading?: boolean, emptyDetails?: EmptyDetails, tableName?: string }) => {
     const Type = [
         {
-            value: 'request',
+            value: 'ONE_OFF_AGENT',
             label: 'Request',
             bgColor: '#FFFBEB',
             borderColor: '#EBFFEE',
             textColor: '#BF6A02'
         },
         {
-            value: 'inspection',
+            value: 'ONE_OFF_AGENT_APPROVED',
             label: 'Inspection',
             bgColor: '#EBFFEE',
             borderColor: '#FFFBEB',
             textColor: '#14AE5C'
         },
         {
-            value: 'regular',
-            label: 'Regular',
+            value: 'ONE_OFF',
+            label: 'ONE_OFF',
             bgColor: '#FFFFFF',
             borderColor: '#E0E0E0',
             textColor: '#4A4A4A'
-        }
+        },
+        {
+            value: 'WHOLE_DAY',
+            label: 'Whole Day',
+            bgColor: '#FFFFFF',
+            borderColor: '#E0E0E0',
+            textColor: '#4A4A4A'
+        },
+        {
+            value: 'RECURRING',
+            label: 'Recurring',
+            bgColor: '#FFFBEB',
+            borderColor: '#EBFFEE',
+            textColor: '#BF6A02'
+        },
     ]
     if (loading) return <Skeleton height={'100%'} width={'100%'} />
     return (

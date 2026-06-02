@@ -127,26 +127,40 @@ export const useColumns = (): ColumnDef<DashboardTickets, any>[] => {
 export const useVisitorColumns = (): ColumnDef<DashboardVisitor, any>[] => {
     const Type = [
         {
-            value: 'request',
+            value: 'ONE_OFF_AGENT',
             label: 'Request',
             bgColor: '#FFFBEB',
             borderColor: '#EBFFEE',
             textColor: '#BF6A02'
         },
         {
-            value: 'inspection',
+            value: 'ONE_OFF_AGENT_APPROVED',
             label: 'Inspection',
             bgColor: '#EBFFEE',
             borderColor: '#FFFBEB',
             textColor: '#14AE5C'
         },
         {
-            value: 'regular',
-            label: 'Regular',
+            value: 'ONE_OFF',
+            label: 'ONE_OFF',
             bgColor: '#FFFFFF',
             borderColor: '#E0E0E0',
             textColor: '#4A4A4A'
-        }
+        },
+        {
+            value: 'WHOLE_DAY',
+            label: 'Whole Day',
+            bgColor: '#FFFFFF',
+            borderColor: '#E0E0E0',
+            textColor: '#4A4A4A'
+        },
+        {
+            value: 'RECURRING',
+            label: 'Recurring',
+            bgColor: '#FFFBEB',
+            borderColor: '#EBFFEE',
+            textColor: '#BF6A02'
+        },
     ]
     return [
         {
@@ -173,7 +187,7 @@ export const useVisitorColumns = (): ColumnDef<DashboardVisitor, any>[] => {
         },
         {
             accessorKey: 'type',
-            header: "Type",
+            header: "Access Type",
             cell: ({ row }) => {
                 const type = Type.find((type) => type.value === row.original.type)
                 return (

@@ -113,10 +113,10 @@ export default function Dashboard() {
                     </SectionFlex>
                     <Tabs.Root defaultValue={"walk-in"} mt={'30px'} color={'#303030'} variant={"line"}>
                         <Tabs.List w={{ base: 'full', md: '55%' }} borderBottom={"1px solid #D9D9D9"}>
-                            <Tabs.Trigger _selected={{ fontWeight: 'bold', borderBottom: "2px solid #303030" }} px={2} value="walk-in">
+                            <Tabs.Trigger textWrap={'nowrap'} _selected={{ fontWeight: 'bold', borderBottom: "2px solid #303030" }} px={2} value="walk-in">
                                 Walk-In Visitors ({WalkinVisitors.length})
                             </Tabs.Trigger>
-                            <Tabs.Trigger _selected={{ fontWeight: 'bold', borderBottom: "2px solid #303030" }} px={2} ml={3} value="scheduled">
+                            <Tabs.Trigger textWrap={'nowrap'} _selected={{ fontWeight: 'bold', borderBottom: "2px solid #303030" }} px={2} ml={3} value="scheduled">
                                 Scheduled Visitors ({ScheduledVisitors.length})
                             </Tabs.Trigger>
                             <Tabs.Indicator bg={'transparent'} color={'#303030'} shadow={"none"} fontWeight={"bold"} />
@@ -150,8 +150,10 @@ const priorityFilter = createListCollection({
 
 const visitorTypeFilter = createListCollection({
     items: [
-        { label: 'Regular', value: 'RECURRING' },
+        { label: 'Recurring', value: 'RECURRING' },
+        { label: 'One Off', value: 'ONE_OFF' },
         { label: 'Inspection', value: 'ONE_OFF_AGENT' },
         { label: 'Whole Day', value: 'WHOLE_DAY' },
+        { label: 'Request', value: 'REQUEST' },
     ]
 })
