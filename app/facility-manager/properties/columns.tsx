@@ -24,6 +24,13 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
         if (row >= 69) { return '#EC221F' }
         return ''
     }
+
+    const types = [
+        //  {value: 'SINGLE_UNIT', label: 'Single Unit'},
+        //  {value: 'MULTI_UNIT', label: 'Multi Unit'},
+        { value: 'COMMERCIAL', label: 'Commercial' },
+        { value: 'RESIDENTIAL', label: 'Residential' },
+    ]
     return [
         {
             accessorKey: 'name',
@@ -41,7 +48,15 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
         {
             accessorFn: (row) => row.type,
             header: "Type",
-            cell: ({ row }) => <Text textTransform={'capitalize'}>{row.original.type.toLocaleLowerCase()}</Text>
+            cell: ({ row }) => {
+                const type = types.find((item) => item.value === row.original.type)
+                return <Text textTransform={'capitalize'}>{type?.label}</Text>
+            }
+        },
+        {
+            accessorKey: 'unitCount',
+            header: "Units",
+            cell: ({ row }) => <Text>{row.original.unitCount}</Text>
         },
         {
             accessorFn: (row) => row.occupancyRate,

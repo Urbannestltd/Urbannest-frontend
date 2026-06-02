@@ -60,6 +60,17 @@ export interface addMemberPayload {
 	userRole: string
 }
 
+export interface addExistingMemberPayload {
+	propertyId: string
+	data: {
+		userId: string
+		role: string
+		unitId: string
+		rentAmount?: number
+		leaseMonths?: number
+	}
+}
+
 export interface removeMemberPayload {
 	propertyId: string
 	data: {
@@ -165,6 +176,14 @@ export const updateLease = async (payload: UpdateLeasePayload) => {
 
 export const addMember = async (payload: addMemberPayload) => {
 	const response = await http.post(adminEndpoints.addMember, payload)
+	return response.data.data as Promise<Property>
+}
+
+export const addExistingMember = async (payload: addExistingMemberPayload) => {
+	const response = await http.post(
+		adminEndpoints.addExistingMember(payload.propertyId),
+		payload.data,
+	)
 	return response.data.data as Promise<Property>
 }
 

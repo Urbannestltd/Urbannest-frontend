@@ -16,15 +16,18 @@ import { MobileTable } from "./ticket-mobile-table"
 import emptyTicketIcon from '@/app/assets/icons/facilty-icons/ticket-empty.svg'
 import { useTicketStore } from "@/store/fm/ticket"
 import { TicketPage } from "./ticket"
+import { TicketFilterFormData } from "@/schema/fm"
 
 export const Tickets = ({ propertyId }: { propertyId: string }) => {
 
-    const { control, handleSubmit } = useForm()
+    const { control, handleSubmit, watch, reset } = useForm<TicketFilterFormData>()
     const columns = useTicketColumns()
     const tickets = useTicketStore(state => state.ticketsPerProperty)
     const fetchAllTickets = useTicketStore(state => state.fetchTicketPerProperty)
+    const loading = useTicketStore(state => state.isLoadingPropertyTickets)
     const [search, setSearch] = useState('')
     const isMobile = window.innerWidth < 600
+    const watchedValues = watch()
 
     useEffect(() => {
         if (!propertyId) return
@@ -33,10 +36,17 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            fetchAllTickets(propertyId, search || undefined)
+            fetchAllTickets(propertyId, {
+                search,
+                priority: watchedValues.priority?.[0] === 'all' ? undefined : watchedValues.priority?.[0],
+                status: watchedValues.status?.[0] === 'all' ? undefined : watchedValues.status?.[0],
+                category: watchedValues.category?.[0] === 'all' ? undefined : watchedValues.category?.[0],
+                //dateRange: watchedValues.dateRange?.[0] === 'all' ? undefined : watchedValues.dateRange?.[0],
+                propertyType: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0]
+            })
         }, 100)
         return () => clearTimeout(timer)
-    }, [search])
+    }, [watchedValues.status, watchedValues.priority, watchedValues.dateRange, watchedValues.category, watchedValues.property])
 
     const [openModal, setOpenModal] = useState(false)
     const [id, setId] = useState('')
@@ -48,27 +58,29 @@ export const Tickets = ({ propertyId }: { propertyId: string }) => {
                     <SearchInput
                         value={search}
                         onChange={setSearch}
-                        onSearch={(val) => fetchAllTickets(propertyId, val)}
+                        onSearch={(val) => fetchAllTickets(propertyId, { search: val })}
                         width={'308px'} />
                     <Flex justify={'center'} gap={2.5} align={'end'}>
-                        <CustomSelect control={control} size={'sm'} name="status" width={'97px'} placeholder="All Types" collection={items} />
+                        <CustomSelect control={control} size={'sm'} name='category' width={'97px'} placeholder="All Types" collection={Issue} />
                     </Flex>
                 </Stack>
             </SectionBox >
             {isMobile ?
-                <MobileTable data={tickets} tableName="Tickets" emptyDetails={{ icon: emptyTicketIcon.src, title: 'No tickets found', description: 'We couldn’t found any maintenance tickets that match your search.' }} /> : <DataTable data={tickets} tableName="Tickets" onRowClick={(row) => { setId(row.id); setOpenModal(true) }} columns={columns} emptyDetails={{ icon: emptyTicketIcon.src, title: 'No tickets found', description: 'We couldn’t found any maintenance tickets that match your search.' }} />}</>}
+                <MobileTable data={tickets} tableName="Tickets" emptyDetails={{ icon: emptyTicketIcon.src, title: 'No tickets found', description: 'We couldn’t found any maintenance tickets that match your search.' }} /> : <DataTable data={tickets} loading={loading} tableName="Tickets" onRowClick={(row) => { setId(row.id); setOpenModal(true) }} columns={columns} emptyDetails={{ icon: emptyTicketIcon.src, title: 'No tickets found', description: 'We couldn’t found any maintenance tickets that match your search.' }} />}</>}
         </>
     )
 }
 
-const items = createListCollection({
+
+const Issue = createListCollection({
     items: [
-        { label: 'All Types', value: 'all' },
-        { label: 'Type 1', value: 'type1' },
-        { label: 'Type 2', value: 'type2' },
-        { label: 'Type 3', value: 'type3' },
-        { label: 'Type 4', value: 'type4' },
-        { label: 'Type 5', value: 'type5' },
-        { label: 'Type 6', value: 'type6' },
+        { value: 'ELECTRICAL', label: 'Electrical', },
+        { value: 'PLUMBING', label: 'Plumbing' },
+        { value: 'SECURITY', label: 'Security' },
+        { value: 'CLEANING', label: 'Cleaning' },
+        { value: 'HVAC', label: 'HVC/AC' },
+        { value: 'BUILDING', label: 'Building (Walls, Doors, Windows, Ceiling)' },
+        { value: 'SAFETY', label: 'Safety & Security' },
     ]
 })
+

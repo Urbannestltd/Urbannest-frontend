@@ -4,7 +4,7 @@ import { MainButton } from "@/components/ui/button"
 import { CustomSelect } from "@/components/ui/custom-fields"
 import { Modal } from "@/components/ui/dialog"
 import { PageTitle } from "@/components/ui/page-title"
-import { addMember, addMemberPayload, removeMember, removeMemberPayload } from "@/services/admin/property"
+import { addExistingMember, addExistingMemberPayload, addMember, addMemberPayload, removeMember, removeMemberPayload } from "@/services/admin/property"
 import { useUserStore } from "@/store/admin/user"
 import { Box, Button, createListCollection, Flex, HStack, Input, InputGroup, Menu, Portal, Select, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
@@ -12,6 +12,7 @@ import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FiSearch } from "react-icons/fi"
 import { LuChevronDown } from "react-icons/lu"
+import { add } from "lodash"
 
 export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, propertyId?: string, unit?: boolean }) => {
     const [userId, setUserId] = useState('')
@@ -28,6 +29,15 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
     const [memberRoles, setMemberRoles] = useState<Record<number, { value: string, label: string }>>({});
     const [deleteTarget, setDeleteTarget] = useState<{
         index: number, data: {
+            userId: string,
+            role: string,
+            unitId: string,
+            propertyId: string
+        }
+    } | null>(null)
+    const [addTarget, setAddTarget] = useState<{
+        index: number, data: {
+            name: string,
             userId: string,
             role: string,
             unitId: string,
@@ -145,7 +155,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                     const currentRole = memberRoles[memberIndex]
                     const initialRole = roles.items.find(role => role.value === member.role)
                     return (
-                        <Flex key={memberIndex} _hover={{ bg: '#F5F5F5' }} align={'center'} justify={'space-between'} p={2}>
+                        <Flex key={memberIndex} onClick={() => setAddTarget({ index: memberIndex, data: { name: member.name, userId: member.email, role: member.role, unitId: unitId ?? '', propertyId: propertyId ?? '' } })} _hover={{ bg: '#F5F5F5' }} align={'center'} justify={'space-between'} p={2}>
                             <Flex align={'center'}>
                                 <Avatar name={member.name} bg={'#CFAA67'} color={'white'} />
                                 <Box ml={4}>
@@ -205,9 +215,73 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                 onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}
                 modalContent={<DeleteTenantPopUp data={deleteTarget?.data ?? { userId: '', role: '', unitId: '', propertyId: '' }} />}
             />
+
+            <Modal
+                size={'sm'}
+                className="w-[350px] h-fit"
+                open={!!addTarget}
+                onOpenChange={(open) => { if (!open) setAddTarget(null) }}
+                modalContent={<AddExistingMemberPopUp data={addTarget?.data ?? { userId: '', role: '', unitId: '', propertyId: '', name: '' }} />}
+            />
         </Box>
     )
 }
+
+export const AddExistingMemberPopUp = ({ data, onClose }: {
+    data: {
+        userId: string,
+        name: string,
+        role: string,
+        unitId: string,
+        propertyId: string
+    }, onClose?: () => void
+}) => {
+
+    const mutate = useMutation({
+        mutationFn: (payload: addExistingMemberPayload) => {
+            return addExistingMember(payload)
+        },
+        onSuccess: () => {
+            toast.success('Member added successfully')
+            onClose?.()
+        },
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to add member')
+        }
+    })
+
+    const addMembers = async () => {
+        const payload: addExistingMemberPayload = {
+            propertyId: data.propertyId ?? '',
+            data: {
+                userId: data.userId,
+                role: data.role,
+                unitId: data.unitId ?? '',
+            },
+        }
+        mutate.mutate(payload)
+    }
+
+    const description = [
+        {
+            role: 'LANDLORD', description: 'This will add them as a landlord of the property. They will be able to manage it..',
+        },
+        {
+            role: 'FACILITY_MANAGER', description: 'This will add them as a facility manager of the property. They will be able to manage maintenance requests for it.',
+        }
+    ]
+    const selectDescription = description.find(item => item.role === data.role)
+    return <>
+        <Flex direction={'column'} mt={4} p={4} align={'center'}>
+            <Text fontSize={'18px'} mb={2} className="satoshi-bold capitalize">Add {data.name}</Text>
+            <Text w={'full'} textWrap={'wrap'} mb={4} color={'#303030'} textAlign={'center'}  >{selectDescription?.description}</Text>
+            <Button h={'45px'} onClick={addMembers} w={'full'} color={'white'} bg={'#2A3348'}>Add</Button>
+        </Flex>
+    </>
+
+}
+
+
 export const DeleteTenantPopUp = ({ data, onClose }: {
     data: {
         userId: string,

@@ -1,9 +1,9 @@
 "use client";
-import { Box, Button, Center, Field, Flex, Heading, Input, InputGroup, Text } from "@chakra-ui/react";
+import { Box, Button, Center, Circle, Field, Flex, Heading, Input, InputGroup, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import bgImage from '@/app/assets/images/forgot-password-bg.png'
 import KeyIcon from '@/app/assets/icons/keys-icon.svg'
-import { LuArrowLeft, LuCircleCheck, LuEye, LuEyeOff, LuLock, } from "react-icons/lu";
+import { LuArrowLeft, LuCircleCheck, LuEye, LuEyeOff, LuLock, LuX, } from "react-icons/lu";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { Suspense, useState } from "react";
@@ -16,12 +16,23 @@ import Logo from '@/app/assets/urbannest-logo.png'
 import { AxiosError } from "axios";
 
 export function ResetPasswordFunc() {
-    const { control, register, handleSubmit, reset, formState: { errors } } = useForm<{ password: string }>();
+    const { control, register, watch, handleSubmit, reset, formState: { errors } } = useForm<{ password: string }>();
     const [isSucessful, setIsSucessful] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
+    const [passwordFocused, setPasswordFocused] = useState(false)
+    const passwordValue = watch('password') ?? ""
+
+    const passwordRequirements = [
+        { label: "Minimum 8 characters", met: passwordValue.length >= 8 },
+        { label: "Must have a number", met: /\d/.test(passwordValue) },
+        { label: "Must have a special character", met: /[^a-zA-Z0-9]/.test(passwordValue) },
+    ]
 
     const searchParams = useSearchParams();
     const token = searchParams.get("token") || "";
+    const { ref: passwordRef, onBlur: passwordOnBlur, ...passwordRegister } = register('password')
+
+
 
     const mutate = useMutation({
         mutationFn: (data: ResetPasswordPayload) => resetPassword(data),
@@ -53,7 +64,7 @@ export function ResetPasswordFunc() {
                             <LuCircleCheck size={40} color={"#14AE5C"} />
                         </Center>
                         <Heading textAlign={'center'} className="satoshi-bold text-[28px] mb-2.5">Password updated!</Heading>
-                        <Text textAlign={'center'} className="satoshi-medium">You can now sign in with your new password.</Text>
+                        <Text textAlign={'center'} className="satoshi-medium">Password updated. Log in with your new password</Text>
                         <Link href={'/auth'} className="flex justify-center items-center"><MainButton children='Continue' /></Link>
                     </Box>
                         : <Box w={{ base: 'full', md: "468px" }}>
@@ -91,6 +102,22 @@ export function ResetPasswordFunc() {
                                             placeholder="New Password"
                                         />
                                     </InputGroup>
+                                    {passwordFocused && (
+                                        <Box mt={2} w="full">
+                                            {passwordRequirements.map((req) => (
+                                                <Flex key={req.label} align="center" gap={2} mb={1}>
+                                                    <Text fontSize="xs" color={'#B3B3B3'}>
+                                                        {req.label}
+                                                    </Text>
+                                                    <Circle bg={req.met ? '#EBFFEE' : '#FEE9E7'}>{req.met
+                                                        ? <LuCircleCheck size={13} color="green" />
+                                                        : <LuX size={13} color="red" />
+                                                    }</Circle>
+
+                                                </Flex>
+                                            ))}
+                                        </Box>
+                                    )}
                                     <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
                                 </Field.Root>
                                 <Field.Root my={4}>
@@ -121,6 +148,22 @@ export function ResetPasswordFunc() {
                                             placeholder="Confirm New Password"
                                         />
                                     </InputGroup>
+                                    {passwordFocused && (
+                                        <Box mt={2} w="full">
+                                            {passwordRequirements.map((req) => (
+                                                <Flex key={req.label} align="center" gap={2} mb={1}>
+                                                    <Text fontSize="xs" color={'#B3B3B3'}>
+                                                        {req.label}
+                                                    </Text>
+                                                    <Circle bg={req.met ? '#EBFFEE' : '#FEE9E7'}>{req.met
+                                                        ? <LuCircleCheck size={13} color="green" />
+                                                        : <LuX size={13} color="red" />
+                                                    }</Circle>
+
+                                                </Flex>
+                                            ))}
+                                        </Box>
+                                    )}
                                     <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
                                 </Field.Root>
 

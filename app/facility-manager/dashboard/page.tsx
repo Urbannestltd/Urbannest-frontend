@@ -1,6 +1,6 @@
 'use client'
 import { CardData, DashboardCard } from "@/components/ui/card";
-import { Box, createListCollection, Flex, Tabs, Text } from "@chakra-ui/react";
+import { Box, createListCollection, Flex, HStack, Tabs, Text } from "@chakra-ui/react";
 import PropertiesIcon from "@/app/assets/icons/facilty-icons/properties-managed.svg"
 import OpenTickets from "@/app/assets/icons/facilty-icons/open-tickets.svg"
 import PendingBudget from "@/app/assets/icons/facilty-icons/pending-budget.svg"
@@ -18,19 +18,31 @@ import { useFMDashboardStore } from "@/store/fm/dashboard";
 import { stat } from "fs";
 import { useEffect } from "react";
 import { it } from "zod/v4/locales";
+import { useRouter } from "next/navigation";
+import { MdOutlineFilterListOff, MdRefresh } from "react-icons/md";
 
 export default function Dashboard() {
-    const { control } = useForm()
+    const { control, watch, reset } = useForm<{ priority: [string], visitorType: [string] }>()
     const columns = useColumns()
+    const router = useRouter()
     const visitorColumns = useVisitorColumns()
     const { summary, visitors, tickets, fetchSummary, fetchVisitors, fetchTickets, isLoadingSummary, isLoadingVisitors, isLoadingTickets, errorLoadingSummary, errorLoadingVisitors, errorLoadingTickets } = useFMDashboardStore(state => state)
     const isMobile = window.innerWidth < 600
+    const formValues = watch()
 
     useEffect(() => {
         fetchSummary()
         fetchVisitors()
         fetchTickets()
     }, [])
+
+    useEffect(() => {
+        fetchTickets(formValues.priority?.[0])
+    }, [formValues.priority])
+
+    useEffect(() => {
+        fetchVisitors(formValues.visitorType?.[0])
+    }, [formValues.visitorType])
 
     const CardData: CardData[] = [
         {
@@ -73,11 +85,17 @@ export default function Dashboard() {
                     <SectionFlex align={'center'} justifyContent={'space-between'}>
                         <Text className="satoshi-bold">Recent Tickets</Text>
                         <div className="w-[20%]">
-                            {isMobile ? <Text className="satoshi-bold text-sm text-[#545F73]">View All</Text> : <CustomSelect control={control} name="type" triggerHeight="32px" placeholder="Priority" collection={createListCollection({ items: [{ value: 'all', label: 'All' }, { value: 'open', label: 'Open' }, { value: 'closed', label: 'Closed' }] })} />
+                            {isMobile ? <Text className="satoshi-bold text-sm text-[#545F73]">View All</Text> : <HStack>
+
+                                <CustomSelect control={control} name='priority' triggerHeight="32px" placeholder="Priority" collection={priorityFilter} />
+                                {formValues.priority?.length > 0 ?
+                                    <MdOutlineFilterListOff cursor={'pointer'} onClick={() => reset({ priority: [] })} /> : null}
+
+                            </HStack>
                             }</div>
                     </SectionFlex>
                     {isMobile ? <MobileTable data={tickets} loading={isLoadingTickets} emptyDetails={{ icon: emptyTicketIcon.src, title: 'No open tickets', description: 'Maintenance tickets will appear here once requests are submitted.' }} /> : <Box rounded={4} mt={'30px'} p={0}>
-                        <DataTable my={'0px'} rounded headerColor="#000000" miniTable tableName="tickets" loading={isLoadingTickets} emptyDetails={{ icon: emptyTicketIcon, title: 'No open tickets', description: 'Maintenance tickets will appear here once requests are submitted.' }} bordered borderRadius={'11px'} columns={columns} data={tickets} />
+                        <DataTable my={'0px'} miniTableOnclick={() => router.push('/facility-manager/maintenance-and-issues')} onRowClick={(row) => router.push(`/facility-manager/maintenance-and-issues/${row.id}`)} rounded headerColor="#000000" miniTable tableName="tickets" loading={isLoadingTickets} emptyDetails={{ icon: emptyTicketIcon, title: 'No open tickets', description: 'Maintenance tickets will appear here once requests are submitted.' }} bordered borderRadius={'11px'} columns={columns} data={tickets} />
                     </Box>}
                 </Box>
                 <Box w={{ base: 'full', md: '50%' }}>
@@ -86,18 +104,22 @@ export default function Dashboard() {
                         <Text className="satoshi-bold">Today’s Visitors</Text>
                         <div className="w-[20%]">
 
-                            {isMobile ? <Text className="satoshi-bold text-sm text-[#545F73]">View All</Text> : <CustomSelect control={control} name="type" triggerHeight="32px" placeholder="All Types" collection={createListCollection({ items: [{ value: 'all', label: 'All' }, { value: 'open', label: 'Open' }, { value: 'closed', label: 'Closed' }] })} />}
+                            {isMobile ? <Text className="satoshi-bold text-sm text-[#545F73]">View All</Text> : <HStack>
+                                <CustomSelect control={control} name='visitorType' triggerHeight="32px" placeholder="All Types" collection={visitorTypeFilter} />
+                                {formValues.visitorType?.length > 0 ?
+                                    <MdOutlineFilterListOff cursor={'pointer'} onClick={() => reset({ priority: [] })} /> : null}
+                            </HStack>}
                         </div>
                     </SectionFlex>
-                    <Tabs.Root defaultValue={"walk-in"} mt={'30px'} variant={"line"}>
+                    <Tabs.Root defaultValue={"walk-in"} mt={'30px'} color={'#303030'} variant={"line"}>
                         <Tabs.List w={{ base: 'full', md: '55%' }} borderBottom={"1px solid #D9D9D9"}>
-                            <Tabs.Trigger px={2} value="walk-in">
+                            <Tabs.Trigger _selected={{ fontWeight: 'bold', borderBottom: "2px solid #303030" }} px={2} value="walk-in">
                                 Walk-In Visitors ({WalkinVisitors.length})
                             </Tabs.Trigger>
-                            <Tabs.Trigger px={2} ml={3} value="scheduled">
+                            <Tabs.Trigger _selected={{ fontWeight: 'bold', borderBottom: "2px solid #303030" }} px={2} ml={3} value="scheduled">
                                 Scheduled Visitors ({ScheduledVisitors.length})
                             </Tabs.Trigger>
-                            <Tabs.Indicator bg={'transparent'} shadow={"none"} fontWeight={"bold"} />
+                            <Tabs.Indicator bg={'transparent'} color={'#303030'} shadow={"none"} fontWeight={"bold"} />
                         </Tabs.List>
                         <Tabs.Content value="walk-in">
                             {isMobile ? (<MobileTableVisitor data={WalkinVisitors ?? []} loading={isLoadingVisitors} tableName="visitors" emptyDetails={{ icon: emptyVisitorIcon.src, title: 'No visitors today', description: 'Visitors your tenants add will appear here for easy access and entry tracking.', }} />) : <Box mt={{ base: '10px', md: '0px' }} p={0}>
@@ -117,3 +139,19 @@ export default function Dashboard() {
         </Box >
     )
 }
+
+const priorityFilter = createListCollection({
+    items: [
+        { label: 'High', value: 'HIGH' },
+        { label: 'Medium', value: 'MEDIUM' },
+        { label: 'Low', value: 'LOW' },
+    ]
+})
+
+const visitorTypeFilter = createListCollection({
+    items: [
+        { label: 'Regular', value: 'RECURRING' },
+        { label: 'Inspection', value: 'ONE_OFF_AGENT' },
+        { label: 'Whole Day', value: 'WHOLE_DAY' },
+    ]
+})

@@ -68,7 +68,7 @@ export default function Maintenance() {
             {//<DashboardCard data={cardData} />
             }
             <form>
-                <HStack mt={9} align={'end'} justify={'space-between'} >
+                <HStack mt={9} align={'center'} justify={'space-between'} >
                     <Flex w={'70%'} gap={5}>
                         <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Properties" label="Property Type" name='property' collection={propertyTypes} />
                         <CustomSelect control={control} borderColor="#F4F4F4" placeholder="All Statuses" label="Status" name="status" collection={statuses} />
@@ -78,7 +78,7 @@ export default function Maintenance() {
                     </Flex>
                     <Flex w={'25%'} justify={'center'} align={'center'} gap={2}>
                         {watchedValues.dateRange?.length > 0 || watchedValues.issue?.length > 0 || watchedValues.priority?.length > 0 || watchedValues.status?.length > 0 || watchedValues.property?.length > 0 ?
-                            < MdOutlineFilterListOff cursor={'pointer'} size={30} onClick={() => reset()} /> : null}
+                            < MdOutlineFilterListOff cursor={'pointer'} size={15} onClick={() => reset()} /> : null}
                     </Flex>
                 </HStack>
             </form>

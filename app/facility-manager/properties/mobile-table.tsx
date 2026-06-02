@@ -29,7 +29,12 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
         if (row >= 69) { return '#EC221F' }
         return ''
     }
-    console.log(data)
+    const types = [
+        { value: 'SINGLE_UNIT', label: 'Single Unit' },
+        { value: 'MULTI_UNIT', label: 'Multi Unit' },
+        { value: 'COMMERCIAL', label: 'Commercial' },
+        { value: 'RESIDENTIAL', label: 'Residential' },
+    ]
 
     if (loading) return <Skeleton height={'100%'} width={'100%'} />
     return (<> {data?.length === 0 && <div className='flex flex-col items-center justify-center my-20 space-y-6'>
@@ -55,7 +60,7 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
                         <Flex justify={'end'} w={'full'} p={2} h={'138px'} bgImage={`url(${item.images[0] ?? rentImage.src})`} bgPos={'center'} bgRepeat={'no-repeat'} backgroundSize={'cover'}>
                             <HStack bg={'#FFFFFFE5'} h={'fit'} rounded={'2px'} px={2} py={1} border={'1px solid #A9B4B933'} w={'fit'}>
                                 <Text className="satoshi-bold" fontSize={'12px'} letterSpacing={'0.55px'} color={'#545F73'} textTransform={'uppercase'}>
-                                    Residential
+                                    {types.find((type) => type.value === item.type)?.label}
                                 </Text>
                                 <LuEllipsisVertical color="#545F73" />
                             </HStack>
@@ -64,26 +69,29 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
                             <Flex justify={'space-between'}>
                                 <VStack align={'start'} gap={2}>
                                     <Text className="satoshi-bold" fontSize={'16px'} color={'#4A4A4A'}>{item.name}</Text>
-                                    <Text className="satoshi-medium" fontSize={'14px'} color={'#566166'}>100 Grand Ave, Downtown</Text>
+                                    <Text className="satoshi-medium" fontSize={'14px'} color={'#566166'}>{item.address}</Text>
                                 </VStack>
                                 <VStack align={'start'} gap={2}>
                                     <Text className="satoshi-bold uppercase" fontSize={'12px'} color={'#566166'}>Units</Text>
-                                    <Text className="satoshi-medium" fontSize={'16px'} color={'#757575'}>120</Text>
+                                    <Text className="satoshi-medium" fontSize={'16px'} color={'#757575'}>{item.unitCount}</Text>
                                 </VStack>
                             </Flex>
                             <Divider my={2} />
                             <HStack justify={'space-between'}>
+                                <VStack align={'start'} gap={2}>
+                                    <Text className="satoshi-bold" fontSize={'12px'} color={'#4A4A4A'}>Complaints</Text>
+                                    <div className="w-[109px]">
+                                        <Progress showValueText value={item.complaints} color={complaint} info={item.complaints} />
+                                    </div>
+
+                                </VStack>
                                 <VStack align={'start'} gap={2}>
                                     <Text className="satoshi-bold" fontSize={'12px'} color={'#4A4A4A'}>Occupancy</Text>
                                     <Center px={2} w={'50px'} fontSize={'12px'} rounded={'full'} bg={occupance}>
                                         <Text>{item.occupancyRate}%</Text>
                                     </Center>
                                 </VStack>
-                                <VStack align={'start'} gap={2}>
-                                    <Text className="satoshi-bold" fontSize={'12px'} color={'#4A4A4A'}>Complaints</Text>
-                                    <Progress showValueText value={item.complaints} color={complaint} info={item.complaints} />
 
-                                </VStack>
                             </HStack>
                         </Box>
 

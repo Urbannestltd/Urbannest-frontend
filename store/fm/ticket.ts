@@ -73,6 +73,7 @@ interface metrics {
 }
 
 interface filter {
+	search?: string
 	propertyId?: string
 	propertyType?: string
 	status?: string
@@ -82,9 +83,21 @@ interface filter {
 	dateTo?: string
 }
 
+interface message {
+	isSystemMessage: true
+	readAt: string
+	timestamp: string
+	attachments: string[]
+	message: string
+	senderName: string
+	senderId: string
+	id: string
+}
+
 interface TicketsStore {
 	//metrics: metrics | null
 	tickets: Tickets[]
+	messages: message[]
 	/*globalBudget: {
 		defaultMaintenanceBudget: number
 	} | null */
@@ -93,9 +106,11 @@ interface TicketsStore {
 	isLoading: boolean
 	isLoadingTicket: boolean
 	isLoadingPropertyTickets: boolean
+	isLoadingMessages: boolean
 	errorLoadingPropertyTickets: boolean
 	errorLoadingTickets: boolean
 	errorLoadingTicket: boolean
+	errorLoadingMessages: boolean
 	//loadingBudget: boolean
 	newComments: {
 		isSystemMessage: boolean
@@ -103,10 +118,11 @@ interface TicketsStore {
 		message: string
 		senderName: string
 		id: string
-	} | null
+	}[]
 	fetchAllTickets: (filter?: filter) => Promise<void>
-	fetchTicketPerProperty: (id: string, search?: string) => Promise<void>
+	fetchTicketPerProperty: (id: string, filter?: filter) => Promise<void>
 	fetchTicket: (id: string) => Promise<void>
+	fetchMessages: (id: string) => Promise<void>
 	//fetchMetrics: () => Promise<void>
 	setComments: (comments: {
 		isSystemMessage: boolean
@@ -121,17 +137,20 @@ interface TicketsStore {
 
 export const useTicketStore = create<TicketsStore>((set) => ({
 	//metrics: null,
+	messages: [],
 	tickets: [],
 	ticketsPerProperty: [],
 	ticket: null,
 	//globalBudget: null,
-	newComments: null,
+	newComments: [],
 	isLoading: false,
 	isLoadingPropertyTickets: false,
 	isLoadingTicket: false,
+	isLoadingMessages: false,
 	errorLoadingPropertyTickets: false,
 	errorLoadingTickets: false,
 	errorLoadingTicket: false,
+	errorLoadingMessages: false,
 	//loadingBudget: false,
 	fetchAllTickets: async (filter) => {
 		try {
@@ -150,14 +169,14 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 			set({ isLoading: false })
 		}
 	},
-	fetchTicketPerProperty: async (id, search) => {
+	fetchTicketPerProperty: async (id, filter) => {
 		try {
 			set({
 				isLoadingPropertyTickets: true,
 				errorLoadingPropertyTickets: false,
 			})
 			const response = await http.get(FmEndpoints.fetchTicketsPerProperty(id), {
-				params: { search: search },
+				params: filter,
 			})
 			console.log("tickets", response.data.data.tickets)
 			set({
@@ -185,6 +204,21 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 			set({ isLoadingTicket: false })
 		}
 	},
+	fetchMessages: async (id: string) => {
+		try {
+			set({ isLoadingMessages: true, errorLoadingMessages: false })
+			const response = await http.get(FmEndpoints.postComments(id))
+			console.log("messages", response.data.data)
+			set({
+				messages: response.data.data,
+			})
+		} catch (e) {
+			set({ messages: [], errorLoadingMessages: true })
+			console.error("❌ Failed to fetch messages", e)
+		} finally {
+			set({ isLoadingMessages: false })
+		}
+	},
 	/*fetchMetrics: async () => {
 		set({ isLoading: true })
 		const response = await http.get(adminEndpoints.fetchTicketMetrics)
@@ -195,6 +229,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		const property = await http.get(adminEndpoints.createBudget)
 		set({ globalBudget: property.data.data, loadingBudget: false })
 	},,*/
-	setComments: (comment) => set({ newComments: comment }),
+	setComments: (comment) =>
+		set((state) => ({ newComments: [...state.newComments, comment] })),
 	clearTickets: () => set({ tickets: [] }),
 }))

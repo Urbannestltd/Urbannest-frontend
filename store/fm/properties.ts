@@ -94,6 +94,7 @@ interface PropertyStore {
 		search?: string
 		type?: string
 		occupancy?: string
+		unitRange?: string
 	}) => Promise<void>
 	fetchProperty: (id: string) => Promise<void>
 	fetchUnits: (id: string, search?: string) => Promise<void>

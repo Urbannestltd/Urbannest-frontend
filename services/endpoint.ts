@@ -97,6 +97,7 @@ const adminEndpoints = {
 	fetchFinancialDashboard: `/admin/payments/metrics`,
 	//MEmebr
 	addMember: `/admin/create-user`,
+	addExistingMember: (id: string) => `/admin/properties/${id}/members`,
 	removeMember: (id: string) => `/admin/properties/${id}/members/remove`,
 
 	//Tickets
@@ -151,7 +152,7 @@ const FmEndpoints = {
 	fetchTicket: (id: string) => `/facility-manager/tickets/${id}`,
 	updateStatus: (id: string) => `/facility-manager/tickets/${id}/status`,
 	updatePriority: (id: string) => `/facility-manager/tickets/${id}/priority`,
-	postComments: (id: string) => `/facility-manager/tickets/${id}/message`,
+	postComments: (id: string) => `/facility-manager/tickets/${id}/messages`,
 	getExpenses: (id: string) => `/facility-manager/tickets/${id}/expenses`,
 	fetchBudget: (id: string) => `/facility-manager/tickets/${id}/budget`,
 }

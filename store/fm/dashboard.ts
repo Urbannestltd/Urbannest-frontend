@@ -45,8 +45,8 @@ interface DashStore {
 	isLoadingVisitors: boolean
 	isLoadingTickets: boolean
 	fetchSummary: () => Promise<void>
-	fetchVisitors: () => Promise<void>
-	fetchTickets: () => Promise<void>
+	fetchVisitors: (frequency?: string) => Promise<void>
+	fetchTickets: (priority?: string) => Promise<void>
 	errorLoadingSummary: boolean
 	errorLoadingVisitors: boolean
 	errorLoadingTickets: boolean
@@ -75,10 +75,12 @@ export const useFMDashboardStore = create<DashStore>((set) => ({
 			set({ isLoadingSummary: false })
 		}
 	},
-	fetchVisitors: async () => {
+	fetchVisitors: async (frequency) => {
 		set({ isLoadingVisitors: true, errorLoadingVisitors: false })
 		try {
-			const visitors = await http.get(FmEndpoints.fetchDashboardVisitors)
+			const visitors = await http.get(FmEndpoints.fetchDashboardVisitors, {
+				params: { frequency: frequency },
+			})
 			set({ visitors: visitors.data.data, isLoadingVisitors: false })
 			console.log("✅ Visitors set in store:", visitors.data.data)
 		} catch (e) {
@@ -88,10 +90,12 @@ export const useFMDashboardStore = create<DashStore>((set) => ({
 			set({ isLoadingVisitors: false })
 		}
 	},
-	fetchTickets: async () => {
+	fetchTickets: async (priority) => {
 		set({ isLoadingTickets: true, errorLoadingTickets: false })
 		try {
-			const tickets = await http.get(FmEndpoints.fetchDashboardTickets)
+			const tickets = await http.get(FmEndpoints.fetchDashboardTickets, {
+				params: { priority: priority },
+			})
 			set({ tickets: tickets.data.data, isLoadingTickets: false })
 			console.log("✅ Tickets set in store:", tickets.data.data)
 		} catch (e) {

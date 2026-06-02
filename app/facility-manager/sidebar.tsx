@@ -19,7 +19,6 @@ export const FMSidebar = ({ onClose }: { onClose?: () => void }) => {
         if (pathname.includes('facility-manager/dashboard')) return 'dashboard'
         if (pathname.includes('facility-manager/maintenance-and-issues')) return 'maintenance-and-issues'
         if (pathname.includes('facility-manager/properties')) return 'properties'
-        if (pathname.includes('facility-manager/tenants')) return 'tenants'
         if (pathname.includes('facility-manager/visitors-management')) return 'visitors-management'
         return 'dashboard'
     };

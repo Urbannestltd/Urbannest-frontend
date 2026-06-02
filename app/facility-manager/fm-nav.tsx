@@ -1,6 +1,6 @@
 'use client'
 import { PageTitle } from "@/components/ui/page-title"
-import { Drawer, Flex, HStack, Menu, Portal } from "@chakra-ui/react"
+import { Drawer, Flex, HStack, Menu, Portal, Stack } from "@chakra-ui/react"
 import { Notifications } from "@/components/common/notifications"
 import useAuthStore from "@/store/auth"
 import { Avatar } from "@/components/ui/avatar"
@@ -26,25 +26,26 @@ export const FMNav = () => {
     }
 
     return (
-        <HStack mb={4} bg={'transparent'} justify={"space-between"
+        <HStack mb={4} bg={'transparent'} align={'start'} justify={"space-between"
         }>
             {
-                isSetting ? <Image className='w-[185px] h-10 mt-4 cursor-pointer' onClick={() => router.push('/facility-manager/dashboard')} src={Logo} alt="logo" /> : <HStack>
-                    <Drawer.Root open={openDrawer} onOpenChange={(e) => setOpenDrawer(e.open)} placement={'start'}>
-                        <Drawer.Trigger className="inline md:hidden">
-                            <MdOutlineMenu className="mr-2 md:mr-0" size={24} />
-                        </Drawer.Trigger>
-                        <Portal>
-                            <Drawer.Backdrop />
-                            <Drawer.Positioner>
-                                <Drawer.Content w={'fit'}>
-                                    <FMSidebar onClose={() => setOpenDrawer(false)} />
-                                </Drawer.Content>
-                            </Drawer.Positioner>
-                        </Portal>
-                    </Drawer.Root>
-                    <PageTitle spacing={0} title={`Welcome, ${user?.name}`} fontSize={{ base: "20px", md: "25px" }} subText="Here is what's happening across UrbanNest today." />
-                </HStack>
+                isSetting ? <Image className='w-[185px] h-10 mt-4 cursor-pointer' onClick={() => router.push('/facility-manager/dashboard')} src={Logo} alt="logo" /> :
+                    <Stack direction={{ base: 'column', md: 'row' }}>
+                        <Drawer.Root open={openDrawer} onOpenChange={(e) => setOpenDrawer(e.open)} placement={'start'}>
+                            <Drawer.Trigger className="inline md:hidden">
+                                <MdOutlineMenu className="mr-2 md:mr-0" size={24} />
+                            </Drawer.Trigger>
+                            <Portal>
+                                <Drawer.Backdrop />
+                                <Drawer.Positioner>
+                                    <Drawer.Content w={'fit'}>
+                                        <FMSidebar onClose={() => setOpenDrawer(false)} />
+                                    </Drawer.Content>
+                                </Drawer.Positioner>
+                            </Portal>
+                        </Drawer.Root>
+                        <PageTitle spacing={0} title={`Welcome, ${user?.name}`} fontSize={{ base: "20px", md: "25px" }} subText="Here is what's happening across UrbanNest today." />
+                    </Stack>
             }
             < Flex gap={{ base: 2, md: 4 }} align={"center"} >
                 <Notifications />

@@ -17,10 +17,10 @@ export interface AvatarProps extends ChakraAvatar.RootProps {
 
 export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
   function Avatar(props, ref) {
-    const { name, src, srcSet, loading, icon, fallback, children, ...rest } =
+    const { name, src, srcSet, loading, icon, bgColor = '#F5F5F5', fallback, children, ...rest } =
       props
     return (
-      <ChakraAvatar.Root position={'relative'} ref={ref} {...rest}>
+      <ChakraAvatar.Root bgColor={bgColor} position={'relative'} ref={ref} {...rest}>
         <AvatarFallback name={name} icon={icon}>
           {fallback}
         </AvatarFallback>

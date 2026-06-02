@@ -15,14 +15,14 @@ export const useTicketColumns = (): ColumnDef<Tickets, any>[] => {
 
     const Status = [
         {
-            value: 'OPEN',
+            value: 'PENDING',
             label: 'Open',
             bgColor: '#F5F5F5',
             textColor: '#4A4A4A',
             borderColor: '#F4F4F4'
         },
         {
-            value: 'PENDING',
+            value: 'IN_PROGRESS',
             label: 'In Progress',
             bgColor: '#EFF6FF',
             textColor: '#1D4ED8',
@@ -130,7 +130,6 @@ export const useTicketColumns = (): ColumnDef<Tickets, any>[] => {
                         px={4}
                         rounded={'3xl'}
                         justify={'center'}
-                        placeSelf={'center'}
                         w={'fit'}
                     >
                         <Text className="capitalize" color={priority?.textColor} children={priority?.label} />
@@ -145,7 +144,7 @@ export const useTicketColumns = (): ColumnDef<Tickets, any>[] => {
         {
             accessorKey: 'responseTimeMinutes',
             header: 'Response',
-            cell: ({ row }) => <Text color={row.original.isFixLate ? '#DC2626' : '#303030'}>{'-'}</Text>
+            cell: ({ row }) => <Text color={row.original.isResponseLate ? '#DC2626' : '#303030'}>{convertMinutes(row.original.responseTimeMinutes) ?? '-'}</Text>
         }
     ]
 }

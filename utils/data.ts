@@ -88,13 +88,6 @@ export const fmSidebarLinks = [
 		icon: maintenanceIcon,
 		value: "maintenance-and-issues",
 	},
-
-	{
-		title: "Tenants",
-		href: "/facility-manager/tenants",
-		icon: tenantsIcon,
-		value: "tenants",
-	},
 	{
 		title: "Visitor Management",
 		href: "/facility-manager/visitor-management",

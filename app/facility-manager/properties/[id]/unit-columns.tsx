@@ -31,14 +31,17 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
 
     const status = [
         {
-            value: 'AVAILABLE',
-            label: 'Available',
-            bg: '#FEE9E7'
-        },
-        {
             value: 'OCCUPIED',
             label: 'Occupied',
-            bg: '#EBFFEE'
+            bg: '#EBFFEE',
+            textColor: '#047857'
+        },
+        {
+
+            value: 'AVAILABLE',
+            label: 'Vacant',
+            bg: '#FEE9E7',
+            textColor: '#C2410C'
         }
     ]
     const complaints = (row: number) => {
@@ -70,7 +73,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
             header: 'Status',
             cell: ({ row }) => {
                 const statusDeets = status.find((status) => status.value === row.original.status)
-                return <Center py={1} px={1} rounded={'full'} bg={statusDeets?.bg}>{statusDeets?.label}</Center>
+                return <Center py={1} px={1.5} color={statusDeets?.textColor} className="satoshi-bold" rounded={'full'} bg={statusDeets?.bg}>{statusDeets?.label}</Center>
             }
         },
         {

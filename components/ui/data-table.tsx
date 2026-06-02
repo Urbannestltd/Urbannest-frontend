@@ -50,6 +50,7 @@ interface DataTableProps<TData, TValue> {
     px?: any
     my?: any
     miniTable?: boolean
+    miniTableOnclick?: () => void
     bordered?: boolean
     rounded?: boolean
 
@@ -69,6 +70,7 @@ export function DataTable<TData, TValue>({
     px,
     my,
     miniTable,
+    miniTableOnclick,
     bordered,
     rounded
 }: DataTableProps<TData, TValue>) {
@@ -173,8 +175,8 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
                 {!isDataEmpty && (miniTable ?
-                    <div>
-                        <HStack className='my-3 satoshi-bold text-[#2A3348] text-sm px-4 sm:mt-6' justify='end'>View all {tableName} <LuArrowRight /></HStack>
+                    <div onClick={miniTableOnclick}>
+                        <HStack cursor={miniTableOnclick ? 'pointer' : 'default'} className='my-3 satoshi-bold text-[#2A3348] text-sm px-4 sm:mt-6' justify='end'>View all {tableName} <LuArrowRight /></HStack>
                     </div> : <div className="mt-3 px-4 sm:mt-6">
                         <Text fontSize={'14px'}>Showing 1-{currentData?.length} of {data?.length} {tableName}</Text>
                         <Paginator
