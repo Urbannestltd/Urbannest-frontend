@@ -34,19 +34,19 @@ function SignIn() {
         },
         onSuccess: (response) => {
             if (response.status === "expired") {
-                router.push(`/auth/${token}/expired`)
+                router.push(`/auth/expired?token=${encodeURIComponent(token)}`)
             }
             else if (response.status === "valid") {
                 setIsSignUp(true)
             }
             else if (response.status === "used") {
-                router.push(`/auth/${token}/expired`)
+                router.push(`/auth/expired?token=${encodeURIComponent(token)}`)
             }
 
 
         },
         onError: (_error: AxiosError<{ message: string }>) => {
-            router.push(`/auth/${token}/invalid`)
+            router.push(`/auth/invalid?token=${encodeURIComponent(token)}`)
         }
     })
 
@@ -60,7 +60,7 @@ function SignIn() {
 
 
 
-    if (token && mutate.isPending) {
+    if (token && (mutate.isIdle || mutate.isPending)) {
         return (
             <Flex align={'center'} h={'87vh'} justify={"center"}>
                 <Image src={Logo} alt="loader" />

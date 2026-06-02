@@ -106,7 +106,7 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
             startDate: start() ? start()?.toISOString() : undefined,
             endDate: formatDateToIso(data.endDate)
         }
-        console.log(payload)
+        mutation.mutate(payload)
     }
 
     return (

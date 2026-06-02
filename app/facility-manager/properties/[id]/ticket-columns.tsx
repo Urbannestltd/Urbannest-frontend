@@ -32,7 +32,7 @@ export const useTicketColumns = (): ColumnDef<Tickets, any>[] => {
             value: 'RESOLVED',
             label: 'Resolved',
             bgColor: '#CFF7D3',
-            textColor: '#02542D',
+            textColor: '#10B981',
             borderColor: '#D1FAE5'
         },
         {
@@ -98,7 +98,6 @@ export const useTicketColumns = (): ColumnDef<Tickets, any>[] => {
                     <Flex
                         alignItems={'center'}
                         fontSize={'14px'}
-                        fontWeight={'semibold'}
                         bg={status?.bgColor}
                         border={'1px solid'}
                         borderColor={status?.borderColor}
@@ -122,7 +121,6 @@ export const useTicketColumns = (): ColumnDef<Tickets, any>[] => {
                     <Flex
                         alignItems={'center'}
                         fontSize={'14px'}
-                        fontWeight={'semibold'}
                         bg={priority?.bg}
                         border={'1px solid'}
                         borderColor={priority?.borderColor}
