@@ -17,32 +17,36 @@ export const useColumns = (): ColumnDef<DashboardTickets, any>[] => {
 
     const Status = [
         {
-            value: 'OPEN',
+            value: 'PENDING',
             label: 'Open',
             bgColor: '#F5F5F5',
             textColor: '#4A4A4A',
-            borderColor: '#F4F4F4'
+            borderColor: '#F4F4F4',
+            circleColor: '#4A4A4A'
         },
         {
-            value: 'PENDING',
+            value: 'IN_PROGRESS',
             label: 'In Progress',
             bgColor: '#EFF6FF',
             textColor: '#1D4ED8',
-            borderColor: '#DBEAFE'
+            borderColor: '#DBEAFE',
+            circleColor: '#3B82F6'
         },
         {
             value: 'RESOLVED',
             label: 'Resolved',
             bgColor: '#CFF7D3',
-            textColor: '#02542D',
-            borderColor: '#D1FAE5'
+            textColor: '#047857',
+            borderColor: '#D1FAE5',
+            circleColor: '#10B981'
         },
         {
             value: 'ESCALATED',
             label: 'Escalated',
             bgColor: '#FEE2E2',
             textColor: '#991B1B',
-            borderColor: '#FECACA'
+            borderColor: '#FECACA',
+            circleColor: '#DC2626'
         }
     ]
 
