@@ -22,6 +22,7 @@ import { useColumns } from "./columns"
 import { useEffect, useState } from "react"
 import { PropertyFilterFormData } from "@/schema/fm"
 import emptyTableIcon from "@/app/assets/icons/empty-state-icons/properties-empty.svg"
+import notFoundIcon from "@/app/assets/icons/facilty-icons/not-found-icon.svg"
 import { MobileTable } from "./mobile-table"
 import { BiSlider } from "react-icons/bi"
 import { useRouter } from "next/navigation"
@@ -36,29 +37,35 @@ export default function Properties() {
     const watchedValues = watch()
 
     const [search, setSearch] = useState("")
+    const [notFound, setNotFound] = useState(false)
     const router = useRouter()
+
+    const hasActiveFilter = !!(
+        search ||
+        (watchedValues.occupancy?.[0] && watchedValues.occupancy[0] !== "all") ||
+        (watchedValues.noOfUnits?.[0] && watchedValues.noOfUnits[0] !== "all") ||
+        (watchedValues.property?.[0] && watchedValues.property[0] !== "all")
+    )
+
 
     useEffect(() => {
         fetchProperties()
     }, [])
 
-    console.log("properties", properties)
     useEffect(() => {
         const timer = setTimeout(
             () => {
                 fetchProperties({
                     search,
-                    // type: formValues.[0],
                     occupancy:
                         watchedValues.occupancy?.[0] === "all"
                             ? undefined
                             : watchedValues.occupancy?.[0],
-
                     unitRange:
                         watchedValues.noOfUnits?.[0] === "all"
                             ? undefined
                             : watchedValues.noOfUnits?.[0],
-                    //propertyId: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
+                    type: watchedValues.property?.[0] === "all" ? undefined : watchedValues.property?.[0],
                 })
             },
             search ? 100 : 0,
@@ -72,15 +79,19 @@ export default function Properties() {
         search,
     ])
 
+    useEffect(() => {
+        if (!isLoading) {
+            setNotFound(hasActiveFilter && properties.length === 0)
+        }
+    }, [isLoading, properties, hasActiveFilter])
+
     const columns = useColumns()
 
     const propertyTypes = createListCollection({
         items: [
-            { label: "All Properties", value: "all" },
-            ...(properties ?? []).map((item) => ({
-                label: item.name,
-                value: item.name,
-            })),
+            { value: "all", label: "All Types" },
+            { value: "RESIDENTIAL", label: "Residential" },
+            { value: "COMMERCIAL", label: "Commercial" },
         ],
     })
     return (
@@ -139,14 +150,14 @@ export default function Properties() {
                 ) : (
                     <>
                         <Flex align={"center"}>
-                            <Span mb={1} mr={4}>
+                            <Span w={'fit'} mb={1} mr={4}>
                                 <CustomSelect
                                     name="property"
                                     control={control}
                                     icon={!isMobile ? HiOutlineBuildingOffice2 : undefined}
                                     size={"xs"}
                                     triggerHeight="20px"
-                                    width={"fit"}
+                                    width={"full"}
                                     value={"all"}
                                     placeholder="All Types"
                                     collection={propertyTypes}
@@ -168,13 +179,13 @@ export default function Properties() {
                                             watchedValues.noOfUnits?.[0] === "all"
                                                 ? undefined
                                                 : watchedValues.noOfUnits?.[0],
-                                        //propertyId: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
+                                        type: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
                                     })
                                 }}
                                 width={"356px"}
                             />
                         </Flex>
-                        <Flex gap={2} w={"20%"} justify={"space-evenly"} align={"center"}>
+                        <Flex gap={2} w={"25%"} justify={"space-evenly"} align={"center"}>
                             <Flex w={"full"}>
                                 <CustomSelect
                                     name="occupancy"
@@ -237,10 +248,11 @@ export default function Properties() {
                     data={properties}
                     tableName="Properties Assigned"
                     emptyDetails={{
-                        icon: emptyTableIcon,
-                        title: "No Properties Assigned",
-                        description:
-                            "No properties have been assigned to your account yet. Your administrator will assign properties to you.",
+                        icon: notFound ? notFoundIcon : emptyTableIcon,
+                        title: notFound ? "No Results Found" : "No Properties Assigned",
+                        description: notFound
+                            ? "We couldn’t found a property to match your search"
+                            : "No properties have been assigned to your account yet. Your administrator will assign properties to you.",
                     }}
                 />
             )}

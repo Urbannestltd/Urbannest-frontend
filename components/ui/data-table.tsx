@@ -144,7 +144,7 @@ export function DataTable<TData, TValue>({
 
                                             <div className='flex flex-col items-center justify-center space-y-2'>
                                                 <h4 className='text-xl font-bold text-[#303030]'> {emptyDetails?.title || `No ${tableName} found`}</h4>
-                                                <p className='text-sm font-medium text-[#6A6C88]'>
+                                                <p className='text-lg w-[290px] text-wrap font-medium text-[#6A6C88]'>
                                                     {emptyDetails?.description || `No ${tableName} found`}
                                                 </p>
                                             </div>

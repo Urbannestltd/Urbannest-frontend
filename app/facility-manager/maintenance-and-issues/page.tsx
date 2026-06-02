@@ -23,6 +23,8 @@ export default function Maintenance() {
     const router = useRouter()
     const [openDrawer, setOpenDrawer] = useState(false)
     const watchedValues = watch()
+    const [notFound, setNotFound] = useState(false)
+
 
 
 
