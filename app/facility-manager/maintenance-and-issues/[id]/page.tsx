@@ -89,10 +89,8 @@ export default function TicketPage() {
     const id = params?.id as string
     const Ticket = useTicketStore((state) => state.ticket)
     const fetchTicket = useTicketStore((state) => state.fetchTicket)
-    const { control, handleSubmit, reset, formState } = useForm<{ message: string }>()
-    const [showStatus, setShowStatus] = useState(false)
+    const { reset } = useForm<{ message: string }>()
     const [updateStatus, setUpdateStatus] = useState(Ticket?.status)
-    const [showPriority, setShowPriority] = useState(false)
     const [updatePriority, setUpdatePriority] = useState(Ticket?.priority)
     const newComment = useTicketStore((state) => state.newComments)
     const setComment = useTicketStore((state) => state.setComments)
@@ -101,6 +99,7 @@ export default function TicketPage() {
     useEffect(() => {
         fetchTicket(id)
         setUpdateStatus(Ticket?.status)
+        toast.success('Ticket loaded successfully')
         setUpdatePriority(Ticket?.priority)
     }, [id])
 

@@ -25,7 +25,7 @@ function SignIn() {
     const searchParams = useSearchParams();
     const token = searchParams.get("token") || "";
 
-    const [isSignUp, setIsSignUp] = useState(false);
+    const [states, setStates] = useState<'login' | 'signup' | 'loading'>('loading');
     const router = useRouter()
 
     const mutate = useMutation({
@@ -37,7 +37,7 @@ function SignIn() {
                 router.push(`/auth/expired?token=${encodeURIComponent(token)}`)
             }
             else if (response.status === "valid") {
-                setIsSignUp(true)
+                setStates('signup')
             }
             else if (response.status === "used") {
                 router.push(`/auth/expired?token=${encodeURIComponent(token)}`)
@@ -55,18 +55,24 @@ function SignIn() {
         if (token) {
             mutate.mutate(token)
         }
+        if (!token) {
+            setStates('login')
+        }
     }, [searchParams]);
 
 
 
 
-    if (token && (mutate.isIdle || mutate.isPending)) {
+
+
+    if (token && (mutate.isIdle || mutate.isPending || states === 'loading')) {
         return (
             <Flex align={'center'} h={'87vh'} justify={"center"}>
                 <Image src={Logo} alt="loader" />
             </Flex>
         )
     }
+
 
     return (
         <Flex align={'center'} h={'87vh'} justify={"center"} p={2} >
@@ -80,18 +86,18 @@ function SignIn() {
                 bg={'transparent'}
             >
                 <Heading mt={{ base: 6 }} fontSize={{ base: "30px", md: "32px" }} mb={{ base: 4, md: 8 }} className="satoshi-bold">
-                    {isSignUp ? "Let's Get Started" : "Welcome Back"}
+                    {states === 'login' ? "Let's Get Started" : states === 'signup' ? "Welcome Back" : null}
                 </Heading>
 
-                {isSignUp ? <SignUp /> : <Login />}
+                {states === "signup" ? <SignUp /> : states === "login" && <Login />}
 
                 <Text className="satoshi-medium">
                     Already have an account?{" "}
                     <Span
-                        onClick={() => setIsSignUp(!isSignUp)}
+                        onClick={() => states === "login" && setStates("signup") || states === "signup" && setStates("login")}
                         className="text-primary-gold cursor-pointer"
                     >
-                        {isSignUp ? "Login" : "Sign Up"}
+                        {states === "login" ? "Login" : states === "signup" && "Sign Up"}
                     </Span>
                 </Text>
                 <Text w={"full"} my={{ base: 4, md: 10 }} textAlign={"center"}>

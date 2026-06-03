@@ -16,11 +16,14 @@ import Logo from '@/app/assets/urbannest-logo.png'
 import { AxiosError } from "axios";
 
 export function ResetPasswordFunc() {
-    const { control, register, watch, handleSubmit, reset, formState: { errors } } = useForm<{ password: string }>();
+    const { control, register, watch, handleSubmit, reset, formState: { errors } } = useForm<{ password: string, confirmPassword: string }>();
     const [isSucessful, setIsSucessful] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [passwordFocused, setPasswordFocused] = useState(false)
+    const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false)
     const passwordValue = watch('password') ?? ""
+    const confirmPasswordValue = watch('confirmPassword') ?? ""
 
     const passwordRequirements = [
         { label: "Minimum 8 characters", met: passwordValue.length >= 8 },
@@ -32,6 +35,7 @@ export function ResetPasswordFunc() {
     const token = searchParams.get("token") || "";
     const { ref: passwordRef, onBlur: passwordOnBlur, ...passwordRegister } = register('password')
 
+    const { ref: confirmPasswordRef, onBlur: confirmPasswordOnBlur, ...confirmPasswordRegister } = register('confirmPassword')
 
 
     const mutate = useMutation({
@@ -48,16 +52,16 @@ export function ResetPasswordFunc() {
     })
 
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: { password: string, confirmPassword: string }) => {
         const payload: ResetPasswordPayload = {
             token: token,
-            newPassword: data.password
+            newPassword: data.confirmPassword
         }
         mutate.mutate(payload)
     };
     return (
         <>
-            <Flex justify={{ base: 'center', md: 'space-between' }} p={3} h={'88%'}>
+            <Flex justify={{ base: 'center', md: 'start' }} p={3} w={'full'} h={'88%'}>
                 <Flex h={'full'} direction={'column'} justify={'center'} align={'center'} className="w-full md:w-[50%]">
                     {isSucessful ? <Box w={{ base: 'full', md: "468px" }}>
                         <Center placeSelf={'center'} my={8} className="bg-[#EBFFEE] rounded-full size-[82px]">
@@ -97,9 +101,13 @@ export function ResetPasswordFunc() {
                                         }
                                     >
                                         <Input
-                                            {...register("password")}
+                                            {...passwordRegister}
+                                            ref={passwordRef}
                                             type={showPassword ? "text" : "password"}
                                             placeholder="New Password"
+                                            onFocus={() => setPasswordFocused(true)}
+                                            onBlur={(e) => { setPasswordFocused(false); passwordOnBlur(e) }}
+
                                         />
                                     </InputGroup>
                                     {passwordFocused && (
@@ -132,23 +140,26 @@ export function ResetPasswordFunc() {
                                             showPassword ? (
                                                 <LuEye
                                                     color="#B3B3B3"
-                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                 />
                                             ) : (
                                                 <LuEyeOff
-                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                     color="#B3B3B3"
                                                 />
                                             )
                                         }
                                     >
                                         <Input
-                                            {...register("password")}
-                                            type={showPassword ? "text" : "password"}
+                                            {...confirmPasswordRegister}
+                                            ref={confirmPasswordRef}
+                                            type={showConfirmPassword ? "text" : "password"}
                                             placeholder="Confirm New Password"
+                                            onFocus={() => setConfirmPasswordFocused(true)}
+                                            onBlur={(e) => { setConfirmPasswordFocused(false); confirmPasswordOnBlur(e) }}
                                         />
                                     </InputGroup>
-                                    {passwordFocused && (
+                                    {confirmPasswordFocused && (
                                         <Box mt={2} w="full">
                                             {passwordRequirements.map((req) => (
                                                 <Flex key={req.label} align="center" gap={2} mb={1}>
@@ -164,7 +175,7 @@ export function ResetPasswordFunc() {
                                             ))}
                                         </Box>
                                     )}
-                                    <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
+                                    <Field.ErrorText>{errors.confirmPassword?.message}</Field.ErrorText>
                                 </Field.Root>
 
                                 <Button
@@ -191,7 +202,7 @@ export function ResetPasswordFunc() {
 
 export default function ResetPassword() {
     return (
-        <Flex align={'center'} justify={"center"} p={2}>
+        <Flex align={'center'} justify={"center"} h={'88%'} p={2}>
             <Suspense fallback={
                 <Flex
                     direction={"column"}
