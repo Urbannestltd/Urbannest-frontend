@@ -93,12 +93,14 @@ export default function TicketPage() {
     const [updateStatus, setUpdateStatus] = useState(Ticket?.status)
     const [updatePriority, setUpdatePriority] = useState(Ticket?.priority)
     const newComment = useTicketStore((state) => state.newComments)
+    const fetchMessages = useTicketStore((state) => state.fetchMessages)
     const setComment = useTicketStore((state) => state.setComments)
     const user = useAuthStore((state) => state.user)
 
     useEffect(() => {
         fetchTicket(id)
         setUpdateStatus(Ticket?.status)
+        fetchMessages(id)
         toast.success('Ticket loaded successfully')
         setUpdatePriority(Ticket?.priority)
     }, [id])
