@@ -25,27 +25,35 @@ export const useColumns = (): ColumnDef<MaintenaceResponse, unknown>[] => {
     const Status = [
         {
             value: 'PENDING',
-            label: 'Pending',
-            bgColor: '#FFF1C2',
-            textColor: '#975102'
+            label: 'Open',
+            bgColor: '#F5F5F5',
+            textColor: '#4A4A4A',
+            borderColor: '#F4F4F4',
+            circleColor: '#4A4A4A'
         },
         {
             value: 'IN_PROGRESS',
             label: 'In Progress',
-            bgColor: '#D8E9F9',
-            textColor: '#1976D2'
+            bgColor: '#EFF6FF',
+            textColor: '#1D4ED8',
+            borderColor: '#DBEAFE',
+            circleColor: '#3B82F6'
         },
         {
             value: 'RESOLVED',
-            label: 'Fixed',
-            bgColor: '#CFF7D3',
-            textColor: '#02542D'
+            label: 'Resolved',
+            bgColor: '#ECFDF5',
+            textColor: '#047857',
+            borderColor: '#D1FAE5',
+            circleColor: '#10B981'
         },
         {
-            value: 'WORK_SCHEDULED',
-            label: 'Work Scheduled',
-            bgColor: '#E6E6E6',
-            textColor: '#757575'
+            value: 'ESCALATED',
+            label: 'Escalated',
+            bgColor: '#FEE2E2',
+            textColor: '#991B1B',
+            borderColor: '#FECACA',
+            circleColor: '#DC2626'
         }
     ]
 

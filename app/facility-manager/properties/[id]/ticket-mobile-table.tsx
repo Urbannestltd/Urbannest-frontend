@@ -31,7 +31,7 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
         {
             value: 'RESOLVED',
             label: 'Resolved',
-            bgColor: '#CFF7D3',
+            bgColor: '#ECFDF5',
             textColor: '#047857',
             borderColor: '#D1FAE5',
             circleColor: '#10B981'

@@ -65,7 +65,7 @@ function SignIn() {
 
 
 
-    if (token && (mutate.isIdle || mutate.isPending || states === 'loading')) {
+    if (token || states === 'loading' && (mutate.isIdle || mutate.isPending)) {
         return (
             <Flex align={'center'} h={'87vh'} justify={"center"}>
                 <Image src={Logo} alt="loader" />
@@ -91,7 +91,7 @@ function SignIn() {
 
                 {states === "signup" ? <SignUp /> : states === "login" && <Login />}
 
-                <Text className="satoshi-medium">
+                {states !== 'loading' && <><Text className="satoshi-medium">
                     Already have an account?{" "}
                     <Span
                         onClick={() => states === "login" && setStates("signup") || states === "signup" && setStates("login")}
@@ -100,11 +100,11 @@ function SignIn() {
                         {states === "login" ? "Login" : states === "signup" && "Sign Up"}
                     </Span>
                 </Text>
-                <Text w={"full"} my={{ base: 4, md: 10 }} textAlign={"center"}>
-                    By clicking “continue” you agree to our{" "}
-                    <Span className="text-primary-gold">terms of service</Span> and{" "}
-                    <Span className="text-primary-gold">privacy policy</Span>
-                </Text>
+                    <Text w={"full"} my={{ base: 4, md: 10 }} textAlign={"center"}>
+                        By clicking “continue” you agree to our{" "}
+                        <Span className="text-primary-gold">terms of service</Span> and{" "}
+                        <Span className="text-primary-gold">privacy policy</Span>
+                    </Text></>}
             </Flex>
         </Flex>
     )

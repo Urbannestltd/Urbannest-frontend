@@ -73,20 +73,20 @@ export const TicketActivity = ({ id }: { id: string }) => {
     return (
         <SectionBox bg={"#FFFFFF"} mt={8} pt={0} px={0}>
             <Tabs.Root defaultValue={'activity'}>
-                <Tabs.List alignContent={'center'} borderBottom={'1px solid #A9B4B91A'}>
+                <Tabs.List alignContent={'center'} color={''} borderBottom={'1px solid #A9B4B91A'}>
                     <Tabs.Trigger px={'32px'} py={'30px'} _selected={{ fontWeight: 700 }} className="satoshi-bold" value={'activity'}>Ticket Chat</Tabs.Trigger>
                     <Tabs.Trigger px={'32px'} py={'30px'} _selected={{ fontWeight: 700 }} className="satoshi-bold" value={'comments'}>Expense Logging</Tabs.Trigger>
                     <Tabs.Trigger px={'32px'} py={'30px'} _selected={{ fontWeight: 700 }} className="satoshi-bold" value={'timeline'}>Budget Approval Status</Tabs.Trigger>
                 </Tabs.List>
                 <Tabs.Content value={'activity'}>
                     <SectionBox rounded={"none"} border={"none"}>
-                        <Timeline.Root variant={"subtle"}>
+                        <Timeline.Root size={'xl'} variant={"subtle"}>
                             {messages.map((message) => {
                                 if (message.isSystemMessage) return <Timeline.Item w={"full"} >
-                                    <Timeline.Connector>
+                                    <Timeline.Connector justifyItems={'center'}>
                                         <Timeline.Separator border={"1px solid #F4F4F4"} />
                                         <Timeline.Indicator bg={"#F5F5F5"}>
-                                            <RiFileList3Line />
+                                            <RiFileList3Line size={14} />
                                         </Timeline.Indicator>
                                     </Timeline.Connector>
                                     <Timeline.Content w={"full"}>
@@ -95,7 +95,7 @@ export const TicketActivity = ({ id }: { id: string }) => {
                                                 <Timeline.Title className="satoshi-bold">
                                                     <HighlightText text={message.senderName} />
                                                 </Timeline.Title>
-                                                <Timeline.Description>
+                                                <Timeline.Description fontSize={'14px'}>
                                                     <HighlightText text={message.message} />
                                                 </Timeline.Description>
                                             </Box>
@@ -109,8 +109,8 @@ export const TicketActivity = ({ id }: { id: string }) => {
                                 if (message.senderName === "System Admin") return <Timeline.Item w={"full"}>
                                     <Timeline.Connector>
                                         <Timeline.Separator border={"1px solid #F4F4F4"} />
-                                        <Timeline.Indicator bg={"#F5F5F5"}>
-                                            <RiLock2Fill color="#D97706" />
+                                        <Timeline.Indicator bg={"#FFFBEB"}>
+                                            <RiLock2Fill size={14} color="#D97706" />
                                         </Timeline.Indicator>
                                     </Timeline.Connector>
                                     <Timeline.Content w={"full"}>
@@ -119,7 +119,7 @@ export const TicketActivity = ({ id }: { id: string }) => {
                                                 <Timeline.Title color={'#78350F'} className="satoshi-bold">
                                                     Internal Note
                                                 </Timeline.Title>
-                                                <Timeline.Description color={'#92400E'} className="satoshi-variable-italic">
+                                                <Timeline.Description mt={0.5} fontSize={'14px'} color={'#92400E'} className="satoshi-variable-italic">
                                                     "{message.message}"
                                                 </Timeline.Description>
                                             </Box>
@@ -135,134 +135,40 @@ export const TicketActivity = ({ id }: { id: string }) => {
                                         <Timeline.Connector>
                                             <Timeline.Separator border={"1px solid #F4F4F4"} />
                                             <Timeline.Indicator>
-                                                <Avatar size={'md'} rounded={'4px'} name={message.senderName} />
+                                                <Avatar size={'sm'} rounded={'4px'} name={message.senderName} />
                                             </Timeline.Indicator>
                                         </Timeline.Connector>
                                         <Timeline.Content>
                                             <Flex w={"full"} justify={"space-between"}>
-                                                <Box>
-                                                    <Timeline.Title className="satoshi-bold">
-                                                        <HighlightText text={message.senderName} />
-                                                    </Timeline.Title>
-                                                    <Timeline.Description>
-                                                        <HighlightText text={message.message} />
-                                                    </Timeline.Description>
-                                                </Box>
+                                                <Timeline.Title className="satoshi-bold">
+                                                    <HighlightText text={message.senderName} />
+                                                </Timeline.Title>
                                                 <Text fontSize={"xs"} textStyle="xs">
                                                     {formatDate(message.timestamp)} • {formatDatetoTime(message.timestamp)}
                                                 </Text>
                                             </Flex>
+                                            <Timeline.Description roundedBottom={'8px'} fontSize={'14px'} roundedTopRight={'8px'} p={4} bg={'#F0F4F7'}>
+                                                <HighlightText text={message.message} />
+                                            </Timeline.Description>
                                         </Timeline.Content>
                                     </Timeline.Item>
                                 )
                             })}
-                            {/*Ticket?.timeline.map((timeline) => {
-                                return (<Timeline.Item w={"full"} >
-                                    <Timeline.Connector>
-                                        <Timeline.Separator border={"1px solid #F4F4F4"} />
-                                        <Timeline.Indicator bg={"#F5F5F5"}>
-                                            <RiFileList3Line />
-                                        </Timeline.Indicator>
-                                    </Timeline.Connector>
-                                    <Timeline.Content w={"full"}>
-                                        <Flex w={"full"} justify={"space-between"}>
-                                            <Box>
-                                                <Timeline.Title className="satoshi-bold">
-                                                    <HighlightText text={timeline.event} />
-                                                </Timeline.Title>
-                                                <Timeline.Description>
-                                                    <HighlightText text={timeline.event} />
-                                                </Timeline.Description>
-                                            </Box>
-                                            <Text fontSize={"xs"} textStyle="xs">
-                                                {formatDate(timeline.timestamp)} • {formatDatetoTime(timeline.timestamp)}
-                                            </Text>
-                                        </Flex>
-                                    </Timeline.Content>
-                                </Timeline.Item>)
-                            })*/}
-                            {Ticket?.activity.map((activity) => {
-                                if (!activity.isSystemMessage) {
-                                    return (
-                                        <></>
-                                        /*  <Timeline.Item>
-                                              <Timeline.Connector>
-                                                  <Timeline.Separator border={"1px solid #F4F4F4"} />
-                                                  <Timeline.Indicator bg={"#F5F5F5"}>
-                                                      <BsChatLeftFill />
-                                                  </Timeline.Indicator>
-                                              </Timeline.Connector>
-                                              <Timeline.Content>
-                                                  <SectionFlex justify={"space-between"} p={2} bg={"#F5F5F5"}>
-                                                      <Box>
-                                                          <Timeline.Title className="satoshi-bold" textStyle="sm">
-                                                              First Response{" "}
-                                                          </Timeline.Title>
-                                                          <Timeline.Description fontSize={"13px"} w={"70%"}>
-                                                              "{activity.message}"
-                                                          </Timeline.Description>
-                                                          <Flex
-                                                              fontSize={"2xs"}
-                                                              mt={2}
-                                                              className="satoshi-bold uppercase"
-                                                              color={"#2A3348"}
-                                                              letterSpacing={"0.5px"}
-                                                              align={"center"}
-                                                          >
-                                                              <AiFillThunderbolt />
-                                                              Response time: {activity.timestamp}
-                                                          </Flex>
-                                                      </Box>
-                                                      <Text fontSize={"xs"} textStyle="xs">
-                                                          {formatDate(activity.timestamp)} • {formatDatetoTime(activity.timestamp)}
-                                                      </Text>
-                                                  </SectionFlex>
-                                              </Timeline.Content>
-                                          </Timeline.Item>)*/
 
-                                    )
-                                }
-                                return
-                                /* <Timeline.Item w={"full"}>
-                        <Timeline.Connector>
-                            <Timeline.Separator border={"1px solid #F4F4F4"} />
-                            <Timeline.Indicator bg={"#F5F5F5"}>
-                                <RiFileList3Line />
-                            </Timeline.Indicator>
-                        </Timeline.Connector>
-                        <Timeline.Content w={"full"}>
-                            <Flex w={"full"} justify={"space-between"}>
-                                <Box>
-                                    <Timeline.Title className="satoshi-bold">
-                                        {activity.senderName}
-                                    </Timeline.Title>
-                                    <Timeline.Description>
-                                        {activity.message}
-                                    </Timeline.Description>
-                                </Box>
-                                <Text fontSize={"xs"} textStyle="xs">
-                                    {activity.timestamp}
-                                </Text>
-                            </Flex>
-                        </Timeline.Content>
-                    </Timeline.Item>
-                    */
-
-                            })}
                             {newComment.length > 0 && newComment.map((newComments) => <Timeline.Item>
                                 <Timeline.Connector>
                                     <Timeline.Separator border={"1px solid #F4F4F4"} />
                                     <Timeline.Indicator>
-                                        <Avatar rounded={'4px'} name={newComments.senderName} />
+                                        <Avatar size={'sm'} rounded={'4px'} name={newComments.senderName} />
                                     </Timeline.Indicator>
                                 </Timeline.Connector>
-                                <Timeline.Content>
+                                <Timeline.Content pl={2}>
                                     <Flex w={"full"} justify={"space-between"}>
                                         <Box>
                                             <Timeline.Title className="satoshi-bold">
                                                 <HighlightText text={newComments.senderName} />
                                             </Timeline.Title>
-                                            <Timeline.Description>
+                                            <Timeline.Description fontSize={'14px'} >
                                                 <HighlightText text={newComments.message} />
                                             </Timeline.Description>
                                         </Box>
@@ -286,7 +192,15 @@ export const TicketActivity = ({ id }: { id: string }) => {
                         control={control}
                         name="message"
                         borderColor="#F4F4F4"
-                        placeholder="Write a message to the facility manager..."
+                        placeholder="Write a message..."
+                        textareaProps={{
+                            onKeyDown: (e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault()
+                                    handleSubmit(onSubmitMessage)()
+                                }
+                            }
+                        }}
                     />
                     <HStack mt={8} justify={"space-between"}>
                         <Flex gap={4}>

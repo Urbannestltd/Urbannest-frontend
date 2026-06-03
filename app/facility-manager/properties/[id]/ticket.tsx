@@ -383,7 +383,7 @@ export function HighlightText({ text, search = Status.map((status) => status.val
     const parts = text.split(regex);
 
     return (
-        <>
+        <Flex gap={1} align={'center'}>
             {parts.map((part, index) => {
                 const match = search.find(
                     word => word.toLowerCase() === part.toLowerCase()
@@ -421,6 +421,6 @@ export function HighlightText({ text, search = Status.map((status) => status.val
 
                 return part
             })}
-        </>
+        </Flex>
     );
 }

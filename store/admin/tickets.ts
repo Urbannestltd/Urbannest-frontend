@@ -109,7 +109,7 @@ interface TicketsStore {
 		message: string
 		senderName: string
 		id: string
-	} | null
+	}[]
 	fetchAllTickets: (filter?: filter) => Promise<void>
 	fetchTicketPerProperty: (id: string, search?: string) => Promise<void>
 	fetchTicket: (id: string) => Promise<void>
@@ -131,7 +131,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 	ticketsPerProperty: [],
 	ticket: null,
 	globalBudget: null,
-	newComments: null,
+	newComments: [],
 	isLoading: false,
 	isLoadingTicket: false,
 	isLoadingPropertyTickets: false,
@@ -164,7 +164,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		set({
 			ticket: response.data.data,
 			isLoadingTicket: false,
-			newComments: null,
+			newComments: [],
 		})
 	},
 	fetchMetrics: async () => {
@@ -177,6 +177,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		const property = await http.get(adminEndpoints.createBudget)
 		set({ globalBudget: property.data.data, loadingBudget: false })
 	},
-	setComments: (comment) => set({ newComments: comment }),
+	setComments: (comment) =>
+		set((state) => ({ newComments: [...state.newComments, comment] })),
 	clearTickets: () => set({ tickets: [] }),
 }))
