@@ -8,17 +8,20 @@ import { useForm } from "react-hook-form"
 import { LuCalendar, LuDownload } from "react-icons/lu"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { getDateRange } from "@/services/date"
+import { convertMinutes, getDateRange } from "@/services/date"
 import { MdOutlineFilterListOff } from "react-icons/md"
 import { useTicketColumns } from "../properties/[id]/ticket-columns"
 import { useTicketStore } from "@/store/fm/ticket"
 import emptyTicketIcon from '@/app/assets/icons/facilty-icons/ticket-empty.svg'
+import { CardData, DashboardCard } from "@/components/ui/card"
 
 export default function Maintenance() {
     const { control, watch, getValues, reset } = useForm<searchMaintenanceFormData>()
     const columns = useTicketColumns()
     const tickets = useTicketStore(state => state.tickets)
+    const metrics = useTicketStore(state => state.metrics)
     const fetchAllTickets = useTicketStore(state => state.fetchAllTickets)
+    const fetchMetrics = useTicketStore(state => state.fetchMetrics)
     const isLoading = useTicketStore(state => state.isLoading)
     const router = useRouter()
     const [openDrawer, setOpenDrawer] = useState(false)
@@ -26,6 +29,9 @@ export default function Maintenance() {
     const [notFound, setNotFound] = useState(false)
 
 
+    useEffect(() => {
+        fetchMetrics()
+    }, [])
 
 
     useEffect(() => {
@@ -40,11 +46,10 @@ export default function Maintenance() {
         })
     }, [watchedValues.status, watchedValues.dateRange, watchedValues.priority, watchedValues.issue, watchedValues.property])
 
-    /*const cardData: CardData[] = [
+    const cardData: CardData[] = [
         {
             title: "Avg. Response Time",
-            data: convertMinutes(metrics?.avgResponseTimeMinutes ?? 0),
-            percentage: '14%',
+            data: convertMinutes(metrics?.avgResponseMinutes ?? 0),
         },
         {
             title: 'High Priority Open',
@@ -53,22 +58,18 @@ export default function Maintenance() {
         },
         {
             title: 'Weekly Completion',
-            data: metrics?.weeklyCompletionPercent ?? 0,
+            data: metrics?.weeklyResolutionRate ?? 0,
             tinyText: 'Target 95%'
         },
-        {
-            title: 'Maintenance Cost (MTD)',
-            data: formatNumber(metrics?.maintenanceCostEstimate),
-            tinyText: 'Est.'
-        }
-    ] */
+
+    ]
 
 
     return (
         <div>
             <PageTitle mb={6} title="Maintenance & Issues" />
-            {//<DashboardCard data={cardData} />
-            }
+            <DashboardCard data={cardData} />
+
             <form>
                 <HStack mt={9} align={'center'} justify={'space-between'} >
                     <Flex w={'70%'} gap={5}>

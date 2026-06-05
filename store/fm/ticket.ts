@@ -64,12 +64,9 @@ interface Ticket {
 }
 
 interface metrics {
+	weeklyResolutionRate: number
 	highPriorityOpenCount: number
-	avgResponseTimeMinutes: number
-	weeklyCompletionPercent: number
-	weeklyTicketsTotal: number
-	weeklyTicketsCompleted: number
-	maintenanceCostEstimate: number
+	avgResponseMinutes: number
 }
 
 interface filter {
@@ -95,7 +92,7 @@ interface message {
 }
 
 interface TicketsStore {
-	//metrics: metrics | null
+	metrics: metrics | null
 	tickets: Tickets[]
 	messages: message[]
 	/*globalBudget: {
@@ -123,7 +120,7 @@ interface TicketsStore {
 	fetchTicketPerProperty: (id: string, filter?: filter) => Promise<void>
 	fetchTicket: (id: string) => Promise<void>
 	fetchMessages: (id: string) => Promise<void>
-	//fetchMetrics: () => Promise<void>
+	fetchMetrics: () => Promise<void>
 	setComments: (comments: {
 		isSystemMessage: boolean
 		timestamp: string
@@ -136,7 +133,7 @@ interface TicketsStore {
 }
 
 export const useTicketStore = create<TicketsStore>((set) => ({
-	//metrics: null,
+	metrics: null,
 	messages: [],
 	tickets: [],
 	ticketsPerProperty: [],
@@ -219,12 +216,12 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 			set({ isLoadingMessages: false })
 		}
 	},
-	/*fetchMetrics: async () => {
+	fetchMetrics: async () => {
 		set({ isLoading: true })
-		const response = await http.get(adminEndpoints.fetchTicketMetrics)
+		const response = await http.get(FmEndpoints.fetchTicketMetrics)
 		set({ metrics: response.data.data, isLoading: false })
 	},
-	fetchBudget: async () => {
+	/*fetchBudget: async () => {
 		set({ loadingBudget: true })
 		const property = await http.get(adminEndpoints.createBudget)
 		set({ globalBudget: property.data.data, loadingBudget: false })

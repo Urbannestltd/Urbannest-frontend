@@ -196,7 +196,7 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
                 <SectionBox mt={6}>
                     <PageTitle title={'Visitor History'} fontSize={'16px'} />
                     <HStack>
-                        {MaintenanceFilter.map((item) => (
+                        {/*MaintenanceFilter.map((item) => (
                             <Button
                                 key={item.value}
                                 onClick={() => setMaintenanceFilter(item.value)}
@@ -211,7 +211,7 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
                             >
                                 {item.label}
                             </Button>
-                        ))}
+                        ))*/}
                     </HStack>
                     <Box mt={6}>
                         {

@@ -147,6 +147,7 @@ const FmEndpoints = {
 
 	//Tickets
 	fetchAllTickets: `/facility-manager/tickets`,
+	fetchTicketMetrics: `/facility-manager/tickets/stats`,
 	fetchTicketsPerProperty: (id: string) =>
 		`/facility-manager/tickets/property/${id}`,
 	fetchTicket: (id: string) => `/facility-manager/tickets/${id}`,

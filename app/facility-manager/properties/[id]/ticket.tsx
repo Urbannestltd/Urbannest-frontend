@@ -104,6 +104,11 @@ export const TicketPage = ({ id }: { id: string }) => {
         setUpdatePriority(Ticket?.priority)
     }, [id])
 
+    useEffect(() => {
+        if (Ticket?.status) setUpdateStatus(Ticket.status)
+        if (Ticket?.priority) setUpdatePriority(Ticket.priority)
+    }, [Ticket?.status, Ticket?.priority])
+
     const Info = [
         {
             label: "Property & Unit",

@@ -99,11 +99,13 @@ export default function TicketPage() {
 
     useEffect(() => {
         fetchTicket(id)
-        setUpdateStatus(Ticket?.status)
         fetchMessages(id)
-        toast.success('Ticket loaded successfully')
-        setUpdatePriority(Ticket?.priority)
     }, [id])
+
+    useEffect(() => {
+        if (Ticket?.status) setUpdateStatus(Ticket.status)
+        if (Ticket?.priority) setUpdatePriority(Ticket.priority)
+    }, [Ticket?.status, Ticket?.priority])
 
     const Info = [
         {
@@ -373,7 +375,7 @@ export default function TicketPage() {
                                     h={'fit'}
                                     onClick={() => handleUpdatePriority(priority.value)}
                                 >
-                                    {priority?.value === updatePriority && <Circle size={'5px'} bg={priority?.textColor} mr={1} />}
+                                    {priority?.value === updatePriority && <Circle size={'5px'} bg={priority?.textColor} mr={0} />}
                                     <Text className="capitalize" color={priority?.textColor} children={priority?.label} />
                                 </Button>
                             ))}

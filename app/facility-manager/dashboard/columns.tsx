@@ -1,4 +1,3 @@
-import { DummyVisitor, PropertyTicket, userData } from "@/utils/model"
 import { Box, Flex, HStack, Image, Stack, Text } from "@chakra-ui/react"
 import { ColumnDef } from "@tanstack/react-table"
 
@@ -146,7 +145,7 @@ export const useVisitorColumns = (): ColumnDef<DashboardVisitor, any>[] => {
         },
         {
             value: 'ONE_OFF',
-            label: 'ONE_OFF',
+            label: 'One Off',
             bgColor: '#FFFFFF',
             borderColor: '#E0E0E0',
             textColor: '#4A4A4A'
@@ -168,10 +167,10 @@ export const useVisitorColumns = (): ColumnDef<DashboardVisitor, any>[] => {
     ]
     return [
         {
-            accessorFn: (row) => row.type + ' (' + row.visitorName + ')',
+            accessorFn: (row) => row.accessType + ' (' + row.visitorName + ')',
             header: "Visitor Name",
             cell: ({ row }) => {
-                const isAgent = row.original.type === 'ONE_OFF_AGENT'
+                const isAgent = row.original.accessType === 'ONE_OFF_AGENT'
                 return (<Box>
                     <Text className="satoshi-bold">{row.original.visitorName}</Text>
                     {isAgent && <Text fontWeight={'normal'} className="text-[13.3px]" color={'#757575'}>Agent</Text>}
@@ -190,10 +189,10 @@ export const useVisitorColumns = (): ColumnDef<DashboardVisitor, any>[] => {
             cell: ({ row }) => <Text color={'#4A4A4A'}>{formatDatetoTime(row.original.checkedInAt)}</Text>
         },
         {
-            accessorKey: 'type',
+            accessorKey: 'accessType',
             header: "Access Type",
             cell: ({ row }) => {
-                const type = Type.find((type) => type.value === row.original.type)
+                const type = Type.find((type) => type.value === row.original.accessType)
                 return (
                     <Flex
                         alignItems={'center'}

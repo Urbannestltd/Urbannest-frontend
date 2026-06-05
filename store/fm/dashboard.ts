@@ -13,7 +13,7 @@ export interface DashboardVisitor {
 	checkedInAt: string
 	status: string
 	isWalkIn: boolean
-	type: string
+	accessType: string
 	validUntil: string
 	validFrom: string
 	tenantName: string
