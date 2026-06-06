@@ -20,5 +20,12 @@ export const ticketFilterSchema = z.object({
     priority: selectArrayField("Priority is required"),
 })
 
+export const addExpenseSchema = z.object({
+    date: inputField("Date is required"),
+    amount: number("Amount is required"),
+    description: inputField("Description is required"),
+})
+
 export type PropertyFilterFormData = z.infer<typeof propertyFilterSchema>
 export type TicketFilterFormData = z.infer<typeof ticketFilterSchema>
+export type AddExpenseFormData = z.infer<typeof addExpenseSchema>

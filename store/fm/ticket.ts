@@ -1,3 +1,4 @@
+import { ExpenseLog } from "@/app/facility-manager/properties/[id]/ticket-activity/columns"
 import { FmEndpoints } from "@/services/endpoint"
 import http from "@/services/https"
 import { create } from "zustand"
@@ -80,7 +81,7 @@ interface filter {
 	dateTo?: string
 }
 
-interface message {
+export interface message {
 	isSystemMessage: true
 	readAt: string
 	timestamp: string
@@ -95,20 +96,26 @@ interface TicketsStore {
 	metrics: metrics | null
 	tickets: Tickets[]
 	messages: message[]
-	/*globalBudget: {
-		defaultMaintenanceBudget: number
-	} | null */
+	globalBudget: {
+		rebuttalNote: string
+		approvalStatus: string
+		quotedCost: number
+		budget: number
+	} | null
+	expense: ExpenseLog[]
 	ticketsPerProperty: Tickets[]
 	ticket: Ticket | null
 	isLoading: boolean
 	isLoadingTicket: boolean
 	isLoadingPropertyTickets: boolean
 	isLoadingMessages: boolean
+	isLoadingExpense: boolean
 	errorLoadingPropertyTickets: boolean
 	errorLoadingTickets: boolean
 	errorLoadingTicket: boolean
 	errorLoadingMessages: boolean
-	//loadingBudget: boolean
+	errorLoadingExpense: boolean
+	loadingBudget: boolean
 	newComments: {
 		isSystemMessage: boolean
 		timestamp: string
@@ -128,7 +135,8 @@ interface TicketsStore {
 		senderName: string
 		id: string
 	}) => void
-	//fetchBudget: () => Promise<void>
+	fetchBudget: (id: string) => Promise<void>
+	fetchExpenses: (id: string) => Promise<void>
 	clearTickets: () => void
 }
 
@@ -138,17 +146,20 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 	tickets: [],
 	ticketsPerProperty: [],
 	ticket: null,
-	//globalBudget: null,
+	globalBudget: null,
 	newComments: [],
 	isLoading: false,
 	isLoadingPropertyTickets: false,
 	isLoadingTicket: false,
 	isLoadingMessages: false,
+	isLoadingExpense: false,
 	errorLoadingPropertyTickets: false,
 	errorLoadingTickets: false,
 	errorLoadingTicket: false,
 	errorLoadingMessages: false,
-	//loadingBudget: false,
+	errorLoadingExpense: false,
+	loadingBudget: false,
+	expense: [],
 	fetchAllTickets: async (filter) => {
 		try {
 			set({ isLoading: true, errorLoadingTickets: false })
@@ -221,11 +232,26 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		const response = await http.get(FmEndpoints.fetchTicketMetrics)
 		set({ metrics: response.data.data, isLoading: false })
 	},
-	/*fetchBudget: async () => {
+	fetchBudget: async (id) => {
 		set({ loadingBudget: true })
-		const property = await http.get(adminEndpoints.createBudget)
+		const property = await http.get(FmEndpoints.fetchBudget(id))
 		set({ globalBudget: property.data.data, loadingBudget: false })
-	},,*/
+	},
+	fetchExpenses: async (id) => {
+		try {
+			set({ isLoadingExpense: true, errorLoadingExpense: false })
+			const response = await http.get(FmEndpoints.getExpenses(id))
+			console.log("expenses", response.data.data)
+			set({
+				expense: response.data.data,
+			})
+		} catch (e) {
+			set({ expense: [], errorLoadingExpense: true })
+			console.error("❌ Failed to fetch expenses", e)
+		} finally {
+			set({ isLoadingExpense: false })
+		}
+	},
 	setComments: (comment) =>
 		set((state) => ({ newComments: [...state.newComments, comment] })),
 	clearTickets: () => set({ tickets: [] }),

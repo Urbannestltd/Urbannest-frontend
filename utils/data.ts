@@ -16,6 +16,7 @@ import {
 	PropertyTicket,
 	userData,
 } from "./model"
+import { ExpenseLog } from "@/app/facility-manager/properties/[id]/ticket-activity/columns"
 
 export const sidebarLinks = [
 	{
@@ -499,5 +500,60 @@ export const TickettData: PropertyTicket[] = [
 		facilityManager: "Mark Stevens",
 		id: "grandview-002",
 		response: "1h 10m",
+	},
+]
+
+export const expense: ExpenseLog[] = [
+	{
+		maintenanceRequestId: "grandview-001",
+		status: "LOGGED",
+		propertyId: "grandview",
+		unitId: "402B",
+		description: "Water is leaking",
+		date: "12-11-23",
+		category: "PARTS",
+		updatedAt: "12-11-23",
+		createdAt: "12-11-23",
+		amount: 5000,
+		id: "grandview-001",
+	},
+	{
+		maintenanceRequestId: "grandview-002",
+		status: "FLAGGED",
+		propertyId: "grandview",
+		unitId: "102",
+		description: "Water is leaking",
+		date: "12-11-23",
+		category: "LABOR",
+		updatedAt: "12-11-23",
+		createdAt: "12-11-23",
+		amount: 5000,
+		id: "grandview-002",
+	},
+	{
+		maintenanceRequestId: "grandview-003",
+		status: "REJECTED",
+		propertyId: "grandview",
+		unitId: "402B",
+		description: "Water is leaking",
+		date: "12-11-23",
+		category: "PARTS",
+		updatedAt: "12-11-23",
+		createdAt: "12-11-23",
+		amount: 5000,
+		id: "grandview-003",
+	},
+	{
+		maintenanceRequestId: "grandview-004",
+		status: "REBUTTED",
+		propertyId: "grandview",
+		unitId: "402B",
+		description: "Water is leaking",
+		date: "12-11-23",
+		category: "SUPPLIES",
+		updatedAt: "12-11-23",
+		createdAt: "12-11-23",
+		amount: 5000,
+		id: "grandview-004",
 	},
 ]

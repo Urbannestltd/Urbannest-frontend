@@ -26,6 +26,16 @@ export interface filter {
 	dateTo?: string
 }
 
+export interface addExpensePayload {
+	data: {
+		date: string
+		description: string
+		category: string
+		amount: number
+	}
+	id: string
+}
+
 export const updateTicketStatus = async (
 	payload: updateTicketStatusPayload,
 ) => {
@@ -52,4 +62,9 @@ export const sendComment = async (payload: sendCommentPayload) => {
 		payload.data,
 	)
 	return response.data
+}
+
+export const addExpense = async (payload: addExpensePayload) => {
+	const response = await http.post(FmEndpoints.getExpenses(payload.id), payload)
+	return response.data.data
 }

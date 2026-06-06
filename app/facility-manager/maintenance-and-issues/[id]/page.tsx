@@ -10,8 +10,10 @@ import {
     Center,
     Circle,
     Flex,
+    Grid,
     HStack,
     Image,
+    Skeleton,
     Text,
     Timeline,
 } from "@chakra-ui/react"
@@ -45,7 +47,7 @@ import { useTicketStore } from "@/store/fm/ticket"
 import { sendComment, sendCommentPayload, updateTicketPriority, updateTicketPriorityPayload, updateTicketStatus, updateTicketStatusPayload } from "@/services/fm/ticket"
 import { BsChatLeftFill } from "react-icons/bs"
 import { AiFillThunderbolt } from "react-icons/ai"
-import { TicketActivity } from "../../properties/[id]/ticket-activity"
+import { TicketActivity } from "../../properties/[id]/ticket-activity/ticket-activity"
 
 const Status = [
     {
@@ -87,40 +89,44 @@ const Priority = [
 export default function TicketPage() {
     const params = useParams()
     const id = params?.id as string
-    const Ticket = useTicketStore((state) => state.ticket)
-    const fetchTicket = useTicketStore((state) => state.fetchTicket)
+    const { ticket, fetchTicket, isLoadingTicket } = useTicketStore((state) => state)
     const { reset } = useForm<{ message: string }>()
-    const [updateStatus, setUpdateStatus] = useState(Ticket?.status)
-    const [updatePriority, setUpdatePriority] = useState(Ticket?.priority)
+    const [updateStatus, setUpdateStatus] = useState(ticket?.status)
+    const [updatePriority, setUpdatePriority] = useState(ticket?.priority)
     const newComment = useTicketStore((state) => state.newComments)
     const fetchMessages = useTicketStore((state) => state.fetchMessages)
     const setComment = useTicketStore((state) => state.setComments)
     const user = useAuthStore((state) => state.user)
+    const fetchBudget = useTicketStore((state) => state.fetchBudget)
+    const fetchExpenses = useTicketStore((state) => state.fetchExpenses)
+
 
     useEffect(() => {
         fetchTicket(id)
         fetchMessages(id)
+        fetchBudget(id)
+        fetchExpenses(id)
     }, [id])
 
     useEffect(() => {
-        if (Ticket?.status) setUpdateStatus(Ticket.status)
-        if (Ticket?.priority) setUpdatePriority(Ticket.priority)
-    }, [Ticket?.status, Ticket?.priority])
+        if (ticket?.status) setUpdateStatus(ticket.status)
+        if (ticket?.priority) setUpdatePriority(ticket.priority)
+    }, [ticket?.status, ticket?.priority])
 
     const Info = [
         {
             label: "Property & Unit",
-            value: Ticket?.unitName,
-            bottom: Ticket?.propertyName,
+            value: ticket?.unitName,
+            bottom: ticket?.propertyName,
         },
         {
             label: "Tenant",
-            value: Ticket?.tenant.name,
-            bottom: Ticket?.tenant.phone,
+            value: ticket?.tenant.name,
+            bottom: ticket?.tenant.phone,
         },
         {
             label: "Issue Type",
-            value: Ticket?.category,
+            value: ticket?.category,
         },
     ]
 
@@ -200,8 +206,6 @@ export default function TicketPage() {
         updatePriorityMutation.mutate(payload)
     }
 
-
-
     return (
         <div>
             <PageTitle title="Maintenance & Issues" fontSize={"22px"} />
@@ -215,12 +219,12 @@ export default function TicketPage() {
                     <Breadcrumb.Separator />
                     <Breadcrumb.Item>
                         <Breadcrumb.CurrentLink className="satoshi-medium">
-                            {Ticket?.subject}
+                            {ticket?.subject}
                         </Breadcrumb.CurrentLink>
                     </Breadcrumb.Item>
                 </Breadcrumb.List>
             </Breadcrumb.Root>
-            <Flex gap={8}>
+            {isLoadingTicket ? <Skeleton mt={4} rounded={'4px'} height={"30vh"} /> : <Flex direction={{ base: 'column', md: 'row' }} gap={8}>
                 <Box w={{ base: 'full', md: "70%" }}>
                     <SectionBox w={"full"} mt={8} p={6}>
                         <HStack justify={"space-between"}>
@@ -231,7 +235,7 @@ export default function TicketPage() {
                                 </HStack>
                                 <PageTitle
                                     mt={2}
-                                    title={Ticket?.subject || "No Subject"}
+                                    title={ticket?.subject || "No Subject"}
                                     fontSize={"22px"}
                                 />
                             </Box>
@@ -243,12 +247,12 @@ export default function TicketPage() {
                                     Created at
                                 </Text>
                                 <Text className="satoshi-bold text-sm">
-                                    {formatDate(Ticket?.dateSubmitted)} •{" "}
-                                    {formatDatetoTime(Ticket?.dateSubmitted)}
+                                    {formatDate(ticket?.dateSubmitted)} •{" "}
+                                    {formatDatetoTime(ticket?.dateSubmitted)}
                                 </Text>
                             </Box>
                         </HStack>
-                        <HStack mt={6} h={"89px"}>
+                        <Grid gap={{ base: 3, md: 4 }} templateColumns={{ base: 'repeat(2,1fr)', md: 'repeat(3,1fr)' }} mt={6} w={'full'} h={{ base: 'fit', md: "89px" }}>
                             {Info.map((info) => (
                                 <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
                                     <Text
@@ -265,7 +269,7 @@ export default function TicketPage() {
                                     )}
                                 </SectionBox>
                             ))}
-                        </HStack>
+                        </Grid>
                         <Box mt={8}>
                             <Text
                                 letterSpacing={"1.1px"}
@@ -276,7 +280,7 @@ export default function TicketPage() {
                             </Text>
                             <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
                                 <Text className="text-sm satoshi-variable-italic">
-                                    "{Ticket?.description}"
+                                    "{ticket?.description}"
                                 </Text>
                             </SectionBox>
                         </Box>
@@ -289,14 +293,14 @@ export default function TicketPage() {
                                 Attached Images
                             </Text>
                             <HStack h={'126px'}>
-                                {Ticket?.images.length === 0 && (
+                                {ticket?.images.length === 0 && (
                                     <ImageSlot
                                         alt="profile"
                                         className="rounded-lg"
                                         boxSize="126px"
                                     />
                                 )}
-                                {Ticket?.images.map((image) => (
+                                {ticket?.images.map((image) => (
                                     <ImageSlot
                                         src={image}
                                         alt="profile"
@@ -383,7 +387,7 @@ export default function TicketPage() {
                     </SectionBox>
 
                 </Box>
-            </Flex>
+            </Flex>}
         </div>
     )
 }

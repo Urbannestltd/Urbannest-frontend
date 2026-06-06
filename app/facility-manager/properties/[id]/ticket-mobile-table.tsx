@@ -10,7 +10,9 @@ import { SectionBox } from "@/components/ui/section-box"
 import { LuEllipsisVertical } from "react-icons/lu"
 import { convertMinutes, formatDate } from "@/services/date"
 import { Tickets } from "@/store/fm/ticket"
-export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: Tickets[], loading?: boolean, emptyDetails?: EmptyDetails, tableName?: string }) => {
+import { useRouter } from "next/navigation"
+export const MobileTable = ({ data, loading, emptyDetails, tableName, onRowClick }: { data: Tickets[], loading?: boolean, emptyDetails?: EmptyDetails, onRowClick?: (row: Tickets) => void, tableName?: string }) => {
+    const router = useRouter()
     const Status = [
         {
             value: 'PENDING',
@@ -83,7 +85,7 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
                 const priority = Priority.find((priority) => priority.value === row.priority)
 
                 return (
-                    <SectionBox key={index} my={'26px'}>
+                    <SectionBox key={index} onClick={() => onRowClick?.(row)} my={'26px'}>
                         <HStack justify={'space-between'} align={'start'}>
                             <Box>
                                 <Text className="satoshi-bold text-sm">{row.propertyName}</Text>

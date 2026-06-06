@@ -10,8 +10,10 @@ import {
     Center,
     Circle,
     Flex,
+    Grid,
     HStack,
     Image,
+    Skeleton,
     Text,
     Timeline,
 } from "@chakra-ui/react"
@@ -45,7 +47,7 @@ import { useTicketStore } from "@/store/fm/ticket"
 import { sendComment, sendCommentPayload, updateTicketPriority, updateTicketPriorityPayload, updateTicketStatus, updateTicketStatusPayload } from "@/services/fm/ticket"
 import { BsChatLeftFill } from "react-icons/bs"
 import { AiFillThunderbolt } from "react-icons/ai"
-import { TicketActivity } from "./ticket-activity"
+import { TicketActivity } from "./ticket-activity/ticket-activity"
 
 const Status = [
     {
@@ -85,44 +87,47 @@ const Priority = [
 ]
 
 export const TicketPage = ({ id }: { id: string }) => {
-    const Ticket = useTicketStore((state) => state.ticket)
-    const fetchTicket = useTicketStore((state) => state.fetchTicket)
+    const { ticket, fetchTicket, isLoadingTicket } = useTicketStore((state) => state)
     const fetchMessages = useTicketStore((state) => state.fetchMessages)
     const { control, handleSubmit, reset, formState } = useForm<{ message: string }>()
     const [showStatus, setShowStatus] = useState(false)
-    const [updateStatus, setUpdateStatus] = useState(Ticket?.status)
+    const [updateStatus, setUpdateStatus] = useState(ticket?.status)
     const [showPriority, setShowPriority] = useState(false)
-    const [updatePriority, setUpdatePriority] = useState(Ticket?.priority)
+    const [updatePriority, setUpdatePriority] = useState(ticket?.priority)
     const newComment = useTicketStore((state) => state.newComments)
     const setComment = useTicketStore((state) => state.setComments)
     const user = useAuthStore((state) => state.user)
+    const fetchBudget = useTicketStore((state) => state.fetchBudget)
+    const fetchExpenses = useTicketStore((state) => state.fetchExpenses)
 
     useEffect(() => {
         fetchTicket(id)
         fetchMessages(id)
-        setUpdateStatus(Ticket?.status)
-        setUpdatePriority(Ticket?.priority)
+        fetchBudget(id)
+        fetchExpenses(id)
+        setUpdateStatus(ticket?.status)
+        setUpdatePriority(ticket?.priority)
     }, [id])
 
     useEffect(() => {
-        if (Ticket?.status) setUpdateStatus(Ticket.status)
-        if (Ticket?.priority) setUpdatePriority(Ticket.priority)
-    }, [Ticket?.status, Ticket?.priority])
+        if (ticket?.status) setUpdateStatus(ticket.status)
+        if (ticket?.priority) setUpdatePriority(ticket.priority)
+    }, [ticket?.status, ticket?.priority])
 
     const Info = [
         {
             label: "Property & Unit",
-            value: Ticket?.unitName,
-            bottom: Ticket?.propertyName,
+            value: ticket?.unitName,
+            bottom: ticket?.propertyName,
         },
         {
             label: "Tenant",
-            value: Ticket?.tenant.name,
-            bottom: Ticket?.tenant.phone,
+            value: ticket?.tenant.name,
+            bottom: ticket?.tenant.phone,
         },
         {
             label: "Issue Type",
-            value: Ticket?.category,
+            value: ticket?.category,
         },
     ]
 
@@ -202,176 +207,177 @@ export const TicketPage = ({ id }: { id: string }) => {
         updatePriorityMutation.mutate(payload)
     }
 
+    if (isLoadingTicket) { return <Skeleton mt={4} rounded={'lg'} height={"30vh"} /> }
 
-
-    return (
-        <div>
-            <Flex gap={8}>
-                <Box w={"65%"}>
-                    <SectionBox w={"full"} mt={8} p={6}>
-                        <HStack justify={"space-between"}>
-                            <Box>
-                                <HStack>
-                                    <Circle size={"8px"} bg={status?.textColor} />
-                                    <Text className="satoshi-bold text-sm">{status?.label}</Text>
-                                </HStack>
-                                <PageTitle
-                                    mt={2}
-                                    title={Ticket?.subject || "No Subject"}
-                                    fontSize={"22px"}
-                                />
-                            </Box>
-                            <Box>
-                                <Text
-                                    letterSpacing={"1.1px"}
-                                    className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                                >
-                                    Created at
-                                </Text>
-                                <Text className="satoshi-bold text-sm">
-                                    {formatDate(Ticket?.dateSubmitted)} •{" "}
-                                    {formatDatetoTime(Ticket?.dateSubmitted)}
-                                </Text>
-                            </Box>
-                        </HStack>
-                        <HStack mt={6} h={"89px"}>
-                            {Info.map((info) => (
-                                <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
+    else
+        return (
+            <div>
+                <Flex gap={8}>
+                    <Box w={"65%"}>
+                        <SectionBox w={"full"} mt={8} p={6}>
+                            <HStack justify={"space-between"}>
+                                <Box>
+                                    <HStack>
+                                        <Circle size={"8px"} bg={status?.textColor} />
+                                        <Text className="satoshi-bold text-sm">{status?.label}</Text>
+                                    </HStack>
+                                    <PageTitle
+                                        mt={2}
+                                        title={ticket?.subject || "No Subject"}
+                                        fontSize={"22px"}
+                                    />
+                                </Box>
+                                <Box>
                                     <Text
                                         letterSpacing={"1.1px"}
                                         className="satoshi-bold uppercase text-[#757575] text-[10px]"
                                     >
-                                        {info.label}
+                                        Created at
                                     </Text>
-                                    <Text className="satoshi-bold text-sm capitalize">
-                                        {info.value?.toLowerCase()}
+                                    <Text className="satoshi-bold text-sm">
+                                        {formatDate(ticket?.dateSubmitted)} •{" "}
+                                        {formatDatetoTime(ticket?.dateSubmitted)}
                                     </Text>
-                                    {info.bottom && (
-                                        <Text className=" text-xs capitalize">{info.bottom}</Text>
-                                    )}
-                                </SectionBox>
-                            ))}
-                        </HStack>
-                        <Box mt={8}>
-                            <Text
-                                letterSpacing={"1.1px"}
-                                mb={3}
-                                className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                            >
-                                Tenant Description
-                            </Text>
-                            <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
-                                <Text className="text-sm satoshi-variable-italic">
-                                    "{Ticket?.description}"
-                                </Text>
-                            </SectionBox>
-                        </Box>
-                        <Box mt={8}>
-                            <Text
-                                letterSpacing={"1.1px"}
-                                mb={3}
-                                className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                            >
-                                Attached Images
-                            </Text>
-                            <HStack h={'126px'}>
-                                {Ticket?.images.length === 0 && (
-                                    <ImageSlot
-                                        alt="profile"
-                                        className="rounded-lg"
-                                        boxSize="126px"
-                                    />
-                                )}
-                                {Ticket?.images.map((image) => (
-                                    <ImageSlot
-                                        src={image}
-                                        alt="profile"
-                                        className="rounded-lg"
-                                        boxSize="126px"
-                                    />
-                                ))}
+                                </Box>
                             </HStack>
-                        </Box>
-                    </SectionBox>
-                    <TicketActivity id={id} />
-                </Box>
-                <Box w={{ base: 'full', md: "26%" }}>
-                    <SectionBox mt={8} p={6} w={'full'}>
-                        <Text
-                            letterSpacing={"1.1px"}
-                            mb={6}
-                            className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                        >
-                            Management Actions
-                        </Text>
-                        <MainButton
-                            variant="darkGhost"
-                            icon={<LuChevronRight />}
-                            onClick={() => handleUpdateStatus(status?.value === "IN_PROGRESS" ? "RESOLVED" : status?.value === "RESOLVED" ? "RESOLVED" : "IN_PROGRESS")}
-                            loading={updateStatusMutation.isPending}
-                            iconPosition="right"
-                            disabled={status?.value === "RESOLVED" || status?.value === "ESCALATED"}
-                            size="lg"
-                            className="h-[38px] justify-between  text-lg satoshi-bold"
-                        >
-                            <Flex align={"center"}>
-                                <LuCircleCheckBig className="mr-2" />Mark {status?.value === "IN_PROGRESS" ? "Resolved" : status?.value === "RESOLVED" ? "Resolved" : "In Progress"}
-                            </Flex>
-                        </MainButton>
-                        <MainButton
-                            variant="outline"
-                            icon={<LuChevronRight />}
-                            iconPosition="right"
-                            disabled={status?.value === "PENDING" || status?.value === "ESCALATED"}
-                            size="lg"
-                            onClick={() => handleUpdateStatus(status?.value === "IN_PROGRESS" ? "PENDING" : status?.value === "RESOLVED" ? "IN_PROGRESS" : "PENDING")}
-                            loading={updateStatusMutation.isPending}
-                            className="h-[38px] my-3 justify-between rounded-full  text-lg satoshi-bold"
-                        >
-                            <Flex align={"center"}>
-                                <Image src={refreshCheck.src} alt="Update Status Icon" mr={2} />{" "}
-                                Mark {status?.value === "IN_PROGRESS" ? "Open" : status?.value === "RESOLVED" ? "In Progress" : "Open"}
-                            </Flex>
-                        </MainButton>
-                        <Divider />
-                        <Text
-                            letterSpacing={"1.1px"}
-                            mb={2}
-                            className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                        >
-                            PRIORITY LEVEL
-                        </Text>
-
-                        <Flex animation={'ease-in-out'} mb={3}
-                            w={'full'}
-                            wrap={'wrap'} gap={1}>
-                            {Priority.map((priority) => (
-                                <Button
-                                    alignItems={'center'}
-                                    fontSize={'12px'}
-                                    fontWeight={'semibold'}
-                                    bg={priority?.bg}
-                                    border={'1px solid'}
-                                    borderColor={priority?.borderColor}
-                                    p={1}
-                                    px={2}
-                                    mt={2}
-                                    rounded={'3xl'}
-                                    w={'fit'}
-                                    h={'fit'}
-                                    onClick={() => handleUpdatePriority(priority.value)}
+                            <Grid gap={{ base: 3, md: 4 }} templateColumns={{ base: 'repeat(2,1fr)', md: 'repeat(3,1fr)' }} mt={6} h={"89px"}>
+                                {Info.map((info) => (
+                                    <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
+                                        <Text
+                                            letterSpacing={"1.1px"}
+                                            className="satoshi-bold uppercase text-[#757575] text-[10px]"
+                                        >
+                                            {info.label}
+                                        </Text>
+                                        <Text className="satoshi-bold text-sm capitalize">
+                                            {info.value?.toLowerCase()}
+                                        </Text>
+                                        {info.bottom && (
+                                            <Text className=" text-xs capitalize">{info.bottom}</Text>
+                                        )}
+                                    </SectionBox>
+                                ))}
+                            </Grid>
+                            <Box mt={8}>
+                                <Text
+                                    letterSpacing={"1.1px"}
+                                    mb={3}
+                                    className="satoshi-bold uppercase text-[#757575] text-[10px]"
                                 >
-                                    {priority?.value === updatePriority && <Circle size={'5px'} bg={priority?.textColor} mr={1} />}
-                                    <Text className="capitalize" color={priority?.textColor} children={priority?.label} />
-                                </Button>
-                            ))}
-                        </Flex>
-                    </SectionBox>
+                                    Tenant Description
+                                </Text>
+                                <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
+                                    <Text className="text-sm satoshi-variable-italic">
+                                        "{ticket?.description}"
+                                    </Text>
+                                </SectionBox>
+                            </Box>
+                            <Box mt={8}>
+                                <Text
+                                    letterSpacing={"1.1px"}
+                                    mb={3}
+                                    className="satoshi-bold uppercase text-[#757575] text-[10px]"
+                                >
+                                    Attached Images
+                                </Text>
+                                <HStack h={'126px'}>
+                                    {ticket?.images.length === 0 && (
+                                        <ImageSlot
+                                            alt="profile"
+                                            className="rounded-lg"
+                                            boxSize="126px"
+                                        />
+                                    )}
+                                    {ticket?.images.map((image) => (
+                                        <ImageSlot
+                                            src={image}
+                                            alt="profile"
+                                            className="rounded-lg"
+                                            boxSize="126px"
+                                        />
+                                    ))}
+                                </HStack>
+                            </Box>
+                        </SectionBox>
+                        <TicketActivity id={id} />
+                    </Box>
+                    <Box w={{ base: 'full', md: "26%" }}>
+                        <SectionBox mt={8} p={6} w={'full'}>
+                            <Text
+                                letterSpacing={"1.1px"}
+                                mb={6}
+                                className="satoshi-bold uppercase text-[#757575] text-[10px]"
+                            >
+                                Management Actions
+                            </Text>
+                            <MainButton
+                                variant="darkGhost"
+                                icon={<LuChevronRight />}
+                                onClick={() => handleUpdateStatus(status?.value === "IN_PROGRESS" ? "RESOLVED" : status?.value === "RESOLVED" ? "RESOLVED" : "IN_PROGRESS")}
+                                loading={updateStatusMutation.isPending}
+                                iconPosition="right"
+                                disabled={status?.value === "RESOLVED" || status?.value === "ESCALATED"}
+                                size="lg"
+                                className="h-[38px] justify-between  text-lg satoshi-bold"
+                            >
+                                <Flex align={"center"}>
+                                    <LuCircleCheckBig className="mr-2" />Mark {status?.value === "IN_PROGRESS" ? "Resolved" : status?.value === "RESOLVED" ? "Resolved" : "In Progress"}
+                                </Flex>
+                            </MainButton>
+                            <MainButton
+                                variant="outline"
+                                icon={<LuChevronRight />}
+                                iconPosition="right"
+                                disabled={status?.value === "PENDING" || status?.value === "ESCALATED"}
+                                size="lg"
+                                onClick={() => handleUpdateStatus(status?.value === "IN_PROGRESS" ? "PENDING" : status?.value === "RESOLVED" ? "IN_PROGRESS" : "PENDING")}
+                                loading={updateStatusMutation.isPending}
+                                className="h-[38px] my-3 justify-between rounded-full  text-lg satoshi-bold"
+                            >
+                                <Flex align={"center"}>
+                                    <Image src={refreshCheck.src} alt="Update Status Icon" mr={2} />{" "}
+                                    Mark {status?.value === "IN_PROGRESS" ? "Open" : status?.value === "RESOLVED" ? "In Progress" : "Open"}
+                                </Flex>
+                            </MainButton>
+                            <Divider />
+                            <Text
+                                letterSpacing={"1.1px"}
+                                mb={2}
+                                className="satoshi-bold uppercase text-[#757575] text-[10px]"
+                            >
+                                PRIORITY LEVEL
+                            </Text>
 
-                </Box>
-            </Flex>
-        </div>
-    )
+                            <Flex animation={'ease-in-out'} mb={3}
+                                w={'full'}
+                                wrap={'wrap'} gap={1}>
+                                {Priority.map((priority) => (
+                                    <Button
+                                        alignItems={'center'}
+                                        fontSize={'12px'}
+                                        fontWeight={'semibold'}
+                                        bg={priority?.bg}
+                                        border={'1px solid'}
+                                        borderColor={priority?.borderColor}
+                                        p={1}
+                                        px={2}
+                                        mt={2}
+                                        rounded={'3xl'}
+                                        w={'fit'}
+                                        h={'fit'}
+                                        onClick={() => handleUpdatePriority(priority.value)}
+                                    >
+                                        {priority?.value === updatePriority && <Circle size={'5px'} bg={priority?.textColor} mr={1} />}
+                                        <Text className="capitalize" color={priority?.textColor} children={priority?.label} />
+                                    </Button>
+                                ))}
+                            </Flex>
+                        </SectionBox>
+
+                    </Box>
+                </Flex>
+            </div>
+        )
 }
 
 export function HighlightText({ text, search = Status.map((status) => status.value) }: { text: string; search?: string[] }) {

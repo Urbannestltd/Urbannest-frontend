@@ -53,6 +53,9 @@ interface DataTableProps<TData, TValue> {
     miniTableOnclick?: () => void
     bordered?: boolean
     rounded?: boolean
+    bgColor?: string
+    borderedHeader?: boolean
+    getRowClassName?: (row: TData) => string
 
 }
 
@@ -72,7 +75,10 @@ export function DataTable<TData, TValue>({
     miniTable,
     miniTableOnclick,
     bordered,
-    rounded
+    rounded,
+    bgColor,
+    borderedHeader,
+    getRowClassName,
 }: DataTableProps<TData, TValue>) {
 
     const pageSize = pagination?.pageSize || 10;
@@ -105,11 +111,12 @@ export function DataTable<TData, TValue>({
                 style={{
                     height: '100%',
                     width: '100%',
+                    backgroundColor: bgColor
                 }}
-                className={`h-full w-full ${px}  ${my ? `my-[${my}]` : 'my-10'} rounded-md   py-2 ${headerColor && `bg-[${headerColor}]`} sm:rounded-xl`}
+                className={cn(`h-full w-full`, px ? `px-[${px}]` : 'px-0', my ? `my-[${my}]` : 'my-10', ' rounded-md pb-2 ', headerColor && `bg-[${headerColor}]`, 'sm:rounded-xl')}
             >
                 <Table wrapperClassName={cn(rounded && 'rounded-xl overflow-hidden')}>
-                    <TableHeader className={cn(' bg-[#F5F5F5] ')}  >
+                    <TableHeader className={cn(headerColor ? `bg-[${headerColor}]` : ' bg-[#F5F5F5] ', borderedHeader && 'border-b border-[#EAECF0]')}  >
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow className={'!font-semibold  !text-[#475467]'} key={tableName + headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
@@ -160,13 +167,18 @@ export function DataTable<TData, TValue>({
                                             className={cn(
                                                 bordered && 'border-b border-[#F4F4F4]',
                                                 'data-[state=selected]:bg-[#F1FCF6]',
+                                                getRowClassName?.(row.original),
                                             )}
                                         >
-                                            {row.getVisibleCells().map((cell) => (
-                                                <TableCell key={tableName + cell.id} color='#475467'>
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </TableCell>
-                                            ))}
+                                            {row.getVisibleCells().map((cell) => {
+                                                const colSpan = (cell.column.columnDef.meta as any)?.getColSpan?.(cell.row.original) ?? 1;
+                                                if (colSpan === 0) return null;
+                                                return (
+                                                    <TableCell key={tableName + cell.id} color='#475467' colSpan={colSpan}>
+                                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                    </TableCell>
+                                                );
+                                            })}
                                         </TableRow>
                                     ))
                                 )}

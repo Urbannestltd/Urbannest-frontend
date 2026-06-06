@@ -1,6 +1,7 @@
 import { Box, Button, FileUpload, FileUploadRootProps, Flex, Float, HStack, Icon, Span, Text, useFileUploadContext } from "@chakra-ui/react"
 import { LuImage, LuUpload, LuX } from "react-icons/lu"
 import { MainButton } from "./button"
+import { BsCloudUploadFill } from "react-icons/bs"
 
 export const AddImage = ({ onFileChange }: { onFileChange: (file: File[] | null) => void }) => {
     return (
@@ -58,13 +59,13 @@ const FileUploadList = () => {
     )
 }
 
-export const DragAndDrop = ({ onFileChange, width = 'md', accept = 'image/*' }: { onFileChange: (file: File | null) => void, width?: FileUploadRootProps['maxW'], accept?: FileUploadRootProps['accept'] }) => {
+export const DragAndDrop = ({ onFileChange, width = 'md', accept = 'image/*', dashed }: { onFileChange: (file: File | null) => void, width?: FileUploadRootProps['maxW'], dashed?: boolean, accept?: FileUploadRootProps['accept'] }) => {
     return (
         <FileUpload.Root maxW={width} alignItems="stretch" onFileChange={(details) => onFileChange?.(details.acceptedFiles[0] || null)} accept={accept} maxFiles={1}>
             <FileUpload.HiddenInput />
-            <FileUpload.Dropzone rounded={'10px'} h={'148px'} border={'1px solid #000000'}>
+            <FileUpload.Dropzone rounded={'10px'} border={'1px solid'} borderColor={'#000000'} borderStyle={dashed ? 'dashed' : 'none'} h={'148px'} >
                 <Icon size="md" color="fg.muted">
-                    <LuUpload />
+                    {dashed ? <BsCloudUploadFill /> : <LuUpload />}
                 </Icon>
                 <FileUpload.DropzoneContent>
                     <Flex><Text className="satoshi-bold mr-1">Click to upload</Text>or drag and drop</Flex>

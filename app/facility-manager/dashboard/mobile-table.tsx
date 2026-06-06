@@ -12,6 +12,7 @@ import { formatDate, formatDateTime, formatDatetoTime } from "@/services/date"
 import { EmptyDetails } from "@/components/ui/data-table"
 import { DashboardTickets, DashboardVisitor } from "@/store/fm/dashboard"
 import { format } from "path"
+import { useRouter } from "next/navigation"
 
 export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: DashboardTickets[], loading?: boolean, emptyDetails?: EmptyDetails, tableName?: string }) => {
     const Issue = [
@@ -28,6 +29,8 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
         { value: 'MEDIUM', label: 'Medium', bg: '#FFF7ED', textColor: '#975102', borderColor: '#FFEDD5' },
         { value: 'HIGH', label: 'High', bg: '#FEF2F2', textColor: '#B91C1C', borderColor: '#FEE2E2' },
     ]
+
+    const router = useRouter()
 
     if (loading) return <Skeleton height={'100%'} width={'100%'} />
 
@@ -49,7 +52,7 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
                 const issues = Issue.find((issue) => issue.value === item.category)
                 const priority = Priority.find((priority) => priority.value === item.priority)
 
-                return <SectionBox mt={4}>
+                return <SectionBox onClick={() => router.push(`/facility-manager/maintenance-and-issues/${item.id}`)} mt={4}>
                     <HStack color={'#717C82'} justify={'space-between'} fontSize={'12px'}>
                         <HStack>
                             <Image src={issues?.icon.src} className="size-[14px] mr-[1px] " alt="" />
@@ -146,7 +149,7 @@ export const MobileTableVisitor = ({ data, loading, emptyDetails, tableName }: {
                 </div>
             </div>}
             {data.length > 0 && data.map((item) => {
-                const type = Type.find((type) => type.value === item.type)
+                const type = Type.find((type) => type.value === item.accessType)
                 return <SectionBox mt={4}>
                     <HStack justify={'space-between'} >
                         <Text className="satoshi-medium">{item.visitorName}</Text>
