@@ -178,7 +178,7 @@ export const TicketPage = ({ id }: { id: string }) => {
             id: id,
             data: {
                 message: data.message,
-                attachments: [],
+                isInternalNote: false,
             }
         }
         postCommentMutation.mutate(payload)
