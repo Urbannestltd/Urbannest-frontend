@@ -11,7 +11,7 @@ export interface updateTicketPriorityPayload {
 }
 export interface sendCommentPayload {
 	data: {
-		attachments?: string[]
+		isInternalNote: boolean
 		message: string
 	}
 	id: string
