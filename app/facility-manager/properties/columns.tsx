@@ -41,9 +41,8 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             </HStack>
         },
         {
-            accessorFn: (row) => row.name,
+            accessorFn: (row) => row.address,
             header: "Address",
-            cell: ({ row }) => '42 Wallaby Way, Sydney CBD'
         },
         {
             accessorFn: (row) => row.type,

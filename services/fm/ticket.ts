@@ -65,6 +65,9 @@ export const sendComment = async (payload: sendCommentPayload) => {
 }
 
 export const addExpense = async (payload: addExpensePayload) => {
-	const response = await http.post(FmEndpoints.getExpenses(payload.id), payload)
+	const response = await http.post(
+		FmEndpoints.getExpenses(payload.id),
+		payload.data,
+	)
 	return response.data.data
 }

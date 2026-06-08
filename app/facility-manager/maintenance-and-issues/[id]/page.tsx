@@ -42,54 +42,81 @@ import { property, set } from "lodash"
 import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import useAuthStore from "@/store/auth"
-import { RiFileList3Line, RiLock2Fill } from "react-icons/ri";
+import { RiFileList3Line, RiLock2Fill } from "react-icons/ri"
 import { useTicketStore } from "@/store/fm/ticket"
-import { sendComment, sendCommentPayload, updateTicketPriority, updateTicketPriorityPayload, updateTicketStatus, updateTicketStatusPayload } from "@/services/fm/ticket"
+import {
+    sendComment,
+    sendCommentPayload,
+    updateTicketPriority,
+    updateTicketPriorityPayload,
+    updateTicketStatus,
+    updateTicketStatusPayload,
+} from "@/services/fm/ticket"
 import { BsChatLeftFill } from "react-icons/bs"
 import { AiFillThunderbolt } from "react-icons/ai"
 import { TicketActivity } from "../../properties/[id]/ticket-activity/ticket-activity"
 
 const Status = [
     {
-        value: 'PENDING',
-        label: 'Open',
-        bgColor: '#F5F5F5',
-        textColor: '#4A4A4A',
-        borderColor: '#F4F4F4'
+        value: "PENDING",
+        label: "Open",
+        bgColor: "#F5F5F5",
+        textColor: "#4A4A4A",
+        borderColor: "#F4F4F4",
     },
     {
-        value: 'IN_PROGRESS',
-        label: 'In Progress',
-        bgColor: '#EFF6FF',
-        textColor: '#1D4ED8',
-        borderColor: '#DBEAFE'
+        value: "IN_PROGRESS",
+        label: "In Progress",
+        bgColor: "#EFF6FF",
+        textColor: "#1D4ED8",
+        borderColor: "#DBEAFE",
     },
     {
-        value: 'RESOLVED',
-        label: 'Resolved',
-        bgColor: '#CFF7D3',
-        textColor: '#02542D',
-        borderColor: '#D1FAE5'
+        value: "RESOLVED",
+        label: "Resolved",
+        bgColor: "#CFF7D3",
+        textColor: "#02542D",
+        borderColor: "#D1FAE5",
     },
     {
-        value: 'ESCALATED',
-        label: 'Escalated',
-        bgColor: '#FEE2E2',
-        textColor: '#991B1B',
-        borderColor: '#FECACA'
-    }
+        value: "ESCALATED",
+        label: "Escalated",
+        bgColor: "#FEE2E2",
+        textColor: "#991B1B",
+        borderColor: "#FECACA",
+    },
 ]
 
 const Priority = [
-    { value: 'LOW', label: 'Low', bg: '#F5F5F5', textColor: '#4A4A4A', borderColor: '#F4F4F4' },
-    { value: 'MEDIUM', label: 'Medium', bg: '#FFF7ED', textColor: '#975102', borderColor: '#FFEDD5' },
-    { value: 'HIGH', label: 'High', bg: '#FEF2F2', textColor: '#B91C1C', borderColor: '#FEE2E2' },
+    {
+        value: "LOW",
+        label: "Low",
+        bg: "#F5F5F5",
+        textColor: "#4A4A4A",
+        borderColor: "#F4F4F4",
+    },
+    {
+        value: "MEDIUM",
+        label: "Medium",
+        bg: "#FFF7ED",
+        textColor: "#975102",
+        borderColor: "#FFEDD5",
+    },
+    {
+        value: "HIGH",
+        label: "High",
+        bg: "#FEF2F2",
+        textColor: "#B91C1C",
+        borderColor: "#FEE2E2",
+    },
 ]
 
 export default function TicketPage() {
     const params = useParams()
     const id = params?.id as string
-    const { ticket, fetchTicket, isLoadingTicket } = useTicketStore((state) => state)
+    const { ticket, fetchTicket, isLoadingTicket } = useTicketStore(
+        (state) => state,
+    )
     const { reset } = useForm<{ message: string }>()
     const [updateStatus, setUpdateStatus] = useState(ticket?.status)
     const [updatePriority, setUpdatePriority] = useState(ticket?.priority)
@@ -99,7 +126,6 @@ export default function TicketPage() {
     const user = useAuthStore((state) => state.user)
     const fetchBudget = useTicketStore((state) => state.fetchBudget)
     const fetchExpenses = useTicketStore((state) => state.fetchExpenses)
-
 
     useEffect(() => {
         fetchTicket(id)
@@ -130,31 +156,30 @@ export default function TicketPage() {
         },
     ]
 
-
-
     const status = Status.find((item) => item.value === updateStatus)
 
     const updateStatusMutation = useMutation({
-        mutationFn: (payload: updateTicketStatusPayload) => updateTicketStatus(payload),
+        mutationFn: (payload: updateTicketStatusPayload) =>
+            updateTicketStatus(payload),
         onSuccess: (variables) => {
-            toast.success('Status updated successfully')
+            toast.success("Status updated successfully")
             setUpdateStatus(variables.data.status)
-        }
+        },
     })
 
     const postCommentMutation = useMutation({
         mutationFn: (payload: sendCommentPayload) => sendComment(payload),
         onSuccess: (variables) => {
-            toast.success('Comment added successfully')
+            toast.success("Comment added successfully")
             reset()
             setComment({
-                senderName: user?.name ?? 'N/A',
+                senderName: user?.name ?? "N/A",
                 isSystemMessage: false,
                 timestamp: new Date().toISOString(),
                 id: variables.data.senderId,
-                message: variables.data.message
+                message: variables.data.message,
             })
-        }
+        },
     })
 
     const handleUpdateStatus = (status: string) => {
@@ -164,7 +189,6 @@ export default function TicketPage() {
         const payload: updateTicketStatusPayload = {
             id: id,
             data: { status: status },
-
         }
         updateStatusMutation.mutate(payload)
     }
@@ -178,22 +202,19 @@ export default function TicketPage() {
             data: {
                 message: data.message,
                 attachments: [],
-            }
+            },
         }
         postCommentMutation.mutate(payload)
     }
 
-
-
-
     const updatePriorityMutation = useMutation({
-        mutationFn: (payload: updateTicketPriorityPayload) => updateTicketPriority(payload),
+        mutationFn: (payload: updateTicketPriorityPayload) =>
+            updateTicketPriority(payload),
         onSuccess: (variables) => {
-            toast.success('priority updated successfully')
+            toast.success("priority updated successfully")
             setUpdatePriority(variables.data.priority)
-        }
+        },
     })
-
 
     const handleUpdatePriority = (priority: string) => {
         if (!user?.id) {
@@ -224,198 +245,251 @@ export default function TicketPage() {
                     </Breadcrumb.Item>
                 </Breadcrumb.List>
             </Breadcrumb.Root>
-            {isLoadingTicket ? <Skeleton mt={4} rounded={'4px'} height={"30vh"} /> : <Flex direction={{ base: 'column', md: 'row' }} gap={8}>
-                <Box w={{ base: 'full', md: "70%" }}>
-                    <SectionBox w={"full"} mt={8} p={6}>
-                        <HStack justify={"space-between"}>
-                            <Box>
-                                <HStack>
-                                    <Circle size={"8px"} bg={status?.textColor} />
-                                    <Text className="satoshi-bold text-sm">{status?.label}</Text>
-                                </HStack>
-                                <PageTitle
-                                    mt={2}
-                                    title={ticket?.subject || "No Subject"}
-                                    fontSize={"22px"}
-                                />
-                            </Box>
-                            <Box>
-                                <Text
-                                    letterSpacing={"1.1px"}
-                                    className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                                >
-                                    Created at
-                                </Text>
-                                <Text className="satoshi-bold text-sm">
-                                    {formatDate(ticket?.dateSubmitted)} •{" "}
-                                    {formatDatetoTime(ticket?.dateSubmitted)}
-                                </Text>
-                            </Box>
-                        </HStack>
-                        <Grid gap={{ base: 3, md: 4 }} templateColumns={{ base: 'repeat(2,1fr)', md: 'repeat(3,1fr)' }} mt={6} w={'full'} h={{ base: 'fit', md: "89px" }}>
-                            {Info.map((info) => (
-                                <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
+            {isLoadingTicket ? (
+                <Skeleton mt={4} rounded={"4px"} height={"30vh"} />
+            ) : (
+                <Flex direction={{ base: "column", md: "row" }} gap={8}>
+                    <Box w={{ base: "full", md: "70%" }}>
+                        <SectionBox w={"full"} mt={8} p={6}>
+                            <HStack justify={"space-between"}>
+                                <Box>
+                                    <HStack>
+                                        <Circle size={"8px"} bg={status?.textColor} />
+                                        <Text className="satoshi-bold text-sm">
+                                            {status?.label}
+                                        </Text>
+                                    </HStack>
+                                    <PageTitle
+                                        mt={2}
+                                        title={ticket?.subject || "No Subject"}
+                                        fontSize={"22px"}
+                                    />
+                                </Box>
+                                <Box>
                                     <Text
                                         letterSpacing={"1.1px"}
                                         className="satoshi-bold uppercase text-[#757575] text-[10px]"
                                     >
-                                        {info.label}
+                                        Created at
                                     </Text>
-                                    <Text className="satoshi-bold text-sm capitalize">
-                                        {info.value?.toLowerCase()}
+                                    <Text className="satoshi-bold text-sm">
+                                        {formatDate(ticket?.dateSubmitted)} •{" "}
+                                        {formatDatetoTime(ticket?.dateSubmitted)}
                                     </Text>
-                                    {info.bottom && (
-                                        <Text className=" text-xs capitalize">{info.bottom}</Text>
-                                    )}
-                                </SectionBox>
-                            ))}
-                        </Grid>
-                        <Box mt={8}>
-                            <Text
-                                letterSpacing={"1.1px"}
-                                mb={3}
-                                className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                            >
-                                Tenant Description
-                            </Text>
-                            <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
-                                <Text className="text-sm satoshi-variable-italic">
-                                    "{ticket?.description}"
-                                </Text>
-                            </SectionBox>
-                        </Box>
-                        <Box mt={8}>
-                            <Text
-                                letterSpacing={"1.1px"}
-                                mb={3}
-                                className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                            >
-                                Attached Images
-                            </Text>
-                            <HStack h={'126px'}>
-                                {ticket?.images.length === 0 && (
-                                    <ImageSlot
-                                        alt="profile"
-                                        className="rounded-lg"
-                                        boxSize="126px"
-                                    />
-                                )}
-                                {ticket?.images.map((image) => (
-                                    <ImageSlot
-                                        src={image}
-                                        alt="profile"
-                                        className="rounded-lg"
-                                        boxSize="126px"
-                                    />
-                                ))}
+                                </Box>
                             </HStack>
-                        </Box>
-                    </SectionBox>
-                    <TicketActivity id={id} />
-                </Box>
-                <Box w={{ base: 'full', md: "25%" }}>
-                    <SectionBox mt={8} p={6} w={"full"}>
-                        <Text
-                            letterSpacing={"1.1px"}
-                            mb={6}
-                            className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                        >
-                            Management Actions
-                        </Text>
-                        <MainButton
-                            variant="darkGhost"
-                            icon={<LuChevronRight />}
-                            onClick={() => handleUpdateStatus(status?.value === "IN_PROGRESS" ? "RESOLVED" : status?.value === "RESOLVED" ? "RESOLVED" : "IN_PROGRESS")}
-                            loading={updateStatusMutation.isPending}
-                            iconPosition="right"
-                            disabled={status?.value === "RESOLVED" || status?.value === "ESCALATED"}
-                            size="lg"
-                            className="h-[38px] justify-between  text-lg satoshi-bold"
-                        >
-                            <Flex align={"center"}>
-                                <LuCircleCheckBig className="mr-2" />Mark {status?.value === "IN_PROGRESS" ? "Resolved" : status?.value === "RESOLVED" ? "Resolved" : "In Progress"}
-                            </Flex>
-                        </MainButton>
-                        <MainButton
-                            variant="outline"
-                            icon={<LuChevronRight />}
-                            iconPosition="right"
-                            disabled={status?.value === "PENDING" || status?.value === "ESCALATED"}
-                            size="lg"
-                            onClick={() => handleUpdateStatus(status?.value === "IN_PROGRESS" ? "PENDING" : status?.value === "RESOLVED" ? "IN_PROGRESS" : "PENDING")}
-                            loading={updateStatusMutation.isPending}
-                            className="h-[38px] my-3 justify-between rounded-full  text-lg satoshi-bold"
-                        >
-                            <Flex align={"center"}>
-                                <Image src={refreshCheck.src} alt="Update Status Icon" mr={2} />{" "}
-                                Mark {status?.value === "IN_PROGRESS" ? "Open" : status?.value === "RESOLVED" ? "In Progress" : "Open"}
-                            </Flex>
-                        </MainButton>
-                        <Divider />
-                        <Text
-                            letterSpacing={"1.1px"}
-                            mb={2}
-                            className="satoshi-bold uppercase text-[#757575] text-[10px]"
-                        >
-                            PRIORITY LEVEL
-                        </Text>
-
-                        <Flex animation={'ease-in-out'} mb={3}
-                            w={'full'}
-                            wrap={'wrap'} gap={1}>
-                            {Priority.map((priority) => (
-                                <Button
-                                    alignItems={'center'}
-                                    fontSize={'12px'}
-                                    fontWeight={'semibold'}
-                                    bg={priority?.bg}
-                                    border={'1px solid'}
-                                    borderColor={priority?.borderColor}
-                                    p={1}
-                                    px={2}
-                                    mt={2}
-                                    rounded={'3xl'}
-                                    w={'fit'}
-                                    h={'fit'}
-                                    onClick={() => handleUpdatePriority(priority.value)}
+                            <Grid
+                                gap={{ base: 3, md: 4 }}
+                                templateColumns={{ base: "repeat(2,1fr)", md: "repeat(3,1fr)" }}
+                                mt={6}
+                                w={"full"}
+                                h={{ base: "fit", md: "89px" }}
+                            >
+                                {Info.map((info) => (
+                                    <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
+                                        <Text
+                                            letterSpacing={"1.1px"}
+                                            className="satoshi-bold uppercase text-[#757575] text-[10px]"
+                                        >
+                                            {info.label}
+                                        </Text>
+                                        <Text className="satoshi-bold text-sm capitalize">
+                                            {info.value?.toLowerCase()}
+                                        </Text>
+                                        {info.bottom && (
+                                            <Text className=" text-xs capitalize">{info.bottom}</Text>
+                                        )}
+                                    </SectionBox>
+                                ))}
+                            </Grid>
+                            <Box mt={8}>
+                                <Text
+                                    letterSpacing={"1.1px"}
+                                    mb={3}
+                                    className="satoshi-bold uppercase text-[#757575] text-[10px]"
                                 >
-                                    {priority?.value === updatePriority && <Circle size={'5px'} bg={priority?.textColor} mr={0} />}
-                                    <Text className="capitalize" color={priority?.textColor} children={priority?.label} />
-                                </Button>
-                            ))}
-                        </Flex>
-                    </SectionBox>
+                                    Tenant Description
+                                </Text>
+                                <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
+                                    <Text className="text-sm satoshi-variable-italic">
+                                        "{ticket?.description}"
+                                    </Text>
+                                </SectionBox>
+                            </Box>
+                            <Box mt={8}>
+                                <Text
+                                    letterSpacing={"1.1px"}
+                                    mb={3}
+                                    className="satoshi-bold uppercase text-[#757575] text-[10px]"
+                                >
+                                    Attached Images
+                                </Text>
+                                <HStack h={"126px"}>
+                                    {ticket?.images.length === 0 && (
+                                        <ImageSlot
+                                            alt="profile"
+                                            className="rounded-lg"
+                                            boxSize="126px"
+                                        />
+                                    )}
+                                    {ticket?.images.map((image) => (
+                                        <ImageSlot
+                                            src={image}
+                                            alt="profile"
+                                            className="rounded-lg"
+                                            boxSize="126px"
+                                        />
+                                    ))}
+                                </HStack>
+                            </Box>
+                        </SectionBox>
+                        <TicketActivity id={id} />
+                    </Box>
+                    <Box w={{ base: "full", md: "25%" }}>
+                        <SectionBox mt={8} p={6} w={"full"}>
+                            <Text
+                                letterSpacing={"1.1px"}
+                                mb={6}
+                                className="satoshi-bold uppercase text-[#757575] text-[10px]"
+                            >
+                                Management Actions
+                            </Text>
+                            <MainButton
+                                variant="darkGhost"
+                                icon={<LuChevronRight />}
+                                onClick={() =>
+                                    handleUpdateStatus('RESOLVED')
 
-                </Box>
-            </Flex>}
+                                }
+                                loading={updateStatusMutation.isPending}
+                                iconPosition="right"
+                                disabled={
+                                    status?.value === "RESOLVED" || status?.value === "ESCALATED"
+                                }
+                                size="lg"
+                                className="h-[38px] justify-between  text-lg satoshi-bold"
+                            >
+                                <Flex align={"center"}>
+                                    <LuCircleCheckBig className="mr-2" />
+                                    Mark{" "}Resolved
+                                </Flex>
+                            </MainButton>
+                            <MainButton
+                                variant="outline"
+                                icon={<LuChevronRight />}
+                                iconPosition="right"
+                                disabled={status?.value === "ESCALATED"
+                                }
+                                size="lg"
+                                onClick={() =>
+                                    handleUpdateStatus(
+                                        status?.value === "IN_PROGRESS"
+                                            ? "PENDING"
+                                            : status?.value === "RESOLVED" ||
+                                                status?.value === "PENDING"
+                                                ? "IN_PROGRESS"
+                                                : "PENDING",
+                                    )
+                                }
+                                loading={updateStatusMutation.isPending}
+                                className="h-[38px] my-3 justify-between rounded-full  text-lg satoshi-bold"
+                            >
+                                <Flex align={"center"}>
+                                    <Image
+                                        src={refreshCheck.src}
+                                        alt="Update Status Icon"
+                                        mr={2}
+                                    />{" "}
+                                    Mark{" "}
+                                    {status?.value === "IN_PROGRESS"
+                                        ? "Open"
+                                        : status?.value === "RESOLVED" ||
+                                            status?.value === "PENDING"
+                                            ? "In Progress"
+                                            : "Open"}
+                                </Flex>
+                            </MainButton>
+                            <Divider />
+                            <Text
+                                letterSpacing={"1.1px"}
+                                mb={2}
+                                className="satoshi-bold uppercase text-[#757575] text-[10px]"
+                            >
+                                PRIORITY LEVEL
+                            </Text>
+
+                            <Flex
+                                animation={"ease-in-out"}
+                                mb={3}
+                                w={"full"}
+                                wrap={"wrap"}
+                                gap={1}
+                            >
+                                {Priority.map((priority) => (
+                                    <Button
+                                        alignItems={"center"}
+                                        fontSize={"12px"}
+                                        fontWeight={"semibold"}
+                                        bg={priority?.bg}
+                                        border={"1px solid"}
+                                        borderColor={priority?.borderColor}
+                                        p={1}
+                                        px={2}
+                                        mt={2}
+                                        rounded={"3xl"}
+                                        w={"fit"}
+                                        h={"fit"}
+                                        onClick={() => handleUpdatePriority(priority.value)}
+                                    >
+                                        {priority?.value === updatePriority && (
+                                            <Circle size={"5px"} bg={priority?.textColor} mr={0} />
+                                        )}
+                                        <Text
+                                            className="capitalize"
+                                            color={priority?.textColor}
+                                            children={priority?.label}
+                                        />
+                                    </Button>
+                                ))}
+                            </Flex>
+                        </SectionBox>
+                    </Box>
+                </Flex>
+            )}
         </div>
     )
 }
 
-function HighlightText({ text, search = Status.map((status) => status.value) }: { text: string; search?: string[] }) {
+function HighlightText({
+    text,
+    search = Status.map((status) => status.value),
+}: {
+    text: string
+    search?: string[]
+}) {
     if (!search || search.length === 0) {
-        return <>{text}</>;
+        return <>{text}</>
     }
 
-    const escaped = search.map(word =>
-        word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    );
+    const escaped = search.map((word) =>
+        word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+    )
 
-    const regex = new RegExp(`(${escaped.join('|')})`, 'gi');
+    const regex = new RegExp(`(${escaped.join("|")})`, "gi")
 
-    const parts = text.split(regex);
+    const parts = text.split(regex)
 
     return (
         <>
             {parts.map((part, index) => {
                 const match = search.find(
-                    word => word.toLowerCase() === part.toLowerCase()
-                );
+                    (word) => word.toLowerCase() === part.toLowerCase(),
+                )
 
                 if (match) {
                     const status = Status.find(
-                        status => status.value.toLowerCase() === match.toLowerCase()
-                    );
+                        (status) => status.value.toLowerCase() === match.toLowerCase(),
+                    )
 
                     return (
                         <Flex
@@ -432,18 +506,15 @@ function HighlightText({ text, search = Status.map((status) => status.value) }: 
                             w="fit"
                             h="fit"
                         >
-                            <Text
-                                className="capitalize"
-                                color={status?.textColor}
-                            >
+                            <Text className="capitalize" color={status?.textColor}>
                                 {status?.label}
                             </Text>
                         </Flex>
-                    );
+                    )
                 }
 
                 return part
             })}
         </>
-    );
+    )
 }

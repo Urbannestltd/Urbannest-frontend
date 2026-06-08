@@ -80,11 +80,21 @@ export const formatDateToIso = (dateStr: string | undefined) => {
 	return date.toISOString()
 }
 
-export const formatDatetoTime = (dateStr: string | undefined) => {
+export const formatDatetoTime = (
+	dateStr: string | undefined,
+	ampm?: boolean,
+) => {
 	if (!dateStr) {
 		return ""
 	}
 	const date = new Date(dateStr)
+	if (ampm) {
+		return date.toLocaleTimeString("en-US", {
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: true,
+		})
+	}
 	return date.toLocaleTimeString("en-GB", {
 		hour: "2-digit",
 		minute: "2-digit",

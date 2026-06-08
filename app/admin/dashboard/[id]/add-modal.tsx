@@ -54,7 +54,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
             ]
     })
 
-    const Members: { name: string, role: string, email: string }[] = users
+    const Members: { name: string, role: string, email: string, id: string }[] = users
         .filter(user => unit
             ? user.role === "TENANT"
             : user.role === "FACILITY_MANAGER" || user.role === "LANDLORD"
@@ -62,7 +62,8 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
         .map(user => ({
             name: user.fullName,
             role: user.role,
-            email: user.email
+            email: user.email,
+            id: user.id
         }))
     const handleRoleChange = (memberIndex: number, role: { value: string, label: string }) => {
         setMemberRoles(prev => ({ ...prev, [memberIndex]: role }))
@@ -155,7 +156,7 @@ export const AddMemberModal = ({ unitId, propertyId, unit }: { unitId?: string, 
                     const currentRole = memberRoles[memberIndex]
                     const initialRole = roles.items.find(role => role.value === member.role)
                     return (
-                        <Flex key={memberIndex} onClick={() => setAddTarget({ index: memberIndex, data: { name: member.name, userId: member.email, role: member.role, unitId: unitId ?? '', propertyId: propertyId ?? '' } })} _hover={{ bg: '#F5F5F5' }} align={'center'} justify={'space-between'} p={2}>
+                        <Flex key={memberIndex} onClick={() => setAddTarget({ index: memberIndex, data: { name: member.name, userId: member.id, role: member.role, unitId: unitId ?? '', propertyId: propertyId ?? '' } })} _hover={{ bg: '#F5F5F5' }} align={'center'} justify={'space-between'} p={2}>
                             <Flex align={'center'}>
                                 <Avatar name={member.name} bg={'#CFAA67'} color={'white'} />
                                 <Box ml={4}>

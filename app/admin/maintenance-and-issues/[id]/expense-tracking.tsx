@@ -87,11 +87,11 @@ export const ExpenseTracking = () => {
         <>
             {" "}
             {rejected ? (
-                <RejectionPage onClose={() => setRejected(false)} />
+                <RejectionPage id={Ticket?.id as string} onClose={() => setRejected(false)} />
             ) : rebuttal ? (
-                <RebuttalPage onClose={() => setRebuttal(false)} />
+                <RebuttalPage id={Ticket?.id as string} onClose={() => setRebuttal(false)} />
             ) : EditBudget ? (
-                <EditBudgetPage onClose={() => setEditBudget(false)} />
+                <EditBudgetPage id={Ticket?.id as string} onClose={() => setEditBudget(false)} />
             ) : (
                 <SectionBox mt={8} p={6} w={"full"}>
                     <HStack mb={6} justify={"space-between"}>
@@ -266,7 +266,7 @@ export const ExpenseTracking = () => {
     )
 }
 
-const RejectionPage = ({ onClose }: { onClose: () => void }) => {
+export const RejectionPage = ({ onClose, id }: { onClose: () => void, id: string }) => {
     const { control, handleSubmit } = useForm<{ reason: string }>()
     const Ticket = useTicketStore((state) => state.ticket)
     const fetchTicket = useTicketStore((state) => state.fetchTicket)
@@ -275,13 +275,13 @@ const RejectionPage = ({ onClose }: { onClose: () => void }) => {
         mutationFn: (data: rejectCostPayload) => rejectCost(data),
         onSuccess: (response) => {
             toast.success(response.message)
-            fetchTicket(Ticket?.id as string)
+            fetchTicket(id)
             onClose()
         },
     })
 
     const onSubmit = (data: { reason: string }) => {
-        mutation.mutate({ id: Ticket?.id as string, reason: data.reason })
+        mutation.mutate({ id: id, reason: data.reason })
     }
 
     return (
@@ -349,7 +349,7 @@ const RejectionPage = ({ onClose }: { onClose: () => void }) => {
     )
 }
 
-const RebuttalPage = ({ onClose }: { onClose: () => void }) => {
+export const RebuttalPage = ({ onClose, id }: { onClose: () => void, id: string }) => {
     const { control, handleSubmit } = useForm<{ amount: string; reason: string }>()
     const Ticket = useTicketStore((state) => state.ticket)
     const fetchTicket = useTicketStore((state) => state.fetchTicket)
@@ -358,7 +358,7 @@ const RebuttalPage = ({ onClose }: { onClose: () => void }) => {
         mutationFn: (data: offerRebuttalPayload) => offerRebuttal(data),
         onSuccess: (response) => {
             toast.success(response.message)
-            fetchTicket(Ticket?.id as string)
+            fetchTicket(id)
             onClose()
         }
     })
@@ -369,7 +369,7 @@ const RebuttalPage = ({ onClose }: { onClose: () => void }) => {
                 message: data.reason,
                 suggestedAmount: Number(data.amount)
             },
-            id: Ticket?.id as string
+            id: id
         }
         mutation.mutate(payload)
     }
@@ -481,7 +481,7 @@ const RebuttalPage = ({ onClose }: { onClose: () => void }) => {
     )
 }
 
-const EditBudgetPage = ({ onClose }: { onClose: () => void }) => {
+export const EditBudgetPage = ({ onClose, id }: { onClose: () => void, id: string }) => {
 
     const Ticket = useTicketStore((state) => state.ticket)
     const fetchTicket = useTicketStore((state) => state.fetchTicket)
@@ -501,7 +501,7 @@ const EditBudgetPage = ({ onClose }: { onClose: () => void }) => {
     })
     const onSubmit = (data: { amount: string }) => {
         const payload: updateBudgetPayload = {
-            id: Ticket?.id as string,
+            id: id,
             data: {
                 budget: Number(data.amount),
                 quotedCost: Ticket?.quotedCost as number ?? 0
@@ -511,7 +511,7 @@ const EditBudgetPage = ({ onClose }: { onClose: () => void }) => {
 
     }
     return (
-        <SectionBox mt={8} p={6} w={"full"}>
+        <Box mt={8} p={6} w={"full"}>
             <Text
                 letterSpacing={"1.1px"}
                 className="satoshi-bold uppercase text-[#757575] text-[10px]"
@@ -569,7 +569,7 @@ const EditBudgetPage = ({ onClose }: { onClose: () => void }) => {
                         size="lg"
                         type='submit'
                         loading={mutation.isPending}
-                        className="satoshi-bold h-[33px] text-xs"
+                        className="satoshi-bold h-[40px] text-xs"
                     >
                         Save Changes
                     </MainButton>
@@ -577,12 +577,12 @@ const EditBudgetPage = ({ onClose }: { onClose: () => void }) => {
                         onClick={onClose}
                         variant="outline"
                         size="lg"
-                        className="satoshi-bold h-[33px] rounded-full text-xs"
+                        className="satoshi-bold h-[40px] rounded-full text-xs"
                     >
                         Cancel
                     </MainButton>
                 </Flex>
             </form>
-        </SectionBox>
+        </Box>
     )
 }

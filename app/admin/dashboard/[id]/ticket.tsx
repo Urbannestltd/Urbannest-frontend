@@ -54,8 +54,8 @@ import { sendComment, sendCommentPayload, updateTicketStatus, updateTicketStatus
 import toast from "react-hot-toast"
 import useAuthStore from "@/store/auth"
 import { RiFileList3Line, RiLock2Fill } from "react-icons/ri";
-import { ExpenseTracking } from "@/app/admin/maintenance-and-issues/[id]/expense-tracking"
-import { TicketActivity } from "./ticket-activity"
+import { TicketActivity } from "./ticket-activity/ticket-activity"
+
 
 const Status = [
     {
@@ -390,7 +390,6 @@ export const TicketPage = ({ id }: { id: string }) => {
                         </MainButton>
                     </Flex>
                 </SectionBox>
-                <ExpenseTracking />
 
             </Box>
         </Flex>

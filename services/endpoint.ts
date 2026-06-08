@@ -156,6 +156,14 @@ const FmEndpoints = {
 	postComments: (id: string) => `/facility-manager/tickets/${id}/messages`,
 	getExpenses: (id: string) => `/facility-manager/tickets/${id}/expenses`,
 	fetchBudget: (id: string) => `/facility-manager/tickets/${id}/budget`,
+
+	//Visitor
+	fetchVisitors: `/facility-manager/visits`,
+	approveVisitor: (id: string) =>
+		`/facility-manager/agent-visits/${id}/approve`,
+	rejectVisitor: (id: string) => `/facility-manager/agent-visits/${id}/reject`,
+	rescheduleVisitor: (id: string) =>
+		`/facility-manager/agent-visits/${id}/reschedule`,
 }
 
 export { FmEndpoints }

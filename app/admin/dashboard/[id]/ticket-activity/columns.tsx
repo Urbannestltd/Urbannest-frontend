@@ -4,7 +4,7 @@ import {
     formatDateRegular,
     formatNumber,
 } from "@/services/date"
-import { Box, Button, Circle, Flex, Input, Text } from "@chakra-ui/react"
+import { Box, Button, Circle, Flex, HStack, Input, Text } from "@chakra-ui/react"
 import { ColumnDef } from "@tanstack/react-table"
 import { useState } from "react"
 import { BiEdit, BiFlag, BiTrash } from "react-icons/bi"
@@ -15,7 +15,8 @@ import { CiSquareRemove } from "react-icons/ci"
 import { AiOutlineWarning } from "react-icons/ai"
 import { LuCheck, LuPencil, LuX } from "react-icons/lu"
 import { Modal } from "@/components/ui/dialog"
-import { DeletePopup, FlagMistake } from "./modaal"
+import { DeletePopup, FlagMistake } from "./moodal"
+import { RebuttalPage, RejectionPage } from "@/app/admin/maintenance-and-issues/[id]/expense-tracking"
 
 export interface ExpenseLog {
     maintenanceRequestId: string
@@ -84,29 +85,6 @@ export const categoryOptions = [
 ]
 
 export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
-    const [editingId, setEditingId] = useState<string | null>(null)
-    const [editValues, setEditValues] = useState<Partial<ExpenseLog>>({})
-
-    const startEdit = (row: ExpenseLog) => {
-        setEditingId(row.id)
-        setEditValues({
-            description: row.description,
-            category: row.category,
-            date: row.date,
-            amount: row.amount,
-        })
-    }
-
-    const cancelEdit = () => {
-        setEditingId(null)
-        setEditValues({})
-    }
-
-    const saveEdit = () => {
-        // TODO: call update API with editValues for row editingId
-        setEditingId(null)
-        setEditValues({})
-    }
 
     return [
         {
@@ -126,24 +104,9 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
                 </Text>
             ),
             cell: ({ row }) => {
-                const isEditing = row.original.id === editingId
                 const color = expenseStatus.find(
                     (item) => item.value === row.original.status,
                 )
-                if (isEditing) {
-                    return (
-                        <Input
-                            value={editValues.description ?? ""}
-                            onChange={(e) =>
-                                setEditValues((prev) => ({ ...prev, description: e.target.value }))
-                            }
-                            size="sm"
-                            borderColor={"#A9B4B9"}
-                            rounded={"6px"}
-                            fontSize={"14px"}
-                        />
-                    )
-                }
                 return (
                     <Flex alignItems={color?.value === "LOGGED" || color?.value === "FLAGGED" ? "center" : "top"}>
                         {color?.value === "LOGGED" || color?.value === "FLAGGED" ? (
@@ -159,7 +122,7 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
                         )}
                         <Box>
                             <Text className="satoshi-bold">{row.getValue("description")}</Text>
-                            {(color?.value === 'PENDING' || color?.value === 'REJECTED' || color?.value === 'REBUTTED') ?
+                            {(color?.value !== "LOGGED" && color?.value !== "FLAGGED") ?
                                 <Text
                                     fontSize={"12px"}
                                     w={'303px'}
@@ -193,35 +156,10 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
                 </Text>
             ),
             cell: ({ row }) => {
-                const isEditing = row.original.id === editingId
                 const color = expenseStatus.find(
                     (item) => item.value === row.original.status,
                 )
-                if (isEditing) {
-                    return (
-                        <select
-                            value={editValues.category ?? ""}
-                            onChange={(e) =>
-                                setEditValues((prev) => ({ ...prev, category: e.target.value }))
-                            }
-                            style={{
-                                border: "1px solid #A9B4B9",
-                                borderRadius: "6px",
-                                padding: "4px 8px",
-                                fontSize: "13px",
-                                color: "#566166",
-                                background: "#fff",
-                                width: "100%",
-                            }}
-                        >
-                            {categoryOptions.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                </option>
-                            ))}
-                        </select>
-                    )
-                }
+
                 return (
                     color?.value === "LOGGED" || color?.value === "FLAGGED" ?
                         <Text
@@ -252,23 +190,7 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
                 </Text>
             ),
             cell: ({ row }) => {
-                const isEditing = row.original.id === editingId
-                if (isEditing) {
-                    return (
-                        <Input
-                            type="date"
-                            value={editValues.date ?? ""}
-                            onChange={(e) =>
-                                setEditValues((prev) => ({ ...prev, date: e.target.value }))
-                            }
-                            size="sm"
-                            borderColor={"#A9B4B9"}
-                            rounded={"6px"}
-                            fontSize={"14px"}
-                        />
-                    )
-                }
-                return <Text>{formatDate(row.getValue("date"))}</Text>
+                return <Text>{formatDateRegular(row.getValue("date"))}</Text>
             },
         },
         {
@@ -287,26 +209,10 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
                 </Text>
             ),
             cell: ({ row }) => {
-                const isEditing = row.original.id === editingId
                 const color = expenseStatus.find(
                     (item) => item.value === row.original.status,
                 )
-                if (isEditing) {
-                    return (
-                        <Input
-                            type="number"
-                            value={editValues.amount ?? ""}
-                            onChange={(e) =>
-                                setEditValues((prev) => ({ ...prev, amount: Number(e.target.value) }))
-                            }
-                            size="sm"
-                            borderColor={"#A9B4B9"}
-                            rounded={"6px"}
-                            fontSize={"14px"}
-                            textAlign={"end"}
-                        />
-                    )
-                }
+
                 return (
                     <Flex direction={"column"} minW={"138px"} w={"fit"} justify={"end"}>
                         <Text className="satoshi-bold" textAlign={"end"}>
@@ -327,70 +233,37 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
             accessorKey: "status",
             header: "",
             cell: ({ row }) => {
-                const isEditing = row.original.id === editingId
                 const color = expenseStatus.find(
                     (item) => item.value === row.original.status,
                 )
-                const [Flagged, SetFlagged] = useState(false)
-                const [Delete, SetDelete] = useState(false)
-
-                if (isEditing) {
-                    return (
-                        <Flex gap={2}>
-                            <LuCheck
-                                color="#047857"
-                                size={20}
-                                cursor="pointer"
-                                onClick={saveEdit}
-                            />
-                            <LuX
-                                color="#B91C1C"
-                                size={20}
-                                cursor="pointer"
-                                onClick={cancelEdit}
-                            />
-                        </Flex>
-                    )
-                }
+                // const [Flagged, SetFlagged] = useState(false)
+                const [rebutted, SetRebutted] = useState(false)
+                const [rejected, SetRejected] = useState(false)
 
                 return (
                     <Flex>
-                        {color?.value === "FLAGGED" || color?.value === "LOGGED" ? (
-                            color?.value === "FLAGGED" ? (
-                                <IoFlag
+                        {color?.value === "LOGGED" || color?.value === "REJECTED" ? (
 
-                                    color={"#EA9C4899"}
-                                    size={"15px"}
-                                />
-                            ) : (
-                                <IoFlagOutline
-                                    onClick={() => SetFlagged(!Flagged)}
-                                    cursor={"pointer"}
-                                    color="#A9B4B999"
-                                    size={"15px"}
-                                />
-                            )
-                        ) : (color?.value === "REJECTED" || color?.value === "PENDING") ?
-                            <Flex>
-                                <LuPencil
-                                    color="#A9B4B9"
-                                    size={18}
-                                    cursor={'pointer'}
-                                    className="mr-2"
-                                    onClick={() => startEdit(row.original)}
-                                />
-                                <BiTrash color="#B91C1C" size={18} cursor={'pointer'} onClick={() => SetDelete(!Delete)} />
+                            <IoFlagOutline
+                                cursor={"pointer"}
+                                color="#A9B4B999"
+                                size={"15px"}
+                            />
 
-                            </Flex> :
-                            color?.value === 'REBUTTED' ? <Flex gap={2} direction={'column'}>
+                        ) :
+                            (color?.value === 'REBUTTED' || color?.value === "PENDING" || color?.value === "FLAGGED") ? <Flex gap={2} direction={'column'}>
                                 <Button bg={'#ECFDF5'} color={'#047857'} h={'30px'} fontSize={'12px'} border={'1px solid #D1FAE5'} py={0} rounded={'full'} px={2}>Accept</Button>
-                                <Button color='#B91C1C' fontSize={'12px'} h={'30px'} bg={'#FEF2F2'} py='0' border={'1px solid #FEE2E2'} rounded={'full'} px={2}>Cancel</Button>
+                                <HStack>
+                                    {color.value === 'PENDING' && <Button onClick={() => SetRebutted(true)} color='#3688EE' fontSize={'12px'} h={'30px'} bg={'#83BAFE1A'} py='0' border={'1px solid #83BAFE26'} rounded={'full'} px={2}>Counter</Button>}
+                                    <Button onClick={() => SetRejected(true)} color='#B91C1C' fontSize={'12px'} h={'30px'} bg={'#FEF2F2'} py='0' border={'1px solid #FEE2E2'} rounded={'full'} px={2}>Cancel</Button></HStack>
 
                             </Flex> : null
 
                         }
-                        <Modal size={'sm'} open={Flagged} modalContent={<FlagMistake onClose={() => SetFlagged(false)} />} onOpenChange={SetFlagged} />
-                        <Modal size={'sm'} open={Delete} modalContent={<DeletePopup onClose={() => SetDelete(false)} />} onOpenChange={SetDelete} />
+                        {// <Modal size={'sm'} open={Flagged} modalContent={<FlagMistake onClose={() => SetFlagged(false)} />} onOpenChange={SetFlagged} />
+                        }
+                        <Modal size={'sm'} open={rejected} modalContent={<RejectionPage id={row.original.id} onClose={() => SetRejected(false)} />} onOpenChange={SetRejected} />
+                        <Modal size={'sm'} open={rebutted} modalContent={<RebuttalPage id={row.original.id} onClose={() => SetRebutted(false)} />} onOpenChange={SetRebutted} />
                     </Flex>
                 )
             },

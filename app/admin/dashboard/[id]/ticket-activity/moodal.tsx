@@ -20,6 +20,8 @@ export const LogExpense = ({ ticketid, onClose }: { onClose: () => void, ticketi
     const properties = usePropertyStore((state) => state.properties)
     const units = usePropertyStore((state) => state.units)
     const { control, watch, reset, handleSubmit } = useForm<AddExpenseFormData>()
+    const fetchProperties = usePropertyStore((state) => state.fetchProperties)
+    const fetchUnits = usePropertyStore((state) => state.fetchUnits)
     const options = [
         {
             label: 'Parts',
@@ -77,17 +79,17 @@ export const LogExpense = ({ ticketid, onClose }: { onClose: () => void, ticketi
     })
 
     const onSubmit = (data: AddExpenseFormData) => {
-        const date = new Date(data.date);
         const payload: addExpensePayload = {
             id: ticketid,
             data: {
-                date: date.toISOString(),
+                date: data.date,
                 amount: data.amount,
                 category: selected.value,
                 description: data.description
             }
         }
         mutation.mutate(payload)
+        console.log(payload)
     }
 
     return (
