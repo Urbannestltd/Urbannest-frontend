@@ -164,6 +164,10 @@ const FmEndpoints = {
 	rejectVisitor: (id: string) => `/facility-manager/agent-visits/${id}/reject`,
 	rescheduleVisitor: (id: string) =>
 		`/facility-manager/agent-visits/${id}/reschedule`,
+
+	//Settings
+	getSettings: `/facility-manager/profile`,
+	changePassword: `/facility-manager/settings/password`,
 }
 
 export { FmEndpoints }

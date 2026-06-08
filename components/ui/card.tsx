@@ -1,4 +1,4 @@
-import { Center, Flex, HStack, Image, Span, Text } from "@chakra-ui/react"
+import { Center, Flex, Grid, HStack, Image, Span, Text } from "@chakra-ui/react"
 import { Progress } from "./progress-bar"
 import { StaticImageData } from "next/image"
 
@@ -21,12 +21,13 @@ export interface CardData {
 
 interface CardProps {
     data: CardData[]
+    newMobile?: boolean
 }
 
-export const DashboardCard = ({ data }: CardProps) => {
+export const DashboardCard = ({ data, newMobile }: CardProps) => {
     const isMobile = window.innerWidth < 600
     return (
-        <Flex gap={4} direction={{ base: 'column', md: 'row' }} w={{ base: "auto", md: "full" }} minH={"118px"} h={'fit'} maxH={{ base: "auto", md: "400px" }} justify="start">
+        <Grid gap={4} templateColumns={{ base: newMobile ? "repeat(2, 1fr)" : "repeat(1, 1fr)", md: "repeat(4, 1fr)" }} w={{ base: "auto", md: "full" }} minH={newMobile ? "180px" : "118px"} h={newMobile ? 'auto' : 'fit'} maxH={{ base: "auto", md: "400px" }}>
             {data.map((item, index) => (
                 <Flex
                     key={index}
@@ -75,6 +76,6 @@ export const DashboardCard = ({ data }: CardProps) => {
                     </Span>}
                 </Flex>
             ))}
-        </Flex>
+        </Grid>
     )
 }

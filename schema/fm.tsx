@@ -26,6 +26,22 @@ export const addExpenseSchema = z.object({
     description: inputField("Description is required"),
 })
 
+export const visitorFilterSchema = z.object({
+    property: selectArrayField("Property is required"),
+    status: selectArrayField("Status is required"),
+    accessType: selectArrayField("Access type is required"),
+    dateRange: selectArrayField("Date range is required"),
+})
+
+export const PersonalInfoSchema = z.object({
+    fullName: inputField("Full name is required"),
+    emailAddress: inputField("Email address is required"),
+    phoneNumber: inputField("Phone number is required"),
+    emergencyContact: inputField("Emergency contact is required"),
+})
+
 export type PropertyFilterFormData = z.infer<typeof propertyFilterSchema>
 export type TicketFilterFormData = z.infer<typeof ticketFilterSchema>
 export type AddExpenseFormData = z.infer<typeof addExpenseSchema>
+export type VisitorFilterFormData = z.infer<typeof visitorFilterSchema>
+export type PersonalInfoFormData = z.infer<typeof PersonalInfoSchema>

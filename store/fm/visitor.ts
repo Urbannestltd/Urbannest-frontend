@@ -29,19 +29,30 @@ export interface Visitor {
 	createdAt: string
 }
 
+interface filter {
+	search?: string
+	propertyId?: string
+	status?: string
+	type?: string
+	dateFrom?: string
+	dateTo?: string
+}
+
 interface VisitorStore {
 	visitors: Visitor[]
 	isLoading: boolean
-	fetchVisitors: () => Promise<void>
+	fetchVisitors: (filter?: filter) => Promise<void>
 }
 
 export const useVisitorStore = create<VisitorStore>((set) => ({
 	visitors: [],
 	isLoading: false,
-	fetchVisitors: async () => {
+	fetchVisitors: async (filter) => {
 		set({ isLoading: true })
 		try {
-			const visitors = await http.get(FmEndpoints.fetchVisitors)
+			const visitors = await http.get(FmEndpoints.fetchVisitors, {
+				params: filter,
+			})
 			set({ visitors: visitors.data.data })
 			console.log("✅ Visitors set in store:", visitors.data.data)
 		} catch (e) {

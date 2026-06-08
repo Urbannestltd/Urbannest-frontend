@@ -1,15 +1,16 @@
 import { DataTable } from "@/components/ui/data-table";
 import { SearchInput } from "@/components/ui/search-input";
-import { Box, Flex, HStack, Menu, Tabs, Text } from "@chakra-ui/react";
+import { Box, Center, Flex, HStack, Menu, Stack, Tabs, Text } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
 import { LuEllipsisVertical } from "react-icons/lu";
 import Image from "next/image";
 import { formatDateDash, formatDatetoTime } from "@/services/date";
 import { Paginator } from "@/components/ui/paginator";
-import { useDashboardStore } from "@/store/tenant/dashboard";
 import { usePathname } from "next/navigation";
 import { useColumns } from "./columns";
+import { Modal } from "@/components/ui/dialog";
+import { ApproveRequestModal, RejectRequestModal, RescheduleRequestModal } from "./modal";
 import { useVisitorStore, Visitor } from "@/store/fm/visitor";
 
 interface TabProps {
@@ -23,31 +24,30 @@ export const VisitorTabs = ({ component }: TabProps) => {
     const visitors = useVisitorStore((state) => state.visitors)
     const fetchVisitors = useVisitorStore((state) => state.fetchVisitors);
     const loadingVisitors = useVisitorStore((state) => state.isLoading)
-    const dashboard = useDashboardStore((state) => state.dashboard)
-    const isLoading = useDashboardStore((state) => state.isLoading)
     const isMobile = window.innerWidth < 700
     const pathname = usePathname();
-    const isDashboard = pathname?.includes("dashboard")
+    const [search, setSearch] = useState('')
 
 
     return (
         <Tabs.Root defaultValue={"walk-in"} variant={"line"}>
-            {isMobile && <Flex mb={4} gap={2}>
-                <SearchInput />
-                {component}
-            </Flex>}
-            <HStack justify={"space-between"}>
+
+            <HStack mt={4} justify={"space-between"}>
                 <Tabs.List borderBottom={"1px solid #D9D9D9"}>
                     <Tabs.Trigger px={2} value="walk-in">
-                        Walk-In Visitors ({isDashboard ? dashboard?.visitorsToday.walkInCount : 0})
+                        Walk-In Visitors (0)
                     </Tabs.Trigger>
                     <Tabs.Trigger px={2} ml={3} value="scheduled">
-                        Scheduled Visitors ({isDashboard ? dashboard?.visitorsToday.scheduledCount : visitors.length})
+                        Scheduled Visitors ({visitors.length ?? 0})
                     </Tabs.Trigger>
                     <Tabs.Indicator bg={'white'} shadow={"none"} fontWeight={"bold"} />
                 </Tabs.List>
                 {!isMobile && <Flex gap={2}>
-                    <SearchInput />
+                    <SearchInput value={search} onChange={setSearch} onSearch={(val) => {
+                        fetchVisitors({
+                            search,
+                        })
+                    }} placeholder="" width={"full"} />
                     {component}
                 </Flex>}
             </HStack>
@@ -57,7 +57,7 @@ export const VisitorTabs = ({ component }: TabProps) => {
                         headerColor="#FFFFFF"
                         my={1}
                         tableName="Walk-in Visitors"
-                        loading={isLoading || loadingVisitors}
+                        loading={loadingVisitors}
                         pagination={{ currentPage: 1, pageSize: 10, total: visitors.length, totalPages: Math.ceil(visitors.length / 10) }}
                         emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
                         columns={columns}
@@ -69,7 +69,7 @@ export const VisitorTabs = ({ component }: TabProps) => {
                     headerColor="#FFFFFF"
                     my={1}
                     tableName="Scheduled Visitors"
-                    loading={isLoading || loadingVisitors}
+                    loading={loadingVisitors}
                     emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
                     columns={Scheduledcolumns}
                     data={visitors}
@@ -83,7 +83,7 @@ export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isSchedule
     const Status = [
         {
             value: 'UPCOMING',
-            label: 'Upcoming',
+            label: 'Not Arrived',
             bgColor: '#F5F5F5',
             textColor: '#757575'
         },
@@ -98,7 +98,63 @@ export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isSchedule
             label: 'Checked Out',
             bgColor: '#F5F5F5',
             textColor: '#757575'
+        },
+        {
+            value: 'PENDING',
+            label: 'Pending',
+            bgColor: '#FFFBEB',
+            textColor: '#BF6A02'
+        },
+        {
+            value: 'RESCHEDULED',
+            label: 'Rescheduled',
+            bgColor: '#FFFBEB',
+            textColor: '#BF6A02'
+        },
+        {
+            value: 'REJECTED',
+            label: 'Rejected',
+            bgColor: '#FEF2F2',
+            textColor: '#B91C1C'
         }
+    ]
+
+    const Type = [
+        {
+            value: 'ONE_OFF_AGENT',
+            label: 'Request',
+            bgColor: '#FFFBEB',
+            borderColor: '#EBFFEE',
+            textColor: '#BF6A02'
+        },
+        {
+            value: 'ONE_OFF_AGENT_APPROVED',
+            label: 'Inspection',
+            bgColor: '#EBFFEE',
+            borderColor: '#FFFBEB',
+            textColor: '#14AE5C'
+        },
+        {
+            value: 'ONE_OFF',
+            label: 'One Off',
+            bgColor: '#FFFFFF',
+            borderColor: '#E0E0E0',
+            textColor: '#4A4A4A'
+        },
+        {
+            value: 'WHOLE_DAY',
+            label: 'Whole Day',
+            bgColor: '#FFFFFF',
+            borderColor: '#E0E0E0',
+            textColor: '#4A4A4A'
+        },
+        {
+            value: 'RECURRING',
+            label: 'Recurring',
+            bgColor: '#FFFBEB',
+            borderColor: '#EBFFEE',
+            textColor: '#BF6A02'
+        },
     ]
 
     const pageSize = 10;
@@ -109,6 +165,11 @@ export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isSchedule
         rows?.slice((currentPage - 1) * pageSize, currentPage * pageSize) ?? [],
         [rows, currentPage, pageSize]
     );
+
+    const [approve, setApprove] = useState(false)
+    const [reject, setReject] = useState(false)
+    const [reschedule, setReschedule] = useState(false)
+
 
 
     const tableData = (currentData ?? []);
@@ -131,12 +192,13 @@ export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isSchedule
         <Box>
             {tableData?.map((row) => {
                 const status = Status.find((status) => status.value === (row?.rawStatus ?? 'CHECKED_IN'))
+                const type = Type.find((type) => type.value === row?.frequency)
 
                 return <Box p={4} rounded={'lg'} my={4} border={'1.7px solid #F4F4F4'}>
                     <HStack justify={'space-between'} my={3}>
                         <Box>
-                            <Text className="satoshi-bold text-sm capitalize">{row?.visitorName}{/*row.isGroupInvite && ` (${row.groupName})`*/}</Text>
-                            <Text className="satoshi-medium text-sm">{row?.visitorPhone}</Text>
+                            <Text className="satoshi-bold text-sm capitalize">{row?.propertyName}{/*row.isGroupInvite && ` (${row.groupName})`*/}</Text>
+                            <Text className="text-[#757575] text-sm">{row?.unitName}</Text>
                         </Box>
                         <Flex gap={1}>
                             <Flex
@@ -152,39 +214,54 @@ export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isSchedule
                             >
                                 <Text className="capitalize" color={status?.textColor} children={status?.label || row?.rawStatus} />
                             </Flex>
-                            <Menu.Root>
+                            {(row.canApprove || row.canReject || row.canReschedule) && <Menu.Root>
                                 <Menu.Trigger>
                                     <LuEllipsisVertical cursor={'pointer'} />
                                 </Menu.Trigger>
                                 <Menu.Positioner>
                                     <Menu.Content>
                                         <Menu.ItemGroup gap={3}>
-                                            <Menu.Item mb={2} cursor={'pointer'} value="save-visitor" >Save as Visitor</Menu.Item>
-                                            <Menu.Item my={2} cursor={'pointer'} value="view-details">View Details</Menu.Item>
-                                            <Menu.Item my={2} cursor={'pointer'} value="revoke-access">Revoke Access</Menu.Item>
+                                            {row.canApprove && <Menu.Item onClick={() => setApprove(true)} value="approve">Approve Request</Menu.Item>}
+                                            {row.canReject && <Menu.Item onClick={() => setReject(true)} value="reject">Reject Request</Menu.Item>}
+                                            {row.canReschedule && <Menu.Item onClick={() => setReschedule(true)} value="reschedule">Reschedule Visit</Menu.Item>}
                                         </Menu.ItemGroup>
                                     </Menu.Content>
                                 </Menu.Positioner>
-                            </Menu.Root>
+                            </Menu.Root>}
                         </Flex>
                     </HStack>
-                    <HStack justify={'space-between'} my={3}>
-                        <Text className="satoshi-bold text-sm">Frequency:</Text>
-                        <Text className="satoshi-medium text-sm" >{row?.frequency}</Text>
-                    </HStack>
+                    <Flex justify={'space-between'}>
+                        <Stack width={'full'} my={3}>
+                            <Text className="text-[13px] text-[#9CA3AF]">Visitor Name</Text>
+                            <Text className="satoshi-medium text-sm" >{row?.visitorName}</Text>
+                        </Stack>
+                        <Stack width={'full'} my={3}>
+                            <Text className="text-[13px] text-[#9CA3AF]">Tenant Name</Text>
+                            <Text className="satoshi-medium text-sm" >{row?.tenantName}</Text>
+                        </Stack>
+                    </Flex>
+                    <Flex justify={'space-between'}>
+                        <Stack width={'full'} my={3}>
+                            <Text className="text-[13px] text-[#9CA3AF]">Access Type</Text>
+                            <Center w={'fit'} py={0.5} bg={type?.bgColor} rounded={'full'} px={2} border={`1px solid ${type?.borderColor}`}>
+                                <Text className="capitalize satoshi-bold text-sm " color={type?.textColor} children={type?.label} />
+                            </Center>
+                        </Stack>
+                        <Stack width={'full'} my={3}>
+                            <Text className="text-[13px] text-[#9CA3AF]">Time in/Out</Text>
+                            <Text className="satoshi-medium text-sm" >{row.visitDate === '-' ? '-' : formatDatetoTime(row?.visitDate)}/{row.proposedDate === '-' ? '-' : formatDatetoTime(row?.proposedDate)}</Text>
+                        </Stack>
+                    </Flex>
                     {isScheduled &&
-                        <HStack justify={'space-between'} my={3}>
-                            <Text className="satoshi-bold text-sm">Expected:</Text>
+                        <Stack my={3}>
+                            <Text className="text-[13px] text-[#9CA3AF]">Expected</Text>
                             <Text className="satoshi-medium text-sm" >{formatDateDash(row.visitDate)} | {formatDatetoTime(row.visitDate)}</Text>
-                        </HStack>}
-                    <HStack justify={'space-between'} my={3}>
-                        <Text className="satoshi-bold text-sm">Time in:</Text>
-                        <Text className="satoshi-medium text-sm" >{row.visitDate === '-' ? '-' : formatDatetoTime(row?.visitDate)}</Text>
-                    </HStack>
-                    <HStack justify={'space-between'} my={3}>
-                        <Text className="satoshi-bold text-sm">Time out:</Text>
-                        <Text className="satoshi-medium text-sm" >{row.proposedDate === '-' ? '-' : formatDatetoTime(row?.proposedDate)}</Text>
-                    </HStack>
+                        </Stack>}
+                    <Modal open={approve} onOpenChange={setApprove} size={'xs'} modalContent={<ApproveRequestModal agentData={{ name: row.agentName, unit: row.unitName }} id={row.id} onClose={() => { setApprove(false) }} />} />
+                    <Modal open={reject} onOpenChange={setReject} size={'xs'} modalContent={<RejectRequestModal id={row.id} onClose={() => { setReject(false) }} />} />
+                    <Modal open={reschedule} onOpenChange={setReschedule} size={'sm'} modalContent={<RescheduleRequestModal proposedDate={row.proposedDate} id={row.id} onClose={() => { setReschedule(false) }} />} />
+
+
                 </Box>
             })}
             <Paginator
