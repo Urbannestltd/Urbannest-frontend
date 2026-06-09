@@ -40,8 +40,20 @@ export const PersonalInfoSchema = z.object({
     emergencyContact: inputField("Emergency contact is required"),
 })
 
+
+export const NotifPreferenceSchema = z.object({
+    fmEmailNewTicket: boolean("Email new ticket is required"),
+    fmEmailTenantMessage: boolean("Email tenant message is required"),
+    fmEmailAdminNote: boolean("Email admin note is required"),
+    fmEmailBudgetResponse: boolean("Email budget response is required"),
+    fmEmailNewAgentVisit: boolean("Email new agent visit is required"),
+    fmEmailAgentReschedule: boolean("Email agent reschedule is required"),
+})
+
+
 export type PropertyFilterFormData = z.infer<typeof propertyFilterSchema>
 export type TicketFilterFormData = z.infer<typeof ticketFilterSchema>
 export type AddExpenseFormData = z.infer<typeof addExpenseSchema>
 export type VisitorFilterFormData = z.infer<typeof visitorFilterSchema>
 export type PersonalInfoFormData = z.infer<typeof PersonalInfoSchema>
+export type NotificationFormData = z.infer<typeof NotifPreferenceSchema>

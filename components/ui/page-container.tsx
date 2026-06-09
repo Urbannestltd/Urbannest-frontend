@@ -12,6 +12,7 @@ export const PageContainer = ({ children, left }: { children: React.ReactNode, l
             justify={'center'}
             color="blue.900"
             top="0rem"
+            bg={isSetting ? 'white' : 'transparent'}
             left={isSetting || isMobile ? '0rem' : left}
             p={{ base: 4, md: 8 }}
             w={`calc(100vw - ${isSetting || isMobile ? '0rem' : left})`}

@@ -20,7 +20,7 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
     const budget = useTicketStore((state) => state.globalBudget)
     const expenses = useTicketStore((state) => state.expense)
     const fetchExpense = useTicketStore((state) => state.fetchExpenses)
-    const columns = useColumns()
+    const columns = useColumns(id)
     const [open, setOpen] = useState(false)
     const isMobile = window.innerWidth < 600
     const expenseDetail = [
@@ -38,6 +38,7 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
             data: formatNumber(0),
         },
     ]
+
     return (
         <Box px={{ base: 4, md: 8 }}>
             <SectionFlex
@@ -70,7 +71,7 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
                                     </Center>
                                 }
                                 modalContent={
-                                    <LogExpense ticketid={id} onClose={() => setOpen(false)} />
+                                    <LogExpense ticketid={id} onClose={() => { fetchExpense(id); setOpen(false) }} />
                                 }
                             />
                         </HStack>
@@ -157,7 +158,7 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
                 )}
             </SectionFlex>
             {isMobile ? (
-                <MobileTable tableName="Expense Log" data={expenses} />
+                <MobileTable ticketId={id} tableName="Expense Log" data={expenses} />
             ) : (
                 <DataTable
                     columns={columns}

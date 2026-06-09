@@ -9,16 +9,18 @@ import { useForm } from "react-hook-form"
 import { Divider } from "@/components/ui/divider"
 import { MainButton } from "@/components/ui/button"
 import { useMutation } from "@tanstack/react-query"
-import { addExpense, addExpensePayload } from '@/services/fm/ticket'
+import { addExpense, addExpensePayload, deleteExpense, deleteExpensePayload, flagExpense, flagExpensePayload } from '@/services/fm/ticket'
 import toast from "react-hot-toast"
 import { AddExpenseFormData } from "@/schema/fm"
 import { UploadGallery } from "@/components/ui/gallery-upload"
 import { DragAndDrop } from "@/components/ui/add-image"
 import { LuFlag } from "react-icons/lu"
+import { useTicketStore } from "@/store/fm/ticket"
 
 export const LogExpense = ({ ticketid, onClose }: { onClose: () => void, ticketid: string }) => {
     const properties = usePropertyStore((state) => state.properties)
     const units = usePropertyStore((state) => state.units)
+    const fetchExpenses = useTicketStore((state) => state.fetchExpenses)
     const { control, watch, reset, handleSubmit } = useForm<AddExpenseFormData>()
     const options = [
         {
@@ -68,6 +70,7 @@ export const LogExpense = ({ ticketid, onClose }: { onClose: () => void, ticketi
         mutationFn: (payload: addExpensePayload) => addExpense(payload),
         onSuccess: () => {
             toast.success('Expense added successfully')
+            fetchExpenses(ticketid)
             onClose()
             reset()
         },
@@ -141,24 +144,66 @@ export const LogExpense = ({ ticketid, onClose }: { onClose: () => void, ticketi
 
 
 
-export const FlagMistake = ({ onClose }: { onClose?: () => void }) => {
+export const FlagMistake = ({ ticketId, id, onClose }: { id: string, ticketId: string, onClose: () => void }) => {
+    const fetchExpenses = useTicketStore((state) => state.fetchExpenses)
+    const mutation = useMutation({
+        mutationFn: (data: flagExpensePayload) => flagExpense(data),
+        onSuccess: () => {
+            onClose()
+            fetchExpenses(ticketId)
+        },
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to flag expense')
+        }
+    })
+
+    const onSubmit = () => {
+        const payload: flagExpensePayload = {
+            id,
+            ticketId,
+            data: {
+                reason: 'Mistake'
+            }
+        }
+        mutation.mutate(payload)
+
+    }
     return (
         <Flex direction={'column'} align={'center'} py={10} px={5} color={'black'}>
             <Center mb={2} bg={'#F2C3914D'} w={12} h={12} rounded={'full'}><LuFlag color="#EA9C48" size={24} /></Center>
             <Text className="satoshi-bold text-lg my-1">Flag Expense as Mistake </Text>
             <Text w={'full'} my={2} textAlign={'center'} textWrap={'wrap'} fontSize={'16px'}>Mark this expense as a mistake if it was logged incorrectly. Flagged expenses are excluded from expense totals and reports.</Text>
-            <MainButton size='lg' className="my-2" onClick={onClose}>Flag</MainButton>
+            <MainButton size='lg' className="my-2" loading={mutation.isPending} onClick={onSubmit}>Flag</MainButton>
             <MainButton size="lg" variant='outline' onClick={onClose}>Cancel</MainButton>
         </Flex>
     )
 }
 
-export const DeletePopup = ({ onClose }: { onClose?: () => void }) => {
+export const DeletePopup = ({ ticketId, id, onClose }: { id: string, ticketId: string, onClose: () => void }) => {
+    const fetchExpenses = useTicketStore((state) => state.fetchExpenses)
+    const mutation = useMutation({
+        mutationFn: (data: deleteExpensePayload) => deleteExpense(data),
+        onSuccess: () => {
+            onClose()
+            fetchExpenses(ticketId)
+        },
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to delete expense')
+        }
+    })
+
+    const onSubmit = () => {
+        const payload: deleteExpensePayload = {
+            id,
+            ticketId,
+        }
+        mutation.mutate(payload)
+    }
     return (
         <Flex direction={'column'} align={'center'} py={5} px={5} color={'black'}>
             <Text className="satoshi-bold text-lg my-1">Delete Expense </Text>
             <Text w={'full'} textAlign={'center'} mb={2} textWrap={'wrap'} fontSize={'16px'}>This action is only available shortly after the expense was created and cannot be undone.</Text>
-            <Button h={'45px'} w={'full'} color={'white'} bg={'#C00F0C'}>Remove</Button>
+            <Button h={'45px'} w={'full'} color={'white'} loading={mutation.isPending} onClick={onSubmit} bg={'#C00F0C'}>Remove</Button>
         </Flex>
     )
 }

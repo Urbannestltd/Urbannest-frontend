@@ -3,8 +3,8 @@
 import { CustomCheckbox, Option } from "@/components/ui/custom-fields"
 import { Divider } from "@/components/ui/divider"
 import { PageTitle } from "@/components/ui/page-title"
-import { NotificationFormData } from "@/schema"
-import { getNotifPreferences, updateNotifPreferences } from "@/services/tenant/settings"
+import { NotificationFormData } from "@/schema/fm"
+import { getNotifPreferences, updateNotifPreferences } from "@/services/fm/settings"
 import { Box, Flex, Stack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { AxiosError } from "axios"
@@ -61,14 +61,14 @@ export const NotifPref = () => {
                 <Flex justify={'space-between'}>
                     <PageTitle title="Email Notifications" fontSize={'18px'} subFontSize={'16px'} spacing={0} subText="Get important updates sent to your email address." />
                     <Stack>
-                        <CustomCheckbox name='emailPayments' control={control} onChange={submitForm}
-                            value={notifValues?.emailPayments} options={options[0]} />
-                        <CustomCheckbox name='emailLease' control={control} onChange={submitForm}
-                            value={notifValues?.emailLease} options={options[1]} />
-                        <CustomCheckbox name='emailMaintenance' control={control} onChange={submitForm}
-                            value={notifValues?.emailMaintenance} options={options[2]} />
-                        <CustomCheckbox name='emailVisitors' control={control} onChange={submitForm}
-                            value={notifValues?.emailVisitors} options={options[3]} />
+                        <CustomCheckbox name='fmEmailAdminNote' control={control} onChange={submitForm}
+                            value={notifValues?.fmEmailAdminNote} options={options[0]} />
+                        <CustomCheckbox name='fmEmailAgentReschedule' control={control} onChange={submitForm}
+                            value={notifValues?.fmEmailAgentReschedule} options={options[1]} />
+                        <CustomCheckbox name='fmEmailNewTicket' control={control} onChange={submitForm}
+                            value={notifValues?.fmEmailNewTicket} options={options[2]} />
+                        <CustomCheckbox name='fmEmailNewAgentVisit' control={control} onChange={submitForm}
+                            value={notifValues?.fmEmailNewAgentVisit} options={options[3]} />
                     </Stack>
                 </Flex>
             </form>
@@ -78,8 +78,8 @@ export const NotifPref = () => {
 
 const options = [
     {
-        label: 'Payments',
-        description: 'Get emails about payment confirmations, failed payments, and overdue payments.'
+        label: 'Properties',
+        description: 'Get emails about changes to the properties you manage.'
     },
     {
         label: 'Lease',
@@ -87,10 +87,10 @@ const options = [
     },
     {
         label: 'Maintenance',
-        description: 'Get emails about maintenance messages, status changes, and visit updates.'
+        description: 'Get emails about maintenance messages, status changes, and budget updates.'
     },
     {
-        label: 'Visitors',
-        description: 'Get emails when your visitor arrives or has an issue at entry.'
+        label: 'Visitors & Inspections',
+        description: 'Stay informed about property visits & inspection requests.'
     }
 ]

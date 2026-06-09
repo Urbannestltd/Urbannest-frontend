@@ -1,4 +1,4 @@
-import { remove, update } from "lodash"
+import { get, remove, update } from "lodash"
 import { deleteFloor, uploadLease } from "./admin/property"
 import { activateUser } from "./admin/user"
 import { exportTickets } from "./admin/maintenance"
@@ -155,6 +155,15 @@ const FmEndpoints = {
 	updatePriority: (id: string) => `/facility-manager/tickets/${id}/priority`,
 	postComments: (id: string) => `/facility-manager/tickets/${id}/messages`,
 	getExpenses: (id: string) => `/facility-manager/tickets/${id}/expenses`,
+	editExpense: (id: string, ticketId: string) =>
+		`/facility-manager/tickets/${ticketId}/expenses/${id}`,
+	flagExpense: (id: string, ticketId: string) =>
+		`/facility-manager/tickets/${ticketId}/expenses/${id}/flag`,
+	acceptExpenseRebuttal: (id: string, ticketId: string) =>
+		`/facility-manager/tickets/${ticketId}/expenses/${id}/accept-rebuttal`,
+	cancelExpense: (id: string, ticketId: string) =>
+		`/facility-manager/tickets/${ticketId}/expenses/${id}/cancel`,
+
 	fetchBudget: (id: string) => `/facility-manager/tickets/${id}/budget`,
 
 	//Visitor
@@ -168,6 +177,7 @@ const FmEndpoints = {
 	//Settings
 	getSettings: `/facility-manager/profile`,
 	changePassword: `/facility-manager/settings/password`,
+	getNotifPreference: `/facility-manager/settings/notifications`,
 }
 
 export { FmEndpoints }

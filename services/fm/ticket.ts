@@ -36,6 +36,34 @@ export interface addExpensePayload {
 	id: string
 }
 
+export interface editExpensePayload {
+	data: {
+		date: string
+		description: string
+		category: string
+		amount: number
+	}
+	id: string
+	ticketId: string
+}
+
+export interface flagExpensePayload {
+	id: string
+	ticketId: string
+	data: {
+		reason: string
+	}
+}
+
+export interface deleteExpensePayload {
+	id: string
+	ticketId: string
+}
+
+export interface acceptExpenseRebuttalPayload extends deleteExpensePayload {}
+
+export interface cancelExpensePayload extends deleteExpensePayload {}
+
 export const updateTicketStatus = async (
 	payload: updateTicketStatusPayload,
 ) => {
@@ -68,6 +96,45 @@ export const addExpense = async (payload: addExpensePayload) => {
 	const response = await http.post(
 		FmEndpoints.getExpenses(payload.id),
 		payload.data,
+	)
+	return response.data.data
+}
+
+export const editExpense = async (payload: editExpensePayload) => {
+	const response = await http.patch(
+		FmEndpoints.editExpense(payload.id, payload.ticketId),
+		payload.data,
+	)
+	return response.data.data
+}
+
+export const flagExpense = async (payload: flagExpensePayload) => {
+	const response = await http.post(
+		FmEndpoints.flagExpense(payload.id, payload.ticketId),
+		payload.data,
+	)
+	return response.data.data
+}
+
+export const deleteExpense = async (payload: deleteExpensePayload) => {
+	const response = await http.delete(
+		FmEndpoints.editExpense(payload.id, payload.ticketId),
+	)
+	return response.data.data
+}
+
+export const acceptExpenseRebuttal = async (
+	payload: acceptExpenseRebuttalPayload,
+) => {
+	const response = await http.post(
+		FmEndpoints.acceptExpenseRebuttal(payload.id, payload.ticketId),
+	)
+	return response.data.data
+}
+
+export const cancelExpense = async (payload: cancelExpensePayload) => {
+	const response = await http.post(
+		FmEndpoints.cancelExpense(payload.id, payload.ticketId),
 	)
 	return response.data.data
 }

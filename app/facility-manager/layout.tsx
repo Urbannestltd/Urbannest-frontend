@@ -1,6 +1,5 @@
 import { Metadata } from "next"
 import { RequireAuth } from "../auth/require-auth"
-import { Box } from "@chakra-ui/react"
 import { PageContainer } from "@/components/ui/page-container"
 import { FMSideBarSetup } from "./sidebar"
 import { FMNav } from "./fm-nav"
@@ -18,7 +17,7 @@ export default function DashboardLayout({
 }) {
     return (
         <RequireAuth>
-            <div className="flex h-screen ">
+            <div className="flex h-screen">
                 <FMSideBarSetup />
                 <PageContainer left={'17rem'} >
                     <div className=" w-full max-w-[1440px]">
@@ -28,5 +27,5 @@ export default function DashboardLayout({
                 </PageContainer>
             </div>
         </RequireAuth>
-    ) //<>{children}</RequireAuth></>;
+    )
 }

@@ -17,6 +17,12 @@ import { LuCheck, LuPencil, LuX } from "react-icons/lu"
 import { Modal } from "@/components/ui/dialog"
 import { DeletePopup, FlagMistake } from "./modaal"
 
+import { useMutation } from "@tanstack/react-query"
+import { acceptExpenseRebuttal, acceptExpenseRebuttalPayload, cancelExpense, cancelExpensePayload, editExpense, editExpensePayload } from "@/services/fm/ticket"
+import { AxiosError } from "axios"
+import toast from "react-hot-toast"
+import { useTicketStore } from "@/store/fm/ticket"
+
 export interface ExpenseLog {
     maintenanceRequestId: string
     category: string
@@ -83,9 +89,10 @@ export const categoryOptions = [
     { label: "Permits", value: "PERMITS" },
 ]
 
-export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
+export const useColumns = (ticketId: string): ColumnDef<ExpenseLog, any>[] => {
     const [editingId, setEditingId] = useState<string | null>(null)
     const [editValues, setEditValues] = useState<Partial<ExpenseLog>>({})
+    const fetchExpense = useTicketStore((state) => state.fetchExpenses)
 
     const startEdit = (row: ExpenseLog) => {
         setEditingId(row.id)
@@ -103,10 +110,61 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
     }
 
     const saveEdit = () => {
-        // TODO: call update API with editValues for row editingId
-        setEditingId(null)
-        setEditValues({})
+        if (!editingId) return
+        editMututation.mutate({
+            id: editingId,
+            ticketId,
+            data: {
+                date: editValues.date ?? '',
+                amount: editValues.amount ?? 0,
+                category: editValues.category ?? '',
+                description: editValues.description ?? '',
+            },
+        })
     }
+
+    const acceptRebutMutation = useMutation({
+        mutationFn: (data: acceptExpenseRebuttalPayload) => acceptExpenseRebuttal(data),
+        onSuccess: () => {
+            fetchExpense(ticketId)
+        },
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to delete expense')
+        }
+    })
+
+    const cancelMututation = useMutation({
+        mutationFn: (data: cancelExpensePayload) => cancelExpense(data),
+        onSuccess: () => {
+            fetchExpense(ticketId)
+        },
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to delete expense')
+        }
+    })
+
+    const editMututation = useMutation({
+        mutationFn: (data: editExpensePayload) => editExpense(data),
+        onSuccess: () => {
+            fetchExpense(ticketId)
+            setEditingId(null)
+            setEditValues({})
+            toast.success('Expense updated successfully')
+        },
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to edit expense')
+        }
+    })
+
+    const onSubmit = (data: acceptExpenseRebuttalPayload) => {
+        acceptRebutMutation.mutate(data)
+    }
+
+    const handleCancel = (data: cancelExpensePayload) => {
+        cancelMututation.mutate(data)
+    }
+
+
 
     return [
         {
@@ -338,10 +396,10 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
                     return (
                         <Flex gap={2}>
                             <LuCheck
-                                color="#047857"
+                                color={editMututation.isPending ? "#A9B4B9" : "#047857"}
                                 size={20}
-                                cursor="pointer"
-                                onClick={saveEdit}
+                                cursor={editMututation.isPending ? "not-allowed" : "pointer"}
+                                onClick={editMututation.isPending ? undefined : saveEdit}
                             />
                             <LuX
                                 color="#B91C1C"
@@ -352,6 +410,8 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
                         </Flex>
                     )
                 }
+
+
 
                 return (
                     <Flex>
@@ -383,14 +443,14 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
 
                             </Flex> :
                             color?.value === 'REBUTTED' ? <Flex gap={2} direction={'column'}>
-                                <Button bg={'#ECFDF5'} color={'#047857'} h={'30px'} fontSize={'12px'} border={'1px solid #D1FAE5'} py={0} rounded={'full'} px={2}>Accept</Button>
-                                <Button color='#B91C1C' fontSize={'12px'} h={'30px'} bg={'#FEF2F2'} py='0' border={'1px solid #FEE2E2'} rounded={'full'} px={2}>Cancel</Button>
+                                <Button bg={'#ECFDF5'} color={'#047857'} h={'30px'} fontSize={'12px'} loading={acceptRebutMutation.isPending} onClick={() => onSubmit({ id: row.original.id, ticketId: row.original.maintenanceRequestId })} border={'1px solid #D1FAE5'} py={0} rounded={'full'} px={2}>Accept</Button>
+                                <Button color='#B91C1C' fontSize={'12px'} h={'30px'} bg={'#FEF2F2'} py='0' loading={cancelMututation.isPending} onClick={() => handleCancel({ id: row.original.id, ticketId: row.original.maintenanceRequestId })} border={'1px solid #FEE2E2'} rounded={'full'} px={2}>Cancel</Button>
 
                             </Flex> : null
 
                         }
-                        <Modal size={'sm'} open={Flagged} modalContent={<FlagMistake onClose={() => SetFlagged(false)} />} onOpenChange={SetFlagged} />
-                        <Modal size={'sm'} open={Delete} modalContent={<DeletePopup onClose={() => SetDelete(false)} />} onOpenChange={SetDelete} />
+                        <Modal size={'sm'} open={Flagged} modalContent={<FlagMistake ticketId={row.original.maintenanceRequestId} id={row.original.id} onClose={() => SetFlagged(false)} />} onOpenChange={SetFlagged} />
+                        <Modal size={'sm'} open={Delete} modalContent={<DeletePopup ticketId={row.original.maintenanceRequestId} id={row.original.id} onClose={() => SetDelete(false)} />} onOpenChange={SetDelete} />
                     </Flex>
                 )
             },
