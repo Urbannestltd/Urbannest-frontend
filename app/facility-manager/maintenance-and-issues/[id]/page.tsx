@@ -44,6 +44,7 @@ import toast from "react-hot-toast"
 import useAuthStore from "@/store/auth"
 import { RiFileList3Line, RiLock2Fill } from "react-icons/ri"
 import { useTicketStore } from "@/store/fm/ticket"
+import { TbRotateDot } from "react-icons/tb";
 import {
     sendComment,
     sendCommentPayload,
@@ -55,6 +56,7 @@ import {
 import { BsChatLeftFill } from "react-icons/bs"
 import { AiFillThunderbolt } from "react-icons/ai"
 import { TicketActivity } from "../../properties/[id]/ticket-activity/ticket-activity"
+import { FaPlay } from "react-icons/fa"
 
 const Status = [
     {
@@ -161,26 +163,14 @@ export default function TicketPage() {
     const updateStatusMutation = useMutation({
         mutationFn: (payload: updateTicketStatusPayload) =>
             updateTicketStatus(payload),
+
         onSuccess: (variables) => {
             toast.success("Status updated successfully")
             setUpdateStatus(variables.data.status)
+            fetchTicket(id)
         },
     })
 
-    const postCommentMutation = useMutation({
-        mutationFn: (payload: sendCommentPayload) => sendComment(payload),
-        onSuccess: (variables) => {
-            toast.success("Comment added successfully")
-            reset()
-            setComment({
-                senderName: user?.name ?? "N/A",
-                isSystemMessage: false,
-                timestamp: new Date().toISOString(),
-                id: variables.data.senderId,
-                message: variables.data.message,
-            })
-        },
-    })
 
     const handleUpdateStatus = (status: string) => {
         if (!user?.id) {
@@ -193,19 +183,6 @@ export default function TicketPage() {
         updateStatusMutation.mutate(payload)
     }
 
-    const onSubmitMessage = async (data: { message: string }) => {
-        if (!user?.id) {
-            return
-        }
-        const payload: sendCommentPayload = {
-            id: id,
-            data: {
-                message: data.message,
-                isInternalNote: false,
-            },
-        }
-        postCommentMutation.mutate(payload)
-    }
 
     const updatePriorityMutation = useMutation({
         mutationFn: (payload: updateTicketPriorityPayload) =>
@@ -213,6 +190,7 @@ export default function TicketPage() {
         onSuccess: (variables) => {
             toast.success("priority updated successfully")
             setUpdatePriority(variables.data.priority)
+            fetchTicket(id)
         },
     })
 
@@ -359,7 +337,6 @@ export default function TicketPage() {
                                 icon={<LuChevronRight />}
                                 onClick={() =>
                                     handleUpdateStatus('RESOLVED')
-
                                 }
                                 loading={updateStatusMutation.isPending}
                                 iconPosition="right"
@@ -370,7 +347,7 @@ export default function TicketPage() {
                                 className="h-[38px] justify-between  text-lg satoshi-bold"
                             >
                                 <Flex align={"center"}>
-                                    <LuCircleCheckBig className="mr-2" />
+                                    <IoCheckmarkCircleOutline size={18} className="mr-2" />
                                     Mark{" "}Resolved
                                 </Flex>
                             </MainButton>
@@ -395,11 +372,8 @@ export default function TicketPage() {
                                 className="h-[38px] my-3 justify-between rounded-full  text-lg satoshi-bold"
                             >
                                 <Flex align={"center"}>
-                                    <Image
-                                        src={refreshCheck.src}
-                                        alt="Update Status Icon"
-                                        mr={2}
-                                    />{" "}
+                                    {status?.value === 'IN_PROGRESS' ? <FaPlay className="mr-2" /> : <TbRotateDot size={18} className="mr-2 rotate-180"
+                                    />}{" "}
                                     Mark{" "}
                                     {status?.value === "IN_PROGRESS"
                                         ? "Open"

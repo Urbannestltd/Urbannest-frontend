@@ -48,6 +48,8 @@ import { sendComment, sendCommentPayload, updateTicketPriority, updateTicketPrio
 import { BsChatLeftFill } from "react-icons/bs"
 import { AiFillThunderbolt } from "react-icons/ai"
 import { TicketActivity } from "./ticket-activity/ticket-activity"
+import { FaPlay } from "react-icons/fa"
+import { TbRotateDot } from "react-icons/tb"
 
 const Status = [
     {
@@ -140,6 +142,10 @@ export const TicketPage = ({ id }: { id: string }) => {
         onSuccess: (variables) => {
             toast.success('Status updated successfully')
             setUpdateStatus(variables.data.status)
+            fetchTicket(id)
+        },
+        onError: () => {
+            toast.error('Something went wrong')
         }
     })
 
@@ -170,20 +176,6 @@ export const TicketPage = ({ id }: { id: string }) => {
         updateStatusMutation.mutate(payload)
     }
 
-    const onSubmitMessage = async (data: { message: string }) => {
-        if (!user?.id) {
-            return
-        }
-        const payload: sendCommentPayload = {
-            id: id,
-            data: {
-                message: data.message,
-                isInternalNote: false,
-            }
-        }
-        postCommentMutation.mutate(payload)
-    }
-
 
 
 
@@ -192,6 +184,10 @@ export const TicketPage = ({ id }: { id: string }) => {
         onSuccess: (variables) => {
             toast.success('priority updated successfully')
             setUpdatePriority(variables.data.priority)
+            fetchTicket(id)
+        },
+        onError: () => {
+            toast.error('Something went wrong')
         }
     })
 
@@ -335,7 +331,8 @@ export const TicketPage = ({ id }: { id: string }) => {
                                 className="h-[38px] my-3 justify-between rounded-full  text-lg satoshi-bold"
                             >
                                 <Flex align={"center"}>
-                                    <Image src={refreshCheck.src} alt="Update Status Icon" mr={2} />{" "}
+                                    {status?.value === 'IN_PROGRESS' ? <FaPlay className="mr-2" /> : <TbRotateDot size={18} className="mr-2 rotate-180"
+                                    />}{" "}
                                     Mark {status?.value === "IN_PROGRESS" ? "Open" : status?.value === "RESOLVED" ? "In Progress" : "Open"}
                                 </Flex>
                             </MainButton>
