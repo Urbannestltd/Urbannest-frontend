@@ -166,8 +166,10 @@ export default function TicketPage() {
 
         onSuccess: (variables) => {
             toast.success("Status updated successfully")
-            setUpdateStatus(variables.data.status)
             fetchTicket(id)
+            console.log(variables)
+            setUpdateStatus(variables.data.status)
+
         },
     })
 
@@ -188,11 +190,16 @@ export default function TicketPage() {
         mutationFn: (payload: updateTicketPriorityPayload) =>
             updateTicketPriority(payload),
         onSuccess: (variables) => {
-            toast.success("priority updated successfully")
-            setUpdatePriority(variables.data.priority)
+            toast.success("Priority updated successfully")
+            toast.error(variables)
             fetchTicket(id)
+
+            setUpdatePriority(variables.data.priority)
+
         },
     })
+
+    console.log(updateStatus, updatePriority)
 
     const handleUpdatePriority = (priority: string) => {
         if (!user?.id) {
@@ -372,7 +379,7 @@ export default function TicketPage() {
                                 className="h-[38px] my-3 justify-between rounded-full  text-lg satoshi-bold"
                             >
                                 <Flex align={"center"}>
-                                    {status?.value === 'IN_PROGRESS' ? <FaPlay className="mr-2" /> : <TbRotateDot size={18} className="mr-2 rotate-180"
+                                    {status?.value === 'PENDING' ? <FaPlay className="mr-2" /> : <TbRotateDot size={18} className="mr-2 rotate-180"
                                     />}{" "}
                                     Mark{" "}
                                     {status?.value === "IN_PROGRESS"

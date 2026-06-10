@@ -141,26 +141,12 @@ export const TicketPage = ({ id }: { id: string }) => {
         mutationFn: (payload: updateTicketStatusPayload) => updateTicketStatus(payload),
         onSuccess: (variables) => {
             toast.success('Status updated successfully')
-            setUpdateStatus(variables.data.status)
             fetchTicket(id)
+            setUpdateStatus(variables.data.status)
+
         },
         onError: () => {
             toast.error('Something went wrong')
-        }
-    })
-
-    const postCommentMutation = useMutation({
-        mutationFn: (payload: sendCommentPayload) => sendComment(payload),
-        onSuccess: (variables) => {
-            toast.success('Comment added successfully')
-            reset()
-            setComment({
-                senderName: user?.name ?? 'N/A',
-                isSystemMessage: false,
-                timestamp: new Date().toISOString(),
-                id: variables.data.senderId,
-                message: variables.data.message
-            })
         }
     })
 
@@ -183,8 +169,8 @@ export const TicketPage = ({ id }: { id: string }) => {
         mutationFn: (payload: updateTicketPriorityPayload) => updateTicketPriority(payload),
         onSuccess: (variables) => {
             toast.success('priority updated successfully')
-            setUpdatePriority(variables.data.priority)
             fetchTicket(id)
+            setUpdatePriority(variables.data.priority)
         },
         onError: () => {
             toast.error('Something went wrong')

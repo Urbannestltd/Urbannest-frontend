@@ -16,17 +16,18 @@ import { useVisitorStore, Visitor } from "@/store/fm/visitor";
 interface TabProps {
     list?: Visitor[]
     component?: React.ReactNode;
+    search?: string;
+    onSearchChange?: (val: string) => void;
+    onSearch?: (val: string) => void;
 }
 
-export const VisitorTabs = ({ component }: TabProps) => {
+export const VisitorTabs = ({ component, search = '', onSearchChange, onSearch }: TabProps) => {
     const columns = useColumns(false)
     const Scheduledcolumns = useColumns(true)
     const visitors = useVisitorStore((state) => state.visitors)
-    const fetchVisitors = useVisitorStore((state) => state.fetchVisitors);
     const loadingVisitors = useVisitorStore((state) => state.isLoading)
     const isMobile = window.innerWidth < 700
     const pathname = usePathname();
-    const [search, setSearch] = useState('')
 
 
     return (
@@ -43,11 +44,13 @@ export const VisitorTabs = ({ component }: TabProps) => {
                     <Tabs.Indicator bg={'white'} shadow={"none"} fontWeight={"bold"} />
                 </Tabs.List>
                 {!isMobile && <Flex gap={2}>
-                    <SearchInput value={search} onChange={setSearch} onSearch={(val) => {
-                        fetchVisitors({
-                            search,
-                        })
-                    }} placeholder="" width={"full"} />
+                    <SearchInput
+                        value={search}
+                        onChange={onSearchChange ?? (() => {})}
+                        onSearch={onSearch ?? (() => {})}
+                        placeholder=""
+                        width={"full"}
+                    />
                     {component}
                 </Flex>}
             </HStack>

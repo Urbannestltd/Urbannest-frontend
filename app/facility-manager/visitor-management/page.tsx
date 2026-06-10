@@ -206,7 +206,21 @@ export default function VisitorManagement() {
                 </Flex>
             </>)}
 
-            <VisitorTabs />
+            <VisitorTabs
+                search={search}
+                onSearchChange={setSearch}
+                onSearch={(val) => {
+                    const { startDate, endDate } = getDateRange(watchedValues.dateRange?.[0])
+                    fetchVisitors({
+                        search: val,
+                        status: watchedValues.status?.[0] === 'all' ? undefined : watchedValues.status?.[0],
+                        type: watchedValues.accessType?.[0] === 'all' ? undefined : watchedValues.accessType?.[0],
+                        propertyId: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
+                        dateFrom: startDate,
+                        dateTo: endDate,
+                    })
+                }}
+            />
         </>
     )
 }
