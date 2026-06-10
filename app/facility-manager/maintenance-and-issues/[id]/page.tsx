@@ -167,7 +167,6 @@ export default function TicketPage() {
         onSuccess: (variables) => {
             toast.success("Status updated successfully")
             fetchTicket(id)
-            console.log(variables)
             setUpdateStatus(variables.data.status)
 
         },
@@ -191,9 +190,7 @@ export default function TicketPage() {
             updateTicketPriority(payload),
         onSuccess: (variables) => {
             toast.success("Priority updated successfully")
-            toast.error(variables)
             fetchTicket(id)
-
             setUpdatePriority(variables.data.priority)
 
         },
