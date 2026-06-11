@@ -33,8 +33,8 @@ export const ApproveRequestModal = ({ id, onClose, agentData }: { id: string, ag
         <Text textWrap={'wrap'} className="satoshi-medium w-full" fontSize={'14px'} lineHeight={'22.57px'} color={'#566166'}>Approving this request will notify Agent {agentData.name}
             and generate a digital keycard for {agentData.unit}.</Text>
         <Stack mt={6}>
-            <MainButton size='lg' loading={mutation.isPending} className="my-1 rounded-full" onClick={() => mutation.mutate(id)}>Approve</MainButton>
-            <MainButton size="lg" variant='outline' className="rounded-full" onClick={onClose}>Cancel</MainButton>
+            <MainButton size='lg' loading={mutation.isPending} className="my-1 rounded-md" onClick={() => mutation.mutate(id)}>Approve</MainButton>
+            <MainButton size="lg" variant='outline' className="rounded-md" onClick={onClose}>Cancel</MainButton>
         </Stack>
 
 
@@ -83,8 +83,8 @@ export const RejectRequestModal = ({ id, onClose }: { id: string, onClose: () =>
                 <CustomTextarea borderColor="#F4F4F4" control={control} name="reason" placeholder="Explain why this request is being 
             rejected..." />
                 <Flex align={'center'} mt={'30px'} gap={4}>
-                    <Button type='submit' w={'50%'} color={'white'} rounded={'full'} bg={'#DC2626'} className="my-2 satoshi-bold" ><LuBan size={16} /> Confirm Rejection</Button>
-                    <MainButton size="lg" className="h-[41px]" fullWidth variant='outlineGhost' onClick={onClose}>Cancel</MainButton>
+                    <Button type='submit' w={'50%'} color={'white'} rounded={'md'} bg={'#DC2626'} className="my-2 satoshi-bold" ><LuBan size={16} /> Confirm Rejection</Button>
+                    <MainButton size="lg" className="h-[41px]" fullWidth variant='outline' onClick={onClose}>Cancel</MainButton>
                 </Flex>
             </Box>
         </form>
@@ -160,8 +160,8 @@ export const RescheduleRequestModal = ({ id, onClose, proposedDate }: { id: stri
         </SectionFlex>
 
         <Stack>
-            <MainButton size="lg" loading={mutation.isPending} className="my-1 h-[44px] rounded-full" onClick={handlePropose}>Propose New Time</MainButton>
-            <MainButton size="lg" variant='outline' className="my-0 h-[44px] rounded-full" onClick={onClose}>Cancel</MainButton>
+            <MainButton size="lg" loading={mutation.isPending} className="my-1 h-[44px] rounded-md" onClick={handlePropose}>Propose New Time</MainButton>
+            <MainButton size="lg" variant='outline' className="my-0 h-[44px] rounded-md" onClick={onClose}>Cancel</MainButton>
         </Stack>
 
     </Box>

@@ -74,7 +74,7 @@ export const MainButton = React.forwardRef<HTMLButtonElement, ButtonProps>(funct
             : null;
 
     return (
-        <button ref={ref} type={props.type ?? 'button'} {...props} className={combinedClassName}>
+        <button ref={ref} disabled={loading} type={props.type ?? 'button'} {...props} className={combinedClassName}>
             {loading ? (
                 <>
                     <CgSpinner size={12} className='mr-2 h-4 w-4 animate-spin' />

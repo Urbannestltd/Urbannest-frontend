@@ -145,7 +145,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		set({ tickets: response.data.data, isLoading: false })
 	},
 	fetchTicketPerProperty: async (id, search) => {
-		set({ isLoadingPropertyTickets: true })
+		set({ isLoadingPropertyTickets: true, ticketsPerProperty: [] })
 		const response = await http.get(
 			adminEndpoints.fetchTicketsPerProperty(id),
 			{
@@ -158,7 +158,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		})
 	},
 	fetchTicket: async (ticketId: string) => {
-		set({ isLoadingTicket: true })
+		set({ isLoadingTicket: true, ticket: null })
 		const response = await http.get(adminEndpoints.fetchTicket(ticketId))
 		console.log("ticket", response.data.data)
 		set({

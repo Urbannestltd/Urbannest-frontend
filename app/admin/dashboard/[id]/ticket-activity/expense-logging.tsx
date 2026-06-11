@@ -1,14 +1,16 @@
 import { MainButton } from "@/components/ui/button";
+import { CustomEditable, CustomInput } from "@/components/ui/custom-fields";
 import { DataTable } from "@/components/ui/data-table";
-import { Divider } from "@/components/ui/divider";
 import { SectionFlex } from "@/components/ui/section-box";
+import { updateBudget, updateBudgetPayload } from "@/services/admin/maintenance";
 import { cn } from "@/utils/lib";
 import { Box, Center, Flex, HStack, Text } from "@chakra-ui/react";
+import { useMutation } from "@tanstack/react-query";
 import { BiPlusCircle } from "react-icons/bi";
 import { useColumns } from "./columns";
 import { LogExpense } from "./moodal";
 import { useState } from "react";
-import { Drawers } from "@/components/ui/drawer";
+import { useForm } from "react-hook-form";
 import { MdOutlineAccountBalanceWallet } from "react-icons/md";
 import { Progress } from "@/components/ui/progress-bar";
 import { MobileTable } from "./mobile-table";
@@ -16,15 +18,45 @@ import EmptyIcon from '@/app/assets/icons/facilty-icons/expense-empty.svg'
 import { useTicketStore } from "@/store/admin/tickets";
 import { formatNumber } from "@/services/date";
 import { Modal } from "@/components/ui/dialog";
-import { EditBudgetPage } from "@/app/admin/maintenance-and-issues/[id]/expense-tracking";
+import toast from "react-hot-toast";
 
 export const ExpenseLogging = ({ id }: { id: string }) => {
     const ticket = useTicketStore(state => state.ticket)
-    const budget = useTicketStore(state => state.globalBudget)
+    const fetchTicket = useTicketStore(state => state.fetchTicket)
     //const expenses = useTicketStore(state => state.expense)
     const columns = useColumns()
     const [open, setOpen] = useState(false)
+    const [editBudget, setEditBudget] = useState(false)
     const isMobile = window.innerWidth < 600
+
+    const { control, handleSubmit, reset } = useForm<{ amount: string }>({
+        defaultValues: { amount: ticket?.budget?.toString() }
+    })
+
+    const budgetMutation = useMutation({
+        mutationFn: (data: updateBudgetPayload) => updateBudget(data),
+        onSuccess: (response) => {
+            toast.success(response.message)
+            fetchTicket(id)
+            setEditBudget(false)
+        }
+    })
+
+    const onSaveBudget = (data: { amount: string }) => {
+        budgetMutation.mutate({
+            id,
+            data: {
+                budget: Number(data.amount),
+                quotedCost: ticket?.quotedCost as number ?? 0
+            }
+        })
+    }
+
+    const handleCancelEdit = () => {
+        reset({ amount: ticket?.budget?.toString() })
+        setEditBudget(false)
+    }
+
     const expenseDetail = [
         {
             title: 'Assigned Budget',
@@ -41,70 +73,118 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
         }
     ]
     return <Box px={{ base: 4, md: 8 }}>
-        <SectionFlex w={'full'} justify={{ base: 'flex-start', md: 'center' }} bg={'#F0F4F780'}>
-            {isMobile ?
-                <Box w={'full'}>
-                    <HStack w={'full'} justify={'space-between'}>
-                        <Box>
-                            <Text letterSpacing={"1.1px"}
-                                mb={1}
-                                className="satoshi-bold uppercase text-[#757575] text-[11px]"
-                            >{expenseDetail[1].title}</Text>
-                            <Text className="satoshi-bold text-xl">{expenseDetail[1].data}</Text>
-                        </Box>
-                        <Modal open={open} onOpenChange={setOpen} triggerElement={<Center bg={'#CAD5ED4D'} p={2} rounded={'sm'}><MdOutlineAccountBalanceWallet color="#545F73" /> </Center>} modalContent={<LogExpense ticketid={id} onClose={() => setOpen(false)} />} />
-                    </HStack>
-                    <Progress value={60} my={4} color={'#545F73'} size={'md'} />
-                    <HStack justify={'space-between'}>
-                        <Box
-                            h={"50px"}
-                            w={'fit'}
-                        >
-                            <Text letterSpacing={"1.1px"}
-                                mb={1}
-                                className="satoshi-bold uppercase text-[#717C82] text-[11px]"
-                            >{expenseDetail[0].title}:</Text>
-                            <Text letterSpacing={"1.1px"}
-                                mb={1}
-                                className="satoshi-bold uppercase text-[#717C82] text-[11px]"
-                            >{expenseDetail[0].data}</Text>
-                        </Box>
-                        <Box
-                            h={"50px"}
-                            w={'fit'}
-                        >
-                            <Text letterSpacing={"1.1px"}
-                                mb={1}
-                                className="satoshi-bold uppercase text-[#545F73] text-[11px]"
-                            >{expenseDetail[2].title}:</Text>
-                            <Text letterSpacing={"1.1px"}
-                                mb={1}
-                                className="satoshi-bold uppercase text-[#545F73] text-[11px]"
-                            >{expenseDetail[2].data}</Text>
-                        </Box>
+        <form onSubmit={handleSubmit(onSaveBudget)}>
+            <SectionFlex w={'full'} justify={{ base: 'flex-start', md: 'center' }} bg={'#F0F4F780'}>
+                {isMobile ?
+                    <Box w={'full'}>
+                        <HStack w={'full'} justify={'space-between'}>
+                            <Box>
+                                <Text letterSpacing={"1.1px"}
+                                    mb={1}
+                                    className="satoshi-bold uppercase text-[#757575] text-[11px]"
+                                >{expenseDetail[1].title}</Text>
+                                <Text className="satoshi-bold text-xl">{expenseDetail[1].data}</Text>
+                            </Box>
+                            <Modal open={open} onOpenChange={setOpen} triggerElement={<Center bg={'#CAD5ED4D'} p={2} rounded={'sm'}><MdOutlineAccountBalanceWallet color="#545F73" /> </Center>} modalContent={<LogExpense ticketid={id} onClose={() => setOpen(false)} />} />
+                        </HStack>
+                        <Progress value={60} my={4} color={'#545F73'} size={'md'} />
+                        <HStack justify={'space-between'}>
+                            <Box
+                                h={"50px"}
+                                w={'fit'}
+                            >
+                                <Text letterSpacing={"1.1px"}
+                                    mb={1}
+                                    className="satoshi-bold uppercase text-[#717C82] text-[11px]"
+                                >{expenseDetail[0].title}:</Text>
+                                <Text letterSpacing={"1.1px"}
+                                    mb={1}
+                                    className="satoshi-bold uppercase text-[#717C82] text-[11px]"
+                                >{expenseDetail[0].data}</Text>
+                            </Box>
+                            <Box
+                                h={"50px"}
+                                w={'fit'}
+                            >
+                                <Text letterSpacing={"1.1px"}
+                                    mb={1}
+                                    className="satoshi-bold uppercase text-[#545F73] text-[11px]"
+                                >{expenseDetail[2].title}:</Text>
+                                <Text letterSpacing={"1.1px"}
+                                    mb={1}
+                                    className="satoshi-bold uppercase text-[#545F73] text-[11px]"
+                                >{expenseDetail[2].data}</Text>
+                            </Box>
 
-                    </HStack>
+                        </HStack>
 
-                </Box>
-                :
-                expenseDetail.map((item, index) => (
-                    <Box
-                        key={index}
-                        h={"50px"}
-                        w={'full'}
-                        className={cn(item.className, 'px-12 ')}
-                    >
-                        <Text letterSpacing={"1.1px"}
-                            mb={1}
-                            className="satoshi-bold uppercase text-[#757575] text-[11px]"
-                        >{item.title}</Text>
-                        <Text className="satoshi-bold text-xl">{item.data}</Text>
                     </Box>
+                    :
+                    <>
+                        {expenseDetail.map((item, index) => (
+                            <Flex
+                                justify={'center'}
+                                key={index}
+                                h={"50px"}
+                                w={'full'}
+                                className={cn(item.className)}
+                            >
+                                {index === 0 && editBudget ? (
+                                    <div className="w-full px-2">
+                                        <Text letterSpacing={"1.1px"}
+                                            mb={1}
+                                            className="satoshi-bold uppercase text-[#757575] text-[11px]"
+                                        >{item.title}</Text>
+                                        <CustomEditable
+                                            textBold
+                                            currency
+                                            textSize={'18px'}
+                                            textAlign="start"
+                                            name="amount"
+                                            control={control}
+                                            width={'100%'}
 
-                ))
-            }
-            {!isMobile && <Modal className="min-w-[450px] w-fit" open={open} onOpenChange={setOpen} triggerElement={<MainButton size='lg' icon={<BiPlusCircle />} className="h-[40px]">Edit Budget</MainButton>} modalContent={<EditBudgetPage id={id} onClose={() => setOpen(false)} />} />
-            }</SectionFlex>
+                                        />
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <Text letterSpacing={"1.1px"}
+                                            mb={1}
+                                            className="satoshi-bold uppercase text-[#757575] text-[11px]"
+                                        >{item.title}</Text>
+                                        <Text className="satoshi-bold text-xl">{item.data}</Text>
+                                    </div>
+                                )}
+                            </Flex>
+                        ))}
+                    </>
+                }
+                {!isMobile && (
+                    editBudget ? (
+                        <HStack gap={2} w={'30%'} flexShrink={0}>
+                            <MainButton
+                                size='lg'
+                                type='submit'
+                                loading={budgetMutation.isPending}
+                                className="h-[40px] rounded-full text-xs"
+                            >
+                                Save Changes
+                            </MainButton>
+                            <MainButton
+                                size='lg'
+                                variant='outline'
+                                onClick={handleCancelEdit}
+                                className="h-[40px] rounded-full text-xs"
+                            >
+                                Cancel
+                            </MainButton>
+                        </HStack>
+                    ) : (
+                        <MainButton size='lg' icon={<BiPlusCircle />} onClick={() => setEditBudget(true)} className="h-[40px]">Edit Budget</MainButton>
+                    )
+                )}
+            </SectionFlex>
+        </form>
         {isMobile ?
             <MobileTable tableName="Expense Log" data={[]} /> : <DataTable
                 columns={columns}

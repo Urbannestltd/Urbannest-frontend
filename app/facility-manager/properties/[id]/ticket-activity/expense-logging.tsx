@@ -26,7 +26,7 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
     const expenseDetail = [
         {
             title: "Assigned Budget",
-            data: formatNumber(budget?.budget),
+            data: formatNumber(budget?.assignedBudget),
         },
         {
             title: "TOTAL EXPENSES",
@@ -35,7 +35,7 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
         },
         {
             title: "Remaining",
-            data: formatNumber(0),
+            data: formatNumber(budget?.remainingBudget),
         },
     ]
 
@@ -44,6 +44,7 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
             <SectionFlex
                 w={"full"}
                 justify={{ base: "flex-start", md: "center" }}
+                align={'center'}
                 bg={"#F0F4F780"}
             >
                 {isMobile ? (
@@ -113,21 +114,25 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
                     </Box>
                 ) : (
                     expenseDetail.map((item, index) => (
-                        <Box
+                        <Flex
+                            direction={'column'}
+                            align={'center'}
                             key={index}
                             h={"50px"}
                             w={"full"}
-                            className={cn(item.className, "px-12 ")}
+                            className={cn(item.className)}
                         >
-                            <Text
-                                letterSpacing={"1.1px"}
-                                mb={1}
-                                className="satoshi-bold uppercase text-[#757575] text-[11px]"
-                            >
-                                {item.title}
-                            </Text>
-                            <Text className="satoshi-bold text-xl">{item.data}</Text>
-                        </Box>
+                            <div>
+                                <Text
+                                    letterSpacing={"1.1px"}
+                                    mb={1}
+                                    className="satoshi-bold uppercase text-[#757575] text-[11px]"
+                                >
+                                    {item.title}
+                                </Text>
+                                <Text className="satoshi-bold text-xl">{item.data}</Text>
+                            </div>
+                        </Flex>
                     ))
                 )}
                 {!isMobile && (

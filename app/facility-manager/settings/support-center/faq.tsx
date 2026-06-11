@@ -20,19 +20,27 @@ export const FAQ = ({ onClose }: { onClose?: () => void }) => {
 
 const Questions = [
     {
-        question: 'Can I see proof of my past payments?',
-        answer: 'Yes. All successful payments are recorded and available in your payment history'
+        question: 'Who creates FM accounts?',
+        answer: 'Only admin can create accounts. The FM receives an invite email and sets up their password from there.'
     },
     {
-        question: 'How do I submit a maintenance request?',
-        answer: 'Go to Maintenance & Issues, select the issue category, and add a brief description.'
+        question: 'What are the ticket statuses and who controls them?',
+        answer: 'Tickets move between Open, In Progress, and Resolved. The FM controls and can reverse all transitions.'
     },
     {
-        question: 'How will I know if someone is working on my request?',
-        answer: 'You’ll receive updates when the status changes or when facility management sends a message.'
+        question: 'What happens when an expense goes over budget?',
+        answer: 'The expense enters a pending state and a budget request is automatically sent to admin.'
     },
     {
-        question: 'What if the issue isn’t resolved?',
-        answer: 'You can reply to the maintenance thread to follow up or provide more details.'
+        question: 'Can the FM delete an expense?',
+        answer: 'No, expenses are append-only. The FM can flag one as a mistake for admin to handle.'
+    },
+    {
+        question: 'What can the FM do with agent visit requests?',
+        answer: 'Approve, reject, or propose a new date. Tenant-logged visits are informational only.'
+    },
+    {
+        question: 'Who can communicate through ticket chat?',
+        answer: 'The FM and tenant within a specific ticket. Admin can post notes only the FM sees.'
     }
 ]

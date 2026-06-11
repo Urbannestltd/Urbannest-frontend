@@ -63,6 +63,7 @@ type InputProps<T extends FieldValues> = BaseProps<T> & {
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
     borderColor?: string
     rounded?: string
+
 };
 type EditableProps<T extends FieldValues> = BaseProps<T> & {
     type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
@@ -81,6 +82,8 @@ type EditableProps<T extends FieldValues> = BaseProps<T> & {
     setValue?: (value: any) => void
     pattern?: RegisterOptions<T>['pattern']
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+    currency?: boolean
+    fontSize?: string | number
 
 }
 
@@ -364,7 +367,9 @@ export function CustomEditable<T extends FieldValues>({
     textBold = false,
     textSize,
     textAlign,
-    orientation = 'vertical', onKeyDown
+    orientation = 'vertical',
+    onKeyDown,
+    currency,
 }: EditableProps<T>) {
     const { field, fieldState, } = useController({
         name, control, rules: {
@@ -385,9 +390,10 @@ export function CustomEditable<T extends FieldValues>({
                 placeholder={placeholder}
                 readOnly={readOnly}
                 size={'sm'}
-                fontSize={'14px'}
+                fontSize={textSize ?? '14px'}
                 name={field.name}
                 defaultValue={String(field.value ?? value ?? '')} >
+                {currency && <Editable.Label fontSize={textSize} className={textBold ? 'satoshi-bold' : 'satoshi-medium'}>₦</Editable.Label>}
                 <Editable.Preview fontSize={textSize} className={textBold ? 'satoshi-bold' : 'satoshi-medium'} />
                 <Editable.Input
                     {...editableProps}

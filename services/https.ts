@@ -22,9 +22,9 @@ const axiosInstance = axios.create({
 
 function showNetworkToastOnce() {
 	if (!isErrorSuppressed()) {
-		toast.error(
+		/*toast.error(
 			"Error in network connection. Check your internet and try again.",
-		)
+		)*/
 		startNetworkSuppression(NETWORK_SUPPRESS_MS)
 	}
 }

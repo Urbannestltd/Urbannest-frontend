@@ -21,6 +21,7 @@ import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import { exportTickets, filter } from "@/services/admin/maintenance"
 import { MdOutlineFilterListOff } from "react-icons/md"
+import emptyTicketIcon from "@/app/assets/icons/facilty-icons/ticket-empty.svg"
 import { AxiosError } from "axios"
 
 export default function Maintenance() {
@@ -125,7 +126,12 @@ export default function Maintenance() {
                     </Flex>
                 </HStack>
             </form>
-            <DataTable data={tickets} loading={isLoading} tableName="Tickets" onRowClick={(row) => router.push(`/admin/maintenance-and-issues/${row.id}`)} columns={columns} />
+            <DataTable data={tickets} loading={isLoading} tableName="Tickets" onRowClick={(row) => router.push(`/admin/maintenance-and-issues/${row.id}`)} columns={columns} emptyDetails={{
+                icon: emptyTicketIcon,
+                title: "No tickets",
+                description:
+                    "Maintenance tickets will appear here once requests are submitted.",
+            }} />
 
         </div>
     )

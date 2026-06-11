@@ -366,8 +366,8 @@ export const TicketPage = ({ id }: { id: string }) => {
                     <Flex>
                         <Avatar mr={3} size={"sm"} />
                         <Box>
-                            <Text className="satoshi-bold text-sm">Alexandru Popescu</Text>
-                            <Text className="satoshi-bold text-xs">alexpopescu@gmail.com</Text>
+                            <Text className="satoshi-bold text-sm">N/A</Text>
+                            <Text className="satoshi-bold text-xs">N/A@gmail.com</Text>
 
                         </Box>
                     </Flex>

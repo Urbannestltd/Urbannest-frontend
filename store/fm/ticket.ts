@@ -100,7 +100,10 @@ interface TicketsStore {
 		rebuttalNote: string
 		approvalStatus: string
 		quotedCost: number
-		budget: number
+		assignedBudget: number
+		remainingBudget: number
+		totalExpenses: number
+		expenses: []
 	} | null
 	expense: ExpenseLog[]
 	ticketsPerProperty: Tickets[]
@@ -182,6 +185,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 			set({
 				isLoadingPropertyTickets: true,
 				errorLoadingPropertyTickets: false,
+				ticketsPerProperty: [],
 			})
 			const response = await http.get(FmEndpoints.fetchTicketsPerProperty(id), {
 				params: filter,
@@ -199,7 +203,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 	},
 	fetchTicket: async (ticketId: string) => {
 		try {
-			set({ isLoadingTicket: true, errorLoadingTicket: false })
+			set({ isLoadingTicket: true, errorLoadingTicket: false, ticket: null })
 			const response = await http.get(FmEndpoints.fetchTicket(ticketId))
 			console.log("ticket", response.data.data)
 			set({
@@ -214,7 +218,7 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 	},
 	fetchMessages: async (id: string) => {
 		try {
-			set({ isLoadingMessages: true, errorLoadingMessages: false })
+			set({ isLoadingMessages: true, errorLoadingMessages: false, messages: [] })
 			const response = await http.get(FmEndpoints.postComments(id))
 			console.log("messages", response.data.data)
 			set({
@@ -233,13 +237,13 @@ export const useTicketStore = create<TicketsStore>((set) => ({
 		set({ metrics: response.data.data, isLoading: false })
 	},
 	fetchBudget: async (id) => {
-		set({ loadingBudget: true })
+		set({ loadingBudget: true, globalBudget: null })
 		const property = await http.get(FmEndpoints.fetchBudget(id))
 		set({ globalBudget: property.data.data, loadingBudget: false })
 	},
 	fetchExpenses: async (id) => {
 		try {
-			set({ isLoadingExpense: true, errorLoadingExpense: false })
+			set({ isLoadingExpense: true, errorLoadingExpense: false, expense: [] })
 			const response = await http.get(FmEndpoints.getExpenses(id))
 			console.log("expenses", response.data.data)
 			set({

@@ -197,7 +197,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 	},
 	selectedProperty: null,
 	fetchProperty: async (id: string) => {
-		set({ isLoading: true })
+		set({ isLoading: true, property: null })
 		try {
 			const property = await http.get(adminEndpoints.fetchProperty(id))
 			set({ property: property.data.data })
@@ -210,7 +210,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 		}
 	},
 	fetchUnits: async (id, search) => {
-		set({ isLoadingUnits: true })
+		set({ isLoadingUnits: true, units: null })
 		try {
 			const units = await http.get(adminEndpoints.fetchUnits(id), {
 				params: { search: search },
@@ -225,7 +225,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 		}
 	},
 	fetchUnit: async (id: string) => {
-		set({ isLoading: true })
+		set({ isLoading: true, unit: null })
 		try {
 			const unit = await http.get(adminEndpoints.editUnit(id))
 			set({ unit: unit.data.data })
@@ -239,7 +239,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 	},
 	clearUnit: () => set({ unit: null }),
 	fetchLease: async (id: string) => {
-		set({ isLoading: true })
+		set({ isLoading: true, lease: null })
 		try {
 			const lease = await http.get(adminEndpoints.fetchLease(id))
 			set({ lease: lease.data.data })

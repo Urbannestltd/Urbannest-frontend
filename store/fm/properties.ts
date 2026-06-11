@@ -129,7 +129,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 	},
 	selectedProperty: null,
 	fetchProperty: async (id: string) => {
-		set({ isLoading: true, errorLoadingProperty: false })
+		set({ isLoading: true, errorLoadingProperty: false, property: null })
 		try {
 			const property = await http.get(FmEndpoints.fetchProperty(id))
 			set({ property: property.data.data })
@@ -142,7 +142,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 		}
 	},
 	fetchUnits: async (id, search) => {
-		set({ isLoadingUnits: true, errorLoadingUnits: false })
+		set({ isLoadingUnits: true, errorLoadingUnits: false, units: null })
 		try {
 			const units = await http.get(FmEndpoints.fetchUnits(id), {
 				params: { search: search },

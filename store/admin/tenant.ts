@@ -64,7 +64,7 @@ export const useAdminTenantStore = create<AdminTenantStore>((set) => ({
 	isLoading: false,
 	fetchTenant: async (id: string) => {
 		try {
-			set({ isLoading: true })
+			set({ isLoading: true, tenant: null })
 			const tenant = await http.get(adminEndpoints.fetchTenant(id))
 			set({ tenant: tenant.data.data })
 			console.log("✅ Tenant set in store:", tenant.data.data)
