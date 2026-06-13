@@ -15,7 +15,7 @@ import { MdOutlineAccountBalanceWallet } from "react-icons/md";
 import { Progress } from "@/components/ui/progress-bar";
 import { MobileTable } from "./mobile-table";
 import EmptyIcon from '@/app/assets/icons/facilty-icons/expense-empty.svg'
-import { useTicketStore } from "@/store/admin/tickets";
+import { Expensee, useTicketStore } from "@/store/admin/tickets";
 import { formatNumber } from "@/services/date";
 import { Modal } from "@/components/ui/dialog";
 import toast from "react-hot-toast";
@@ -186,11 +186,11 @@ export const ExpenseLogging = ({ id }: { id: string }) => {
             </SectionFlex>
         </form>
         {isMobile ?
-            <MobileTable tableName="Expense Log" data={[]} /> : <DataTable
+            <MobileTable tableName="Expense Log" data={ticket?.expenses as Expensee[]} /> : <DataTable
                 columns={columns}
                 borderedHeader
                 headerColor="#ffffff"
-                data={[]}
+                data={ticket?.expenses as Expensee[]}
                 getRowClassName={(row) => {
                     if (row.status === 'REJECTED') return 'bg-[#FE89830D] hover:bg-[#FE89830D]  border-l-4 border-t border-[#FE898333]  data-[state=selected]:bg-[#FE89830D] my-4'
                     if (row.status === 'PENDING') return 'bg-[#FEC3831A] hover:bg-[#FEC3831A] data-[state=selected]:bg-[#FEC3831A] border-l-4 border-t border-[#FEC38333] my-4'

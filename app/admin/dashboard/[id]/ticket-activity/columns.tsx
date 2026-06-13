@@ -17,6 +17,7 @@ import { LuCheck, LuPencil, LuX } from "react-icons/lu"
 import { Modal } from "@/components/ui/dialog"
 import { DeletePopup, FlagMistake } from "./moodal"
 import { RebuttalPage, RejectionPage } from "@/app/admin/maintenance-and-issues/[id]/expense-tracking"
+import { Expensee } from "@/store/admin/tickets"
 
 export interface ExpenseLog {
     maintenanceRequestId: string
@@ -84,7 +85,7 @@ export const categoryOptions = [
     { label: "Permits", value: "PERMITS" },
 ]
 
-export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
+export const useColumns = (): ColumnDef<Expensee, any>[] => {
 
     return [
         {
@@ -190,7 +191,7 @@ export const useColumns = (): ColumnDef<ExpenseLog, any>[] => {
                 </Text>
             ),
             cell: ({ row }) => {
-                return <Text>{formatDateRegular(row.getValue("date"))}</Text>
+                return <Text>{formatDate(row.getValue('date'))}</Text>
             },
         },
         {

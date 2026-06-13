@@ -27,6 +27,18 @@ export interface Tickets {
 	isFixLate: boolean
 }
 
+export interface Expensee {
+	createdAt: string
+	loggedBy: string
+	date: string
+	flagReason: string
+	status: string
+	description: string
+	category: string
+	amount: number
+	id: string
+}
+
 interface Ticket {
 	id: string
 	subject: string
@@ -70,6 +82,7 @@ interface Ticket {
 	quotedCost: number
 	approvalStatus: string
 	rebuttalNote: string
+	expenses: Expensee[]
 }
 
 interface metrics {

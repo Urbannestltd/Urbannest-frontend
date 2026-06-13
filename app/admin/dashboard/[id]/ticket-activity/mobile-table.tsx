@@ -10,8 +10,9 @@ import { LuPencil } from "react-icons/lu"
 import { BiTrash } from "react-icons/bi"
 import Image from "next/image"
 import EmptyIcon from '@/app/assets/icons/facilty-icons/expense-empty.svg'
+import { Expensee } from "@/store/admin/tickets"
 
-export const MobileTable = ({ data, tableName }: { data: ExpenseLog[], tableName: string }) => {
+export const MobileTable = ({ data, tableName }: { data: Expensee[], tableName: string }) => {
     const [isFlagged, setIsFlagged] = useState<string | null>(null)
     const [Delete, setDelete] = useState<string | null>(null)
     const emptyDetails = {

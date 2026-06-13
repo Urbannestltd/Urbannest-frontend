@@ -62,7 +62,9 @@ export default function AdminDashboard() {
 
     return (
         <>
-            <DashboardCard data={cardData} />
+            <Flex w={'full'}>
+                <DashboardCard fourcolumn={false} data={cardData} />
+            </Flex>
             <HStack gap={6} mt={6} h={'413px'} align={'start'}>
                 <Flex direction={'column'} justify={'center'} p={6} bg={'white'} w={'60%'} h={'full'} rounded={'8px'} border={'1px solid #F4F4F4'}>
                     <Demo loading={isLoading} chartData={dashboard?.maintenanceChart ?? []} />

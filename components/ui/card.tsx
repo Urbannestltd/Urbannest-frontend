@@ -17,17 +17,19 @@ export interface CardData {
     cardColor?: string
     newColor?: string
     border?: boolean
+
 }
 
 interface CardProps {
     data: CardData[]
     newMobile?: boolean
+    fourcolumn?: boolean
 }
 
-export const DashboardCard = ({ data, newMobile }: CardProps) => {
+export const DashboardCard = ({ data, newMobile, fourcolumn = true }: CardProps) => {
     const isMobile = window.innerWidth < 600
     return (
-        <Grid gap={4} templateColumns={{ base: newMobile ? "repeat(2, 1fr)" : "repeat(1, 1fr)", md: "repeat(4, 1fr)" }} w={{ base: "auto", md: "full" }} minH={newMobile ? "180px" : "118px"} h={newMobile ? 'auto' : 'fit'} maxH={{ base: "auto", md: "400px" }}>
+        <Grid gap={4} templateColumns={{ base: newMobile ? "repeat(2, 1fr)" : "repeat(1, 1fr)", md: fourcolumn ? "repeat(4, 1fr)" : "repeat(3, 1fr)" }} w={{ base: "auto", md: "full" }} minH={newMobile ? "180px" : "118px"} h={newMobile ? 'auto' : 'fit'} maxH={{ base: "auto", md: "400px" }}>
             {data.map((item, index) => (
                 <Flex
                     key={index}
