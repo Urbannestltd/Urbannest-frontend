@@ -12,6 +12,7 @@ interface PageTitleProps {
     py?: string | number;
     mb?: string | number;
     mt?: string | number;
+    center?: boolean
 }
 
 export const PageTitle = ({
@@ -25,10 +26,10 @@ export const PageTitle = ({
     spacing = 2,
     py,
     mb,
-    mt
+    mt, center
 }: PageTitleProps) => {
     return (
-        <Stack gap={spacing} mb={mb} mt={mt} py={py} maxW='500px'>
+        <Stack gap={spacing} align={center ? 'center' : 'start'} mb={mb} mt={mt} py={py} maxW='500px'>
             <Heading className='satoshi-bold' fontSize={fontSize} color={titleColor}>
                 {title}
             </Heading>

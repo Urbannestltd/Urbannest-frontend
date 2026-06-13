@@ -21,7 +21,6 @@ import { AxiosError } from "axios";
 export default function Page() {
     const params = useParams();
     const id = params?.id as string;
-
     const property = usePropertyStore((state) => state.property)
     const fetchProperty = usePropertyStore((state) => state.fetchProperty)
     const fetchUnits = usePropertyStore((state) => state.fetchUnits)

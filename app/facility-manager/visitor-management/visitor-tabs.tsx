@@ -11,7 +11,7 @@ import { usePathname } from "next/navigation";
 import { useColumns } from "./columns";
 import { Modal } from "@/components/ui/dialog";
 import { ApproveRequestModal, RejectRequestModal, RescheduleRequestModal } from "./modal";
-import { useVisitorStore, Visitor } from "@/store/fm/visitor";
+import { useVisitorStore, Visitor, WalkIn } from "@/store/fm/visitor";
 
 interface TabProps {
     list?: Visitor[]
@@ -25,7 +25,9 @@ export const VisitorTabs = ({ component, search = '', onSearchChange, onSearch }
     const columns = useColumns(false)
     const Scheduledcolumns = useColumns(true)
     const visitors = useVisitorStore((state) => state.visitors)
+    const walkins = useVisitorStore((state) => state.walkins)
     const loadingVisitors = useVisitorStore((state) => state.isLoading)
+    const loadingWalkins = useVisitorStore((state) => state.isLoadingWalkins)
     const isMobile = window.innerWidth < 700
     const pathname = usePathname();
 
@@ -36,18 +38,18 @@ export const VisitorTabs = ({ component, search = '', onSearchChange, onSearch }
             <HStack mt={4} justify={"space-between"}>
                 <Tabs.List borderBottom={"1px solid #D9D9D9"}>
                     <Tabs.Trigger px={2} value="walk-in">
-                        Walk-In Visitors (0)
+                        Walk-In Visitors ({walkins.length ?? 0})
                     </Tabs.Trigger>
                     <Tabs.Trigger px={2} ml={3} value="scheduled">
                         Scheduled Visitors ({visitors.length ?? 0})
                     </Tabs.Trigger>
                     <Tabs.Indicator bg={'white'} shadow={"none"} fontWeight={"bold"} />
                 </Tabs.List>
-                {!isMobile && <Flex gap={2}>
+                {!isMobile && <Flex w={'40%'} gap={2}>
                     <SearchInput
                         value={search}
-                        onChange={onSearchChange ?? (() => {})}
-                        onSearch={onSearch ?? (() => {})}
+                        onChange={onSearchChange ?? (() => { })}
+                        onSearch={onSearch ?? (() => { })}
                         placeholder=""
                         width={"full"}
                     />
@@ -55,7 +57,7 @@ export const VisitorTabs = ({ component, search = '', onSearchChange, onSearch }
                 </Flex>}
             </HStack>
             <Tabs.Content value="walk-in">
-                {isMobile ? <MobileTable rows={[]} /> :
+                {isMobile ? <MobileTable rows={walkins} /> :
                     <DataTable
                         headerColor="#FFFFFF"
                         my={1}
@@ -64,7 +66,7 @@ export const VisitorTabs = ({ component, search = '', onSearchChange, onSearch }
                         pagination={{ currentPage: 1, pageSize: 10, total: visitors.length, totalPages: Math.ceil(visitors.length / 10) }}
                         emptyDetails={{ icon: EmptyTableIcon, title: 'No Visitors yet', description: 'Visitors you add will appear here for easy access and entry tracking.' }}
                         columns={columns}
-                        data={[]}
+                        data={walkins}
                     />}
             </Tabs.Content>
             <Tabs.Content value="scheduled">
@@ -82,7 +84,10 @@ export const VisitorTabs = ({ component, search = '', onSearchChange, onSearch }
     )
 }
 
-export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isScheduled?: boolean }) => {
+const isVisitor = (row: Visitor | WalkIn): row is Visitor => "normalizedStatus" in row;
+
+
+export const MobileTable = ({ rows, isScheduled }: { rows: (Visitor | WalkIn)[], isScheduled?: boolean }) => {
     const Status = [
         {
             value: 'UPCOMING',
@@ -194,8 +199,9 @@ export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isSchedule
     return (
         <Box>
             {tableData?.map((row) => {
-                const status = Status.find((status) => status.value === (row?.rawStatus ?? 'CHECKED_IN'))
-                const type = Type.find((type) => type.value === row?.frequency)
+                const visitor = isVisitor(row)
+                const status = Status.find((status) => status.value === (visitor ? row?.rawStatus : row?.status ?? 'CHECKED_IN'))
+                const type = Type.find((type) => type.value === (visitor ? row?.frequency : row?.visitorType))
 
                 return <Box p={4} rounded={'lg'} my={4} border={'1.7px solid #F4F4F4'}>
                     <HStack justify={'space-between'} my={3}>
@@ -215,22 +221,23 @@ export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isSchedule
                                 justify={'center'}
                                 w={'fit'}
                             >
-                                <Text className="capitalize" color={status?.textColor} children={status?.label || row?.rawStatus} />
+                                <Text className="capitalize" color={status?.textColor} children={status?.label || (visitor ? row?.rawStatus : row?.status)} />
                             </Flex>
-                            {(row.canApprove || row.canReject || row.canReschedule) && <Menu.Root>
-                                <Menu.Trigger>
-                                    <LuEllipsisVertical cursor={'pointer'} />
-                                </Menu.Trigger>
-                                <Menu.Positioner>
-                                    <Menu.Content>
-                                        <Menu.ItemGroup gap={3}>
-                                            {row.canApprove && <Menu.Item onClick={() => setApprove(true)} value="approve">Approve Request</Menu.Item>}
-                                            {row.canReject && <Menu.Item onClick={() => setReject(true)} value="reject">Reject Request</Menu.Item>}
-                                            {row.canReschedule && <Menu.Item onClick={() => setReschedule(true)} value="reschedule">Reschedule Visit</Menu.Item>}
-                                        </Menu.ItemGroup>
-                                    </Menu.Content>
-                                </Menu.Positioner>
-                            </Menu.Root>}
+                            {
+                                visitor && (row.canApprove || row.canReject || row.canReschedule) && <Menu.Root>
+                                    <Menu.Trigger>
+                                        <LuEllipsisVertical cursor={'pointer'} />
+                                    </Menu.Trigger>
+                                    <Menu.Positioner>
+                                        <Menu.Content>
+                                            <Menu.ItemGroup gap={3}>
+                                                {row.canApprove && <Menu.Item onClick={() => setApprove(true)} value="approve">Approve Request</Menu.Item>}
+                                                {row.canReject && <Menu.Item onClick={() => setReject(true)} value="reject">Reject Request</Menu.Item>}
+                                                {row.canReschedule && <Menu.Item onClick={() => setReschedule(true)} value="reschedule">Reschedule Visit</Menu.Item>}
+                                            </Menu.ItemGroup>
+                                        </Menu.Content>
+                                    </Menu.Positioner>
+                                </Menu.Root>}
                         </Flex>
                     </HStack>
                     <Flex justify={'space-between'}>
@@ -252,18 +259,18 @@ export const MobileTable = ({ rows, isScheduled }: { rows: Visitor[], isSchedule
                         </Stack>
                         <Stack width={'full'} my={3}>
                             <Text className="text-[13px] text-[#9CA3AF]">Time in/Out</Text>
-                            <Text className="satoshi-medium text-sm" >{row.visitDate === '-' ? '-' : formatDatetoTime(row?.visitDate)}/{row.proposedDate === '-' ? '-' : formatDatetoTime(row?.proposedDate)}</Text>
+                            <Text className="satoshi-medium text-sm" >{(visitor ? row.visitDate : row.checkedInAt) === '-' ? '-' : formatDatetoTime(visitor ? row?.visitDate : row?.checkedInAt)}/{(visitor ? row.proposedDate : row.checkedOutAt) === '-' ? '-' : formatDatetoTime(visitor ? row?.proposedDate : row?.checkedOutAt)}</Text>
                         </Stack>
                     </Flex>
-                    {isScheduled &&
+                    {(isScheduled && visitor) &&
                         <Stack my={3}>
                             <Text className="text-[13px] text-[#9CA3AF]">Expected</Text>
                             <Text className="satoshi-medium text-sm" >{formatDateDash(row.visitDate)} | {formatDatetoTime(row.visitDate)}</Text>
                         </Stack>}
-                    <Modal open={approve} onOpenChange={setApprove} size={'xs'} modalContent={<ApproveRequestModal agentData={{ name: row.agentName, unit: row.unitName }} id={row.id} onClose={() => { setApprove(false) }} />} />
-                    <Modal open={reject} onOpenChange={setReject} size={'xs'} modalContent={<RejectRequestModal id={row.id} onClose={() => { setReject(false) }} />} />
-                    <Modal open={reschedule} onOpenChange={setReschedule} size={'sm'} modalContent={<RescheduleRequestModal proposedDate={row.proposedDate} id={row.id} onClose={() => { setReschedule(false) }} />} />
-
+                    {visitor && <><Modal open={approve} onOpenChange={setApprove} size={'xs'} modalContent={<ApproveRequestModal agentData={{ name: row.agentName, unit: row.unitName }} id={row.id} onClose={() => { setApprove(false) }} />} />
+                        <Modal open={reject} onOpenChange={setReject} size={'xs'} modalContent={<RejectRequestModal id={row.id} onClose={() => { setReject(false) }} />} />
+                        <Modal open={reschedule} onOpenChange={setReschedule} size={'sm'} modalContent={<RescheduleRequestModal proposedDate={row.proposedDate} id={row.id} onClose={() => { setReschedule(false) }} />} />
+                    </>}
 
                 </Box>
             })}

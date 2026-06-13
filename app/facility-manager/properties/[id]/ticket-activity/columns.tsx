@@ -35,6 +35,12 @@ export interface ExpenseLog {
     createdAt: string
     amount: number
     id: string
+    canEdit: boolean,
+    canDelete: boolean,
+    canFlag: boolean,
+    canCancel: boolean,
+    canAcceptRebuttal: boolean,
+    flagReason: string
 }
 
 export const expenseStatus = [
@@ -415,38 +421,37 @@ export const useColumns = (ticketId: string): ColumnDef<ExpenseLog, any>[] => {
 
                 return (
                     <Flex>
-                        {color?.value === "FLAGGED" || color?.value === "LOGGED" ? (
-                            color?.value === "FLAGGED" ? (
-                                <IoFlag
-
-                                    color={"#EA9C4899"}
-                                    size={"15px"}
-                                />
-                            ) : (
-                                <IoFlagOutline
-                                    onClick={() => SetFlagged(!Flagged)}
-                                    cursor={"pointer"}
-                                    color="#A9B4B999"
-                                    size={"15px"}
-                                />
-                            )
-                        ) : (color?.value === "REJECTED" || color?.value === "PENDING") ?
+                        {row.original.canEdit || row.original.canDelete ?
                             <Flex>
-                                <LuPencil
+                                {row.original.canEdit && <LuPencil
                                     color="#A9B4B9"
                                     size={18}
                                     cursor={'pointer'}
                                     className="mr-2"
                                     onClick={() => startEdit(row.original)}
-                                />
-                                <BiTrash color="#B91C1C" size={18} cursor={'pointer'} onClick={() => SetDelete(!Delete)} />
+                                />}
+                                {row.original.canDelete && <BiTrash color="#B91C1C" size={18} cursor={'pointer'} onClick={() => SetDelete(!Delete)} />}
 
-                            </Flex> :
-                            color?.value === 'REBUTTED' ? <Flex gap={2} direction={'column'}>
-                                <Button bg={'#ECFDF5'} color={'#047857'} h={'30px'} fontSize={'12px'} loading={acceptRebutMutation.isPending} onClick={() => onSubmit({ id: row.original.id, ticketId: row.original.maintenanceRequestId })} border={'1px solid #D1FAE5'} py={0} rounded={'full'} px={2}>Accept</Button>
-                                <Button color='#B91C1C' fontSize={'12px'} h={'30px'} bg={'#FEF2F2'} py='0' loading={cancelMututation.isPending} onClick={() => handleCancel({ id: row.original.id, ticketId: row.original.maintenanceRequestId })} border={'1px solid #FEE2E2'} rounded={'full'} px={2}>Cancel</Button>
-
-                            </Flex> : null
+                            </Flex> : color?.value === "FLAGGED" || color?.value === "LOGGED" ? (
+                                color?.value === "FLAGGED" ? (
+                                    <IoFlag
+                                        color={"#EA9C4899"}
+                                        size={"15px"}
+                                    />
+                                ) : (
+                                    <IoFlagOutline
+                                        onClick={() => { row.original.canFlag && SetFlagged(!Flagged) }}
+                                        cursor={"pointer"}
+                                        color="#A9B4B999"
+                                        size={"15px"}
+                                    />
+                                )
+                            ) :
+                                color?.value === 'REBUTTED' ? <Flex gap={2} direction={'column'}>
+                                    {row.original.canAcceptRebuttal && <Button bg={'#ECFDF5'} color={'#047857'} h={'30px'} fontSize={'12px'} loading={acceptRebutMutation.isPending} onClick={() => onSubmit({ id: row.original.id, ticketId: row.original.maintenanceRequestId })} border={'1px solid #D1FAE5'} py={0} rounded={'full'} px={2}>Accept</Button>
+                                    }  {row.original.canCancel && <Button color='#B91C1C' fontSize={'12px'} h={'30px'} bg={'#FEF2F2'} py='0' loading={cancelMututation.isPending} onClick={() => handleCancel({ id: row.original.id, ticketId: row.original.maintenanceRequestId })} border={'1px solid #FEE2E2'} rounded={'full'} px={2}>Cancel</Button>
+                                    }
+                                </Flex> : null
 
                         }
                         <Modal size={'sm'} open={Flagged} modalContent={<FlagMistake ticketId={row.original.maintenanceRequestId} id={row.original.id} onClose={() => SetFlagged(false)} />} onOpenChange={SetFlagged} />

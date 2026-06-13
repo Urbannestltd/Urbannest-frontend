@@ -21,15 +21,17 @@ import { useForm } from "react-hook-form"
 import { VisitorFilterFormData } from "@/schema/fm"
 import { getDateRange } from "@/services/date"
 import { SectionBox } from "@/components/ui/section-box"
+import { AddWalkins, CheckIn } from "./add-walkins"
 
 export default function VisitorManagement() {
     const [maintenanceFilter, setMaintenanceFilter] = useState('TODAY')
     const [openModal, setOpenModal] = useState(false)
-    const [SwitchModal, setSwitchModal] = useState(false)
+    const [openWalkinModal, setOpenWalkinModal] = useState(false)
     const [search, setSearch] = useState("")
     const visitors = useVisitorStore((state) => state.visitors)
     const loading = useVisitorStore((state) => state.isLoading)
     const fetchVisitors = useVisitorStore((state) => state.fetchVisitors);
+    const fetchWalkins = useVisitorStore((state) => state.fetchWalkins);
     const isMobile = window.innerWidth < 600
     const { control, watch } = useForm<VisitorFilterFormData>()
     const watchedValues = watch()
@@ -50,6 +52,20 @@ export default function VisitorManagement() {
             () => {
                 const { startDate, endDate } = getDateRange(watchedValues.dateRange?.[0])
                 fetchVisitors({
+                    search,
+                    status:
+                        watchedValues.status?.[0] === "all"
+                            ? undefined
+                            : watchedValues.status?.[0],
+                    type:
+                        watchedValues.accessType?.[0] === "all"
+                            ? undefined
+                            : watchedValues.accessType?.[0],
+                    dateFrom: startDate,
+                    dateTo: endDate,
+                    propertyId: watchedValues.property?.[0] === "all" ? undefined : watchedValues.property?.[0],
+                })
+                fetchWalkins({
                     search,
                     status:
                         watchedValues.status?.[0] === "all"
@@ -84,6 +100,7 @@ export default function VisitorManagement() {
 
     useEffect(() => {
         fetchVisitors()
+        fetchWalkins()
     }, [])
 
     const visitorDashboard = [
@@ -165,6 +182,14 @@ export default function VisitorManagement() {
                             dateFrom: startDate,
                             dateTo: endDate
                         })
+                        fetchWalkins({
+                            search,
+                            propertyId: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
+                            status: watchedValues.status?.[0] === 'all' ? undefined : watchedValues.status?.[0],
+                            type: watchedValues.accessType?.[0] === 'all' ? undefined : watchedValues.accessType?.[0],
+                            dateFrom: startDate,
+                            dateTo: endDate
+                        })
                     }} placeholder="" width={"full"} />
                     {" "}
                 </SectionBox>
@@ -207,11 +232,46 @@ export default function VisitorManagement() {
             </>)}
 
             <VisitorTabs
+                component={
+                    <Flex w={'100%'} gap={2}><Modal
+                        open={openModal}
+                        onOpenChange={setOpenModal}
+                        modalContent={
+                            <AddWalkins
+                                onClose={() => { fetchWalkins(); setOpenModal(false) }}
+                            />
+                        }
+                        triggerContent="Add Walk In"
+                        triggerVariant='outline'
+                        triggerSize='lg'
+                    /><Modal
+                            size={'cover'}
+                            className="w-[600px] h-fit"
+                            open={openWalkinModal}
+                            onOpenChange={setOpenWalkinModal}
+                            modalContent={
+                                <CheckIn
+                                    onWalkIn={() => { setOpenWalkinModal(false); setOpenModal(true) }}
+                                    onClose={() => setOpenWalkinModal(false)}
+                                />
+                            }
+                            triggerContent="Add Check In"
+
+                            triggerSize='lg'
+                        /></Flex>}
                 search={search}
                 onSearchChange={setSearch}
                 onSearch={(val) => {
                     const { startDate, endDate } = getDateRange(watchedValues.dateRange?.[0])
                     fetchVisitors({
+                        search: val,
+                        status: watchedValues.status?.[0] === 'all' ? undefined : watchedValues.status?.[0],
+                        type: watchedValues.accessType?.[0] === 'all' ? undefined : watchedValues.accessType?.[0],
+                        propertyId: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
+                        dateFrom: startDate,
+                        dateTo: endDate,
+                    })
+                    fetchWalkins({
                         search: val,
                         status: watchedValues.status?.[0] === 'all' ? undefined : watchedValues.status?.[0],
                         type: watchedValues.accessType?.[0] === 'all' ? undefined : watchedValues.accessType?.[0],

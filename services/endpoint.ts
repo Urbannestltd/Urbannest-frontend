@@ -168,11 +168,23 @@ const FmEndpoints = {
 
 	//Visitor
 	fetchVisitors: `/facility-manager/visits`,
+
 	approveVisitor: (id: string) =>
 		`/facility-manager/agent-visits/${id}/approve`,
 	rejectVisitor: (id: string) => `/facility-manager/agent-visits/${id}/reject`,
 	rescheduleVisitor: (id: string) =>
 		`/facility-manager/agent-visits/${id}/reschedule`,
+	fetchWalkinVisitors: `/facility-manager/walk-ins`,
+	checkoutWalkinVisitor: (id: string) =>
+		`/facility-manager/walk-ins/${id}/checkout`,
+	getWalkinVisitorStatus: (id: string) =>
+		`/facility-manager/walk-ins/${id}/status`,
+	getVisitorByCode: (code: string) => `/facility-manager/gate/pin/${code}`,
+	getRepeatWalkinVisitor: `/facility-manager/walk-ins/repeat-visitor`,
+	checkinScheduledVisitor: (id: string) =>
+		`/facility-manager/gate/${id}/check-in`,
+	checkoutScheduledVisitor: (id: string) =>
+		`/facility-manager/gate/${id}/checkout`,
 
 	//Settings
 	getSettings: `/facility-manager/profile`,

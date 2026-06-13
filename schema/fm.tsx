@@ -1,3 +1,4 @@
+import { access } from 'fs';
 import * as z from 'zod'
 import { ca } from 'zod/v4/locales';
 
@@ -50,6 +51,15 @@ export const NotifPreferenceSchema = z.object({
     fmEmailAgentReschedule: boolean("Email agent reschedule is required"),
 })
 
+export const AddWalkinSchema = z.object({
+    property: selectArrayField("Property is required"),
+    visitorPhone: inputField("Visitor phone is required"),
+    visitorType: selectArrayField("Visitor type is required"),
+    accessType: selectArrayField("Access type is required"),
+    visitorName: inputField("Visitor name is required"),
+    unit: inputField("Unit is required")
+})
+
 
 export type PropertyFilterFormData = z.infer<typeof propertyFilterSchema>
 export type TicketFilterFormData = z.infer<typeof ticketFilterSchema>
@@ -57,3 +67,4 @@ export type AddExpenseFormData = z.infer<typeof addExpenseSchema>
 export type VisitorFilterFormData = z.infer<typeof visitorFilterSchema>
 export type PersonalInfoFormData = z.infer<typeof PersonalInfoSchema>
 export type NotificationFormData = z.infer<typeof NotifPreferenceSchema>
+export type AddWalkinFormData = z.infer<typeof AddWalkinSchema>

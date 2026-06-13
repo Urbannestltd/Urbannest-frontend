@@ -29,6 +29,25 @@ export interface Visitor {
 	createdAt: string
 }
 
+export interface WalkIn {
+	id: string
+	visitorName: string
+	visitorPhone: string
+	visitorType: string
+	status: string
+	unitId: string
+	unitName: string
+	propertyId: string
+	propertyName: string
+	tenantName: string
+	fallbackRule: string
+	approvalExpiresAt: string
+	secondsUntilExpiry: number
+	checkedInAt: string
+	checkedOutAt: string
+	createdAt: string
+}
+
 interface filter {
 	search?: string
 	propertyId?: string
@@ -40,13 +59,18 @@ interface filter {
 
 interface VisitorStore {
 	visitors: Visitor[]
+	walkins: WalkIn[]
 	isLoading: boolean
+	isLoadingWalkins: boolean
 	fetchVisitors: (filter?: filter) => Promise<void>
+	fetchWalkins: (filter?: filter) => Promise<void>
 }
 
 export const useVisitorStore = create<VisitorStore>((set) => ({
 	visitors: [],
+	walkins: [],
 	isLoading: false,
+	isLoadingWalkins: false,
 	fetchVisitors: async (filter) => {
 		set({ isLoading: true })
 		try {
@@ -60,6 +84,21 @@ export const useVisitorStore = create<VisitorStore>((set) => ({
 			console.error("❌ Failed to fetch visitors", e)
 		} finally {
 			set({ isLoading: false })
+		}
+	},
+	fetchWalkins: async (filter) => {
+		set({ isLoadingWalkins: true })
+		try {
+			const walkins = await http.get(FmEndpoints.fetchWalkinVisitors, {
+				params: filter,
+			})
+			set({ walkins: walkins.data.data })
+			console.log("✅ Walkins set in store:", walkins.data.data)
+		} catch (e) {
+			set({ walkins: [] })
+			console.error("❌ Failed to fetch walkins", e)
+		} finally {
+			set({ isLoadingWalkins: false })
 		}
 	},
 }))
