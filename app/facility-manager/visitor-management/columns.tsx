@@ -1,5 +1,5 @@
 import { Modal } from "@/components/ui/dialog";
-import { formatDatetoTime } from "@/services/date";
+import { formatDate, formatDatetoTime } from "@/services/date";
 import { useVisitorStore, Visitor, WalkIn } from "@/store/fm/visitor";
 import { Center, Flex, Menu, Stack, Text } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -127,21 +127,10 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
 
         return (
             <Flex direction="column" gap={1}>
-                {row.secondsUntilExpiry === null && <Flex
-                    alignItems="center"
-                    fontSize="14px"
-                    fontWeight="semibold"
-                    bg={status?.bgColor}
-                    p={1}
-                    px={4}
-                    rounded="3xl"
-                    justify="center"
-                    w="fit"
-                >
-                    <Text color={status?.textColor}>
-                        {status?.label || row.status}
+                {row.secondsUntilExpiry === null &&
+                    <Text>
+                        {formatDatetoTime(row.checkedInAt)}
                     </Text>
-                </Flex>
                 }
                 {row.secondsUntilExpiry !== null && secondsLeft > 0 && (
                     <Flex

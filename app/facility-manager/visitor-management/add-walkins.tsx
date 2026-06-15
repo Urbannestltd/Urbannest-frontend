@@ -108,7 +108,7 @@ export const AddWalkins = ({ search, onClose }: { search?: string, onClose: () =
         setValue('visitorName', visitor.visitorName)
         setValue('visitorPhone', visitor.visitorPhone)
         setValue('visitorType', [visitor.visitorType])
-        setValue('unit', visitor.lastUnitId)
+        setValue('unit', [visitor.lastUnitId])
         setShowSuggestions(false)
         setSuggestions([])
     }
@@ -197,7 +197,7 @@ export const AddWalkins = ({ search, onClose }: { search?: string, onClose: () =
                                         _hover={{ bg: 'gray.50' }}
                                         borderBottom={index < suggestions.length - 1 ? '1px solid' : 'none'}
                                         borderColor="gray.100"
-                                        onMouseDown={(e) => {
+                                        onClick={(e) => {
                                             // onMouseDown instead of onClick so it fires before onBlur
                                             e.preventDefault()
                                             handleSelectSuggestion(visitor)

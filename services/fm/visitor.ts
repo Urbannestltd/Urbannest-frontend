@@ -128,10 +128,10 @@ export const RepeatVisitor = async (search: string) => {
 			search,
 		},
 	})
-	return response.data as Promise<getRepeatWalkinVisitorResponse>
+	return response.data.data as Promise<getRepeatWalkinVisitorResponse>
 }
 
 export const GetStatus = async (id: string) => {
 	const response = await http.get(FmEndpoints.getWalkinVisitorStatus(id))
-	return response.data.data as Promise<GetStatusResponse>
+	return response.data as Promise<GetStatusResponse>
 }

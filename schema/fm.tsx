@@ -57,7 +57,7 @@ export const AddWalkinSchema = z.object({
     visitorType: selectArrayField("Visitor type is required"),
     accessType: selectArrayField("Access type is required"),
     visitorName: inputField("Visitor name is required"),
-    unit: inputField("Unit is required")
+    unit: selectArrayField("Unit is required"),
 })
 
 
