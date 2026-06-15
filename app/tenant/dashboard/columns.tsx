@@ -106,7 +106,7 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] =>
             cell: ({ row }) => {
                 const roow = row.original.checkInTime
                 if (roow === '-') return '-'
-                return formatDatetoTime(row.getValue('checkInTime'))
+                return formatDatetoTime(row.original.checkInTime)
             },
         },
         {
@@ -115,7 +115,7 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor, unknown>[] =>
             cell: ({ row }) => {
                 const roow = row.original.checkOutTime
                 if (roow === '-') return '-'
-                return formatDatetoTime(row.getValue('checkOutTime'))
+                return formatDatetoTime(row.original.checkOutTime)
             },
         },
         {
