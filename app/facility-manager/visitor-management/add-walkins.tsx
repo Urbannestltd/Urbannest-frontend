@@ -401,7 +401,7 @@ export const CheckIn = ({ onClose, onWalkIn }: { onClose: () => void, onWalkIn: 
                             value={digit}
                             onChange={(e) => handleChange(i, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(i, e)}
-                            disabled={mutation.isPending}
+                            disabled={mutation.isPending || (visitor ? true : false)}
                             onFocus={(e) => { e.target.style.borderColor = '#475266' }}
                             onBlur={(e) => { e.target.style.borderColor = digit ? '#475266' : '#E2E8F0' }}
                             style={{
