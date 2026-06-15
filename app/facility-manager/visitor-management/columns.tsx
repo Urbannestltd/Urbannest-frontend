@@ -1,17 +1,20 @@
 import { Modal } from "@/components/ui/dialog";
 import { formatDatetoTime } from "@/services/date";
-import { Visitor, WalkIn } from "@/store/fm/visitor";
+import { useVisitorStore, Visitor, WalkIn } from "@/store/fm/visitor";
 import { Center, Flex, Menu, Stack, Text } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuEllipsisVertical } from "react-icons/lu";
 import { ApproveRequestModal, RejectRequestModal, RescheduleRequestModal } from "./modal";
 import { ActionsModal } from "./actions-modal";
 import { set } from "lodash";
+import { AddWalkins } from "./add-walkins";
 
 const isVisitor = (row: Visitor | WalkIn): row is Visitor => "normalizedStatus" in row;
 
+
 export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>[] => {
+    const fetchWalkins = useVisitorStore((state) => state.fetchWalkins)
     const Status = [
         {
             value: "UPCOMING",
@@ -46,6 +49,12 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
         {
             value: "REJECTED",
             label: "Rejected",
+            bgColor: "#FEF2F2",
+            textColor: "#B91C1C",
+        },
+        {
+            value: "EXPIRED",
+            label: "Expired",
             bgColor: "#FEF2F2",
             textColor: "#B91C1C",
         },
@@ -88,6 +97,88 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
             textColor: "#BF6A02",
         },
     ];
+    const CountdownCell = ({ row }: { row: WalkIn }) => {
+        const [secondsLeft, setSecondsLeft] = useState(row.secondsUntilExpiry)
+
+        useEffect(() => {
+            if (secondsLeft === null || secondsLeft <= 0) return
+
+            const interval = setInterval(() => {
+                setSecondsLeft((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(interval)
+                        return 0
+                    }
+                    return prev - 1
+                })
+            }, 1000)
+
+            return () => clearInterval(interval)
+        }, []) // run once on mount, state handles the rest
+
+
+        const status = Status.find((s) => s.value === row.status)
+
+        const formatTime = (secs: number) => {
+            const m = Math.floor(secs / 60).toString().padStart(2, '0')
+            const s = (secs % 60).toString().padStart(2, '0')
+            return `${m}:${s}`
+        }
+
+        return (
+            <Flex direction="column" gap={1}>
+                {row.secondsUntilExpiry === null && <Flex
+                    alignItems="center"
+                    fontSize="14px"
+                    fontWeight="semibold"
+                    bg={status?.bgColor}
+                    p={1}
+                    px={4}
+                    rounded="3xl"
+                    justify="center"
+                    w="fit"
+                >
+                    <Text color={status?.textColor}>
+                        {status?.label || row.status}
+                    </Text>
+                </Flex>
+                }
+                {row.secondsUntilExpiry !== null && secondsLeft > 0 && (
+                    <Flex
+                        alignItems="center"
+                        fontSize="14px"
+                        fontWeight="semibold"
+                        bg={Status[4].bgColor}
+                        p={1}
+                        px={4}
+                        rounded="3xl"
+                        justify="center"
+                        w="fit"
+                    > <Text fontSize="11px" color={Status[4].textColor} className="satoshi-medium">
+                            {formatTime(secondsLeft)}
+                        </Text>
+                    </Flex>
+                )}
+
+                {row.secondsUntilExpiry !== null && secondsLeft <= 0 && (
+                    <Flex
+                        alignItems="center"
+                        fontSize="14px"
+                        fontWeight="semibold"
+                        bg={Status[4].bgColor}
+                        p={1}
+                        px={4}
+                        rounded="3xl"
+                        justify="center"
+                        w="fit"
+                    > <Text fontSize="14px" color={Status[4].textColor} className="satoshi-medium">
+                            Call Tenant
+                        </Text>
+                    </Flex>
+                )}
+            </Flex>
+        )
+    }
 
     return [
         {
@@ -192,11 +283,12 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
                 isVisitor(row) ? row.proposedDate : row.checkedInAt,
             header: "Time In",
             cell: ({ row }) => {
-                const time = isVisitor(row.original)
-                    ? row.original.proposedDate
-                    : row.original.checkedInAt;
-                if (!time || time === "-") return "-";
-                return formatDatetoTime(time);
+                if (isVisitor(row.original)) {
+                    const time = row.original.proposedDate
+                    if (!time || time === "-") return "-";
+                    return formatDatetoTime(time);
+                }
+                else { return <CountdownCell row={row.original} /> }
             },
         },
         {
@@ -263,6 +355,7 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
                                             <Menu.Item
                                                 onClick={() => setActions(true)}
                                                 value="checkout"
+                                                color={'#C00F0C'}
                                             >
                                                 Check Out
                                             </Menu.Item>
@@ -332,7 +425,8 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
                 header: "Actions",
                 cell: ({ row }) => {
                     const [openModal, setOpenModal] = useState(false);
-                    const [type, setType] = useState<'repeat' | 'checkout' | 'status'>('checkout');
+                    const [openWalkin, setOpenWalkin] = useState(false);
+                    const [type, setType] = useState<'checkout' | 'status'>('checkout');
 
                     const visitor = row.original;
 
@@ -348,8 +442,7 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
 
                                         <Menu.Item
                                             onClick={() => {
-                                                setOpenModal(true);
-                                                setType("repeat");
+                                                setOpenWalkin(true);
                                             }}
                                             value="repeat"
                                         >
@@ -372,6 +465,7 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
                                                 setType("checkout");
                                             }}
                                             value="checkout"
+                                            color={'#C00F0C'}
                                         >
                                             Check Out
                                         </Menu.Item>
@@ -391,6 +485,16 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
                                             setOpenModal(false);
                                             setType('checkout')
                                         }}
+                                    />
+                                }
+                            />
+                            <Modal
+                                open={openWalkin}
+                                onOpenChange={setOpenWalkin}
+                                modalContent={
+                                    <AddWalkins
+                                        search={visitor.visitorName}
+                                        onClose={() => { fetchWalkins(); setOpenWalkin(false) }}
                                     />
                                 }
                             />

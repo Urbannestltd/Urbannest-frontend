@@ -1,6 +1,6 @@
 'use client'
 import { addVisitorFormData } from "@/schema"
-import { Box, Center, createListCollection, Flex, HStack, IconButton, Text } from "@chakra-ui/react"
+import { Box, Center, createListCollection, Flex, HStack, IconButton, Spinner, Text } from "@chakra-ui/react"
 import { useForm } from "react-hook-form"
 import { CustomInput, CustomSelect } from "@/components/ui/custom-fields"
 import { PageTitle } from "@/components/ui/page-title"
@@ -14,7 +14,7 @@ import { formatDate, formatDateToIso, formatDatetoTime } from "@/services/date"
 import dayjs from "dayjs"
 import { AxiosError } from "axios"
 import { AddWalkinFormData } from "@/schema/fm"
-import { AddWalkIn, AddWalkInPayload, CheckInVisitor, GetVisitorByCode, GetVisitorByCodeResponse, Profile } from "@/services/fm/visitor"
+import { AddWalkIn, AddWalkInPayload, CheckInVisitor, getRepeatWalkinVisitorResponse, GetVisitorByCode, GetVisitorByCodeResponse, Profile, RepeatVisitor } from "@/services/fm/visitor"
 import { WalkIn } from "@/store/fm/visitor"
 import { usePropertyStore } from "@/store/fm/properties"
 import { TiSortNumerically } from "react-icons/ti";
@@ -25,13 +25,44 @@ import { LuLogIn } from "react-icons/lu"
 import { MdOutlineLockReset } from "react-icons/md"
 
 
-export const AddWalkins = ({ onClose }: { onClose: () => void }) => {
+export const AddWalkins = ({ search, onClose }: { search?: string, onClose: () => void }) => {
     const { control, reset, watch, handleSubmit, setValue, formState } = useForm<AddWalkinFormData>()
     const { properties, units, fetchProperties, fetchUnits } = usePropertyStore((state) => state)
     const selectedValue = watch('property')
+    const visitorNameValue = watch('visitorName')
+
+    const [suggestions, setSuggestions] = useState<getRepeatWalkinVisitorResponse[]>([])
+    const [showSuggestions, setShowSuggestions] = useState(false)
+    const [searchTerm, setSearchTerm] = useState('')
+    const suggestionRef = useRef<HTMLDivElement>(null)
+
+    const walkinmututation = useMutation({
+        mutationFn: (search: string) => RepeatVisitor(search),
+        onSuccess: (response) => {
+            // Handle both array and single object responses
+            const results = Array.isArray(response) ? response : [response]
+            if (results.length > 0) {
+                setSuggestions(results)
+                setShowSuggestions(true)
+            } else {
+                setShowSuggestions(false)
+            }
+        },
+        onError: () => {
+            setSuggestions([])
+            setShowSuggestions(false)
+        }
+    })
 
     useEffect(() => {
         fetchProperties()
+        reset({
+            accessType: ['ONE_OFF'],
+        })
+        if (search) {
+            setValue('visitorName', search)
+        }
+
     }, [])
 
     useEffect(() => {
@@ -39,21 +70,60 @@ export const AddWalkins = ({ onClose }: { onClose: () => void }) => {
         fetchUnits(selectedValue[0])
     }, [selectedValue])
 
+    // Debounce the name input before firing the search
+    useEffect(() => {
+        if (!visitorNameValue || visitorNameValue.length < 2) {
+            setSuggestions([])
+            setShowSuggestions(false)
+            return
+        }
+
+        const timer = setTimeout(() => {
+            setSearchTerm(visitorNameValue)
+        }, 400)
+
+        return () => clearTimeout(timer)
+    }, [visitorNameValue])
+
+    // Close suggestions when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (suggestionRef.current && !suggestionRef.current.contains(e.target as Node)) {
+                setShowSuggestions(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+
+
+
+    // Fire search when debounced term changes
+    useEffect(() => {
+        if (!searchTerm) return
+        walkinmututation.mutate(searchTerm)
+    }, [searchTerm])
+
+    const handleSelectSuggestion = (visitor: getRepeatWalkinVisitorResponse) => {
+        setValue('visitorName', visitor.visitorName)
+        setValue('visitorPhone', visitor.visitorPhone)
+        setValue('visitorType', [visitor.visitorType])
+        setValue('unit', visitor.lastUnitId)
+        setShowSuggestions(false)
+        setSuggestions([])
+    }
+
     const props = createListCollection({
         items: properties.map((item) => ({ label: item.name, value: item.id }))
     })
     const unit = createListCollection({
-        items: [
-            { label: 'All Units', value: 'all' },
-            ...units?.grouped?.flatMap((floorUnits) =>
-                floorUnits.units.map((item) => ({
-                    label: item.name,
-                    value: item.id,
-                }))
-            ) ?? [],
-        ]
+        items: units?.grouped?.flatMap((floorUnits) =>
+            floorUnits.units.map((item) => ({
+                label: item.name,
+                value: item.id,
+            }))
+        ) ?? []
     })
-
 
     const mutation = useMutation({
         mutationFn: (data: AddWalkInPayload) => AddWalkIn(data),
@@ -66,7 +136,6 @@ export const AddWalkins = ({ onClose }: { onClose: () => void }) => {
             toast.error(error.response?.data?.message ?? error?.message)
         }
     })
-
 
     const handleAddVisitor = (data: AddWalkinFormData) => {
         const payload: AddWalkInPayload = {
@@ -84,34 +153,100 @@ export const AddWalkins = ({ onClose }: { onClose: () => void }) => {
             <PageTitle title="Add Walk-ins" fontSize={'18px'} mb={7} spacing={0} subFontSize={'14px'} subText="Create a visitor pass for guests, deliveries, or service providers." />
             <form onSubmit={handleSubmit(handleAddVisitor)}>
                 <HStack w={'full'} gap={4}>
-                    <CustomInput name="visitorName" width={'full'} required control={control} label="Full Name" placeholder="Full Name" />
-                    <CustomInput name='visitorPhone' width={'full'} onKeyDown={(e) => {
-                        const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "+"]
-                        if (!allowed.includes(e.key) && !/[0-9]/.test(e.key)) {
-                            e.preventDefault()
-                        }
-                    }} pattern={{
-                        value: /^\+?[0-9]{7,15}$/,
-                        message: "Enter a valid phone number",
-                    }} required control={control} label='Phone Number' placeholder="Phone Number" />
+
+                    {/* Name input wrapped in a relative Box for the dropdown */}
+                    <Box position="relative" w={'full'} ref={suggestionRef}>
+                        <CustomInput
+                            name="visitorName"
+                            width={'full'}
+                            required
+                            control={control}
+                            label="Full Name"
+                            placeholder="Full Name"
+                        />
+
+                        {/* Suggestion dropdown */}
+                        {showSuggestions && suggestions.length > 0 && (
+                            <Box
+                                position="absolute"
+                                top="100%"
+                                left={0}
+                                right={0}
+                                zIndex={50}
+                                mt={1}
+                                bg="white"
+                                border="1px solid"
+                                borderColor="gray.200"
+                                borderRadius="md"
+                                boxShadow="lg"
+                                maxH="220px"
+                                overflowY="auto"
+                            >
+                                {walkinmututation.isPending && (
+                                    <Flex px={4} py={3} align="center" gap={2} color="gray.400" fontSize="sm">
+                                        <Spinner size="xs" />
+                                        <Text>Searching...</Text>
+                                    </Flex>
+                                )}
+                                {suggestions.map((visitor, index) => (
+                                    <Box
+                                        key={index}
+                                        px={4}
+                                        py={3}
+                                        cursor="pointer"
+                                        _hover={{ bg: 'gray.50' }}
+                                        borderBottom={index < suggestions.length - 1 ? '1px solid' : 'none'}
+                                        borderColor="gray.100"
+                                        onMouseDown={(e) => {
+                                            // onMouseDown instead of onClick so it fires before onBlur
+                                            e.preventDefault()
+                                            handleSelectSuggestion(visitor)
+                                        }}
+                                    >
+                                        <Text fontWeight="500" fontSize="sm">{visitor.visitorName}</Text>
+                                        <Text fontSize="xs" color="gray.500">{visitor.visitorPhone}</Text>
+                                    </Box>
+                                ))}
+                            </Box>
+                        )}
+                    </Box>
+
+                    <CustomInput
+                        name='visitorPhone'
+                        width={'full'}
+                        onKeyDown={(e) => {
+                            const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "+"]
+                            if (!allowed.includes(e.key) && !/[0-9]/.test(e.key)) {
+                                e.preventDefault()
+                            }
+                        }}
+                        pattern={{
+                            value: /^\+?[0-9]{7,15}$/,
+                            message: "Enter a valid phone number",
+                        }}
+                        required
+                        control={control}
+                        label='Phone Number'
+                        placeholder="Phone Number"
+                    />
                 </HStack>
+
                 <HStack mt={4} w={'full'} gap={4}>
                     <CustomSelect name='property' width={'full'} collection={props} required control={control} label='Property' placeholder="Property" />
                     <CustomSelect name='unit' width={'full'} collection={unit} required control={control} label='Unit' placeholder="Unit" />
                 </HStack>
                 <HStack mt={4} w={'full'} gap={4}>
                     <CustomSelect name="visitorType" width={'full'} collection={visitorType} required control={control} label='Visitor Type' placeholder="Visitor Type" />
-                    <CustomSelect name="accessType" width={'full'} collection={accessType} required control={control} label='Access Type' placeholder="Access Type" />
+                    <CustomSelect name="accessType" width={'full'} value={'ONE_OFF'} readOnly collection={accessType} required control={control} label='Access Type' placeholder="Access Type" />
                 </HStack>
 
                 <Flex mt={10} align={'center'} w={'full'}>
-                    <MainButton disabled={mutation.isPending || !formState.isValid} loading={mutation.isPending} size="lg" type="submit">Add Vistors</MainButton>
+                    <MainButton disabled={mutation.isPending || !formState.isValid} loading={mutation.isPending} size="lg" type="submit">Add Visitors</MainButton>
                 </Flex>
             </form>
         </Box>
     )
 }
-
 const visitorType = createListCollection({
     items: [
         { label: 'Guest', value: 'GUEST' },
@@ -122,9 +257,7 @@ const visitorType = createListCollection({
 
 const accessType = createListCollection({
     items: [
-        { label: 'One Off', value: 'ONE_OFF' },
-        { label: 'Whole Day', value: 'WHOLE_DAY' },
-        { label: 'Recurring', value: 'RECURRING' },
+        { label: 'One Off', value: 'ONE_OFF' }
     ]
 })
 

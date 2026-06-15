@@ -68,6 +68,16 @@ export interface GetStatusResponse {
 	success: boolean
 }
 
+export interface getRepeatWalkinVisitorResponse {
+	visitorName: string
+	visitorPhone: string
+	visitorType: string
+	lastVisitDate: string
+	lastUnitId: string
+	lastUnitName: string
+	totalVisits: number
+}
+
 export const ApproveAgent = async (id: string) => {
 	const response = await http.patch(FmEndpoints.approveVisitor(id))
 	return response.data
@@ -112,9 +122,13 @@ export const CheckOutVisitor = async (id: string, isWalkin: boolean) => {
 	}
 }
 
-export const RepeatVisitor = async () => {
-	const response = await http.get(FmEndpoints.getRepeatWalkinVisitor)
-	return response.data
+export const RepeatVisitor = async (search: string) => {
+	const response = await http.get(FmEndpoints.getRepeatWalkinVisitor, {
+		params: {
+			search,
+		},
+	})
+	return response.data as Promise<getRepeatWalkinVisitorResponse>
 }
 
 export const GetStatus = async (id: string) => {

@@ -252,7 +252,7 @@ export default function VisitorManagement() {
                             modalContent={
                                 <CheckIn
                                     onWalkIn={() => { setOpenWalkinModal(false); setOpenModal(true) }}
-                                    onClose={() => setOpenWalkinModal(false)}
+                                    onClose={() => { fetchVisitors(); setOpenWalkinModal(false) }}
                                 />
                             }
                             triggerContent="Add Check In"
