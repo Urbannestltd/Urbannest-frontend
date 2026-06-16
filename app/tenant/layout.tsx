@@ -1,6 +1,5 @@
 import { Metadata } from "next"
 import { RequireAuth } from "../auth/require-auth"
-import { SideBarSetup } from "./page"
 import { PageContainer } from "@/components/ui/page-container"
 import { TenantSidebar } from "@/components/common/side-bar"
 import { Nav } from "@/components/common/nav-bar"

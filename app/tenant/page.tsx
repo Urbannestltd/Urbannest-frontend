@@ -2,7 +2,6 @@
 import { useLeaseStore } from "@/store/tenant/lease";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { TenantSidebar } from "./sidebar";
 
 export default function Home() {
     const router = useRouter()
@@ -19,13 +18,4 @@ export default function Home() {
     }, [lease, router])
 
     return null
-}
-
-export function SideBarSetup() {
-    const pathname = usePathname();
-    const isSetting = pathname.includes('settings');
-
-    return (<> {isSetting ? null : <div className="relative hidden md:block w-[380px]">
-        <TenantSidebar />
-    </div>}</>)
 }
