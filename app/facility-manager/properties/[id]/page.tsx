@@ -1,5 +1,5 @@
 'use client'
-import { Box, Breadcrumb, Flex, HStack, Image, SkeletonText, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Image, SkeletonText, Text } from "@chakra-ui/react";
 import rentImage from '@/app/assets/images/lease-image.png'
 import locateIcon from '@/app/assets/icons/location-icon.svg'
 import { PropertyTabs } from "./tabs";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { usePropertyStore } from "@/store/fm/properties";
+import { PageBreadcrumb } from "@/components/ui/page-breadcrumb";
 
 
 
@@ -39,21 +40,7 @@ export default function Page() {
 
 
     return (<div>
-        <Breadcrumb.Root>
-            <Breadcrumb.List>
-                <Breadcrumb.Item>
-                    <Breadcrumb.Link href="/facility-manager/properties">Properties</Breadcrumb.Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Separator />
-                <Breadcrumb.Item>
-                    <Breadcrumb.Link href="#">Property Details</Breadcrumb.Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Separator />
-                <Breadcrumb.Item>
-                    <Breadcrumb.CurrentLink>{selectedTab}</Breadcrumb.CurrentLink>
-                </Breadcrumb.Item>
-            </Breadcrumb.List>
-        </Breadcrumb.Root>
+        <PageBreadcrumb items={[{ label: "Properties", to: "/facility-manager/properties" }, { label: selectedTab, isCurrent: true }]} />
         <Flex direction={{ base: 'column', md: 'row' }} mb={12} mt={4} justify={'space-between'} align={'center'} rounded={'8px'} p={{ base: 2, md: 4 }} className="bg-primary-gold-50">
             <HStack w={{ base: 'full', md: 'auto' }}  >
                 <Image src={property?.images[0] ?? rentImage.src} mr={{ base: 4, md: 3 }} w={{ base: '100px', md: '165px' }} rounded={'8px'} h={{ base: '60px', md: '80px' }} alt="rent" />

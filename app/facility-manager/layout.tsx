@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 import { RequireAuth } from "../auth/require-auth"
 import { PageContainer } from "@/components/ui/page-container"
-import { FMSideBarSetup } from "./sidebar"
-import { FMNav } from "./fm-nav"
+import { FMSidebar } from "@/components/common/side-bar"
+import { Nav } from "@/components/common/nav-bar"
 
 export const metadata: Metadata = {
     title: "Admin Dashboard",
@@ -18,10 +18,12 @@ export default function DashboardLayout({
     return (
         <RequireAuth>
             <div className="flex h-screen">
-                <FMSideBarSetup />
+                <div className="hidden md:block">
+                    <FMSidebar />
+                </div>
                 <PageContainer left={'17rem'} >
                     <div className=" w-full max-w-[1440px]">
-                        <FMNav />
+                        <Nav role='facilitymanager' />
                         {children}
                     </div>
                 </PageContainer>

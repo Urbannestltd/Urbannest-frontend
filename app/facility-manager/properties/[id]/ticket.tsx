@@ -5,7 +5,6 @@ import { convertMinutes, formatDate, formatDatetoTime } from "@/services/date"
 import { TickettData } from "@/utils/data"
 import {
     Box,
-    Breadcrumb,
     Button,
     Center,
     Circle,
@@ -194,9 +193,9 @@ export const TicketPage = ({ id }: { id: string }) => {
 
     else
         return (
-            <div>
-                <Flex gap={8}>
-                    <Box w={"65%"}>
+            <div className="w-full">
+                <Flex direction={{ base: 'column', md: 'row' }} w={'full'} gap={8}>
+                    <Box w={{ base: 'full', md: "65%" }}>
                         <SectionBox w={"full"} mt={8} p={6}>
                             <HStack justify={"space-between"}>
                                 <Box>
@@ -223,7 +222,7 @@ export const TicketPage = ({ id }: { id: string }) => {
                                     </Text>
                                 </Box>
                             </HStack>
-                            <Grid gap={{ base: 3, md: 4 }} templateColumns={{ base: 'repeat(2,1fr)', md: 'repeat(3,1fr)' }} mt={6} h={"89px"}>
+                            <Grid gap={{ base: 3, md: 4 }} templateColumns={{ base: 'repeat(2,1fr)', md: 'repeat(3,1fr)' }} mt={6} h={{ base: "auto", md: "89px" }}>
                                 {Info.map((info) => (
                                     <SectionBox bg={"#F5F5F5"} p={4} w={"full"} h={"full"}>
                                         <Text

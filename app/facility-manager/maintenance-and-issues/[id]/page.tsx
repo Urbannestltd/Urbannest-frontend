@@ -1,12 +1,10 @@
 "use client"
 import { PageTitle } from "@/components/ui/page-title"
-import {
-    Breadcrumb,
-} from "@chakra-ui/react"
 import { useParams } from "next/navigation"
 import { useEffect } from "react"
 import { useTicketStore } from "@/store/fm/ticket"
 import { TicketPage } from "../../properties/[id]/ticket"
+import { PageBreadcrumb } from "@/components/ui/page-breadcrumb"
 
 
 export default function Ticket() {
@@ -22,21 +20,7 @@ export default function Ticket() {
     return (
         <div>
             <PageTitle title="Maintenance & Issues" fontSize={"22px"} />
-            <Breadcrumb.Root>
-                <Breadcrumb.List>
-                    <Breadcrumb.Item>
-                        <Breadcrumb.Link href="/facility-manager/maintenance-and-issues">
-                            Maintenance & Issues
-                        </Breadcrumb.Link>
-                    </Breadcrumb.Item>
-                    <Breadcrumb.Separator />
-                    <Breadcrumb.Item>
-                        <Breadcrumb.CurrentLink className="satoshi-medium">
-                            {ticket?.subject}
-                        </Breadcrumb.CurrentLink>
-                    </Breadcrumb.Item>
-                </Breadcrumb.List>
-            </Breadcrumb.Root>
+            <PageBreadcrumb items={[{ label: "Maintenance & Issues", to: "/facility-manager/maintenance-and-issues" }, { label: ticket?.subject, isCurrent: true }]} />
             <TicketPage id={id} />
         </div>
     )

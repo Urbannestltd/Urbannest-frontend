@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react"
 import { categoryOptions, ExpenseLog, expenseStatus } from "./columns"
 import { SectionBox, SectionFlex } from "@/components/ui/section-box"
-import { formatNumber } from "@/services/date"
+import { formatDate, formatNumber } from "@/services/date"
 import { useState } from "react"
 import { IoFlag, IoFlagOutline } from "react-icons/io5"
 import { DeletePopup, FlagMistake } from "./modaal"
@@ -172,7 +172,7 @@ export const MobileTable = ({ data, tableName, ticketId }: { data: ExpenseLog[],
                                         <Text className="satoshi-bold text-base">
                                             {row?.description}
                                         </Text>
-                                        <Flex className=" text-[#717C82] text-xs">{row?.date} • <Text color={color?.textColor} ml={1} className="satoshi-bold">{color?.text}</Text></Flex>
+                                        <Flex className=" text-[#717C82] text-xs">{formatDate(row?.date)} • <Text color={color?.textColor} ml={1} className="satoshi-bold">{color?.text}</Text></Flex>
                                         {color?.value === 'REBUTTED' ? <Flex gap={2} mt={2}>
                                             <Button bg={'#ECFDF5'} color={'#047857'} h={'30px'} fontSize={'12px'} loading={acceptRebutMutation.isPending} onClick={() => onSubmit({ id: row.id, ticketId: row.maintenanceRequestId })} border={'1px solid #D1FAE5'} py={0} rounded={'full'} px={2}>Accept</Button>
                                             <Button color='#B91C1C' fontSize={'12px'} h={'30px'} bg={'#FEF2F2'} py='0' loading={cancelMututation.isPending} onClick={() => handleCancel({ id: row.id, ticketId: row.maintenanceRequestId })} border={'1px solid #FEE2E2'} rounded={'full'} px={2}>Cancel</Button>
@@ -216,7 +216,7 @@ export const MobileTable = ({ data, tableName, ticketId }: { data: ExpenseLog[],
                             <Text className="satoshi-bold text-base">
                                 {row?.description}
                             </Text>
-                            <Flex className=" text-[#717C82] text-xs">{row?.date} • <Text color={color?.textColor} ml={1} className="satoshi-bold">{color?.text}</Text></Flex>
+                            <Flex className=" text-[#717C82] text-xs">{formatDate(row?.date)} • <Text color={color?.textColor} ml={1} className="satoshi-bold">{color?.text}</Text></Flex>
                             <Text
                                 bg={"#E1E9EE"}
                                 w={"fit"}

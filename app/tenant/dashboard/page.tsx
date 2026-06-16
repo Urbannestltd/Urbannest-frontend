@@ -82,7 +82,7 @@ export default function TenantDashboard() {
                     ))}
                 </HStack>
                 <Flex mt={3} mb={8} w={"full"} maxW={'99%'} overflowX={'scroll'} align={"center"} justify="start">
-                    <DashboardCard data={CardData} />
+                    <DashboardCard fourcolumn={false} data={CardData} />
                     <Box
                         ml={4}
                         className="relative"

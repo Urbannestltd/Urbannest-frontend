@@ -18,7 +18,7 @@ import {
 } from "./model"
 import { ExpenseLog } from "@/app/facility-manager/properties/[id]/ticket-activity/columns"
 
-export const sidebarLinks = [
+export const tenantSidebarLinks = [
 	{
 		title: "Dashboard",
 		href: "/tenant/dashboard",

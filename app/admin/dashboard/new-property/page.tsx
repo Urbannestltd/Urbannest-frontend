@@ -6,7 +6,6 @@ import { SectionBox } from "@/components/ui/section-box"
 import { addPropertyFormData } from "@/schema/admin"
 import {
     Box,
-    Breadcrumb,
     Button,
     Center,
     createListCollection,
@@ -27,6 +26,7 @@ import { addProperty, AddPropertyPayload } from "@/services/admin/property"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import { AxiosError } from "axios"
+import { PageBreadcrumb } from "@/components/ui/page-breadcrumb"
 
 export default function NewProperty() {
     const { control, reset, handleSubmit, formState, setValue, watch } = useForm<addPropertyFormData>({ mode: 'onChange' })
@@ -132,21 +132,7 @@ export default function NewProperty() {
                 <HStack justify={"space-between"}>
                     <Box>
                         <PageTitle title="Add New Property" fontSize={"20px"} />
-                        <Breadcrumb.Root className="satoshi-medium">
-                            <Breadcrumb.List>
-                                <Breadcrumb.Item>
-                                    <Breadcrumb.Link href="/admin/dashboard">
-                                        Dashboard
-                                    </Breadcrumb.Link>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Separator />
-                                <Breadcrumb.Item>
-                                    <Breadcrumb.CurrentLink>
-                                        Add New Property
-                                    </Breadcrumb.CurrentLink>
-                                </Breadcrumb.Item>
-                            </Breadcrumb.List>
-                        </Breadcrumb.Root>
+                        <PageBreadcrumb items={[{ label: "Dashboard", to: "/admin/dashboard" }, { label: "Add New Property", isCurrent: true }]} />
                     </Box>
                     <Flex w={"243px"} gap={2}>
                         <MainButton

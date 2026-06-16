@@ -1,5 +1,5 @@
 'use client'
-import { Box, Breadcrumb, Flex, HStack, Image, SkeletonText, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Image, SkeletonText, Text } from "@chakra-ui/react";
 import rentImage from '@/app/assets/images/lease-image.png'
 import locateIcon from '@/app/assets/icons/location-icon.svg'
 import { MainButton } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { useMutation } from "@tanstack/react-query";
 import { editProperty, EditPropertyPayload } from "@/services/admin/property";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
+import { PageBreadcrumb } from "@/components/ui/page-breadcrumb";
 
 
 
@@ -78,21 +79,8 @@ export default function Page() {
 
 
     return (<div>
-        <Breadcrumb.Root>
-            <Breadcrumb.List>
-                <Breadcrumb.Item>
-                    <Breadcrumb.Link href="/admin/dashboard">Dashboard</Breadcrumb.Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Separator />
-                <Breadcrumb.Item>
-                    <Breadcrumb.Link href="#">Property Details</Breadcrumb.Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Separator />
-                <Breadcrumb.Item>
-                    <Breadcrumb.CurrentLink>{selectedTab}</Breadcrumb.CurrentLink>
-                </Breadcrumb.Item>
-            </Breadcrumb.List>
-        </Breadcrumb.Root>
+        <PageBreadcrumb items={[{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Property Details', href: '#' }, { label: selectedTab, isCurrent: true }]} />
+
         <Flex direction={{ base: 'column', md: 'row' }} mb={12} mt={4} justify={'space-between'} align={'center'} rounded={'8px'} p={4} className="bg-primary-gold-50">
             <HStack>
                 <Image src={property?.images[0] ?? rentImage.src} mr={3} w={{ base: '100px', md: '165px' }} rounded={'8px'} h={{ base: '60px', md: '80px' }} alt="rent" />

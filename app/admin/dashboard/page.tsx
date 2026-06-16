@@ -1,6 +1,5 @@
 'use client'
-import { usePathname, useRouter } from "next/navigation";
-import { AdminSidebar } from "./sidebar";
+import { useRouter } from "next/navigation";
 import { DashboardCard } from "@/components/ui/card";
 import { SemiProgressCircle } from "@/components/ui/semi-progress-circle";
 import { Box, Circle, Flex, HStack, Text } from "@chakra-ui/react";
@@ -108,12 +107,4 @@ export default function AdminDashboard() {
     )
 }
 
-export function AdminSideBarSetup() {
-    const pathname = usePathname();
-    const isSetting = pathname.includes('settings');
-
-    return (<> {isSetting ? null : <div className="relative hidden md:block w-[380px]">
-        <AdminSidebar />
-    </div>}</>)
-}
 

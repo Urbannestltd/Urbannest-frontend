@@ -1,7 +1,7 @@
 'use client'
 import { PageTitle } from "@/components/ui/page-title";
 import { useUserStore } from "@/store/admin/user";
-import { Breadcrumb, Button, Flex, Text } from "@chakra-ui/react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import Tenant from "./tenant";
@@ -12,6 +12,7 @@ import { FacilityManager } from "./facility-manager";
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { activateUser, suspendUser } from "@/services/admin/user";
+import { PageBreadcrumb } from "@/components/ui/page-breadcrumb";
 
 export default function UserPage() {
     const params = useParams();
@@ -50,21 +51,7 @@ export default function UserPage() {
     return (
         <div>
             <PageTitle title="User Management" fontSize={'22px'} />
-            <Breadcrumb.Root>
-                <Breadcrumb.List>
-                    <Breadcrumb.Item>
-                        <Breadcrumb.Link href="/admin/user-management">
-                            User Management
-                        </Breadcrumb.Link>
-                    </Breadcrumb.Item>
-                    <Breadcrumb.Separator />
-                    <Breadcrumb.Item>
-                        <Breadcrumb.CurrentLink className="satoshi-medium">
-                            {user?.fullName}
-                        </Breadcrumb.CurrentLink>
-                    </Breadcrumb.Item>
-                </Breadcrumb.List>
-            </Breadcrumb.Root>
+            <PageBreadcrumb items={[{ label: "User Management", to: "/admin/user-management" }, { label: user?.fullName, isCurrent: true }]} />
             <RoleComponent userId={user.id} />
         </div>
     )

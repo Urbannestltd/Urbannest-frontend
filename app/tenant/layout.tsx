@@ -1,8 +1,9 @@
 import { Metadata } from "next"
 import { RequireAuth } from "../auth/require-auth"
-import { UserNav } from "./user-nav"
 import { SideBarSetup } from "./page"
 import { PageContainer } from "@/components/ui/page-container"
+import { TenantSidebar } from "@/components/common/side-bar"
+import { Nav } from "@/components/common/nav-bar"
 
 export const metadata: Metadata = {
     title: "Tenant Dashboard",
@@ -18,14 +19,16 @@ export default function DashboardLayout({
     return (
         <RequireAuth>
             <div className="flex h-screen">
-                <SideBarSetup />
-                <PageContainer left={'15rem'} >
+                <div className="hidden md:block">
+                    <TenantSidebar />
+                </div>
+                <PageContainer left={'17rem'} >
                     <div className=" w-full max-w-[1440px]">
-                        <UserNav />
+                        <Nav role='tenant' />
                         {children}
                     </div>
                 </PageContainer>
             </div>
         </RequireAuth>
-    ) //<>{children}</RequireAuth></>;
+    )
 }

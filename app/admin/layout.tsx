@@ -1,9 +1,8 @@
 import { Metadata } from "next"
 import { RequireAuth } from "../auth/require-auth"
-import { AdminNav } from "./admin-nav"
-import { AdminSideBarSetup } from "./dashboard/page"
-import { Box } from "@chakra-ui/react"
 import { PageContainer } from "@/components/ui/page-container"
+import { AdminSidebar } from "@/components/common/side-bar"
+import { Nav } from "@/components/common/nav-bar"
 
 export const metadata: Metadata = {
     title: "Admin Dashboard",
@@ -19,10 +18,12 @@ export default function DashboardLayout({
     return (
         <RequireAuth>
             <div className="flex h-screen ">
-                <AdminSideBarSetup />
+                <div className="hidden md:block">
+                    <AdminSidebar />
+                </div>
                 <PageContainer left={'17rem'} >
                     <div className=" w-full max-w-[1440px]">
-                        <AdminNav />
+                        <Nav role='admin' />
                         {children}
                     </div>
                 </PageContainer>
