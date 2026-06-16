@@ -190,10 +190,10 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
             ),
         },
         {
-            accessorFn: (row) => (isVisitor(row) ? row.frequency : undefined),
+            accessorKey: 'frequency',
             header: "Access",
             cell: ({ row }) => {
-                const freq = isVisitor(row.original) ? row.original.frequency : undefined;
+                const freq = row.original.frequency;
                 const frequency = Type.find((f) => f.value === freq);
                 return (
                     <Center
@@ -482,6 +482,7 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
                                 onOpenChange={setOpenWalkin}
                                 modalContent={
                                     <AddWalkins
+                                        propertyId={visitor.propertyId}
                                         search={visitor.visitorName}
                                         onClose={() => { fetchWalkins(); setOpenWalkin(false) }}
                                     />

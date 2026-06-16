@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from '@chakra-ui/react';
 import { CgSpinner } from 'react-icons/cg';
+import { cn } from '@/utils/lib';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'outlineGhost' | 'darkGhost';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'auto';
@@ -55,8 +56,7 @@ export const MainButton = React.forwardRef<HTMLButtonElement, ButtonProps>(funct
     fullWidth,
     ...props
 }, ref) {
-    const base =
-        'cursor-pointer inline-flex items-center justify-center px-4 py-2  text-sm font-semibold rounded-[6px] border tracking-wide transition-colors duration-200 focus:outline-none focus:ring-0 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed';
+    const base = ` ${loading ? 'cursor-not-allowed' : 'cursor-pointer'} inline-flex items-center justify-center px-4 py-2  text-sm font-semibold rounded-[6px] border tracking-wide transition-colors duration-200 focus:outline-none focus:ring-0 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed`;
 
     const combinedClassName = [base, variantStyles[variant], sizeStyles[size], props.className]
         .filter(Boolean)

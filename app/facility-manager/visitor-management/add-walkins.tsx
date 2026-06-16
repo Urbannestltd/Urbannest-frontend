@@ -25,8 +25,10 @@ import { LuLogIn } from "react-icons/lu"
 import { MdOutlineLockReset } from "react-icons/md"
 
 
-export const AddWalkins = ({ search, onClose }: { search?: string, onClose: () => void }) => {
-    const { control, reset, watch, handleSubmit, setValue, formState } = useForm<AddWalkinFormData>()
+export const AddWalkins = ({ search, onClose, propertyId }: { search?: string, propertyId?: string, onClose: () => void }) => {
+    const { control, reset, watch, handleSubmit, trigger, setValue, formState } = useForm<AddWalkinFormData>({
+        mode: 'onChange'
+    })
     const { properties, units, fetchProperties, fetchUnits } = usePropertyStore((state) => state)
     const selectedValue = watch('property')
     const visitorNameValue = watch('visitorName')
@@ -36,16 +38,30 @@ export const AddWalkins = ({ search, onClose }: { search?: string, onClose: () =
     const [searchTerm, setSearchTerm] = useState('')
     const suggestionRef = useRef<HTMLDivElement>(null)
 
+    const handleSelectSuggestion = (visitor: getRepeatWalkinVisitorResponse) => {
+        setValue('visitorName', visitor.visitorName)
+        setValue('visitorPhone', visitor.visitorPhone)
+        setValue('visitorType', [visitor.visitorType])
+        setValue('unit', [visitor.lastUnitId])
+        setShowSuggestions(false)
+        setSuggestions([])
+        trigger()
+    }
+
     const walkinmututation = useMutation({
         mutationFn: (search: string) => RepeatVisitor(search),
         onSuccess: (response) => {
             // Handle both array and single object responses
             const results = Array.isArray(response) ? response : [response]
-            if (results.length > 0) {
-                setSuggestions(results)
-                setShowSuggestions(true)
+            if (!search) {
+                if (results.length > 0) {
+                    setSuggestions(results)
+                    setShowSuggestions(true)
+                } else {
+                    setShowSuggestions(false)
+                }
             } else {
-                setShowSuggestions(false)
+                handleSelectSuggestion(results[0])
             }
         },
         onError: () => {
@@ -62,7 +78,9 @@ export const AddWalkins = ({ search, onClose }: { search?: string, onClose: () =
         if (search) {
             setValue('visitorName', search)
         }
-
+        if (propertyId) {
+            setValue('property', [propertyId])
+        }
     }, [])
 
     useEffect(() => {
@@ -104,14 +122,7 @@ export const AddWalkins = ({ search, onClose }: { search?: string, onClose: () =
         walkinmututation.mutate(searchTerm)
     }, [searchTerm])
 
-    const handleSelectSuggestion = (visitor: getRepeatWalkinVisitorResponse) => {
-        setValue('visitorName', visitor.visitorName)
-        setValue('visitorPhone', visitor.visitorPhone)
-        setValue('visitorType', [visitor.visitorType])
-        setValue('unit', [visitor.lastUnitId])
-        setShowSuggestions(false)
-        setSuggestions([])
-    }
+
 
     const props = createListCollection({
         items: properties.map((item) => ({ label: item.name, value: item.id }))
@@ -257,7 +268,7 @@ const visitorType = createListCollection({
 
 const accessType = createListCollection({
     items: [
-        { label: 'One Off', value: 'ONE_OFF' }
+        { label: 'One Off (default for walk-ins)', value: 'ONE_OFF' }
     ]
 })
 

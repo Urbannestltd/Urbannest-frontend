@@ -43,6 +43,7 @@ export interface WalkIn {
 	fallbackRule: string
 	approvalExpiresAt: string
 	secondsUntilExpiry: number
+	frequency: string
 	checkedInAt: string
 	checkedOutAt: string
 	createdAt: string

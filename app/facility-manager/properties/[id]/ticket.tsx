@@ -50,6 +50,7 @@ import { AiFillThunderbolt } from "react-icons/ai"
 import { TicketActivity } from "./ticket-activity/ticket-activity"
 import { FaPlay } from "react-icons/fa"
 import { TbRotateDot } from "react-icons/tb"
+import { AxiosError } from "axios"
 
 const Status = [
     {
@@ -145,8 +146,8 @@ export const TicketPage = ({ id }: { id: string }) => {
             setUpdateStatus(variables.data.status)
 
         },
-        onError: () => {
-            toast.error('Something went wrong')
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to update status')
         }
     })
 
@@ -172,8 +173,8 @@ export const TicketPage = ({ id }: { id: string }) => {
             fetchTicket(id)
             setUpdatePriority(variables.data.priority)
         },
-        onError: () => {
-            toast.error('Something went wrong')
+        onError: (error: AxiosError<{ message: string }>) => {
+            toast.error(error.response?.data?.message ?? 'Failed to update priority')
         }
     })
 
@@ -298,7 +299,7 @@ export const TicketPage = ({ id }: { id: string }) => {
                                 onClick={() => handleUpdateStatus(status?.value === "IN_PROGRESS" ? "RESOLVED" : status?.value === "RESOLVED" ? "RESOLVED" : "IN_PROGRESS")}
                                 loading={updateStatusMutation.isPending}
                                 iconPosition="right"
-                                disabled={status?.value === "RESOLVED" || status?.value === "ESCALATED"}
+                                disabled={status?.value === "RESOLVED" || status?.value === "ESCALATED" || updateStatusMutation.isPending}
                                 size="lg"
                                 className="h-[38px] justify-between  text-lg satoshi-bold"
                             >
@@ -310,9 +311,9 @@ export const TicketPage = ({ id }: { id: string }) => {
                                 variant="outline"
                                 icon={<LuChevronRight />}
                                 iconPosition="right"
-                                disabled={status?.value === "PENDING" || status?.value === "ESCALATED"}
+                                disabled={status?.value === "PENDING" || status?.value === "ESCALATED" || updateStatusMutation.isPending}
                                 size="lg"
-                                onClick={() => handleUpdateStatus(status?.value === "IN_PROGRESS" ? "PENDING" : status?.value === "RESOLVED" ? "IN_PROGRESS" : "PENDING")}
+                                onMouseDown={(e) => { e.preventDefault(); handleUpdateStatus(status?.value === "IN_PROGRESS" ? "PENDING" : status?.value === "RESOLVED" ? "IN_PROGRESS" : "PENDING") }}
                                 loading={updateStatusMutation.isPending}
                                 className="h-[38px] my-3 justify-between rounded-full  text-lg satoshi-bold"
                             >

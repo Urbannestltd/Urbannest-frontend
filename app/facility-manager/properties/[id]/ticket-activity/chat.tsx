@@ -216,11 +216,7 @@ export const Chat = ({ id, tableName }: { id: string, tableName?: string }) => {
                             }
                         }}
                     />
-                    <HStack mt={8} justify={"space-between"}>
-                        <Flex gap={4}>
-                            <MdAttachFile cursor={"pointer"} color="#4A4A4A" size={20} />
-                            <LuAtSign cursor={"pointer"} color="#4A4A4A" size={20} />
-                        </Flex>
+                    <HStack mt={8} justify={'end'}>
                         <MainButton
                             variant="darkGhost"
                             size="sm"

@@ -15,8 +15,22 @@ export const useColumns = (): ColumnDef<financials, any>[] => {
 
         },
         {
+            value: "FLAGGED",
+            label: "Flagged",
+            color: "#9F403D",
+            bg: '#F2C391',
+            border: '#F2C391'
+        },
+        {
             value: 'PAID',
             label: 'Paid',
+            color: '#545F73',
+            bg: '#22C55E',
+            border: '#545F7333'
+        },
+        {
+            value: 'LOGGED',
+            label: 'Logged',
             color: '#545F73',
             bg: '#22C55E',
             border: '#545F7333'
@@ -83,9 +97,9 @@ export const useColumns = (): ColumnDef<financials, any>[] => {
             header: "Status",
             cell: ({ row }) => {
                 const statusItem = status.find((item) => item.value === row.original.status)
-                if (statusItem?.value === 'PAID') return <Center fontSize={'12px'} color={statusItem?.color} rounded={'full'} px={1} border={`1px solid ${statusItem.border}`} bg={'transparent'}>
+                if (statusItem?.value === 'PAID' || statusItem?.value === 'LOGGED') return <Center fontSize={'12px'} w={'fit'} color={statusItem?.color} rounded={'full'} px={3} border={`1px solid ${statusItem.border}`} bg={'transparent'}>
                     <Circle size='5px' mr={1} bg={statusItem?.bg} />{statusItem?.label}</Center>
-                return <Text color={statusItem?.color} rounded={'full'} px={1} bg={statusItem?.bg}>{statusItem?.label}</Text>
+                return <Text color={statusItem?.color} w={'fit'} rounded={'full'} fontSize={'12px'} px={3} bg={statusItem?.bg}>{statusItem?.label}</Text>
             }
         },
         {

@@ -214,12 +214,8 @@ const statuses = createListCollection({
             value: "IN_PROGRESS",
         },
         {
-            label: "Closed",
+            label: "Resolved",
             value: "RESOLVED",
-        },
-        {
-            label: "Escalated",
-            value: "ESCALATED",
         },
     ],
 })
