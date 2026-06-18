@@ -109,7 +109,7 @@ export const AddVisitorGroupsModal = ({ Submit, unitid, Open }: addVisitorProps)
             <form onSubmit={handleSubmit(handleAddVisitor)}>
                 <HStack w={'full'} gap={4}>
                     <CustomInput name='groupName' width={'full'} required control={control} label='Group Name' placeholder="Group Name" />
-                    <CustomInput name='contactNumber' width={'full'} required control={control} label='Group Contact Number' placeholder="Group Contact Number" />
+                    <CustomInput name='email' width={'full'} required control={control} label='Group Contact Number' placeholder="Group Contact Number" />
                 </HStack>
                 <HStack mt={4} w={'full'} gap={4}>
                     <CustomSelect name="visitorType" width={'full'} collection={visitorType} control={control} label='Visitor Type' placeholder="Visitor Type" />

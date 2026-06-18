@@ -85,7 +85,7 @@ export const formatDatetoTime = (
 	ampm?: boolean,
 ) => {
 	if (!dateStr) {
-		return ""
+		return "-"
 	}
 	const date = new Date(dateStr)
 	if (ampm) {
@@ -189,4 +189,22 @@ export const convertMinutes = (totalMinutes: number) => {
 	const minutes = Math.floor((totalSeconds % 3600) / 60)
 
 	return `${days}d ${hours}h ${minutes}m `
+}
+
+export const stringToNumber = (val: string | number | undefined) => {
+	if (val === undefined || val === null) return 0
+	return parseFloat(String(val).replace("%", "")) || 0
+}
+
+export const leaseExpiry = (row: number) => {
+	if (row >= 0 && row <= 40) {
+		return "#EC221F"
+	}
+	if (row >= 41 && row <= 70) {
+		return "#E8B931"
+	}
+	if (row >= 71) {
+		return "#14AE5C"
+	}
+	return ""
 }

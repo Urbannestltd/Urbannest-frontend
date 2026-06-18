@@ -2,7 +2,7 @@
 import { Box, Button, Center, Flex, Tabs, Text } from "@chakra-ui/react"
 import Image, { StaticImageData } from "next/image"
 import Logo from '@/app/assets/urbannest-logo-white.png'
-import { adminSidebarLinks, fmSidebarLinks, tenantSidebarLinks } from "@/utils/data";
+import { adminSidebarLinks, fmSidebarLinks, landlordSidebarLinks, tenantSidebarLinks } from "@/utils/data";
 import { LuLogOut, LuSettings } from "react-icons/lu";
 import { usePathname, useRouter } from "next/navigation";
 import useAuthStore from "@/store/auth";
@@ -121,3 +121,18 @@ export const TenantSidebar = ({ onClose }: { onClose?: () => void }) => {
     )
 }
 
+
+export const LandlordSidebar = ({ onClose }: { onClose?: () => void }) => {
+    const pathname = usePathname();
+    const getActiveTab = () => {
+        if (pathname.includes('landlord/dashboard')) return 'dashboard'
+        if (pathname.includes('landlord/properties')) return 'properties'
+        if (pathname.includes('landlord/maintenance-and-issues')) return 'maintenance-and-issues'
+        if (pathname.includes('landlord/tenant-approvals')) return 'tenant-approvals'
+        return 'dashboard'
+    };
+
+    return (
+        <Sidebar activeTab={getActiveTab()} onClose={onClose} modules={landlordSidebarLinks} />
+    )
+}

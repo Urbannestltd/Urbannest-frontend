@@ -55,30 +55,32 @@ export const MultiBar = ({ chartData, loading }: { chartData: { revenue: number;
                     <option value="yearly">Yearly</option>
                 </select>
             </HStack>
-            {loading ? <Skeleton height={'300px'} /> : <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data} barSize={16}>
-                    <CartesianGrid
-                        vertical={false}
-                        horizontal={true}
-                        strokeDasharray="0"
-                        stroke="#E5E7EB"
-                    />
-                    <XAxis dataKey='month' axisLine={false} tickLine={false} />
+            {loading ?
+                <Skeleton height={'300px'} /> :
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={data} barSize={16}>
+                        <CartesianGrid
+                            vertical={false}
+                            horizontal={true}
+                            strokeDasharray="0"
+                            stroke="#E5E7EB"
+                        />
+                        <XAxis dataKey='month' axisLine={false} tickLine={false} />
 
-                    <YAxis
-                        axisLine={false}
-                        tickLine={false}
-                        tickCount={5}
-                        tickFormatter={(value) => `${value}`}
-                    />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tickCount={5}
+                            tickFormatter={(value) => `${value}`}
+                        />
 
-                    <Tooltip cursor={{ fill: "transparent" }} />
+                        <Tooltip cursor={{ fill: "transparent" }} />
 
-                    <Bar dataKey="revenue" fill="#A7C3DF" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="revenue" fill="#539EE9" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="revenue" fill="#142C43" radius={[6, 6, 0, 0]} />
-                </BarChart>
-            </ResponsiveContainer>}
+                        <Bar dataKey="revenue" fill="#A7C3DF" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="revenue" fill="#539EE9" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="revenue" fill="#142C43" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                </ResponsiveContainer>}
         </Box>
     )
 }

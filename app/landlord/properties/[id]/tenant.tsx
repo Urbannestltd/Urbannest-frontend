@@ -1,10 +1,11 @@
+/* eslint-disable react/jsx-key, react/no-children-prop */
 import { Row } from "./unit-columns"
 import { Box, Flex, Skeleton, Text } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { useFMTenantStore } from "@/store/fm/tenant"
-import { GeneralInfoSection } from "@/components/sections/tenant/general-info"
 import { CohabitantsSection, LeaseInfoSection } from "@/components/sections/tenant/lease-info"
+import { GeneralInfoSection } from "@/components/sections/tenant/general-info"
 import { PaymentHistorySection, VisitorHistorySection } from "@/components/sections/tenant/history"
 
 export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string }) => {
@@ -30,24 +31,23 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
             bg: '#EBFFEE'
         }
     ]
-    const statusDeets = status.find((status) => status.value === tenants?.status)
 
+    const statusDeets = status.find((status) => status.value === tenants?.status)
 
     if (!tenants && !isLoading) return <Flex h={'50vh'} justify={'center'} align={'center'}>
         <Text fontSize={'24px'} className="satoshi-bold">No Tenant Info Found</Text>
     </Flex>
 
-    if (isLoading) return <Skeleton h={'20vh'} />
-
-
-
+    if (isLoading) {
+        return <Skeleton h={'20vh'} />
+    }
 
     return (
         tenants &&
         <Flex maxW={'full'} border={''} direction={{ base: 'column', md: 'row' }} gap={8}>
             <Box w={{ base: 'full', md: '70%' }}>
                 <GeneralInfoSection tenants={tenants} statusDeets={statusDeets} />
-                <LeaseInfoSection currentLease={tenants?.currentLease ?? {}} />
+                <LeaseInfoSection currentLease={tenants?.currentLease} />
                 <VisitorHistorySection visitorHistory={tenants?.visitorHistory} />
             </Box>
             <Box w={{ base: 'full', md: "30%" }}>

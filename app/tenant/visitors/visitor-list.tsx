@@ -7,6 +7,7 @@ import { LuUserPlus } from "react-icons/lu";
 
 interface Visitor {
     name: string;
+    email?: string;
     phone: string;
 }
 interface VisitorListProps {
@@ -38,7 +39,7 @@ export const VisitorList = ({ visitors, onChange }: VisitorListProps) => {
                     placeholder="John Doe"
                 />
                 <CustomInput
-                    name='phone'
+                    name="phone"
                     control={control}
                     label="Visitor Phone"
                     placeholder="123-456-7890"

@@ -168,6 +168,7 @@ const FmEndpoints = {
 
 	//Visitor
 	fetchVisitors: `/facility-manager/visits`,
+	fetchStats: `/facility-manager/visits/stats`,
 
 	approveVisitor: (id: string) =>
 		`/facility-manager/agent-visits/${id}/approve`,

@@ -53,13 +53,13 @@ export const Nav = ({ role }: { role: "tenant" | "facilitymanager" | "admin" | "
             path: "/admin/dashboard",
             component: <AdminSidebar onClose={() => setOpenDrawer(false)} />,
             settingsPath: '/admin/settings',
-            subtitle: ''
+            subtitle: "Welcome to your dashboard!"
         },
         landlord: {
             path: "/landlord/dashboard",
             component: <FMSidebar onClose={() => setOpenDrawer(false)} />,
             settingsPath: '/landlord/settings',
-            subtitle: ''
+            subtitle: "Here is what's happening across UrbanNest today."
         },
         agent: {
             path: "/agent/dashboard",

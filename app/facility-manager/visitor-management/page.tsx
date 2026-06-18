@@ -13,7 +13,7 @@ import { useEffect, useState } from "react"
 import { LuCalendar, LuUserPlus } from "react-icons/lu"
 import { Modal } from "@/components/ui/dialog"
 import { VisitorTabs } from "./visitor-tabs"
-import { useVisitorStore } from "@/store/fm/visitor"
+import { Stats, useVisitorStore } from "@/store/fm/visitor"
 import { BiSlider } from "react-icons/bi"
 import { CustomSelect } from "@/components/ui/custom-fields"
 import { SearchInput } from "@/components/ui/search-input"
@@ -24,14 +24,16 @@ import { SectionBox } from "@/components/ui/section-box"
 import { AddWalkins, CheckIn } from "./add-walkins"
 
 export default function VisitorManagement() {
-    const [maintenanceFilter, setMaintenanceFilter] = useState('TODAY')
+    const [maintenanceFilter, setMaintenanceFilter] = useState<keyof Stats>('today')
     const [openModal, setOpenModal] = useState(false)
     const [openWalkinModal, setOpenWalkinModal] = useState(false)
     const [search, setSearch] = useState("")
     const visitors = useVisitorStore((state) => state.visitors)
+    const stats = useVisitorStore((state) => state.stats)
     const loading = useVisitorStore((state) => state.isLoading)
     const fetchVisitors = useVisitorStore((state) => state.fetchVisitors);
     const fetchWalkins = useVisitorStore((state) => state.fetchWalkins);
+    const fetchStats = useVisitorStore((state) => state.fetchStats);
     const isMobile = window.innerWidth < 600
     const { control, watch } = useForm<VisitorFilterFormData>()
     const watchedValues = watch()
@@ -101,24 +103,33 @@ export default function VisitorManagement() {
     useEffect(() => {
         fetchVisitors()
         fetchWalkins()
+        fetchStats()
     }, [])
+
+
+    const visitorFilter: Record<keyof Stats, { label: string, value: string }> = {
+        today: { label: "Today", value: "TODAY" },
+        last15Days: { label: "Last Week", value: "LAST_WEEK" },
+        last30Days: { label: "Last Month", value: "LAST_MONTH" },
+    }
+    const selectedStats = stats?.[maintenanceFilter]
 
     const visitorDashboard = [
         {
             title: "Total Vistors",
-            data: 0,
+            data: selectedStats?.total ?? 0,
         },
         {
             title: "Total Scheduled",
-            data: 0,
+            data: selectedStats?.scheduled ?? 0,
         },
         {
             title: "Total Walk-ins",
-            data: 0,
+            data: selectedStats?.walkIns ?? 0,
         },
         {
             title: "Total Cancels",
-            data: 0,
+            data: selectedStats?.noShows ?? 0,
         },
     ]
 
@@ -126,20 +137,20 @@ export default function VisitorManagement() {
         <>
             <PageTitle mt={7} title="Visitor Management" />
             <HStack my={5}>
-                {visitorFilter.map((item) => (
+                {Object.entries(visitorFilter).map((item) => (
                     <Button
-                        key={item.value}
-                        onClick={() => { setMaintenanceFilter(item.value); fetchVisitors() }}
+                        key={item[0]}
+                        onClick={() => { setMaintenanceFilter(item[0] as keyof Stats) }}
                         w={"72px"}
                         h={"30px"}
                         rounded={"full"}
                         fontSize={"12px"}
-                        className={`${maintenanceFilter === item.value
+                        className={`${maintenanceFilter === item[0]
                             ? "bg-[#F9EBD1]"
                             : "border border-[#757575]"
                             }`}
                     >
-                        {item.label}
+                        {item[1].label}
                     </Button>
                 ))}
             </HStack>
@@ -284,12 +295,6 @@ export default function VisitorManagement() {
         </>
     )
 }
-
-const visitorFilter = [
-    { label: "Today", value: "TODAY" },
-    { label: "Last Week", value: "LAST_WEEK" },
-    { label: "Last Month", value: "LAST_MONTH" },
-]
 
 
 

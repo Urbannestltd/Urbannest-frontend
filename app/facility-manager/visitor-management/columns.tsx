@@ -117,8 +117,6 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
         }, []) // run once on mount, state handles the rest
 
 
-        const status = Status.find((s) => s.value === row.status)
-
         const formatTime = (secs: number) => {
             const m = Math.floor(secs / 60).toString().padStart(2, '0')
             const s = (secs % 60).toString().padStart(2, '0')
@@ -129,7 +127,7 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
             <Flex direction="column" gap={1}>
                 {row.secondsUntilExpiry === null &&
                     <Text>
-                        {formatDatetoTime(row.checkedInAt)}
+                        {formatDatetoTime(row.checkedInAt, true)}
                     </Text>
                 }
                 {row.secondsUntilExpiry !== null && secondsLeft > 0 && (
@@ -268,28 +266,24 @@ export const useColumns = (scheduled: boolean): ColumnDef<Visitor | WalkIn, any>
                 cell: () => <></>,
             },
         {
-            accessorFn: (row) =>
-                isVisitor(row) ? row.proposedDate : row.checkedInAt,
+            accessorFn: (row) => row.checkedInAt,
             header: "Time In",
             cell: ({ row }) => {
                 if (isVisitor(row.original)) {
-                    const time = row.original.proposedDate
+                    const time = row.original.checkedInAt;
                     if (!time || time === "-") return "-";
-                    return formatDatetoTime(time);
+                    return formatDatetoTime(time, true);
                 }
                 else { return <CountdownCell row={row.original} /> }
             },
         },
         {
-            accessorFn: (row) =>
-                isVisitor(row) ? row.proposedDate : row.checkedOutAt,
+            accessorFn: (row) => row.checkedOutAt,
             header: "Time Out",
             cell: ({ row }) => {
-                const time = isVisitor(row.original)
-                    ? row.original.proposedDate
-                    : row.original.checkedOutAt;
+                const time = row.original.checkedOutAt;
                 if (!time || time === "-") return "-";
-                return formatDatetoTime(time);
+                return formatDatetoTime(time, true);
             },
         },
         scheduled

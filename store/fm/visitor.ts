@@ -27,6 +27,8 @@ export interface Visitor {
 	canReject: boolean
 	canReschedule: boolean
 	createdAt: string
+	checkedInAt: string
+	checkedOutAt: string
 }
 
 export interface WalkIn {
@@ -58,16 +60,40 @@ interface filter {
 	dateTo?: string
 }
 
+export interface Stats {
+	today: {
+		total: number
+		scheduled: number
+		walkIns: number
+		noShows: number
+	}
+	last15Days: {
+		total: number
+		scheduled: number
+		walkIns: number
+		noShows: number
+	}
+	last30Days: {
+		total: number
+		scheduled: number
+		walkIns: number
+		noShows: number
+	}
+}
+
 interface VisitorStore {
+	stats: Stats | null
 	visitors: Visitor[]
 	walkins: WalkIn[]
 	isLoading: boolean
 	isLoadingWalkins: boolean
 	fetchVisitors: (filter?: filter) => Promise<void>
 	fetchWalkins: (filter?: filter) => Promise<void>
+	fetchStats: () => Promise<void>
 }
 
 export const useVisitorStore = create<VisitorStore>((set) => ({
+	stats: null,
 	visitors: [],
 	walkins: [],
 	isLoading: false,
@@ -100,6 +126,16 @@ export const useVisitorStore = create<VisitorStore>((set) => ({
 			console.error("❌ Failed to fetch walkins", e)
 		} finally {
 			set({ isLoadingWalkins: false })
+		}
+	},
+	fetchStats: async () => {
+		try {
+			const stats = await http.get(FmEndpoints.fetchStats)
+			set({ stats: stats.data.data })
+			console.log("✅ Stats set in store:", stats.data.data)
+		} catch (e) {
+			set({ stats: null })
+			console.error("❌ Failed to fetch stats", e)
 		}
 	},
 }))

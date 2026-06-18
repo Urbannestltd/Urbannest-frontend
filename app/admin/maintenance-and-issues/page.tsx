@@ -108,7 +108,7 @@ export default function Maintenance() {
     return (
         <div>
             <PageTitle mb={6} title="Maintenance & Issues" />
-            <DashboardCard data={cardData} />
+            <DashboardCard fourcolumn={false} data={cardData} />
             <form>
                 <HStack mt={9} align={'end'} justify={'space-between'} >
                     <Flex w={'70%'} gap={5}>

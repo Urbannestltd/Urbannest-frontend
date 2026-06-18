@@ -10,7 +10,7 @@ interface ProgressProps extends ChakraProgress.RootProps {
 
 export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
     function Progress(props, ref) {
-        const { showValueText, valueText, label, info, color, ...rest } = props
+        const { showValueText, valueText, h, label, info, rounded = 'full', color, ...rest } = props
         return (
             <ChakraProgress.Root orientation='horizontal' shape={'rounded'} {...rest} ref={ref}>
                 {label && (
@@ -19,9 +19,9 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
                     </ChakraProgress.Label>
                 )}
                 <Box display="flex" alignItems="space-between" gap={1}>
-                    <ChakraProgress.Track rounded={'full'} flex={1}>
+                    <ChakraProgress.Track h={h} rounded={rounded} flex={1}>
                         <ChakraProgress.Range
-                            rounded={'full'}
+                            rounded={rounded}
                             css={{ backgroundColor: color ? color : '#CFAA67' }}
                         />
                     </ChakraProgress.Track>

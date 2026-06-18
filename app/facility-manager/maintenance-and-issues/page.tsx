@@ -85,7 +85,7 @@ export default function Maintenance() {
     return (
         <div>
             <PageTitle mb={6} title="Maintenance & Issues" />
-            <DashboardCard data={cardData} />
+            <DashboardCard fourcolumn={false} data={cardData} />
 
             <form>
                 <HStack mt={9} w={'full'} align={"center"} justify={"space-between"}>

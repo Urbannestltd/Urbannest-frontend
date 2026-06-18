@@ -138,3 +138,9 @@ export interface PropertyTicket {
 	facilityManager: string
 	response: string
 }
+
+export interface TenantApprovals {
+	applicantName: string
+	propertyName: string
+	unitName: string
+}

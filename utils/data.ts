@@ -6,7 +6,7 @@ import financialIcon from "@/app/assets/icons/admin-sidebar-icons/financials.svg
 import userIcon from "@/app/assets/icons/admin-sidebar-icons/user-management-icon.svg"
 import leaseImage from "@/app/assets/images/lease-image.png"
 import propertiesIcon from "@/app/assets/icons/facilty-icons/properties.svg"
-import tenantsIcon from "@/app/assets/icons/facilty-icons/tenants.svg"
+import tenantsIcon from "@/app/assets/icons/landlord-icons/house-icon.svg"
 import {
 	LeaseAgreement,
 	Maintance,
@@ -14,6 +14,7 @@ import {
 	notification,
 	Properties,
 	PropertyTicket,
+	TenantApprovals,
 	userData,
 } from "./model"
 import { ExpenseLog } from "@/app/facility-manager/properties/[id]/ticket-activity/columns"
@@ -94,6 +95,33 @@ export const fmSidebarLinks = [
 		href: "/facility-manager/visitor-management",
 		icon: visitorIcon,
 		value: "visitor-management",
+	},
+]
+
+export const landlordSidebarLinks = [
+	{
+		title: "Dashboard",
+		href: "/landlord/dashboard",
+		icon: dashboardIcon,
+		value: "dashboard",
+	},
+	{
+		title: "Properties",
+		href: "/landlord/properties",
+		icon: propertiesIcon,
+		value: "properties",
+	},
+	{
+		title: "Maintenance & Issues",
+		href: "/landlord/maintenance-and-issues",
+		icon: maintenanceIcon,
+		value: "maintenance-and-issues",
+	},
+	{
+		title: "Tenant Approvals",
+		href: "/landlord/tenant-approvals",
+		icon: tenantsIcon,
+		value: "tenant-approvals",
 	},
 ]
 export const VistorData: userData = {
@@ -500,5 +528,23 @@ export const TickettData: PropertyTicket[] = [
 		facilityManager: "Mark Stevens",
 		id: "grandview-002",
 		response: "1h 10m",
+	},
+]
+
+export const TenantApprovalsList: TenantApprovals[] = [
+	{
+		applicantName: "John Doe",
+		propertyName: "The Grandview",
+		unitName: "Unit 102",
+	},
+	{
+		applicantName: "Jane Smith",
+		propertyName: "Oakwood Lofts",
+		unitName: "Unit 201A",
+	},
+	{
+		applicantName: "Mark Stevens",
+		propertyName: "Skyline Tower",
+		unitName: "Unit 302C",
 	},
 ]

@@ -8,8 +8,6 @@ import CleaningIcon from '@/app/assets/icons/maintenance-icons/cleaning.svg'
 import HvacIcon from '@/app/assets/icons/maintenance-icons/hvc-ac.svg'
 import BuildingIcon from '@/app/assets/icons/maintenance-icons/building.svg'
 import { formatDate, formatDatetoTime } from "@/services/date"
-import { text } from "stream/consumers"
-import { Tickets } from "@/store/admin/tickets"
 import { DashboardTickets, DashboardVisitor } from "@/store/fm/dashboard"
 
 export const useColumns = (): ColumnDef<DashboardTickets, any>[] => {

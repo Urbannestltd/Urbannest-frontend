@@ -3,8 +3,9 @@ import http from "../https"
 
 export interface InviteVisitorPayload {
 	visitor: {
-		phone: string
+		email: string
 		name: string
+		phone?: string
 	}
 	type: string
 	frequency: string
@@ -15,6 +16,7 @@ export interface InviteVisitorPayload {
 export interface InviteVisitorGroupPayload {
 	visitors: {
 		name: string
+		email?: string
 		phone: string
 	}[]
 	type: string

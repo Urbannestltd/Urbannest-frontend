@@ -63,8 +63,8 @@ export const useFMTenantStore = create<FMTenantStore>((set) => ({
 	tenant: {} as FMTenantState,
 	isLoading: false,
 	fetchTenant: async (id: string, tenantId: string) => {
+		set({ isLoading: true, tenant: null })
 		try {
-			set({ isLoading: true, tenant: null })
 			const tenant = await http.get(FmEndpoints.fetchTenant(id, tenantId))
 			set({ tenant: tenant.data.data })
 			console.log("✅ Tenant set in store:", tenant.data.data)

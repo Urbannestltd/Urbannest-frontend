@@ -70,7 +70,7 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
                 type: variables.type,
                 isGroupInvite: false,
                 frequency: variables.frequency,
-                visitorPhone: variables.visitor.phone,
+                visitorPhone: variables.visitor.email,
                 visitorName: variables.visitor.name,
                 id: variables.visitor.name,
                 checkInTime: '-',
@@ -99,7 +99,7 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
         const payload: InviteVisitorPayload = {
             visitor: {
                 name: data.fullName,
-                phone: data.phoneNumber
+                email: data.email
             },
             frequency: data.accessType[0],
             type: data.visitorType[0],
@@ -115,15 +115,7 @@ export const AddVisitorModal = ({ Submit, Open }: addVisitorProps) => {
             <form onSubmit={handleSubmit(handleAddVisitor)}>
                 <HStack w={'full'} gap={4}>
                     <CustomInput name='fullName' width={'full'} required control={control} label="Visitor's Name" placeholder="Full Name" />
-                    <CustomInput name='phoneNumber' width={'full'} onKeyDown={(e) => {
-                        const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "+"]
-                        if (!allowed.includes(e.key) && !/[0-9]/.test(e.key)) {
-                            e.preventDefault()
-                        }
-                    }} pattern={{
-                        value: /^\+?[0-9]{7,15}$/,
-                        message: "Enter a valid phone number",
-                    }} required control={control} label='Phone Number' placeholder="Phone Number" />
+                    <CustomInput name='email' width={'full'} required control={control} label="Visitor's Email" placeholder="Email" />
                 </HStack>
                 <HStack mt={4} w={'full'} gap={4}>
                     <CustomSelect name="visitorType" width={'full'} collection={visitorType} required control={control} label='Visitor Type' placeholder="Visitor Type" />

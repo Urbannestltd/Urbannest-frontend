@@ -5,6 +5,7 @@ const selectArrayField = (msg: string) => z.array(z.string()).min(1, msg).defaul
 const inputField = (msg: string) => z.string().min(1, msg);
 const number = (msg: string) => z.coerce.number().refine((v) => v > 0, { message: msg });
 const boolean = (msg: string) => z.boolean().default(false);
+const email = (msg: string) => z.email().min(1, msg);
 
 export const loginSchema = z.object({
     email: inputField("Email is required"),
@@ -23,7 +24,8 @@ export const registerSchema = z.object({
 
 export const addVisitorSchema = z.object({
     fullName: inputField("Full name is required"),
-    phoneNumber: inputField("Phone number is required"),
+    phone: inputField("Phone number is required"),
+    email: email("Email is required"),
     visitorType: selectArrayField("Visitor type is required"),
     accessType: selectArrayField("Access type is required"),
     timeExpected: inputField("Time expected is required").optional(),
@@ -33,12 +35,14 @@ export const addVisitorSchema = z.object({
 
 export const VisitorListSchema = z.object({
     name: inputField("Full name is required"),
+    email: email("Email is required").optional(),
     phone: inputField("Phone number is required"),
 })
 
 export const addVisitorGroupsSchema = z.object({
     groupName: inputField("Full name is required"),
-    contactNumber: inputField("Phone number is required"),
+    email: email("Email is required"),
+    phone: inputField("Phone number is required"),
     visitorType: selectArrayField("Visitor type is required"),
     accessType: selectArrayField("Access type is required"),
     timeExpected: inputField("Time expected is required"),
