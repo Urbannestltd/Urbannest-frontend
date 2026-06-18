@@ -58,7 +58,7 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
         }
     })
     const [amenities, setAmenities] = useState<string[]>([])
-    const isMobile = window.innerWidth < 600
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 600
 
     const occupancy = (row: number | string) => {
         const value =

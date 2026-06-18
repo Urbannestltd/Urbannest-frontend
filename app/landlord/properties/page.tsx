@@ -33,7 +33,7 @@ export default function Properties() {
     const { properties, fetchProperties, isLoading } = usePropertyStore(
         (state) => state,
     )
-    const isMobile = window.innerWidth < 600
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 600
     const watchedValues = watch()
 
     const [search, setSearch] = useState("")

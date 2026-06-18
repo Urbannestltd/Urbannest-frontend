@@ -16,7 +16,7 @@ import { RevenueAnalytics, revenueProperties } from "./chart"
 
 export default function Dashboard() {
     const { control, resetField } = useForm<{ revenueProperty: string[]; approvalsProperty: string[] }>()
-    const isMobile = window.innerWidth < 600
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 600
     const selectedRevenueProperty = useWatch({ control, name: 'revenueProperty' })?.[0] ?? 'all'
     const selectedApprovalsProperty = useWatch({ control, name: 'approvalsProperty' })
     const selectedProperties = selectedRevenueProperty === 'all'

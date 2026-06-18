@@ -19,7 +19,7 @@ export const Unit = () => {
     const tenantId = searchParams.get('tenantId')
     const [showTenant, setShowTenant] = useState(!!tenantId)
     const [search, setSearch] = useState('')
-    const isMobile = window.innerWidth < 600
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 600
 
     const [selectedRow, setSelectedRow] = useState<Row | null>(null)
 

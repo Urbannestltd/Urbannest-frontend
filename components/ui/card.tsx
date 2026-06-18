@@ -31,7 +31,7 @@ export const DashboardCard = ({
     newMobile,
     fourcolumn = true,
 }: CardProps) => {
-    const isMobile = window.innerWidth < 600
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 600
     return (
         <Grid
             gap={4}

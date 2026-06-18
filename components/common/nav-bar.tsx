@@ -26,7 +26,7 @@ export const Nav = ({ role }: { role: "tenant" | "facilitymanager" | "admin" | "
     const { user } = useAuthStore()
     const pathname = usePathname()
     const isSetting = pathname.includes("settings")
-    const isMobile = window.innerWidth < 600
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 600
     const logoutUser = useAuthStore((state) => state.logoutUser)
     const [openDrawer, setOpenDrawer] = useState(false)
     const router = useRouter()

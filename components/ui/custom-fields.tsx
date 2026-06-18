@@ -5,7 +5,7 @@ import { Avatar } from './avatar';
 import { InputGroup } from './input-group';
 import { cn } from '@/utils/lib';
 
-const isMobile = window.innerWidth < 500;
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 500;
 type BaseProps<T extends FieldValues> = {
     name: FieldPath<T>;
     control: Control<T>;

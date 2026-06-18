@@ -103,7 +103,9 @@ axiosInstance.interceptors.response.use(
 				return axiosInstance(originalRequest)
 			} catch (refreshError) {
 				clearAuthTokens()
-				window.location.href = "/auth"
+				if (typeof window !== "undefined") {
+					window.location.href = "/auth"
+				}
 				toast.error("Session expired. Please log in again.")
 				console.log("Refresh token error:", refreshError)
 				return Promise.reject(refreshError)
