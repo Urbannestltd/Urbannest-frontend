@@ -81,6 +81,10 @@ export const Login = () => {
                     console.log("→ Redirecting to facility manager dashboard");
                     toast.success("Redirecting to facility manager dashboard")
                     router.replace("/facility-manager/dashboard")
+                } else if (role === "landlord" || role === "LANDLORD") {
+                    console.log("→ Redirecting to landlord dashboard");
+                    toast.success("Redirecting to landlord dashboard")
+                    router.replace("/landlord/dashboard")
                 }
                 return;
             } else {

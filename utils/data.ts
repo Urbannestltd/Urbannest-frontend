@@ -123,6 +123,12 @@ export const landlordSidebarLinks = [
 		icon: tenantsIcon,
 		value: "tenant-approvals",
 	},
+	{
+		title: "Financials",
+		href: "/landlord/financials",
+		icon: financialIcon,
+		value: "financials",
+	},
 ]
 export const VistorData: userData = {
 	id: 1,

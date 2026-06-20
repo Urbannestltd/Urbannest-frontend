@@ -31,7 +31,7 @@ export const MobileTable = ({ data, emptyDetails, tableName }: MobileTableProps)
                 </div>
             </div>}
             {data.map((item) =>
-                <SectionFlex justify={'space-between'} mt={4}>
+                <SectionFlex key={item.id ?? `${item.applicantName}-${item.propertyName}-${item.unitName}`} justify={'space-between'} mt={4}>
                     <Box>
                         <Text className="satoshi-medium">{item.applicantName}</Text>
                         <Text color={'#566166'} fontSize={'12px'} mr={4}>
@@ -62,7 +62,7 @@ export const MobileTable = ({ data, emptyDetails, tableName }: MobileTableProps)
                                 onClick={() => { setOpenModal(true); setType('decline') }}
                             />
                         </Flex>
-                        <Modal size={'xs'} open={openModal} onOpenChange={setOpenModal} modalContent={<TenantApprovalsModal type={type} id={item.applicantName} onClose={() => setOpenModal(false)} />} />
+                        <Modal size={'xs'} open={openModal} onOpenChange={setOpenModal} modalContent={<TenantApprovalsModal type={type} id={item.id ?? ''} onClose={() => setOpenModal(false)} />} />
                     </Box>
 
                 </SectionFlex>

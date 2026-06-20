@@ -17,17 +17,19 @@ export default function DashboardLayout({
 }) {
     return (
 
-        <div className="flex h-screen ">
-            <div className="hidden md:block">
-                <LandlordSidebar />
-            </div>
-            <PageContainer left={'17rem'} >
-                <div className=" w-full max-w-[1440px]">
-                    <Nav role='landlord' />
-                    {children}
+        <RequireAuth>
+            <div className="flex h-screen ">
+                <div className="hidden md:block">
+                    <LandlordSidebar />
                 </div>
-            </PageContainer>
-        </div>
+                <PageContainer left={'17rem'} >
+                    <div className=" w-full max-w-[1440px]">
+                        <Nav role='landlord' />
+                        {children}
+                    </div>
+                </PageContainer>
+            </div>
+        </RequireAuth>
 
     )
 }

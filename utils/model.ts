@@ -140,6 +140,7 @@ export interface PropertyTicket {
 }
 
 export interface TenantApprovals {
+	id?: string
 	applicantName: string
 	propertyName: string
 	unitName: string

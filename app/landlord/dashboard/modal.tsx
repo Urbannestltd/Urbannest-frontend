@@ -4,16 +4,14 @@ import ApproveIcon from '@/app/assets/icons/facilty-icons/approve-visit.svg'
 import { PageTitle } from "@/components/ui/page-title"
 import { MainButton } from "@/components/ui/button"
 import { useMutation } from "@tanstack/react-query"
-import { ApproveAgent, RejectAgent, RejectPayload, RescheduleAgent, ReschedulePayload } from "@/services/fm/visitor"
 import { AxiosError } from "axios"
 import toast from "react-hot-toast"
-import { LuBan, LuCalendar, LuCircleX, LuClock } from "react-icons/lu"
+import { LuBan, LuCircleX } from "react-icons/lu"
 import { Divider } from "@/components/ui/divider"
 import { useForm } from "react-hook-form"
 import { CustomTextarea } from "@/components/ui/custom-fields"
-import { SectionBox, SectionFlex } from "@/components/ui/section-box"
-import { formatDate, formatDatetoTime } from "@/services/date"
-import { useRef, useState } from "react"
+import { approveTenant, rejectTenant, RejectTenantPayload } from "@/services/landlord/approvals"
+import { useLandlordDashboardStore } from "@/store/landlord/dashboard"
 
 interface TenantApprovalsModalProps {
     id: string
@@ -28,14 +26,18 @@ export const TenantApprovalsModal = ({ type, id, onClose }: TenantApprovalsModal
 }
 
 const ApproveRequestModal = ({ id, onClose }: { id: string, onClose: () => void }) => {
+    const fetchStats = useLandlordDashboardStore((state) => state.fetchStats)
+    const fetchApprovals = useLandlordDashboardStore((state) => state.fetchApprovals)
 
     const mutation = useMutation({
-        mutationFn: (id: string) => ApproveAgent(id),
+        mutationFn: (id: string) => approveTenant(id),
         onSuccess: () => {
+            fetchStats()
+            fetchApprovals()
             onClose()
         },
         onError: (error: AxiosError<{ message: string }>) => {
-            toast.error(error.response?.data?.message ?? 'Failed to remove property')
+            toast.error(error.response?.data?.message ?? 'Failed to approve tenant')
         }
     })
 
@@ -54,10 +56,14 @@ const ApproveRequestModal = ({ id, onClose }: { id: string, onClose: () => void 
 
 const RejectRequestModal = ({ id, onClose }: { id: string, onClose: () => void }) => {
     const { control, handleSubmit } = useForm<{ reason: string }>()
+    const fetchStats = useLandlordDashboardStore((state) => state.fetchStats)
+    const fetchApprovals = useLandlordDashboardStore((state) => state.fetchApprovals)
 
     const mutation = useMutation({
-        mutationFn: (payload: RejectPayload) => RejectAgent(payload),
+        mutationFn: (payload: RejectTenantPayload) => rejectTenant(payload),
         onSuccess: () => {
+            fetchStats()
+            fetchApprovals()
             onClose()
         },
         onError: (error: AxiosError<{ message: string }>) => {
@@ -66,7 +72,7 @@ const RejectRequestModal = ({ id, onClose }: { id: string, onClose: () => void }
     })
 
     const onSubmit = (data: { reason: string }) => {
-        const payload: RejectPayload = {
+        const payload: RejectTenantPayload = {
             id: id,
             reason: data.reason
         }

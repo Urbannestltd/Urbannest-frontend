@@ -9,7 +9,7 @@ import { TenantApprovalsModal } from "./modal"
 
 
 
-export const useColumns = (): ColumnDef<TenantApprovals, any>[] => {
+export const useColumns = (): ColumnDef<TenantApprovals>[] => {
     return [
         {
             accessorKey: 'applicantName',
@@ -26,33 +26,36 @@ export const useColumns = (): ColumnDef<TenantApprovals, any>[] => {
         {
             id: 'actions',
             header: "Actions",
-            cell: ({ row }) => {
-                const [openModal, setOpenModal] = useState(false)
-                const [type, setType] = useState<'accept' | 'decline'>('decline')
-                return <>
-                    <Flex gap={2}>
-                        <IoEyeOutline
-                            color={'#566166'}
-                            size={20}
-                            cursor={"pointer"}
-                            onClick={() => { setOpenModal(true); setType('accept') }}
-                        />
-                        <LuCheck
-                            color={"#047857"}
-                            size={20}
-                            cursor={"pointer"}
-                            onClick={() => { setOpenModal(true); setType('accept') }}
-                        />
-                        <LuX
-                            color="#B91C1C"
-                            size={20}
-                            cursor="pointer"
-                            onClick={() => { setOpenModal(true); setType('decline') }}
-                        />
-                    </Flex>
-                    <Modal size={'xs'} open={openModal} onOpenChange={setOpenModal} modalContent={<TenantApprovalsModal type={type} id={row.original.applicantName} onClose={() => setOpenModal(false)} />} />
-                </>
-            }
+            cell: ({ row }) => <ApprovalActions approval={row.original} />
         }
     ]
+}
+
+const ApprovalActions = ({ approval }: { approval: TenantApprovals }) => {
+    const [openModal, setOpenModal] = useState(false)
+    const [type, setType] = useState<'accept' | 'decline'>('decline')
+
+    return <>
+        <Flex gap={2}>
+            <IoEyeOutline
+                color={'#566166'}
+                size={20}
+                cursor={"pointer"}
+                onClick={() => { setOpenModal(true); setType('accept') }}
+            />
+            <LuCheck
+                color={"#047857"}
+                size={20}
+                cursor={"pointer"}
+                onClick={() => { setOpenModal(true); setType('accept') }}
+            />
+            <LuX
+                color="#B91C1C"
+                size={20}
+                cursor="pointer"
+                onClick={() => { setOpenModal(true); setType('decline') }}
+            />
+        </Flex>
+        <Modal size={'xs'} open={openModal} onOpenChange={setOpenModal} modalContent={<TenantApprovalsModal type={type} id={approval.id ?? ''} onClose={() => setOpenModal(false)} />} />
+    </>
 }

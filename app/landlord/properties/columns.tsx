@@ -37,7 +37,7 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             accessorKey: 'name',
             header: "Name",
             cell: ({ row }) => <HStack>
-                <Image src={row.original.images[0] ?? rentImage.src} alt="profile" className="rounded-lg" width={74} height={47} />
+                <Image src={row.original.images?.[0] ?? rentImage.src} alt="profile" className="rounded-lg" width={74} height={47} />
                 <Text>{row.original.name}</Text>
             </HStack>
         },
@@ -54,9 +54,9 @@ export const useColumns = (): ColumnDef<Properties, any>[] => {
             }
         },
         {
-            accessorKey: 'unitCount',
+            accessorKey: 'totalUnits',
             header: "Units",
-            cell: ({ row }) => <Text>{row.original.unitCount}</Text>
+            cell: ({ row }) => <Text>{row.original.totalUnits}</Text>
         },
         {
             accessorFn: (row) => row.occupancyRate,

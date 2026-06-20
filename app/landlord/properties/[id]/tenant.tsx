@@ -3,7 +3,7 @@ import { Row } from "./unit-columns"
 import { Box, Flex, Skeleton, Text } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useSearchParams } from "next/navigation"
-import { useFMTenantStore } from "@/store/fm/tenant"
+import { useLandlordTenantStore } from "@/store/landlord/tenant"
 import { CohabitantsSection, LeaseInfoSection } from "@/components/sections/tenant/lease-info"
 import { GeneralInfoSection } from "@/components/sections/tenant/general-info"
 import { PaymentHistorySection, VisitorHistorySection } from "@/components/sections/tenant/history"
@@ -11,9 +11,9 @@ import { PaymentHistorySection, VisitorHistorySection } from "@/components/secti
 export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string }) => {
     const searchParams = useSearchParams()
     const tenantId = searchParams.get('tenantId')
-    const tenants = useFMTenantStore((state) => state.tenant)
-    const fetchTenant = useFMTenantStore((state) => state.fetchTenant)
-    const isLoading = useFMTenantStore((state) => state.isLoading)
+    const tenants = useLandlordTenantStore((state) => state.tenant)
+    const fetchTenant = useLandlordTenantStore((state) => state.fetchTenant)
+    const isLoading = useLandlordTenantStore((state) => state.isLoading)
 
     useEffect(() => {
         fetchTenant(propertyId, tenantId ? tenantId : tenant.tenantId,)

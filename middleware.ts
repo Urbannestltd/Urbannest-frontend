@@ -2,7 +2,7 @@ import { jwtDecode } from "jwt-decode"
 import { NextRequest, NextResponse } from "next/server"
 
 type TokenPayload = {
-	role: "ADMIN" | "TENANT" | "FACILITY_MANAGER"
+	role: "ADMIN" | "TENANT" | "FACILITY_MANAGER" | "LANDLORD"
 	exp: number
 }
 
@@ -14,14 +14,15 @@ export function middleware(req: NextRequest) {
 		if (
 			pathname.startsWith("/admin") ||
 			pathname.startsWith("/tenant") ||
-			pathname.startsWith("/facility-manager")
+			pathname.startsWith("/facility-manager") ||
+			pathname.startsWith("/landlord")
 		) {
 			return NextResponse.redirect(new URL("/auth", req.url))
 		}
 		return NextResponse.next()
 	}
 
-	let role: "ADMIN" | "TENANT" | "FACILITY_MANAGER"
+	let role: "ADMIN" | "TENANT" | "FACILITY_MANAGER" | "LANDLORD"
 	try {
 		const decoded = jwtDecode<TokenPayload>(token)
 
@@ -50,6 +51,10 @@ export function middleware(req: NextRequest) {
 		return NextResponse.redirect(new URL("/auth", req.url))
 	}
 
+	if (pathname.startsWith("/landlord") && role !== "LANDLORD") {
+		return NextResponse.redirect(new URL("/auth", req.url))
+	}
+
 	if (pathname.startsWith("/auth") || pathname === "/") {
 		if (role === "TENANT")
 			return NextResponse.redirect(new URL("/tenant/dashboard", req.url))
@@ -59,6 +64,8 @@ export function middleware(req: NextRequest) {
 			return NextResponse.redirect(
 				new URL("/facility-manager/dashboard", req.url),
 			)
+		if (role === "LANDLORD")
+			return NextResponse.redirect(new URL("/landlord/dashboard", req.url))
 	}
 
 	return NextResponse.next()
@@ -71,5 +78,6 @@ export const config = {
 		"/admin/:path*",
 		"/tenant/:path*",
 		"/facility-manager/:path*",
+		"/landlord/:path*",
 	],
 }

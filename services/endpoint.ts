@@ -194,3 +194,32 @@ const FmEndpoints = {
 }
 
 export { FmEndpoints }
+
+const landlordEndpoints = {
+	//Daashboard
+	fetchStats: `/landlord/dashboard`,
+	fetchRevenueChart: `/landlord/dashboard/revenue-chart`,
+	//Properties
+	fetchProperties: `/landlord/properties`,
+	fetchProperty: (id: string) => `/landlord/properties/${id}`,
+	fetchUnits: (id: string) => `/landlord/properties/${id}/units`,
+	fetchTenant: (id: string, tenantId: string) =>
+		`/landlord/properties/${id}/tenants/${tenantId}`,
+
+	//Approvals
+	fetchApprovals: `/landlord/approvals`,
+	fetchApprovasHistory: `/landlord/approvals/history`,
+	fetchApproval: (id: string) => `/landlord/approvals/${id}`,
+	approveTenant: (id: string) => `/landlord/approvals/${id}/approve`,
+	rejectTenant: (id: string) => `/landlord/approvals/${id}/reject`,
+
+	//Maintenance
+	fetchMaintenanceOverview: `/landlord/maintenance/overview`,
+
+	//Settings
+	getSettings: `/landlord/profile`,
+	changePassword: `/landlord/settings/password`,
+	getNotifPreference: `/landlord/settings/notifications`,
+}
+
+export { landlordEndpoints }

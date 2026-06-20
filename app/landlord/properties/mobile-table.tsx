@@ -74,7 +74,7 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
                                 </VStack>
                                 <VStack align={'start'} gap={2}>
                                     <Text className="satoshi-bold uppercase" fontSize={'12px'} color={'#566166'}>Units</Text>
-                                    <Text className="satoshi-medium" fontSize={'16px'} color={'#757575'}>{item.unitCount}</Text>
+                                    <Text className="satoshi-medium" fontSize={'16px'} color={'#757575'}>{item.totalUnits}</Text>
                                 </VStack>
                             </Flex>
                             <Divider my={2} />

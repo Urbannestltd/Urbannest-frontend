@@ -20,13 +20,13 @@ import { MdOutlineFilterListOff, MdRefresh } from "react-icons/md"
 import { DataTable } from "@/components/ui/data-table"
 import { useColumns } from "./columns"
 import { useEffect, useState } from "react"
-import { PropertyFilterFormData } from "@/schema/fm"
 import emptyTableIcon from "@/app/assets/icons/empty-state-icons/properties-empty.svg"
 import notFoundIcon from "@/app/assets/icons/facilty-icons/not-found-icon.svg"
 import { MobileTable } from "./mobile-table"
 import { BiSlider } from "react-icons/bi"
 import { useRouter } from "next/navigation"
 import { usePropertyStore } from "@/store/landlord/properties"
+import { PropertyFilterFormData } from "@/schema/landlord"
 
 export default function Properties() {
     const { control, watch, getValues, reset } = useForm<PropertyFilterFormData>()
@@ -245,7 +245,7 @@ export default function Properties() {
                     onRowClick={(row) =>
                         router.push(`/landlord/properties/${row.id}`)
                     }
-                    data={properties}
+                    data={properties ?? []}
                     tableName="Properties Assigned"
                     emptyDetails={{
                         icon: notFound ? notFoundIcon : emptyTableIcon,

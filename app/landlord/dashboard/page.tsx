@@ -10,57 +10,79 @@ import { MdOutlineFilterListOff } from "react-icons/md"
 import emptyVisitorIcon from "@/app/assets/icons/empty-state-icons/visitor-table.svg"
 import { useRouter } from "next/navigation"
 import { useColumns } from "./columns"
-import { TenantApprovalsList } from "@/utils/data"
 import { MobileTable } from "./mobile-table"
-import { RevenueAnalytics, revenueProperties } from "./chart"
+import { RevenueAnalytics, RevenueProperty } from "./chart"
+import { useEffect } from "react"
+import { useLandlordDashboardStore } from "@/store/landlord/dashboard"
 
 export default function Dashboard() {
     const { control, resetField } = useForm<{ revenueProperty: string[]; approvalsProperty: string[] }>()
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 600
     const selectedRevenueProperty = useWatch({ control, name: 'revenueProperty' })?.[0] ?? 'all'
-    const selectedApprovalsProperty = useWatch({ control, name: 'approvalsProperty' })
+    const selectedApprovalsProperty = useWatch({ control, name: 'approvalsProperty' })?.[0] ?? 'all'
+    const {
+        stats,
+        revenueChart,
+        approvals,
+        isLoadingApprovals,
+        fetchStats,
+        fetchRevenueChart,
+        fetchApprovals,
+    } = useLandlordDashboardStore((state) => state)
+    const revenueProperties = revenueChart.map(toRevenueProperty)
     const selectedProperties = selectedRevenueProperty === 'all'
         ? revenueProperties
         : revenueProperties.filter((property) => property.id === selectedRevenueProperty)
-    const selectedPropertyName = selectedProperties[0]?.name
-    const pendingApprovals = selectedRevenueProperty === 'all'
-        ? TenantApprovalsList
-        : TenantApprovalsList.filter((approval) => approval.propertyName === selectedPropertyName)
-    const totalCollectedRevenue = selectedProperties.reduce((total, property) => total + property.collectedRevenue, 0)
-    const averageOccupancy = selectedProperties.length
-        ? Math.round(selectedProperties.reduce((total, property) => total + property.value, 0) / selectedProperties.length)
-        : 0
+    const selectedApprovalPropertyName = revenueProperties.find((property) => property.id === selectedApprovalsProperty)?.name
+    const pendingApprovals = selectedApprovalsProperty === 'all'
+        ? approvals
+        : approvals.filter((approval) => approval.propertyName === selectedApprovalPropertyName)
     const router = useRouter()
     const columns = useColumns()
+    const properties = createListCollection({
+        items: [
+            { value: 'all', label: 'All Properties' },
+            ...revenueProperties.map((property) => ({
+                value: property.id,
+                label: property.name,
+            })),
+        ]
+    })
+
+    useEffect(() => {
+        fetchStats()
+        fetchRevenueChart()
+        fetchApprovals()
+    }, [fetchApprovals, fetchRevenueChart, fetchStats])
 
     const CardData: CardData[] = [
         {
             title: "Total Properties",
-            data: selectedProperties.length,
+            data: stats?.totalProperties ?? 0,
             cardColor: "#E8EBEE",
             border: true,
-            emptyMessage: selectedRevenueProperty === 'all' ? 'Across your portfolio' : selectedPropertyName
+            emptyMessage: 'Across your portfolio'
 
         },
         {
             title: "Portfolio Occupancy",
-            data: `${averageOccupancy}%`,
+            data: `${stats?.occupancyRate ?? 0}%`,
             border: true,
-            progress: averageOccupancy,
+            progress: stats?.occupancyRate ?? 0,
         },
         {
             title: "Revenue(YTD)",
-            data: formatCurrency(totalCollectedRevenue),
+            data: formatCurrency(stats?.revenueCollected ?? 0),
             border: true,
             emptyMessage: 'Collected revenue'
 
         },
         {
             title: "Pending Approvals",
-            data: pendingApprovals.length,
+            data: stats?.pendingApprovalsCount ?? pendingApprovals.length,
             border: true,
-            emptyMessage: pendingApprovals.length > 0 ? 'New tenant applications incoming' : 'No pending applications',
-            actionRequired: pendingApprovals.length > 0
+            emptyMessage: (stats?.pendingApprovalsCount ?? pendingApprovals.length) > 0 ? 'New tenant applications incoming' : 'No pending applications',
+            actionRequired: (stats?.pendingApprovalsCount ?? pendingApprovals.length) > 0
 
 
         },
@@ -92,7 +114,7 @@ export default function Dashboard() {
                 gap={"27px"}
             >
                 <Box w={{ base: 'full', md: '50%' }}>
-                    <RevenueAnalytics selectedPropertyId={selectedRevenueProperty} />
+                    <RevenueAnalytics data={revenueProperties} selectedPropertyId={selectedRevenueProperty} />
                 </Box>
 
                 <Box w={{ base: "full", md: "50%" }}>
@@ -112,7 +134,7 @@ export default function Dashboard() {
                                         placeholder="All Properties"
                                         collection={properties}
                                     />
-                                    {selectedApprovalsProperty?.length > 0 ? (
+                                    {selectedApprovalsProperty !== 'all' ? (
                                         <MdOutlineFilterListOff
                                             cursor={"pointer"}
                                             onClick={() => resetField('approvalsProperty')}
@@ -140,6 +162,7 @@ export default function Dashboard() {
                                 }
                                 rounded
                                 columns={columns}
+                                loading={isLoadingApprovals}
                                 data={pendingApprovals}
                                 miniTable
                                 bordered
@@ -157,17 +180,23 @@ export default function Dashboard() {
 
 }
 
-const properties = createListCollection({
-    items: [
-        { value: 'all', label: 'All Properties' },
-        ...revenueProperties.map((property) => ({
-            value: property.id,
-            label: property.name,
-        })),
-    ]
-})
-
 const formatCurrency = (value: number) => {
     if (value >= 1000000) return `₦${Math.round(value / 1000000)}M`
     return `₦${value.toLocaleString()}`
+}
+
+const toRevenueProperty = (property: { propertyId: string; propertyName: string; expectedRevenue: number; collectedRevenue: number }): RevenueProperty => {
+    const expectedRevenue = property.expectedRevenue ?? 0
+    const collectedRevenue = property.collectedRevenue ?? 0
+    const value = expectedRevenue > 0 ? Math.round((collectedRevenue / expectedRevenue) * 100) : 0
+
+    return {
+        id: property.propertyId,
+        name: property.propertyName,
+        expectedRevenue,
+        collectedRevenue,
+        totalAmount: formatCurrency(expectedRevenue),
+        collectedAmount: formatCurrency(collectedRevenue),
+        value,
+    }
 }
