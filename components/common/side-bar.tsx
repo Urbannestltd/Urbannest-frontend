@@ -46,7 +46,7 @@ export const Sidebar = ({ activeTab, modules, onClose }: SideBarProps) => {
                         <Image src={Logo} onClick={() => router.push('/')} className="w-[147.5px] mb-[54px]" alt="" />
                         <Text className="satoshi-bold text-[10px] mb-4 tracking-[0.2em] mt-4 uppercase">Menu</Text>
                         {modules.map((link) =>
-                            <Tabs.Trigger w={'full'} value={link.value} className="" p={2} onClick={() => { router.push(link.href); onClose && onClose() }} key={link.href}>
+                            <Tabs.Trigger w={'full'} value={link.value} className="" p={2} onClick={() => { router.push(link.href); onClose?.() }} key={link.href}>
                                 <Image alt='image' src={link.icon} /> {link.title}
                             </Tabs.Trigger>)}
                         <Tabs.Indicator className="satoshi-bold" bg={'#2A3348'} />
@@ -129,6 +129,7 @@ export const LandlordSidebar = ({ onClose }: { onClose?: () => void }) => {
         if (pathname.includes('landlord/properties')) return 'properties'
         if (pathname.includes('landlord/maintenance-and-issues')) return 'maintenance-and-issues'
         if (pathname.includes('landlord/tenant-approvals')) return 'tenant-approvals'
+        if (pathname.includes('landlord/financials')) return 'financials'
         return 'dashboard'
     };
 

@@ -220,6 +220,14 @@ const landlordEndpoints = {
 	getSettings: `/landlord/profile`,
 	changePassword: `/landlord/settings/password`,
 	getNotifPreference: `/landlord/settings/notifications`,
+
+	//Financials
+	fetchFinancialsMetrics: `/landlord/financials/summary`,
+	fetchFinancialsRevenueChart: `/landlord/financials/revenue-chart`,
+	fetchFinancialsRevenueShare: `/landlord/financials/revenue-share`,
+	fetchFinancialsArrears: `/landlord/financials/arrears`,
+	fetchFinancialsTransactions: `/landlord/financials/transactions`,
+	exportTransactions: `/landlord/financials/export`,
 }
 
 export { landlordEndpoints }

@@ -208,3 +208,9 @@ export const leaseExpiry = (row: number) => {
 	}
 	return ""
 }
+
+export const formatCompactCurrency = (value: number) => {
+	if (value >= 1000 && value < 1000000) return `₦${(value / 1000).toFixed(1)}k`
+	if (value >= 1000000) return `₦${(value / 1000000).toFixed(1)}M`
+	return formatNumber(value)
+}

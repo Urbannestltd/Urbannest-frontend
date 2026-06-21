@@ -40,8 +40,8 @@ export const DashboardCard = ({
                 md: fourcolumn ? "repeat(4, 1fr)" : "repeat(3, 1fr)",
             }}
             w={"full"}
-            minH={newMobile ? "180px" : "118px"}
-            h={newMobile ? "auto" : "fit"}
+            minH={newMobile && isMobile ? "180px" : "118px"}
+            h={newMobile && isMobile ? "auto" : "fit"}
             maxH={{ base: "auto", md: "400px" }}
         >
             {data.map((item, index) => (

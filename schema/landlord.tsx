@@ -17,5 +17,11 @@ export const approvalFilterSchema = z.object({
     dateRange: selectArrayField("Date range is required"),
 })
 
+export const MaintenanceFilterSchema = z.object({
+    issueType: selectArrayField("Issue type is required"),
+    dateRange: selectArrayField("Date range is required"),
+})
+
 export type PropertyFilterFormData = z.infer<typeof propertyFilterSchema>
 export type ApprovalFilterFormData = z.infer<typeof approvalFilterSchema>
+export type MaintenanceFilterFormData = z.infer<typeof MaintenanceFilterSchema>

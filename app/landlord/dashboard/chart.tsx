@@ -50,8 +50,8 @@ export const RevenueAnalytics = ({ data, selectedPropertyId = 'all' }: { data: R
 
 
 
-const RectangleBar = ({ value }: { value: number }) => {
-    return <Progress value={value} size={'xl'} color={'#2A3348'} shape={'square'} rounded={'none'} />
+export const RectangleBar = ({ value, color, trackColor }: { value: number, color?: string, trackColor?: string }) => {
+    return <Progress value={value} size={'xl'} color={color ?? '#2A3348'} bg={trackColor} shape={'square'} rounded={'none'} />
 }
 
 export const RevenuePropertyChart = ({ property }: { property: RevenueProperty }) => {
