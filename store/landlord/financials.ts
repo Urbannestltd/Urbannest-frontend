@@ -22,6 +22,13 @@ export interface revenueChart {
 	collectedRevenue: number
 }
 
+export interface UnitRevenueChart {
+	unitId: string
+	unitName: string
+	expectedRent: number
+	collectedRent: number
+}
+
 export interface revenueShare {
 	propertyId: string
 	propertyName: string
@@ -52,7 +59,7 @@ export interface transactions {
 
 interface FinancialStore {
 	summary: summary | null
-	revenueChart: revenueChart[]
+	revenueChart: revenueChart[] | UnitRevenueChart[]
 	revenueShare: revenueShare[]
 	arrears: arrears[]
 	transactions: transactions[]
@@ -85,9 +92,12 @@ export const useLandlordFinancialsStore = create<FinancialStore>((set) => ({
 	fetchSummary: async (filter) => {
 		set({ loadingSummary: true })
 		try {
-			const response = await http.get(landlordEndpoints.fetchFinancialsMetrics, {
-				params: filter,
-			})
+			const response = await http.get(
+				landlordEndpoints.fetchFinancialsMetrics,
+				{
+					params: filter,
+				},
+			)
 			set({ summary: response.data.data })
 		} catch (error) {
 			set({ summary: null })
@@ -99,9 +109,12 @@ export const useLandlordFinancialsStore = create<FinancialStore>((set) => ({
 	fetchRevenueChart: async (filter) => {
 		set({ loadingRevenueChart: true })
 		try {
-			const response = await http.get(landlordEndpoints.fetchFinancialsRevenueChart, {
-				params: filter,
-			})
+			const response = await http.get(
+				landlordEndpoints.fetchFinancialsRevenueChart,
+				{
+					params: filter,
+				},
+			)
 			set({ revenueChart: response.data.data ?? [] })
 		} catch (error) {
 			set({ revenueChart: [] })
@@ -113,9 +126,12 @@ export const useLandlordFinancialsStore = create<FinancialStore>((set) => ({
 	fetchRevenueShare: async (filter) => {
 		set({ loadingRevenueShare: true })
 		try {
-			const response = await http.get(landlordEndpoints.fetchFinancialsRevenueShare, {
-				params: filter,
-			})
+			const response = await http.get(
+				landlordEndpoints.fetchFinancialsRevenueShare,
+				{
+					params: filter,
+				},
+			)
 			set({ revenueShare: response.data.data ?? [] })
 		} catch (error) {
 			set({ revenueShare: [] })
@@ -127,9 +143,12 @@ export const useLandlordFinancialsStore = create<FinancialStore>((set) => ({
 	fetchArrears: async (filter) => {
 		set({ loadingArrears: true })
 		try {
-			const response = await http.get(landlordEndpoints.fetchFinancialsArrears, {
-				params: filter,
-			})
+			const response = await http.get(
+				landlordEndpoints.fetchFinancialsArrears,
+				{
+					params: filter,
+				},
+			)
 			set({ arrears: response.data.data ?? [] })
 		} catch (error) {
 			set({ arrears: [] })
@@ -141,9 +160,12 @@ export const useLandlordFinancialsStore = create<FinancialStore>((set) => ({
 	fetchTransactions: async (filter) => {
 		set({ loadingTransactions: true })
 		try {
-			const response = await http.get(landlordEndpoints.fetchFinancialsTransactions, {
-				params: filter,
-			})
+			const response = await http.get(
+				landlordEndpoints.fetchFinancialsTransactions,
+				{
+					params: filter,
+				},
+			)
 			set({ transactions: response.data.data ?? [] })
 		} catch (error) {
 			set({ transactions: [] })

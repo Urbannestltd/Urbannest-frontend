@@ -15,12 +15,13 @@ export type RevenueProperty = {
     value: number
 }
 
-export const RevenueAnalytics = ({ data, selectedPropertyId = 'all' }: { data: RevenueProperty[]; selectedPropertyId?: string }) => {
-    const visibleProperties = selectedPropertyId === 'all'
-        ? data
-        : data.filter((item) => item.id === selectedPropertyId)
 
-    return <>      {selectedPropertyId === 'all' && <Box rounded={'9px'} p={0}>
+export const RevenueAnalytics = ({ data, selectedProperty = { id: 'all', name: '' } }: { data: RevenueProperty[]; selectedProperty?: { id: string, name: string } }) => {
+    const visibleProperties = data
+
+    console.log(visibleProperties)
+
+    return <>      {selectedProperty.id === 'all' && <Box rounded={'9px'} p={0}>
         <Flex p={4} justify={'space-between'} roundedTop={'9px'} bg={'#F5F5F5'}>
             <Flex align={'center'} color={'#2A3348'} fontSize={'16px'} className="satoshi-bold"><CgLoadbarSound size={20} className="mr-1" />Revenue Analytics</Flex>
             <HStack fontSize={'14px'} ><Box boxSize={'15px'} ml={3} bg={'#2A334833'} />Expected
@@ -39,11 +40,12 @@ export const RevenueAnalytics = ({ data, selectedPropertyId = 'all' }: { data: R
             </Box>))}
 
         </SectionBox></Box>}
-        {selectedPropertyId !== 'all' && visibleProperties.map((item) => (
-            <SectionBox key={item.id}>
-                <RevenuePropertyChart property={item} />
+        {selectedProperty.id !== 'all' &&
+            <SectionBox>
+                <RevenuePropertyChart name={selectedProperty.name} property={visibleProperties} />
             </SectionBox>
-        ))}
+        }
+
     </>
 }
 
@@ -54,17 +56,16 @@ export const RectangleBar = ({ value, color, trackColor }: { value: number, colo
     return <Progress value={value} size={'xl'} color={color ?? '#2A3348'} bg={trackColor} shape={'square'} rounded={'none'} />
 }
 
-export const RevenuePropertyChart = ({ property }: { property: RevenueProperty }) => {
-    const chartData = [
-        {
-            label: property.name,
-            expected: property.expectedRevenue,
-            collected: property.collectedRevenue,
-        },
-    ]
+export const RevenuePropertyChart = ({ property, name }: { property: RevenueProperty[], name: string }) => {
+    const chartData = property.map((property) => ({
+        label: property.name,
+        expected: property.expectedRevenue,
+        collected: property.collectedRevenue
+    }))
+
 
     return <Box rounded={'9px'} p={0}>
-        <PageTitle title={property.name} fontSize={'22px'} spacing={0} subText="Expected and collected revenue" />
+        <PageTitle title={name} fontSize={'22px'} spacing={0} subText="Efficiency metric by individual unit ID" />
         <ResponsiveContainer width="100%" className={'mt-6'} height={300}>
             <BarChart data={chartData} barSize={32}>
                 <CartesianGrid

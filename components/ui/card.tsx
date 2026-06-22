@@ -62,7 +62,7 @@ export const DashboardCard = ({
                         item.attentionRequired
                             ? "#9F403D"
                             : item.border
-                                ? "#E0E0E0"
+                                ? "#F4F4F4"
                                 : "#F4F4F4"
                     }
                     borderLeft={item.attentionRequired ? "4px solid #9F403D" : ""}

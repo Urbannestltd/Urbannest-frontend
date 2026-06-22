@@ -2,6 +2,7 @@ import { landlordEndpoints } from "@/services/endpoint"
 import http from "@/services/https"
 import { TenantApprovals } from "@/utils/model"
 import { create } from "zustand"
+import { UnitRevenueChart } from "./financials"
 
 export interface Stats {
 	totalProperties: number
@@ -19,7 +20,7 @@ export interface RevenueChart {
 
 interface DashboardStore {
 	stats: Stats | null
-	revenueChart: RevenueChart[]
+	revenueChart: RevenueChart[] | UnitRevenueChart[]
 	approvals: TenantApprovals[]
 	isLoadingStats: boolean
 	isLoadingRevenueChart: boolean
@@ -28,7 +29,7 @@ interface DashboardStore {
 	errorLoadingRevenueChart: boolean
 	errorLoadingApprovals: boolean
 	fetchStats: () => Promise<void>
-	fetchRevenueChart: () => Promise<void>
+	fetchRevenueChart: (propertyId?: string) => Promise<void>
 	fetchApprovals: () => Promise<void>
 }
 
@@ -55,12 +56,17 @@ export const useLandlordDashboardStore = create<DashboardStore>((set) => ({
 			set({ isLoadingStats: false })
 		}
 	},
-	fetchRevenueChart: async () => {
+	fetchRevenueChart: async (propertyId) => {
 		set({ isLoadingRevenueChart: true, errorLoadingRevenueChart: false })
 		try {
-			const revenueChart = await http.get(landlordEndpoints.fetchRevenueChart)
+			const revenueChart = await http.get(landlordEndpoints.fetchRevenueChart, {
+				params: { propertyId },
+			})
 			set({ revenueChart: revenueChart.data.data ?? [] })
-			console.log("✅ Landlord revenue chart set in store:", revenueChart.data.data)
+			console.log(
+				"✅ Landlord revenue chart set in store:",
+				revenueChart.data.data,
+			)
 		} catch (e) {
 			set({ revenueChart: [], errorLoadingRevenueChart: true })
 			console.error("❌ Failed to fetch landlord revenue chart", e)
@@ -97,22 +103,14 @@ const normalizeApprovals = (data: unknown): TenantApprovals[] => {
 			id: String(approval.id ?? approval.approvalId ?? ""),
 			applicantName: String(
 				approval.applicantName ??
-				approval.tenantName ??
-				applicant?.name ??
-				tenant?.name ??
-				tenant?.fullName ??
-				"N/A",
+					approval.tenantName ??
+					applicant?.name ??
+					tenant?.name ??
+					tenant?.fullName ??
+					"N/A",
 			),
-			propertyName: String(
-				approval.propertyName ??
-				property?.name ??
-				"N/A",
-			),
-			unitName: String(
-				approval.unitName ??
-				unit?.name ??
-				"N/A",
-			),
+			propertyName: String(approval.propertyName ?? property?.name ?? "N/A"),
+			unitName: String(approval.unitName ?? unit?.name ?? "N/A"),
 		}
 	})
 }

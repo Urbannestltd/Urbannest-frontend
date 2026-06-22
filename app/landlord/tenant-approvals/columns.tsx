@@ -5,7 +5,7 @@ import { useState } from "react"
 import { IoEyeOutline } from "react-icons/io5"
 import { LuBadgeCheck, LuBriefcaseBusiness, LuCheck, LuCircleCheck, LuClipboardCheck, LuDownload, LuEye, LuFileCheck2, LuFileText, LuIdCard, LuPaperclip, LuPhone, LuX } from "react-icons/lu"
 import { TenantApprovalsModal } from "../dashboard/modal"
-import { Approvals } from "@/store/landlord/approvals"
+import { Approvals, useApprovalsStore } from "@/store/landlord/approvals"
 import { formatDate, formatNumber } from "@/services/date"
 import Image from "next/image"
 import UserAvatar from "@/app/assets/images/user-avatar.png"
@@ -92,12 +92,20 @@ export const useColumns = (): ColumnDef<Approvals>[] => {
 export const ApprovalActions = ({ approval }: { approval: Approvals }) => {
     const [openModal, setOpenModal] = useState(false)
     const [openDetails, setOpenDetails] = useState(false)
+    const [outcome, setOutcome] = useState<'accept' | 'decline' | null>(null)
     const [type, setType] = useState<'accept' | 'decline'>('decline')
+    const { fetchPendingApprovals, fetchApprovalHistory } = useApprovalsStore((state) => state)
 
     const openDecisionModal = (decisionType: 'accept' | 'decline') => {
         setType(decisionType)
         setOpenDetails(false)
         setOpenModal(true)
+    }
+
+    const handleDecisionSuccess = (decisionType: 'accept' | 'decline') => {
+        fetchPendingApprovals()
+        fetchApprovalHistory()
+        setOutcome(decisionType)
     }
 
     return <>
@@ -134,7 +142,32 @@ export const ApprovalActions = ({ approval }: { approval: Approvals }) => {
                 />
             )}
         />
-        <Modal size={'xs'} open={openModal} onOpenChange={setOpenModal} modalContent={<TenantApprovalsModal type={type} id={approval.leadId ?? ''} onClose={() => setOpenModal(false)} />} />
+        <Modal
+            size={'xs'}
+            open={openModal}
+            onOpenChange={setOpenModal}
+            modalContent={(
+                <TenantApprovalsModal
+                    type={type}
+                    id={approval.leadId ?? ''}
+                    onClose={() => setOpenModal(false)}
+                    onSuccess={handleDecisionSuccess}
+                />
+            )}
+        />
+        <Modal
+            size={'cover'}
+            open={outcome !== null}
+            onOpenChange={(open) => !open && setOutcome(null)}
+            className="w-[94vw] max-w-[1000px] h-[94vh] overflow-hidden rounded-none md:rounded-[2px]"
+            modalContent={outcome ? (
+                <TenantApprovalOutcomeModal
+                    approval={approval}
+                    outcome={outcome}
+                    onClose={() => setOutcome(null)}
+                />
+            ) : null}
+        />
     </>
 }
 
@@ -148,6 +181,7 @@ const TenantApprovalDetailsModal = ({
     onDeny: () => void
 }) => {
     const sentLabel = getSentLabel(approval.dateForwarded)
+    const [selectedDocument, setSelectedDocument] = useState<string | null>(null)
     const initials = approval.applicantName
         ?.split(' ')
         .map((name) => name[0])
@@ -212,8 +246,8 @@ const TenantApprovalDetailsModal = ({
 
                 <DetailsSection icon={<LuIdCard />} title="Identity & Verification">
                     <Stack gap={4}>
-                        <DocumentRow icon={<LuFileCheck2 />} name="Passport Copy.pdf" />
-                        <DocumentRow icon={<LuFileCheck2 />} name="Driver's License.pdf" />
+                        <DocumentRow icon={<LuFileCheck2 />} name="Passport Copy.pdf" onView={() => setSelectedDocument("Passport Copy.pdf")} />
+                        <DocumentRow icon={<LuFileCheck2 />} name="Driver's License.pdf" onView={() => setSelectedDocument("Driver's License.pdf")} />
                     </Stack>
                 </DetailsSection>
 
@@ -237,8 +271,8 @@ const TenantApprovalDetailsModal = ({
 
                 <DetailsSection icon={<LuPaperclip />} title="Supporting Documents">
                     <Stack gap={4}>
-                        <DocumentRow icon={<LuFileText />} name="Proof of Employment.pdf" />
-                        <DocumentRow icon={<LuFileText />} name="Reference Letter.docx" />
+                        <DocumentRow icon={<LuFileText />} name="Proof of Employment.pdf" onView={() => setSelectedDocument("Proof of Employment.pdf")} />
+                        <DocumentRow icon={<LuFileText />} name="Reference Letter.docx" onView={() => setSelectedDocument("Reference Letter.docx")} />
                     </Stack>
                 </DetailsSection>
             </Stack>
@@ -266,6 +300,13 @@ const TenantApprovalDetailsModal = ({
                     Approve Tenant
                 </button>
             </Flex>
+            {selectedDocument ? (
+                <DocumentPreviewOverlay
+                    title={selectedDocument}
+                    applicantName={approval.applicantName}
+                    onClose={() => setSelectedDocument(null)}
+                />
+            ) : null}
         </Box>
     )
 }
@@ -287,14 +328,14 @@ const InfoBlock = ({ label, value }: { label: string, value: string | number }) 
     </Box>
 )
 
-const DocumentRow = ({ icon, name }: { icon: React.ReactElement, name: string }) => (
+const DocumentRow = ({ icon, name, onView }: { icon: React.ReactElement, name: string, onView: () => void }) => (
     <Flex align="center" justify="space-between" bg="#F1F5F7" rounded="7px" px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }} gap={4}>
         <HStack gap={4} minW={0}>
             <Box color="#545F73" fontSize="25px" flexShrink={0}>{icon}</Box>
             <Text fontSize={{ base: "17px", md: "20px" }} color="#2E363B" truncate>{name}</Text>
         </HStack>
         <HStack gap={{ base: 3, md: 6 }} color="#566166" flexShrink={0}>
-            <button type="button" aria-label={`View ${name}`}>
+            <button type="button" aria-label={`View ${name}`} onClick={onView}>
                 <LuEye size={22} />
             </button>
             <button type="button" aria-label={`Download ${name}`}>
@@ -302,6 +343,167 @@ const DocumentRow = ({ icon, name }: { icon: React.ReactElement, name: string })
             </button>
         </HStack>
     </Flex>
+)
+
+const TenantApprovalOutcomeModal = ({
+    approval,
+    outcome,
+    onClose,
+}: {
+    approval: Approvals
+    outcome: 'accept' | 'decline'
+    onClose: () => void
+}) => {
+    const sentLabel = getSentLabel(approval.dateForwarded)
+    const propertyLabel = `${approval.propertyName || "The Glendale"}, ${approval.unitName || "Unit 402B"}`
+    const approved = outcome === 'accept'
+
+    return (
+        <Box bg="#F8FAFC" color="#2B3338" className="satoshi" h="94vh" overflow="hidden">
+            <ApprovalModalHeader approval={approval} sentLabel={sentLabel} />
+            <Center h="calc(94vh - 174px)" px={{ base: 6, md: 12 }}>
+                <Stack align="center" gap={0} w="full" maxW="720px" textAlign="center">
+                    <Center
+                        w="124px"
+                        h="124px"
+                        rounded="18px"
+                        bg={approved ? "#DCFCE7" : "#FDE8E8"}
+                        mb={14}
+                    >
+                        <Center w="78px" h="78px" rounded="full" bg={approved ? "#16A34A" : "#B04444"}>
+                            {approved ? <LuCheck size={52} color="white" strokeWidth={4} /> : <LuX size={52} color="white" strokeWidth={4} />}
+                        </Center>
+                    </Center>
+                    <Text className="satoshi-bold" fontSize={{ base: "24px", md: "28px" }} color="#2E363B">
+                        {approved ? "Tenant Approved Successfully" : "Application Rejected"}
+                    </Text>
+                    <Text mt={7} color="#566166" fontSize={{ base: "21px", md: "26px" }} lineHeight="1.65">
+                        {approved ? (
+                            <>
+                                {approval.applicantName || "Applicant"} has been approved for <Text as="span" className="satoshi-bold">{propertyLabel}</Text>. The forwarding agent has been notified and the lease agreement is being generated.
+                            </>
+                        ) : (
+                            <>
+                                {approval.applicantName || "Applicant"}&apos;s application for <Text as="span" className="satoshi-bold">{propertyLabel}</Text> has been rejected. The forwarding agent has been notified and the reason for rejection has been logged in the audit trail.
+                            </>
+                        )}
+                    </Text>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="mt-24 h-[74px] w-full max-w-[500px] rounded-[8px] bg-[#2A3348] text-white text-[24px] satoshi-bold shadow-[0_12px_24px_rgba(42,51,72,0.2)]"
+                    >
+                        Close &amp; Return to List
+                    </button>
+                </Stack>
+            </Center>
+        </Box>
+    )
+}
+
+const ApprovalModalHeader = ({ approval, sentLabel }: { approval: Approvals, sentLabel: string }) => (
+    <Flex
+        gap={{ base: 4, md: 8 }}
+        align={{ base: "start", md: "center" }}
+        p={{ base: 6, md: 12 }}
+        pr={{ base: 12, md: 16 }}
+        borderBottom="1px solid #E8ECEF"
+        bg="#F8FAFC"
+    >
+        <Box position="relative" flexShrink={0}>
+            <Box w={{ base: "88px", md: "132px" }} h={{ base: "88px", md: "132px" }} rounded="10px" overflow="hidden" bg="#E9EEF2">
+                <Image src={UserAvatar} alt={approval.applicantName || "Applicant"} className="h-full w-full object-cover" />
+            </Box>
+            <Center
+                position="absolute"
+                right="-10px"
+                bottom="-10px"
+                w="36px"
+                h="36px"
+                rounded="full"
+                bg="white"
+                shadow="0 2px 8px rgba(15, 23, 42, 0.16)"
+            >
+                <LuBadgeCheck size={27} color="#566166" fill="#566166" stroke="white" strokeWidth={2.4} />
+            </Center>
+        </Box>
+        <Box minW={0}>
+            <Text className="satoshi-bold capitalize" fontSize={{ base: "34px", md: "42px" }} lineHeight="1.1" color="#2E363B">
+                {approval.applicantName || "Applicant"}
+            </Text>
+            <Flex mt={4} gap={4} align="center" wrap="wrap" color="#566166" fontSize={{ base: "20px", md: "27px" }}>
+                <Text px={4} py={2} rounded="3px" bg="#E9EDF1" className="satoshi-bold" color="#545F73" lineHeight="1">
+                    FORWARDED
+                </Text>
+                <Text>• {sentLabel}</Text>
+            </Flex>
+        </Box>
+    </Flex>
+)
+
+const DocumentPreviewOverlay = ({
+    title,
+    applicantName,
+    onClose,
+}: {
+    title: string
+    applicantName?: string
+    onClose: () => void
+}) => (
+    <Center
+        position="fixed"
+        inset={0}
+        zIndex={1700}
+        bg="rgba(15, 23, 42, 0.45)"
+        p={{ base: 4, md: 10 }}
+        onClick={onClose}
+    >
+        <Box onClick={(event) => event.stopPropagation()} maxW="720px" w="full">
+            <Box bg="#F5F4E6" border="1px solid #D6D0B8" shadow="0 18px 42px rgba(15, 23, 42, 0.28)" p={{ base: 3, md: 5 }}>
+                <Flex bg="#DCE8D4" border="1px solid #BFC7B2" minH={{ base: "270px", md: "390px" }} overflow="hidden">
+                    <Box w="34%" bg="#EAF1DF" p={{ base: 3, md: 5 }} borderRight="1px solid #BFC7B2">
+                        <Box bg="#1C1F24" color="white" className="satoshi-bold" fontSize={{ base: "10px", md: "13px" }} px={2} py={1}>
+                            DRIVER LICENSE
+                        </Box>
+                        <Box mt={5} h={{ base: "120px", md: "190px" }} bg="#38424A" display="flex" alignItems="end" justifyContent="center">
+                            <Image src={UserAvatar} alt={applicantName || "Applicant"} className="h-full w-full object-cover" />
+                        </Box>
+                        <Text mt={4} className="satoshi-bold" fontSize={{ base: "13px", md: "18px" }}>{applicantName || "Applicant"}</Text>
+                    </Box>
+                    <Box flex={1} p={{ base: 3, md: 5 }} position="relative">
+                        <Text className="satoshi-bold" color="#264E73" fontSize={{ base: "15px", md: "25px" }}>
+                            FEDERAL REPUBLIC OF NIGERIA
+                        </Text>
+                        <Text className="satoshi-bold" color="#264E73" fontSize={{ base: "12px", md: "18px" }}>
+                            NATIONAL DRIVERS LICENCE
+                        </Text>
+                        <Box mt={5} bg="#0D5F91" color="white" px={3} py={1} className="satoshi-bold" fontSize={{ base: "12px", md: "18px" }}>
+                            LMO AKW05888AAZ
+                        </Box>
+                        <Grid mt={5} templateColumns="repeat(2, 1fr)" gap={{ base: 2, md: 4 }} color="#263238">
+                            <PreviewField label="DOB" value="06-11-1974" />
+                            <PreviewField label="EXP" value="06-11-2030" />
+                            <PreviewField label="SEX" value="M" />
+                            <PreviewField label="CLASS" value="B" />
+                            <PreviewField label="HT" value="1.75M" />
+                            <PreviewField label="BG" value="A+" />
+                        </Grid>
+                        <Text position="absolute" right={{ base: 3, md: 5 }} bottom={{ base: 3, md: 5 }} color="#B88925" opacity={0.45} fontSize={{ base: "80px", md: "150px" }} lineHeight="1">
+                            8
+                        </Text>
+                    </Box>
+                </Flex>
+            </Box>
+            <Text mt={4} textAlign="center" color="white" className="satoshi-bold">{title}</Text>
+        </Box>
+    </Center>
+)
+
+const PreviewField = ({ label, value }: { label: string, value: string }) => (
+    <Box>
+        <Text color="#6B7280" className="satoshi-bold" fontSize={{ base: "9px", md: "12px" }}>{label}</Text>
+        <Text className="satoshi-bold" fontSize={{ base: "12px", md: "18px" }}>{value}</Text>
+    </Box>
 )
 
 const getSentLabel = (dateForwarded?: string) => {

@@ -6,12 +6,12 @@ import { CustomSelect } from "@/components/ui/custom-fields"
 import { DataTable } from "@/components/ui/data-table"
 import { PageTitle } from "@/components/ui/page-title"
 import { SectionBox, SectionFlex } from "@/components/ui/section-box"
-import { formatNumber, getDateRange } from "@/services/date"
+import { formatNumber, getDateRange, getFinancialDateRange } from "@/services/date"
 import { useLandlordFinancialsStore } from "@/store/landlord/financials"
-import type { revenueChart, revenueShare } from "@/store/landlord/financials"
+import type { revenueChart, revenueShare, UnitRevenueChart } from "@/store/landlord/financials"
 import { usePropertyStore } from "@/store/landlord/properties"
 import { Box, Center, createListCollection, Flex, HStack, Skeleton, Text } from "@chakra-ui/react"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import toast from "react-hot-toast"
 import { LuCalendar, LuDownload, LuPlus } from "react-icons/lu"
@@ -31,6 +31,8 @@ type RevenueShareLegendItem = revenueShare & {
 }
 
 const REVENUE_SHARE_COLORS = ["#2A3348", "#545F73", "#A9B4B9", "#C7CDD2", "#E1E5E8"]
+
+const isUnit = (data: revenueChart | UnitRevenueChart): data is UnitRevenueChart => 'unitId' in data;
 
 export default function LandlordFinancials() {
     const { control, reset } = useForm<FinancialFilterForm>()
@@ -70,9 +72,9 @@ export default function LandlordFinancials() {
             ...properties.map((property) => ({ label: property.name, value: property.id })),
         ],
     })
-    const selectedRevenueChart = selectedProperty === "all"
-        ? revenueChart
-        : revenueChart.filter((item) => item.propertyId === selectedProperty)
+    const [props, setProps] = useState(propertyOptions.items)
+
+    const selectedRevenueChart = revenueChart
     const revenueProperties = selectedRevenueChart.map(toRevenueProperty)
     const occupancyProgress = summary?.totalUnitsCount
         ? Math.round((summary.activeLeasesCount / summary.totalUnitsCount) * 100)
@@ -121,6 +123,11 @@ export default function LandlordFinancials() {
         toast.error("Expense creation is not available for landlord financials yet")
     }
 
+    const findProperty = (id: string) => {
+        return props.find((property) => property.value === id)?.label
+    }
+
+
     return (
         <Box>
 
@@ -134,7 +141,7 @@ export default function LandlordFinancials() {
             )}
 
             <HStack my={9} align={"end"} justify={"space-between"} gap={4} flexWrap={"wrap"}>
-                <Flex gap={5} w={{ base: "full", md: "35%" }}>
+                <Flex align={'center'} gap={5} w={{ base: "full", md: "35%" }}>
                     <CustomSelect
                         control={control}
                         borderColor="#F4F4F4"
@@ -152,6 +159,11 @@ export default function LandlordFinancials() {
                         placeholder="Last 30 Days"
                         collection={dateFilter}
                     />
+                    <div>
+                        {(selectedProperty !== "all" || selectedDateRange !== "last_30_days") ? (
+                            <MdOutlineFilterListOff cursor={"pointer"} size={18} className="mt-4" onClick={() => reset()} />
+                        ) : null}
+                    </div>
                 </Flex>
                 <Flex w={{ base: "full", md: "290px" }} gap={2} justify={"end"}>
                     <MainButton
@@ -169,17 +181,16 @@ export default function LandlordFinancials() {
                         Add Expense
                     </MainButton>
                 </Flex>
-                {(selectedProperty !== "all" || selectedDateRange !== "last_30_days") ? (
-                    <MdOutlineFilterListOff cursor={"pointer"} size={18} onClick={() => reset()} />
-                ) : null}
+
             </HStack>
+
 
             <Flex direction={{ base: "column", lg: "row" }} gap={8}>
                 <Box w={{ base: "full", lg: "50%" }}>
                     {loadingRevenueChart ? (
                         <Skeleton h={"460px"} rounded={"9px"} />
                     ) : (
-                        <RevenueAnalytics data={revenueProperties} selectedPropertyId="all" />
+                        <RevenueAnalytics data={revenueProperties} selectedProperty={{ id: selectedProperty, name: findProperty(selectedProperty) ?? "" }} />
                     )}
                 </Box>
                 <Box w={{ base: "full", lg: "50%" }}>
@@ -305,14 +316,15 @@ const getRevenueShareData = (data: revenueShare[]): RevenueShareLegendItem[] => 
     ]
 }
 
-const toRevenueProperty = (property: revenueChart): RevenueProperty => {
-    const expectedRevenue = property.expectedRevenue ?? 0
-    const collectedRevenue = property.collectedRevenue ?? 0
+const toRevenueProperty = (property: revenueChart | UnitRevenueChart): RevenueProperty => {
+
+    const expectedRevenue = isUnit(property) ? property.expectedRent : property.expectedRevenue
+    const collectedRevenue = isUnit(property) ? property.collectedRent : property.collectedRevenue
     const value = expectedRevenue > 0 ? Math.round((collectedRevenue / expectedRevenue) * 100) : 0
 
     return {
-        id: property.propertyId,
-        name: property.propertyName,
+        id: isUnit(property) ? property.unitId : property.propertyId,
+        name: isUnit(property) ? property.unitName : property.propertyName,
         expectedRevenue,
         collectedRevenue,
         totalAmount: formatCompactCurrency(expectedRevenue),
@@ -327,20 +339,6 @@ const formatCompactCurrency = (value: number) => {
     return formatNumber(value)
 }
 
-const getFinancialDateRange = (filter: string) => {
-    if (filter === "last_30_days") {
-        const end = new Date()
-        const start = new Date()
-        start.setDate(end.getDate() - 30)
-
-        return {
-            startDate: start.toISOString(),
-            endDate: end.toISOString(),
-        }
-    }
-
-    return getDateRange(filter)
-}
 
 const dateFilter = createListCollection({
     items: [

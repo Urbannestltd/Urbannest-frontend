@@ -17,15 +17,16 @@ interface TenantApprovalsModalProps {
     id: string
     onClose: () => void
     type: 'accept' | 'decline'
+    onSuccess?: (type: 'accept' | 'decline') => void
 }
 
-export const TenantApprovalsModal = ({ type, id, onClose }: TenantApprovalsModalProps) => {
-    if (type === 'accept') return <ApproveRequestModal id={id} onClose={onClose} />
-    if (type === 'decline') return <RejectRequestModal id={id} onClose={onClose} />
+export const TenantApprovalsModal = ({ type, id, onClose, onSuccess }: TenantApprovalsModalProps) => {
+    if (type === 'accept') return <ApproveRequestModal id={id} onClose={onClose} onSuccess={() => onSuccess?.('accept')} />
+    if (type === 'decline') return <RejectRequestModal id={id} onClose={onClose} onSuccess={() => onSuccess?.('decline')} />
 
 }
 
-const ApproveRequestModal = ({ id, onClose }: { id: string, onClose: () => void }) => {
+const ApproveRequestModal = ({ id, onClose, onSuccess }: { id: string, onClose: () => void, onSuccess?: () => void }) => {
     const fetchStats = useLandlordDashboardStore((state) => state.fetchStats)
     const fetchApprovals = useLandlordDashboardStore((state) => state.fetchApprovals)
 
@@ -34,6 +35,7 @@ const ApproveRequestModal = ({ id, onClose }: { id: string, onClose: () => void 
         onSuccess: () => {
             fetchStats()
             fetchApprovals()
+            onSuccess?.()
             onClose()
         },
         onError: (error: AxiosError<{ message: string }>) => {
@@ -54,7 +56,7 @@ const ApproveRequestModal = ({ id, onClose }: { id: string, onClose: () => void 
     </Box>
 }
 
-const RejectRequestModal = ({ id, onClose }: { id: string, onClose: () => void }) => {
+const RejectRequestModal = ({ id, onClose, onSuccess }: { id: string, onClose: () => void, onSuccess?: () => void }) => {
     const { control, handleSubmit } = useForm<{ reason: string }>()
     const fetchStats = useLandlordDashboardStore((state) => state.fetchStats)
     const fetchApprovals = useLandlordDashboardStore((state) => state.fetchApprovals)
@@ -64,6 +66,7 @@ const RejectRequestModal = ({ id, onClose }: { id: string, onClose: () => void }
         onSuccess: () => {
             fetchStats()
             fetchApprovals()
+            onSuccess?.()
             onClose()
         },
         onError: (error: AxiosError<{ message: string }>) => {

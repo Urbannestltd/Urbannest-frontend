@@ -214,3 +214,18 @@ export const formatCompactCurrency = (value: number) => {
 	if (value >= 1000000) return `₦${(value / 1000000).toFixed(1)}M`
 	return formatNumber(value)
 }
+
+export const getFinancialDateRange = (filter: string) => {
+	if (filter === "last_30_days") {
+		const end = new Date()
+		const start = new Date()
+		start.setDate(end.getDate() - 30)
+
+		return {
+			startDate: start.toISOString(),
+			endDate: end.toISOString(),
+		}
+	}
+
+	return getDateRange(filter)
+}
