@@ -275,7 +275,7 @@ export function CustomSelect<T extends FieldValues>({
                             value={valueForSelect}
                             border={borderColor ? '1px solid ' + borderColor : '1px solid #A0A0A0'}
                             rounded={'md'}
-                            width={width}
+                            width={width ?? 'fit-content'}
                             disabled={disabled}
                             readOnly={readOnly}
                             color={'black'}
@@ -295,13 +295,13 @@ export function CustomSelect<T extends FieldValues>({
                         >
                             {multiple && <Select.HiddenSelect />}
                             <Select.Control  >
-                                <HStack>
-                                    <Select.Trigger h={avatar ? 'fit' : triggerHeight}>
+                                <HStack rounded={'md'} flexWrap="nowrap" w={width ?? 'fit-content'}>
+                                    <Select.Trigger h={avatar ? 'fit' : triggerHeight} justifyContent={'start'} minW="max-content" whiteSpace="nowrap">
                                         {icon && <Icon className='ml-1' color='fg.muted' size='xs' as={icon} />}
                                         {isLoading ? (
                                             <Text>Loading...</Text>
                                         ) : (
-                                            avatar ? <SelectValue /> : <Select.ValueText p={icon ? 1 : 2} mr={4} textAlign={alignCenter ? 'center' : 'start'} w={'full'} placeholder={placeholder} fontSize={'14px'} _placeholder={{ color: '#B3B3B3' }} color='black' />
+                                            avatar ? <SelectValue /> : <Select.ValueText p={icon ? 1 : 2} mr={4} textAlign={alignCenter ? 'center' : 'start'} textWrap={'nowrap'} pr={3} w={'max-content'} placeholder={placeholder} fontSize={'14px'} _placeholder={{ color: '#B3B3B3' }} color='black' />
                                         )}
                                     </Select.Trigger>
                                     <Select.IndicatorGroup>
@@ -310,8 +310,8 @@ export function CustomSelect<T extends FieldValues>({
                             </Select.Control>
 
                             <Portal >
-                                <Select.Positioner w={width} >
-                                    <Select.Content p={2} w={'96%'} zIndex='9999' bg='white'>
+                                <Select.Positioner w={width ?? 'max-content'} minW="max-content">
+                                    <Select.Content p={2} w={'full'} minW="max-content" zIndex='9999' bg='white'>
                                         {(collection.items ?? []).map((item: Option) => (
                                             <Select.Item
                                                 justifyContent={'start'}
@@ -320,6 +320,7 @@ export function CustomSelect<T extends FieldValues>({
                                                 p={1}
                                                 mb={1}
                                                 w={'full'}
+                                                whiteSpace="nowrap"
                                                 color='#101828'
                                             >
                                                 {avatar &&

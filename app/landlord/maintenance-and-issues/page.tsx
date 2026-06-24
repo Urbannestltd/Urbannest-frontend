@@ -115,11 +115,12 @@ export default function Maintenance() {
                     </HStack>
                 </Box></SectionFlex> :
                 <form>
-                    <HStack mt={9} w={'full'} align={"center"} justify={"space-between"}>
+                    <HStack mt={9} w={'full'} align={"center"}>
                         <Flex w={"30%"} gap={5}>
 
                             <CustomSelect
                                 control={control}
+                                width={'full'}
                                 borderColor="#F4F4F4"
                                 placeholder="All Types"
                                 label="Issue Type"
@@ -129,6 +130,7 @@ export default function Maintenance() {
                             <CustomSelect
                                 name="dateRange"
                                 control={control}
+                                width={'full'}
                                 borderColor="#F4F4F4"
                                 placeholder="Last 30 Days"
                                 icon={LuCalendar}
@@ -136,7 +138,7 @@ export default function Maintenance() {
                                 collection={dateFilter}
                             />
                         </Flex>
-                        <Flex w={"25%"} justify={"center"} align={"center"} gap={2}>
+                        <Flex w={"5%"} justify={"center"} align={"center"} gap={2}>
                             {dateRange?.length > 0 ||
                                 issueType?.length > 0 ? (
                                 <MdOutlineFilterListOff
@@ -150,7 +152,7 @@ export default function Maintenance() {
                 </form>}
 
             {isMobile ? <ChartMobile visibleProperties={chartData} loading={isLoading} /> : <MaintenanceDistributionChart data={chartData} loading={isLoading} />}
-        </div>
+        </div >
     )
 }
 
@@ -228,10 +230,10 @@ const MaintenanceDistributionChart = ({
                             />
                             <YAxis hide domain={[0, 110]} />
                             <Tooltip cursor={{ fill: 'transparent' }} content={<MaintenanceDistributionTooltip />} />
-                            <Bar dataKey="scaledCost" fill="#2A3348" radius={[2, 2, 0, 0]} maxBarSize={46}>
+                            <Bar dataKey="scaledCost" fill="#2A3348" radius={[2, 2, 0, 0]} maxBarSize={46} minPointSize={20}>
                                 <LabelList dataKey="totalCost" content={<CostLabel />} />
                             </Bar>
-                            <Bar dataKey="scaledTicketCount" fill="#E9EAEC" radius={[2, 2, 0, 0]} maxBarSize={46}>
+                            <Bar dataKey="scaledTicketCount" fill="#E9EAEC" radius={[2, 2, 0, 0]} maxBarSize={46} minPointSize={20}>
                                 <LabelList dataKey="ticketCount" content={<TicketLabel />} />
                             </Bar>
                         </BarChart>

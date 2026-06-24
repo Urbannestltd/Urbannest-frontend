@@ -12,10 +12,11 @@ import { useRouter } from "next/navigation"
 import { useColumns } from "./columns"
 import { MobileTable } from "./mobile-table"
 import { RevenueAnalytics, RevenueProperty } from "./chart"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { RevenueChart, useLandlordDashboardStore } from "@/store/landlord/dashboard"
-import { formatCompactCurrency, getFinancialDateRange } from "@/services/date"
+import { formatCompactCurrency, formatNumber } from "@/services/date"
 import { UnitRevenueChart } from "@/store/landlord/financials"
+import { usePropertyStore } from "@/store/landlord/properties"
 
 const isUnit = (data: RevenueChart | UnitRevenueChart): data is UnitRevenueChart => 'unitId' in data;
 
@@ -29,20 +30,26 @@ export default function Dashboard() {
         stats,
         revenueChart,
         approvals,
+        isLoadingStats,
         isLoadingApprovals,
         isLoadingRevenueChart,
         fetchStats,
         fetchRevenueChart,
         fetchApprovals,
     } = useLandlordDashboardStore((state) => state)
+    const { properties: landlordProperties, fetchProperties } = usePropertyStore((state) => state)
     const filter = useMemo(() => {
         return {
             propertyId: selectedRevenueProperty === "all" ? undefined : selectedRevenueProperty,
         }
     }, [selectedRevenueProperty])
     const revenueProperties = revenueChart.map(toRevenueProperty)
+    const revenuePropertyOptions = [
+        { value: 'all', label: 'All Properties' },
+        ...landlordProperties.map((property) => ({ value: property.id, label: property.name })),
+    ]
 
-    const selectedApprovalPropertyName = revenueProperties.find((property) => property.id === selectedApprovalsProperty)?.name
+    const selectedApprovalPropertyName = revenuePropertyOptions.find((property) => property.value === selectedApprovalsProperty)?.label
     const pendingApprovals = selectedApprovalsProperty === 'all'
         ? approvals
         : approvals.filter((approval) => approval.propertyName === selectedApprovalPropertyName)
@@ -51,24 +58,21 @@ export default function Dashboard() {
     const properties = createListCollection({
         items: [
             { value: 'all', label: 'All Properties' },
-            ...revenueProperties.map((property) => ({
-                value: property.id,
-                label: property.name,
-            })),
+            ...revenuePropertyOptions.filter((property) => property.value !== 'all'),
         ]
     })
-    const [props, setProps] = useState(properties.items)
 
     useEffect(() => {
         fetchStats()
         fetchRevenueChart()
         fetchApprovals()
-    }, [fetchApprovals, fetchRevenueChart, fetchStats])
+        fetchProperties()
+    }, [fetchApprovals, fetchProperties, fetchRevenueChart, fetchStats])
 
     useEffect(() => {
         fetchRevenueChart(filter.propertyId)
-    }, [filter.propertyId, fetchRevenueChart])
-
+        fetchStats(filter.propertyId)
+    }, [filter.propertyId, fetchRevenueChart, fetchStats])
 
     /*const onShow = () => {
         fetchRevenueChart(filter.propertyId)
@@ -92,7 +96,7 @@ export default function Dashboard() {
         },
         {
             title: "Revenue(YTD)",
-            data: formatCurrency(stats?.revenueCollected ?? 0),
+            data: formatNumber(stats?.revenueCollected ?? 0),
             border: true,
             emptyMessage: 'Collected revenue'
 
@@ -115,17 +119,21 @@ export default function Dashboard() {
     }
 
     const findProperty = (id: string) => {
-        return props.find((property) => property.value === id)?.label
+        return revenuePropertyOptions.find((property) => property.value === id)?.label
     }
 
     return (
         < >
             <Flex width={'full'} mt={8}>
-                <DashboardCard data={CardData} />
+                {isLoadingStats ? (
+                    <Skeleton h={"118px"} rounded={"8px"} />
+                ) : (
+                    <DashboardCard data={CardData} />
+                )}
             </Flex>
             <HStack align={'end'} my={11} justify={'start'}>
-                <Flex w={{ base: '60%', md: '15%' }}>
-                    <CustomSelect width={'full'} name="revenueProperty" collection={properties} control={control} label="Select Property" placeholder="All Property" />
+                <Flex w={{ base: 'fit-content', md: 'fit-content' }}>
+                    <CustomSelect name="revenueProperty" collection={properties} control={control} label="Select Property" placeholder="All Property" />
                 </Flex>
                 <MainButton size='sm' className=" h-[43px]" >Show</MainButton>
             </HStack>
@@ -147,13 +155,13 @@ export default function Dashboard() {
                 <Box w={{ base: "full", md: "50%" }}>
                     <SectionFlex p={4} align={"center"} mb={4} justifyContent={"space-between"}>
                         <Text className="satoshi-bold">Pending Tenant Approvals</Text>
-                        <div className="w-[20%]">
+                        <div className="w-[30%]">
                             {isMobile ? (
                                 <Text className="satoshi-bold text-sm text-[#545F73]">
                                     View All
                                 </Text>
                             ) : (
-                                <HStack>
+                                <HStack >
                                     <CustomSelect
                                         control={control}
                                         name='approvalsProperty'
@@ -205,11 +213,6 @@ export default function Dashboard() {
         </>
     )
 
-}
-
-const formatCurrency = (value: number) => {
-    if (value >= 1000000) return `₦${Math.round(value / 1000000)}M`
-    return `₦${value.toLocaleString()}`
 }
 
 const toRevenueProperty = (property: RevenueChart | UnitRevenueChart): RevenueProperty => {

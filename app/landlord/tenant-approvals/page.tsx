@@ -179,7 +179,7 @@ export default function TenantApprovals() {
                     width={"356px"}
                 />
             </Flex>
-            <Flex gap={2} w={"25%"} justify={"space-evenly"} align={"center"}>
+            <Flex gap={2} w={"15%"} justify={"space-evenly"} align={"center"}>
                 <CustomSelect
                     name="dateRange"
                     control={control}
@@ -187,6 +187,7 @@ export default function TenantApprovals() {
                     placeholder="Last 30 Days"
                     icon={LuCalendar}
                     collection={dateFilter}
+                    width={"full"}
                 />
                 {
                     watchedValues.property?.length > 0 ||

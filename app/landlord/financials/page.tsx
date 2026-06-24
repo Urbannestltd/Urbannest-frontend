@@ -11,18 +11,21 @@ import { useLandlordFinancialsStore } from "@/store/landlord/financials"
 import type { revenueChart, revenueShare, UnitRevenueChart } from "@/store/landlord/financials"
 import { usePropertyStore } from "@/store/landlord/properties"
 import { Box, Center, createListCollection, Flex, HStack, Skeleton, Text } from "@chakra-ui/react"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import toast from "react-hot-toast"
 import { LuCalendar, LuDownload, LuPlus } from "react-icons/lu"
-import { MdOutlineFilterListOff } from "react-icons/md"
+import { MdOutlineFilterListOff, MdRefresh } from "react-icons/md"
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
 import { RevenueAnalytics, RevenueProperty } from "../dashboard/chart"
-import { useColumns } from "./columns"
+import { useColumns, useFinancialsColumns } from "./columns"
+import { SearchInput } from "@/components/ui/search-input"
 
 type FinancialFilterForm = {
     property: string[]
     dateRange: string[]
+    status: string[]
+    type: string[]
 }
 
 type RevenueShareLegendItem = revenueShare & {
@@ -35,26 +38,31 @@ const REVENUE_SHARE_COLORS = ["#2A3348", "#545F73", "#A9B4B9", "#C7CDD2", "#E1E5
 const isUnit = (data: revenueChart | UnitRevenueChart): data is UnitRevenueChart => 'unitId' in data;
 
 export default function LandlordFinancials() {
-    const { control, reset } = useForm<FinancialFilterForm>()
+    const { control, reset, watch } = useForm<FinancialFilterForm>()
     const selectedProperty = useWatch({ control, name: "property" })?.[0] ?? "all"
     const selectedDateRange = useWatch({ control, name: "dateRange" })?.[0] ?? "last_30_days"
     const columns = useColumns()
+    const transactCol = useFinancialsColumns()
     const properties = usePropertyStore((state) => state.properties)
+    const formValues = watch()
     const fetchProperties = usePropertyStore((state) => state.fetchProperties)
     const {
         summary,
         revenueChart,
         revenueShare,
         arrears,
+        transactions,
         loadingSummary,
         loadingRevenueChart,
         loadingRevenueShare,
         loadingArrears,
+        loadingTransactions,
         exportingTransactions,
         fetchSummary,
         fetchRevenueChart,
         fetchRevenueShare,
         fetchArrears,
+        fetchTransactions,
         exportTransactions,
     } = useLandlordFinancialsStore((state) => state)
     const filter = useMemo(() => {
@@ -72,8 +80,6 @@ export default function LandlordFinancials() {
             ...properties.map((property) => ({ label: property.name, value: property.id })),
         ],
     })
-    const [props, setProps] = useState(propertyOptions.items)
-
     const selectedRevenueChart = revenueChart
     const revenueProperties = selectedRevenueChart.map(toRevenueProperty)
     const occupancyProgress = summary?.totalUnitsCount
@@ -108,7 +114,8 @@ export default function LandlordFinancials() {
         fetchRevenueChart(filter)
         fetchRevenueShare(filter)
         fetchArrears(filter)
-    }, [fetchArrears, fetchRevenueChart, fetchRevenueShare, fetchSummary, filter])
+        fetchTransactions(filter)
+    }, [fetchArrears, fetchRevenueChart, fetchRevenueShare, fetchSummary, filter, fetchTransactions])
 
     const handleExport = async () => {
         try {
@@ -124,7 +131,7 @@ export default function LandlordFinancials() {
     }
 
     const findProperty = (id: string) => {
-        return props.find((property) => property.value === id)?.label
+        return propertyOptions.items.find((property) => property.value === id)?.label
     }
 
 
@@ -149,6 +156,7 @@ export default function LandlordFinancials() {
                         name="property"
                         placeholder="All Properties"
                         collection={propertyOptions}
+                        width={"full"}
                     />
                     <CustomSelect
                         control={control}
@@ -158,6 +166,7 @@ export default function LandlordFinancials() {
                         name="dateRange"
                         placeholder="Last 30 Days"
                         collection={dateFilter}
+                        width={"full"}
                     />
                     <div>
                         {(selectedProperty !== "all" || selectedDateRange !== "last_30_days") ? (
@@ -165,22 +174,7 @@ export default function LandlordFinancials() {
                         ) : null}
                     </div>
                 </Flex>
-                <Flex w={{ base: "full", md: "290px" }} gap={2} justify={"end"}>
-                    <MainButton
-                        size="lg"
-                        variant="outline"
-                        onClick={handleExport}
-                        loading={exportingTransactions}
-                        loadingText="Exporting"
-                        className="h-[41px]"
-                        icon={<LuDownload />}
-                    >
-                        Export
-                    </MainButton>
-                    <MainButton size="lg" className="h-[41px]" fullWidth icon={<LuPlus />} onClick={handleAddExpense}>
-                        Add Expense
-                    </MainButton>
-                </Flex>
+
 
             </HStack>
 
@@ -218,6 +212,51 @@ export default function LandlordFinancials() {
                 loading={loadingArrears}
                 tableName="Arrears"
                 columns={columns}
+                bgColor="white"
+                bordered
+                rounded
+            />
+            <SectionFlex mt={9} align={"center"} justify={"space-between"}>
+                <Text color={"#303030"} fontSize={"18px"} className="satoshi-bold">
+                    Transaction History
+                </Text>
+                <Flex align={'center'} gap={5}>
+                    <SearchInput placeholder="Search" width={'400px'} />
+                    <Flex gap={2} align={'center'}>
+                        <Flex>
+                            <CustomSelect name='dateRange' control={control} icon={LuCalendar} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Today" collection={dateFilter} />
+                        </Flex>
+                        <Flex>
+                            <CustomSelect name='type' control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Payment Types" collection={paymentFilter} />
+                        </Flex>
+                        <Flex>
+                            <CustomSelect name='status' control={control} size={'xs'} triggerHeight='20px' width={'fit'} placeholder="Status" collection={statusFilter} />
+                        </Flex>
+                        {formValues.type?.length > 0 || formValues.dateRange?.length > 0 || formValues.property?.length > 0 || formValues.status?.length > 0 ?
+                            <MdOutlineFilterListOff cursor={'pointer'} onClick={() => reset()} /> : null}
+                        <MdRefresh color="#94A3B8" className=" size-4" />
+                    </Flex>
+                </Flex>
+            </SectionFlex>
+            <Flex w={{ base: "full" }} my={4} gap={2} justify={"end"}>
+                <MainButton
+                    size='sm'
+                    variant="outline"
+                    onClick={handleExport}
+                    loading={exportingTransactions}
+                    loadingText="Exporting"
+                    className="h-[41px]"
+                    icon={<LuDownload />}
+                >
+                    Export
+                </MainButton>
+            </Flex>
+
+            <DataTable
+                data={transactions}
+                loading={loadingTransactions}
+                tableName="Transactions"
+                columns={transactCol}
                 bgColor="white"
                 bordered
                 rounded
@@ -348,4 +387,23 @@ const dateFilter = createListCollection({
         { label: "This Month", value: "this_month" },
         { label: "This Year", value: "this_year" },
     ],
+})
+
+
+const paymentFilter = createListCollection({
+    items: [
+        { label: 'Rent', value: 'RENT' },
+        { label: 'Maintenance', value: 'UTILITY_TOKEN' },
+        { label: 'Utility', value: 'UTILITY_BILL' },
+        { label: 'Service', value: 'SERVICE_CHARGE' }
+    ]
+})
+
+const statusFilter = createListCollection({
+    items: [
+        { label: 'Paid', value: 'PAID' },
+        { label: 'Pending', value: 'PENDING' },
+        { label: 'Overdue', value: 'OVERDUE' },
+        { label: 'Failed', value: 'FAILED' },
+    ]
 })

@@ -76,12 +76,11 @@ export const MultiBar = ({ chartData, loading }: { chartData: { revenue: number;
 
                         <Tooltip cursor={{ fill: "transparent" }} />
 
-                        <Bar dataKey="revenue" fill="#A7C3DF" radius={[6, 6, 0, 0]} />
-                        <Bar dataKey="revenue" fill="#539EE9" radius={[6, 6, 0, 0]} />
-                        <Bar dataKey="revenue" fill="#142C43" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="revenue" fill="#A7C3DF" radius={[6, 6, 0, 0]} minPointSize={20} />
+                        <Bar dataKey="revenue" fill="#539EE9" radius={[6, 6, 0, 0]} minPointSize={20} />
+                        <Bar dataKey="revenue" fill="#142C43" radius={[6, 6, 0, 0]} minPointSize={20} />
                     </BarChart>
                 </ResponsiveContainer>}
         </Box>
     )
 }
-

@@ -76,7 +76,7 @@ export const Demo = ({ chartData, loading }: { chartData: { property: string; co
                     />
 
                     <Tooltip cursor={{ fill: "transparent" }} content={<CustomTooltip />} />
-                    <Bar dataKey='count' radius={[10, 10, 0, 0]} label={<CustomLabel />}>
+                    <Bar dataKey='count' radius={[10, 10, 0, 0]} label={<CustomLabel />} minPointSize={20}>
                         {chartData.map((entry, index) => (
                             <Cell
                                 key={index}

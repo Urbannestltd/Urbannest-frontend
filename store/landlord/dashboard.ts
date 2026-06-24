@@ -28,7 +28,7 @@ interface DashboardStore {
 	errorLoadingStats: boolean
 	errorLoadingRevenueChart: boolean
 	errorLoadingApprovals: boolean
-	fetchStats: () => Promise<void>
+	fetchStats: (propertyId?: string) => Promise<void>
 	fetchRevenueChart: (propertyId?: string) => Promise<void>
 	fetchApprovals: () => Promise<void>
 }
@@ -43,10 +43,12 @@ export const useLandlordDashboardStore = create<DashboardStore>((set) => ({
 	errorLoadingStats: false,
 	errorLoadingRevenueChart: false,
 	errorLoadingApprovals: false,
-	fetchStats: async () => {
+	fetchStats: async (propertyId) => {
 		set({ isLoadingStats: true, errorLoadingStats: false })
 		try {
-			const stats = await http.get(landlordEndpoints.fetchStats)
+			const stats = await http.get(landlordEndpoints.fetchStats, {
+				params: { propertyId },
+			})
 			set({ stats: stats.data.data })
 			console.log("✅ Landlord stats set in store:", stats.data.data)
 		} catch (e) {

@@ -39,7 +39,7 @@ export default function Page() {
 
 
     return (<div>
-        <PageBreadcrumb items={[{ label: "Properties", to: "/landlord/properties" }, { label: selectedTab, isCurrent: true }]} />
+        <PageBreadcrumb items={[{ label: "Properties", to: "/landlord/properties" }, { label: 'Properties Details', to: `#` }, { label: selectedTab, isCurrent: true }]} />
         <Flex direction={{ base: 'column', md: 'row' }} mb={12} mt={4} justify={'space-between'} align={'center'} rounded={'8px'} p={{ base: 2, md: 4 }} className="bg-primary-gold-50">
             <HStack w={{ base: 'full', md: 'auto' }}  >
                 <Image src={property?.images[0] ?? rentImage.src} mr={{ base: 4, md: 3 }} w={{ base: '100px', md: '165px' }} rounded={'8px'} h={{ base: '60px', md: '80px' }} alt="rent" />
