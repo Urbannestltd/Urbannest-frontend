@@ -59,7 +59,7 @@ export const Unit = () => {
                 <LuArrowLeft size={18} color="#CFAA67" />
                 Back
             </Flex><Tenant propertyId={property?.id as string} tenant={selectedRow as Row} /></> : <> <SectionBox mb={4}>
-                <PageTitle title={`Total ${units?.totalUnits ?? 0} Units`} />
+                <PageTitle title={`Total ${units?.length ?? 0} Units`} />
                 <HStack mt={2} justify={'space-between'}>
                     <SearchInput
                         value={search}
@@ -68,10 +68,10 @@ export const Unit = () => {
 
                 </HStack>
             </SectionBox>
-                {units?.grouped.map((floor, index) => (<SectionBox key={floor.floor} my={4}>
-                    <Box ref={index === units?.grouped.length - 1 ? ref : null}>
-                        <PageTitle title={floor.floor} fontSize={{ base: '18px', md: '22px' }} />
-                        {isMobile ? <MobileTable onTenantClick={handleTenantClick} data={floor.units ?? []} emptyDetails={{ title: 'No Units Found', description: 'No Units Found', icon: '' }} tableName="Units" /> : <DataTable tableName="Units" data={floor.units ?? null} emptyDetails={{ title: 'No Units Found', description: 'No Units Found', icon: '' }} columns={columns} />}
+                {units?.map((floor, index) => (<SectionBox key={index} my={4}>
+                    <Box ref={index === units?.length - 1 ? ref : null}>
+                        <PageTitle title={`floor ${index + 1}`} fontSize={{ base: '18px', md: '22px' }} />
+                        {isMobile ? <MobileTable onTenantClick={handleTenantClick} data={units ?? []} emptyDetails={{ title: 'No Units Found', description: 'No Units Found', icon: '' }} tableName="Units" /> : <DataTable tableName="Units" data={units ?? null} emptyDetails={{ title: 'No Units Found', description: 'No Units Found', icon: '' }} columns={columns} />}
                     </Box> </SectionBox>))}
             </>}
         </>

@@ -125,11 +125,11 @@ export default function Dashboard() {
     return (
         < >
             <Flex width={'full'} mt={8}>
-                {isLoadingStats ? (
-                    <Skeleton h={"118px"} rounded={"8px"} />
-                ) : (
+                {isLoadingStats ?
+                    <Skeleton h={"15vh"} w={"100%"} rounded={"8px"} />
+                    :
                     <DashboardCard data={CardData} />
-                )}
+                }
             </Flex>
             <HStack align={'end'} my={11} justify={'start'}>
                 <Flex w={{ base: 'fit-content', md: 'fit-content' }}>

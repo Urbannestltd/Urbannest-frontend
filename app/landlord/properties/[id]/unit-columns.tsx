@@ -8,22 +8,32 @@ import { ColumnDef } from "@tanstack/react-table"
 import { ProgressCircle } from "@/components/ui/progress-circle"
 
 export interface Row {
-    complaints: {
-        openPercent: number
-        openCount: number
-        total: number
-    }
-    members: number
-    leaseExpiry: string
-    moveInDate: string
-    tenantProfilePic: string
-    tenantName: string
-    tenantId: string
-    rentAmount: number
-    status: string
-    floor: string
-    name: string
     id: string
+    propertyId: string
+    propertyName: string
+    unitName: string
+    status: string
+    baseRent: number
+    tenantName: string
+    leaseStartDate: string
+    leaseEndDate: string
+
+    /* complaints: {
+         openPercent: number
+         openCount: number
+         total: number
+     }
+     members: number
+     leaseExpiry: string
+     moveInDate: string
+     tenantProfilePic: string
+     tenantName: string
+     tenantId: string
+     rentAmount: number
+     status: string
+     floor: string
+     name: string
+     id: string*/
 }
 
 
@@ -66,7 +76,7 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
 
     return [
         {
-            accessorKey: 'name',
+            accessorKey: 'unitName',
             header: 'Unit'
         },
         {
@@ -78,22 +88,22 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
             }
         },
         {
-            accessorKey: 'rentAmount',
+            accessorKey: 'baseRent',
             header: 'Rent',
-            cell: ({ row }) => <Text>{formatNumber(row.original.rentAmount)}</Text>
+            cell: ({ row }) => <Text>{formatNumber(row.original.baseRent)}</Text>
         },
         {
-            accessorFn: (row) => `${row.tenantName} (${row.tenantProfilePic})`,
+            accessorFn: (row) => `${row.tenantName}`,// ${row.tenantProfilePic}`,
             header: 'Tenant',
             cell: ({ row }) => <Flex gap={2} className=" group" onClick={() => onTenantClick(row.original)} cursor={'pointer'} align={'center'}>
-                <Avatar src={row.original.tenantProfilePic} name={row.original.tenantName} />
+                <Avatar name={row.original.tenantName} />
                 <Text className=" group-hover:underline">{row.original.tenantName ?? 'N/A'}</Text>
             </Flex>
         },
         {
-            accessorKey: 'moveInDate',
+            accessorKey: 'leaseStartDate',
             header: 'Move In Date',
-            cell: ({ row }) => <Text>{formatDate(row.original.moveInDate)}</Text>
+            cell: ({ row }) => <Text>{formatDate(row.original.leaseStartDate)}</Text>
         },
         {
             accessorKey: 'members',
@@ -103,19 +113,19 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
             accessorKey: 'leaseExpiry',
             header: 'Lease Left',
             cell({ row }) {
-                return <ProgressCircle showValueText value={stringToNumber(row.original.leaseExpiry)} thickness={2} cap={'round'} color={leaseExpiry(stringToNumber(row.original.leaseExpiry))} size={'xs'} />
+                return <ProgressCircle showValueText value={stringToNumber('0')} thickness={2} cap={'round'} color={leaseExpiry(stringToNumber('0'))} size={'xs'} />
             },
         },
-        {
-            accessorFn: (row) => row.complaints.openPercent,
-            header: 'Complaints',
-            cell: ({ row }) => {
-                const complaint = complaints(row.original.complaints.openPercent)
-                return (
-                    <Progress showValueText value={row.original.complaints.openPercent} color={complaint} info={complaint} />
-                )
-            }
-        },
+        /* {
+             accessorFn: (row) => row.complaints.openPercent,
+             header: 'Complaints',
+             cell: ({ row }) => {
+                 const complaint = complaints(row.original.complaints.openPercent)
+                 return (
+                     <Progress showValueText value={row.original.complaints.openPercent} color={complaint} info={complaint} />
+                 )
+             }
+         },*/
 
 
     ]

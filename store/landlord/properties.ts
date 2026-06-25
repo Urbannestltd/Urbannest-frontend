@@ -78,13 +78,25 @@ export interface Units {
 	totalUnits: number
 }
 
+export interface Unit {
+	id: string
+	propertyId: string
+	propertyName: string
+	unitName: string
+	status: string
+	baseRent: number
+	tenantName: string
+	leaseStartDate: string
+	leaseEndDate: string
+}
+
 interface PropertyStore {
 	properties: Properties[]
 	property: Property | null
 	isLoading: boolean
 	isLoadingProperty: boolean
 	isLoadingUnits: boolean
-	units: Units | null
+	units: Unit[] | null
 	errorLoadingProperty: boolean
 	errorLoadingProperties: boolean
 	errorLoadingUnits: boolean
@@ -147,8 +159,8 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 	fetchUnits: async (id, search) => {
 		set({ isLoadingUnits: true, errorLoadingUnits: false, units: null })
 		try {
-			const units = await http.get(landlordEndpoints.fetchUnits(id), {
-				params: { search: search },
+			const units = await http.get(landlordEndpoints.fetchUnits, {
+				params: { propertyId: id, search: search },
 			})
 			set({ units: units.data.data })
 			console.log("✅ Landlord units set in store:", units.data.data)

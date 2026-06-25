@@ -202,7 +202,7 @@ const landlordEndpoints = {
 	//Properties
 	fetchProperties: `/landlord/properties`,
 	fetchProperty: (id: string) => `/landlord/properties/${id}`,
-	fetchUnits: (id: string) => `/landlord/properties/${id}/units`,
+	fetchUnits: `/landlord/units`,
 	fetchTenant: (id: string, tenantId: string) =>
 		`/landlord/properties/${id}/tenants/${tenantId}`,
 

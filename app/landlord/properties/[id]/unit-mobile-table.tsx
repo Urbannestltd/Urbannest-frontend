@@ -65,7 +65,7 @@ export const MobileTable = ({ data, loading, emptyDetails, onTenantClick, tableN
                         <HStack align={'start'} justify={'space-between'}>
                             <Box>
                                 <Text className="satoshi-bold" color={'#5A6061'} letterSpacing={'0.5px'} fontSize={'10px'}>Unit #</Text>
-                                <Text className="satoshi-bold" fontSize={'14px'}>{row.name}</Text>
+                                <Text className="satoshi-bold" fontSize={'14px'}>{row.unitName}</Text>
                             </Box>
                             <Center py={1} px={1.5} color={statusDeets?.textColor} fontSize={'12px'} className="satoshi-bold" rounded={'full'} bg={statusDeets?.bg}>{statusDeets?.label}</Center>
                         </HStack>
@@ -73,12 +73,12 @@ export const MobileTable = ({ data, loading, emptyDetails, onTenantClick, tableN
                         <HStack justify={'space-between'} align={'start'}>
                             <Box fontSize={'14px'}>
                                 <Text className="satoshi-bold" >Rent</Text>
-                                <Text className="satoshi-medium" fontSize={'15px'} color={'#5A5A5A'}>{formatNumber(row.rentAmount)}</Text>
+                                <Text className="satoshi-medium" fontSize={'15px'} color={'#5A5A5A'}>{formatNumber(row.baseRent)}</Text>
                             </Box>
                             <Box w={'40%'} onClick={() => onTenantClick(row)} fontSize={'14px'}>
                                 <Text className="satoshi-bold" >Tenant</Text>
                                 <Flex align={'center'} gap={2}>
-                                    <Avatar name={row.tenantName} src={row.tenantProfilePic} />
+                                    <Avatar name={row.tenantName} />
                                     <Text className="satoshi-medium">{row.tenantName ?? 'N/A'}</Text>
                                 </Flex>
                             </Box>
@@ -87,29 +87,30 @@ export const MobileTable = ({ data, loading, emptyDetails, onTenantClick, tableN
                             <HStack justify={'space-between'} align={'start'}>
                                 <Box fontSize={'14px'}>
                                     <Text className="satoshi-bold" >Move In Date</Text>
-                                    <Text className="satoshi-medium" color={'#5A5A5A'}>{formatDate(row.moveInDate)}</Text>
+                                    <Text className="satoshi-medium" color={'#5A5A5A'}>{formatDate(row.leaseStartDate)}</Text>
                                 </Box>
                                 <Box w={'40%'} fontSize={'14px'}>
                                     <Text mb={2} className="satoshi-bold" >Lease Left</Text>
-                                    <Progress showValueText value={stringToNumber(row.leaseExpiry)} color={leaseExpiry(stringToNumber(row.leaseExpiry))} info={'help'} />
+                                    <Progress showValueText value={stringToNumber('0')} color={leaseExpiry(stringToNumber('0'))} info={'help'} />
                                 </Box>
                             </HStack>
                             <Box mt={7}>
                                 <HStack mb={2} justify={'space-between'} w={'full'}>
                                     <Text className="satoshi-medium text-sm">Complaints</Text>
                                     <Text className="satoshi-medium text-sm">
-                                        {row.complaints.openPercent}
+                                        {//row.complaints.openPercent
+                                        }
                                     </Text>
 
                                 </HStack>
-
+                                {/*
                                 <Progress
                                     valueText={`${row?.complaints.openPercent ?? 0}`}
                                     value={stringToNumber(
                                         String(row?.complaints.openPercent ?? "0"),
                                     )}
                                     color={complaints(row?.complaints.openPercent ?? 0)}
-                                />
+                                />*/}
                             </Box></>}
 
                     </SectionBox>
