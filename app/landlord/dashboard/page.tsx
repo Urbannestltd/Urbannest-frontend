@@ -81,18 +81,19 @@ export default function Dashboard() {
 
     const CardData: CardData[] = [
         {
-            title: "Total Properties",
-            data: stats?.totalProperties ?? 0,
+            title: selectedRevenueProperty === 'all' ? "Total Properties" : 'Total Units',
+            data: (selectedRevenueProperty === 'all' ? stats?.totalProperties : revenueProperties.length) ?? 0,
             cardColor: "#E8EBEE",
             border: true,
             emptyMessage: 'Across your portfolio'
 
         },
         {
-            title: "Portfolio Occupancy",
+            title: selectedRevenueProperty === 'all' ? "Portfolio Occupancy" : "Property Occupancy",
             data: `${stats?.occupancyRate ?? 0}%`,
             border: true,
             progress: stats?.occupancyRate ?? 0,
+            progressText: `${0} / ${revenueProperties.length ?? 0} units`,
         },
         {
             title: "Revenue(YTD)",

@@ -7,6 +7,7 @@ export interface CardData {
     data: string | number
     emptyMessage?: string
     progress?: number
+    progressText?: string
     isTitleBold?: boolean
     attentionRequired?: boolean
     actionRequired?: boolean
@@ -112,7 +113,19 @@ export const DashboardCard = ({
                                         </Text>
                                     )}
                                 </Flex>
-                                {item.progress && <Progress value={item.progress} />}
+                                {item.progress && <div className="w-full flex justify-between items-center ">
+                                    <Progress
+                                        mt={1}
+                                        w={'75%'}
+                                        size={"sm"}
+                                        color={"#545F73"}
+                                        value={item.progress}
+                                    />
+                                    {item.progressText && <Text ml={2}
+                                        color={"#757575"}
+                                        fontSize={"12px"}
+                                        className="satoshi-medium w-fit">{item.progressText}</Text>}
+                                </div>}
                             </Flex>
                         </HStack>
                     ) : (
@@ -210,14 +223,20 @@ export const DashboardCard = ({
                                     {item.emptyMessage}
                                 </Text>
                             )}
-                            {item.progress && (
+                            {item.progress && <div className="w-full flex justify-between items-center ">
                                 <Progress
                                     mt={1}
+                                    w={'75%'}
                                     size={"sm"}
                                     color={"#545F73"}
                                     value={item.progress}
                                 />
-                            )}
+                                {item.progressText && <Text ml={2}
+                                    color={"#757575"}
+                                    fontSize={"12px"}
+                                    className="satoshi-medium w-fit">{item.progressText}</Text>}
+                            </div>}
+
                         </Span>
                     )}
                 </Flex>

@@ -295,18 +295,17 @@ export function CustomSelect<T extends FieldValues>({
                         >
                             {multiple && <Select.HiddenSelect />}
                             <Select.Control  >
-                                <HStack rounded={'md'} flexWrap="nowrap" w={width ?? 'fit-content'}>
-                                    <Select.Trigger h={avatar ? 'fit' : triggerHeight} justifyContent={'start'} minW="max-content" whiteSpace="nowrap">
-                                        {icon && <Icon className='ml-1' color='fg.muted' size='xs' as={icon} />}
-                                        {isLoading ? (
-                                            <Text>Loading...</Text>
-                                        ) : (
-                                            avatar ? <SelectValue /> : <Select.ValueText p={icon ? 1 : 2} mr={4} textAlign={alignCenter ? 'center' : 'start'} textWrap={'nowrap'} pr={3} w={'max-content'} placeholder={placeholder} fontSize={'14px'} _placeholder={{ color: '#B3B3B3' }} color='black' />
-                                        )}
-                                    </Select.Trigger>
-                                    <Select.IndicatorGroup>
-                                        <Select.Indicator />
-                                    </Select.IndicatorGroup></HStack>
+                                <Select.Trigger h={avatar ? 'fit' : triggerHeight} justifyContent={'start'} minW="max-content" whiteSpace="nowrap">
+                                    {icon && <Icon className='ml-1' color='fg.muted' size='xs' as={icon} />}
+                                    {isLoading ? (
+                                        <Text>Loading...</Text>
+                                    ) : (
+                                        avatar ? <SelectValue /> : <Select.ValueText p={icon ? 1 : 2} mr={8} textAlign={alignCenter ? 'center' : 'start'} textWrap={'nowrap'} pr={3} w={'max-content'} placeholder={placeholder} fontSize={'14px'} _placeholder={{ color: '#B3B3B3' }} color='black' />
+                                    )}
+                                </Select.Trigger>
+                                <Select.IndicatorGroup >
+                                    <Select.Indicator />
+                                </Select.IndicatorGroup>
                             </Select.Control>
 
                             <Portal >

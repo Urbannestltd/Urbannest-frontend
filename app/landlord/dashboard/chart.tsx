@@ -81,7 +81,7 @@ export const RevenuePropertyChart = ({ property, name }: { property: RevenueProp
                         right: 0,
                         left: 0,
                         bottom: 5,
-                    }} data={chartData} barSize={32}>
+                    }} data={chartData} barSize={20}>
                         <CartesianGrid
                             vertical={false}
                             horizontal={false}

@@ -16,7 +16,7 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
     const isLoading = useLandlordTenantStore((state) => state.isLoading)
 
     useEffect(() => {
-        fetchTenant(propertyId, tenantId ? tenantId : tenant.tenantId,)
+        fetchTenant(propertyId, tenantId ? tenantId : tenant.id,)
     }, [tenant?.id, tenantId, propertyId])
 
     const status = [
