@@ -1,18 +1,12 @@
 import { DataTable } from "@/components/ui/data-table";
-import { SearchInput } from "@/components/ui/search-input";
-import { Box, Center, createListCollection, Flex, HStack, Menu, Stack, Tabs, Text, VStack } from "@chakra-ui/react";
+import { Box, Flex, HStack, Stack, Tabs, Text, VStack } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import EmptyTableIcon from '@/app/assets/icons/empty-state-icons/visitor-table.svg'
-import { LuEllipsisVertical } from "react-icons/lu";
 import Image from "next/image";
 import { formatDatetoTime, formatNumber } from "@/services/date";
 import { Paginator } from "@/components/ui/paginator";
-import { usePathname } from "next/navigation";
 import { ApprovalActions, TenantApprovalStatus, useColumns } from "./columns";
 import { Approvals, useApprovalsStore } from "@/store/landlord/approvals";
-import { usePropertyStore } from "@/store/landlord/properties";
-import { useForm } from "react-hook-form";
-import { PropertyFilterFormData } from "@/schema/fm";
 
 interface TabProps {
     list?: Approvals[]
@@ -34,7 +28,7 @@ const DummyData: Approvals[] = [
         agentId: "string",
         agentName: "string",
         dateForwarded: "2026-06-20T23:39:17.959Z",
-        outcome: "APPROVED",
+        outcome: 'PENDING',
         decidedAt: "2026-06-20T23:39:17.959Z",
         rejectionReason: "string",
     }

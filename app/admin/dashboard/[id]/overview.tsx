@@ -37,6 +37,7 @@ import { Controller, useForm } from "react-hook-form"
 import { CustomEditable } from "@/components/ui/custom-fields"
 import { addPropertyFormData, editPropertyFormData } from "@/schema/admin"
 import { StoreFile } from "@/services/tenant/maintenance"
+import { ContactSection } from "@/components/sections/overview/contacts"
 
 interface OverviewProps {
     property?: Property | null
@@ -455,56 +456,7 @@ export const Overview = React.forwardRef<{ handleSave: () => void }, OverviewPro
                         )}
                     </Box>
                 </SectionBox>
-                <SectionBox mt={6}>
-                    {PropertyContacts.map((contact, index) => (
-                        <Box key={index}>
-                            <HStack justify={"space-between"}>
-                                <Text
-                                    fontSize={"12px"}
-                                    textTransform={"uppercase"}
-                                    color={"#757575"}
-                                    className="satoshi-bold tracking-[1.1px]"
-                                >
-                                    {contact.title}
-                                </Text>
-                                <LuEllipsisVertical />
-                            </HStack>
-                            <Flex mt={4} justify={"start"}>
-                                <Avatar size={"lg"} src={contact.pfp} />
-                                <Box ml={"11px"} w={"full"}>
-                                    <Box>
-                                        <Text fontSize={"14px"} className="satoshi-bold">
-                                            {contact.name}
-                                        </Text>
-                                        <Text fontSize={"11px"} color={"#010F0D"}>
-                                            {contact.email}
-                                        </Text>
-                                    </Box>
-                                    <Flex mt={3} gap={2}>
-                                        <MainButton
-                                            size="lg"
-                                            variant="ghost"
-                                            className="px-1 h-[29px]"
-                                            icon={<LuPhone />}
-                                        >
-                                            Call
-                                        </MainButton>
-                                        <MainButton
-                                            size="lg"
-                                            variant="ghost"
-                                            className="px-1 h-[29px]"
-                                            icon={<LuMail />}
-                                        >
-                                            Email
-                                        </MainButton>
-                                    </Flex>
-                                </Box>
-                            </Flex>
-
-                            {index !== 2 && <Divider my={6} />}
-                        </Box>
-                    ))}
-                </SectionBox>
+                <ContactSection data={PropertyContacts} />
             </Box>
         </Flex >
     )

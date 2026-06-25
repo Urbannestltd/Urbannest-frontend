@@ -15,8 +15,12 @@ export interface Row {
     status: string
     baseRent: number
     tenantName: string
+    tenantId: string
     leaseStartDate: string
     leaseEndDate: string
+    complaintsPercentage: number,
+    leaseExpiryPercentage: number,
+    members: number,
 
     /* complaints: {
          openPercent: number
@@ -110,22 +114,22 @@ export const useUnitColumns = (onTenantClick: (row: Row) => void): ColumnDef<Row
             header: 'Members'
         },
         {
-            accessorKey: 'leaseExpiry',
+            accessorKey: 'leaseExpiryPercentage',
             header: 'Lease Left',
             cell({ row }) {
-                return <ProgressCircle showValueText value={stringToNumber('0')} thickness={2} cap={'round'} color={leaseExpiry(stringToNumber('0'))} size={'xs'} />
+                return <ProgressCircle showValueText value={stringToNumber(row.original.leaseExpiryPercentage)} thickness={2} cap={'round'} color={leaseExpiry(stringToNumber(row.original.leaseExpiryPercentage))} size={'xs'} />
             },
         },
-        /* {
-             accessorFn: (row) => row.complaints.openPercent,
-             header: 'Complaints',
-             cell: ({ row }) => {
-                 const complaint = complaints(row.original.complaints.openPercent)
-                 return (
-                     <Progress showValueText value={row.original.complaints.openPercent} color={complaint} info={complaint} />
-                 )
-             }
-         },*/
+        {
+            accessorFn: (row) => row.complaintsPercentage,
+            header: 'Complaints',
+            cell: ({ row }) => {
+                const complaint = complaints(row.original.complaintsPercentage)
+                return (
+                    <Progress showValueText value={row.original.complaintsPercentage} color={complaint} info={complaint} />
+                )
+            }
+        },
 
 
     ]

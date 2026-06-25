@@ -91,26 +91,25 @@ export const MobileTable = ({ data, loading, emptyDetails, onTenantClick, tableN
                                 </Box>
                                 <Box w={'40%'} fontSize={'14px'}>
                                     <Text mb={2} className="satoshi-bold" >Lease Left</Text>
-                                    <Progress showValueText value={stringToNumber('0')} color={leaseExpiry(stringToNumber('0'))} info={'help'} />
+                                    <Progress showValueText value={stringToNumber(row.leaseExpiryPercentage)} color={leaseExpiry(stringToNumber(row.leaseExpiryPercentage))} info={'help'} />
                                 </Box>
                             </HStack>
                             <Box mt={7}>
                                 <HStack mb={2} justify={'space-between'} w={'full'}>
                                     <Text className="satoshi-medium text-sm">Complaints</Text>
                                     <Text className="satoshi-medium text-sm">
-                                        {//row.complaints.openPercent
-                                        }
+                                        {row.complaintsPercentage}
                                     </Text>
 
                                 </HStack>
-                                {/*
+
                                 <Progress
-                                    valueText={`${row?.complaints.openPercent ?? 0}`}
+                                    valueText={`${row?.complaintsPercentage ?? 0}`}
                                     value={stringToNumber(
-                                        String(row?.complaints.openPercent ?? "0"),
+                                        String(row?.complaintsPercentage ?? "0"),
                                     )}
-                                    color={complaints(row?.complaints.openPercent ?? 0)}
-                                />*/}
+                                    color={complaints(row?.complaintsPercentage ?? 0)}
+                                />
                             </Box></>}
 
                     </SectionBox>

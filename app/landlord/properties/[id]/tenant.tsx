@@ -5,8 +5,9 @@ import { useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { useLandlordTenantStore } from "@/store/landlord/tenant"
 import { CohabitantsSection, LeaseInfoSection } from "@/components/sections/tenant/lease-info"
-import { GeneralInfoSection } from "@/components/sections/tenant/general-info"
+import { generalInfoProps, GeneralInfoSection } from "@/components/sections/tenant/general-info"
 import { PaymentHistorySection, VisitorHistorySection } from "@/components/sections/tenant/history"
+import { ContactSection } from "@/components/sections/overview/contacts"
 
 export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string }) => {
     const searchParams = useSearchParams()
@@ -16,8 +17,20 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
     const isLoading = useLandlordTenantStore((state) => state.isLoading)
 
     useEffect(() => {
-        fetchTenant(propertyId, tenantId ? tenantId : tenant.id,)
-    }, [tenant?.id, tenantId, propertyId])
+        fetchTenant(tenantId ? tenantId : tenant.tenantId,)
+    }, [tenant?.tenantId, tenantId, propertyId])
+
+    const tenantDeets: generalInfoProps = {
+        fullName: tenants?.tenantName ?? 'N/A',
+        profilePic: tenants?.profilePic ?? 'N/A',
+        status: tenants?.status ?? 'N/A',
+        email: tenants?.tenantEmail ?? 'N/A',
+        phone: tenants?.tenantPhone ?? 'N/A',
+        emergencyContact: 'N/A',
+        dateOfBirth: 'N/A',
+        occupation: 'N/A',
+        employer: 'N/A'
+    }
 
     const status = [
         {
@@ -32,6 +45,14 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
         }
     ]
 
+    const PropertyContacts = [
+        {
+            title: "Facility Manager",
+            name: "N/A",
+            email: "N/A",
+            pfp: 'N/A',
+        },
+    ]
     const statusDeets = status.find((status) => status.value === tenants?.status)
 
     if (!tenants && !isLoading) return <Flex h={'50vh'} justify={'center'} align={'center'}>
@@ -46,13 +67,11 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
         tenants &&
         <Flex maxW={'full'} border={''} direction={{ base: 'column', md: 'row' }} gap={8}>
             <Box w={{ base: 'full', md: '70%' }}>
-                <GeneralInfoSection tenants={tenants} statusDeets={statusDeets} />
+                <GeneralInfoSection tenants={tenantDeets} statusDeets={statusDeets} />
                 <LeaseInfoSection currentLease={tenants?.currentLease} />
-                <VisitorHistorySection visitorHistory={tenants?.visitorHistory} />
             </Box>
             <Box w={{ base: 'full', md: "30%" }}>
-                <CohabitantsSection cohabitants={tenants?.cohabitants} />
-                <PaymentHistorySection paymentHistory={tenants?.paymentHistory} />
+                <ContactSection data={PropertyContacts} />
             </Box>
         </Flex>
     )

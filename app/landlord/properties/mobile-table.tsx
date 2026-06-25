@@ -58,7 +58,7 @@ export const MobileTable = ({ data, loading, emptyDetails, tableName }: { data: 
 
                 return (
                     <Box w={'full'} border={'1px solid #A9B4B926'} cursor={'pointer'} onClick={() => router.push(`/landlord/properties/${item.id}`)} rounded={'4px'} overflow={'hidden'} my={4}>
-                        <Flex justify={'end'} w={'full'} p={2} h={'138px'} bgImage={`url(${item.images[0] ?? rentImage.src})`} bgPos={'center'} bgRepeat={'no-repeat'} backgroundSize={'cover'}>
+                        <Flex justify={'end'} w={'full'} p={2} h={'138px'} bgImage={`url(${item.images?.[0] ?? rentImage.src})`} bgPos={'center'} bgRepeat={'no-repeat'} backgroundSize={'cover'}>
                             <HStack bg={'#FFFFFFE5'} h={'fit'} rounded={'2px'} px={2} py={1} border={'1px solid #A9B4B933'} w={'fit'}>
                                 <Text className="satoshi-bold" fontSize={'12px'} letterSpacing={'0.55px'} color={'#545F73'} textTransform={'uppercase'}>
                                     {types.find((type) => type.value === item.type)?.label}

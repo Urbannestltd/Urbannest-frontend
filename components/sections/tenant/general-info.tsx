@@ -4,7 +4,7 @@ import { Avatar } from "@/components/ui/avatar"
 import { Box, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react"
 import { PageTitle } from "@/components/ui/page-title"
 import { formatDate } from "@/services/date"
-interface generalInfoProps {
+export interface generalInfoProps {
     fullName: string
     profilePic: string
     status: string

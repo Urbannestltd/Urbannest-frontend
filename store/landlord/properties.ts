@@ -86,8 +86,12 @@ export interface Unit {
 	status: string
 	baseRent: number
 	tenantName: string
+	tenantId: string
 	leaseStartDate: string
 	leaseEndDate: string
+	complaintsPercentage: number
+	leaseExpiryPercentage: number
+	members: number
 }
 
 interface PropertyStore {

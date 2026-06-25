@@ -9,6 +9,7 @@ import { Approvals, useApprovalsStore } from "@/store/landlord/approvals"
 import { formatDate, formatNumber } from "@/services/date"
 import Image from "next/image"
 import UserAvatar from "@/app/assets/images/user-avatar.png"
+import { Drawers } from "@/components/ui/drawer"
 
 export const TenantApprovalStatus: { label: string, value: string, color: string, bgColor: string }[] = [
     {
@@ -129,11 +130,11 @@ export const ApprovalActions = ({ approval }: { approval: Approvals }) => {
                 onClick={() => { setOpenModal(true); setType('decline') }}
             />
         </Flex>
-        <Modal
-            size={'cover'}
+        <Drawers
+            size={'full'}
             open={openDetails}
             onOpenChange={setOpenDetails}
-            className="w-[94vw] max-w-[760px] max-h-[97vh] overflow-hidden rounded-none md:rounded-[2px]"
+            className="w-[94vw] max-w-[760px] max-h-[100vh] overflow-hidden rounded-none md:rounded-[2px]"
             modalContent={(
                 <TenantApprovalDetailsModal
                     approval={approval}
@@ -190,7 +191,7 @@ const TenantApprovalDetailsModal = ({
         .toUpperCase()
 
     return (
-        <Box bg="white" color="#2B3338" className="satoshi" maxH="97vh" overflow='scroll'>
+        <Box bg="white" color="#2B3338" className="satoshi" maxH="100vh" overflow='scroll'>
             <Flex
                 gap={{ base: 4, md: 7 }}
                 align={{ base: "start", md: "center" }}

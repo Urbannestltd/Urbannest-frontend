@@ -30,12 +30,12 @@ export interface Cohabitant {
 }
 
 interface TenantState {
-	id: string
-	fullName: string
+	tenantId: string
+	tenantName: string
 	profilePic: string
 	status: string
-	email: string
-	phone: string
+	tenantEmail: string
+	tenantPhone: string
 	emergencyContact: string
 	dateOfBirth: string
 	occupation: string
@@ -60,16 +60,16 @@ interface TenantState {
 interface TenantStore {
 	tenant: TenantState | null
 	isLoading: boolean
-	fetchTenant: (id: string, tenantId: string) => Promise<void>
+	fetchTenant: (tenantId: string) => Promise<void>
 }
 
 export const useLandlordTenantStore = create<TenantStore>((set) => ({
 	tenant: null,
 	isLoading: false,
-	fetchTenant: async (id: string, tenantId: string) => {
+	fetchTenant: async (tenantId: string) => {
 		set({ isLoading: true, tenant: null })
 		try {
-			const tenant = await http.get(landlordEndpoints.fetchTenant(id, tenantId))
+			const tenant = await http.get(landlordEndpoints.fetchTenant(tenantId))
 			set({ tenant: tenant.data.data })
 			console.log("✅ Landlord tenant set in store:", tenant.data.data)
 		} catch (e) {
