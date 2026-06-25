@@ -136,7 +136,6 @@ export default function Dashboard() {
                 <Flex w={{ base: 'fit-content', md: 'fit-content' }}>
                     <CustomSelect name="revenueProperty" collection={properties} control={control} label="Select Property" placeholder="All Property" />
                 </Flex>
-                <MainButton size='sm' className=" h-[43px]" >Show</MainButton>
             </HStack>
             <Flex
                 mt={"45px"}
