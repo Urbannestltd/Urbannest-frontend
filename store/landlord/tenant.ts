@@ -30,12 +30,12 @@ export interface Cohabitant {
 }
 
 interface TenantState {
-	tenantId: string
-	tenantName: string
+	id: string
+	fullName: string
 	profilePic: string
 	status: string
-	tenantEmail: string
-	tenantPhone: string
+	email: string
+	phone: string
 	emergencyContact: string
 	dateOfBirth: string
 	occupation: string

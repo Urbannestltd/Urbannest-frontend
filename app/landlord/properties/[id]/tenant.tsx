@@ -20,17 +20,7 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
         fetchTenant(tenantId ? tenantId : tenant.tenantId,)
     }, [tenant?.tenantId, tenantId, propertyId])
 
-    const tenantDeets: generalInfoProps = {
-        fullName: tenants?.tenantName ?? 'N/A',
-        profilePic: tenants?.profilePic ?? 'N/A',
-        status: tenants?.status ?? 'N/A',
-        email: tenants?.tenantEmail ?? 'N/A',
-        phone: tenants?.tenantPhone ?? 'N/A',
-        emergencyContact: 'N/A',
-        dateOfBirth: 'N/A',
-        occupation: 'N/A',
-        employer: 'N/A'
-    }
+
 
     const status = [
         {
@@ -67,7 +57,7 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
         tenants &&
         <Flex maxW={'full'} border={''} direction={{ base: 'column', md: 'row' }} gap={8}>
             <Box w={{ base: 'full', md: '70%' }}>
-                <GeneralInfoSection tenants={tenantDeets} statusDeets={statusDeets} />
+                <GeneralInfoSection tenants={tenants} statusDeets={statusDeets} />
                 <LeaseInfoSection currentLease={tenants?.currentLease} />
             </Box>
             <Box w={{ base: 'full', md: "30%" }}>
