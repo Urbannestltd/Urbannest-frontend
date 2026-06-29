@@ -8,12 +8,14 @@ import { CohabitantsSection, LeaseInfoSection } from "@/components/sections/tena
 import { generalInfoProps, GeneralInfoSection } from "@/components/sections/tenant/general-info"
 import { PaymentHistorySection, VisitorHistorySection } from "@/components/sections/tenant/history"
 import { ContactSection } from "@/components/sections/overview/contacts"
+import { usePropertyStore } from "@/store/landlord/properties"
 
 export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string }) => {
     const searchParams = useSearchParams()
     const tenantId = searchParams.get('tenantId')
     const tenants = useLandlordTenantStore((state) => state.tenant)
     const fetchTenant = useLandlordTenantStore((state) => state.fetchTenant)
+    const property = usePropertyStore((state) => state.property)
     const isLoading = useLandlordTenantStore((state) => state.isLoading)
 
     useEffect(() => {
@@ -38,9 +40,9 @@ export const Tenant = ({ tenant, propertyId }: { tenant: Row, propertyId: string
     const PropertyContacts = [
         {
             title: "Facility Manager",
-            name: "N/A",
-            email: "N/A",
-            pfp: 'N/A',
+            name: property?.facilityManager?.name ?? "N/A",
+            email: property?.facilityManager?.email ?? "N/A",
+            pfp: property?.facilityManager?.photoUrl ?? "N/A",
         },
     ]
     const statusDeets = status.find((status) => status.value === tenants?.status)

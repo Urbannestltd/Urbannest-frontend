@@ -92,13 +92,13 @@ export const Unit = () => {
                         <SectionBox key={index} my={4}>
                             <Box ref={index === units?.length - 1 ? ref : null}>
                                 <PageTitle
-                                    title={`floor ${index + 1}`}
+                                    title={floor.floor}
                                     fontSize={{ base: "18px", md: "22px" }}
                                 />
                                 {isMobile ? (
                                     <MobileTable
                                         onTenantClick={handleTenantClick}
-                                        data={units ?? []}
+                                        data={floor.units ?? []}
                                         emptyDetails={{
                                             title: "No Units Found",
                                             description: "No Units Found",
@@ -109,7 +109,7 @@ export const Unit = () => {
                                 ) : (
                                     <DataTable
                                         tableName="Units"
-                                        data={units ?? null}
+                                        data={floor.units ?? null}
                                         emptyDetails={{
                                             title: "No Units Found",
                                             description: "No Units Found",

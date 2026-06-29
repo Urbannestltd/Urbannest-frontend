@@ -8,16 +8,16 @@ import { ColumnDef } from "@tanstack/react-table"
 import { ProgressCircle } from "@/components/ui/progress-circle"
 
 export interface Row {
-    id: string
-    propertyId: string
-    propertyName: string
-    unitName: string
-    status: string
-    baseRent: number
-    tenantName: string
-    tenantId: string
-    leaseStartDate: string
-    leaseEndDate: string
+    id: string,
+    propertyId: string,
+    propertyName: string,
+    unitName: string,
+    status: string,
+    baseRent: number,
+    tenantId: string,
+    tenantName: string,
+    leaseStartDate: string,
+    leaseEndDate: string,
     complaintsPercentage: number,
     leaseExpiryPercentage: number,
     members: number,

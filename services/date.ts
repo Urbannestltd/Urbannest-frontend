@@ -229,3 +229,13 @@ export const getFinancialDateRange = (filter: string) => {
 
 	return getDateRange(filter)
 }
+
+export const getNumberRange = (value?: string) => {
+	if (!value || value === "all") return undefined
+
+	const [min, max] = value.split("-").map((item) => Number(item.trim()))
+
+	if (!Number.isFinite(min) || !Number.isFinite(max)) return undefined
+
+	return { min, max }
+}

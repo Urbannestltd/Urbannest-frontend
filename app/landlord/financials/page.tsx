@@ -17,6 +17,7 @@ import toast from "react-hot-toast"
 import { LuCalendar, LuDownload, LuPlus } from "react-icons/lu"
 import { MdOutlineFilterListOff, MdRefresh } from "react-icons/md"
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
+import emptyTableIcon from "@/app/assets/icons/empty-state-icons/properties-empty.svg"
 import { RevenueAnalytics, RevenueProperty } from "../dashboard/chart"
 import { useColumns, useFinancialsColumns } from "./columns"
 import { SearchInput } from "@/components/ui/search-input"
@@ -32,6 +33,7 @@ type RevenueShareLegendItem = revenueShare & {
     label: string
     color: string
 }
+
 
 const REVENUE_SHARE_COLORS = ["#2A3348", "#545F73", "#A9B4B9", "#C7CDD2", "#E1E5E8"]
 
@@ -211,6 +213,11 @@ export default function LandlordFinancials() {
                 data={arrears}
                 loading={loadingArrears}
                 tableName="Arrears"
+                emptyDetails={{
+                    icon: emptyTableIcon,
+                    title: 'No Deficits Yet',
+                    description: 'All rent balances are up to date. Outstanding or overdue payments across your properties will appear here.'
+                }}
                 columns={columns}
                 bgColor="white"
                 bordered
@@ -255,11 +262,17 @@ export default function LandlordFinancials() {
             <DataTable
                 data={transactions}
                 loading={loadingTransactions}
+                emptyDetails={{
+                    icon: emptyTableIcon,
+                    title: 'No Transactions Yet',
+                    description: 'Transaction records will appear here once rent payments are recorded for your properties'
+                }}
                 tableName="Transactions"
                 columns={transactCol}
                 bgColor="white"
                 bordered
                 rounded
+
             />
         </Box>
     )

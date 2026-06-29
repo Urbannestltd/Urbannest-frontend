@@ -19,7 +19,7 @@ import { SearchInput } from "@/components/ui/search-input"
 import { MdOutlineFilterListOff, MdRefresh } from "react-icons/md"
 import { DataTable } from "@/components/ui/data-table"
 import { useColumns } from "./columns"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import emptyTableIcon from "@/app/assets/icons/empty-state-icons/properties-empty.svg"
 import notFoundIcon from "@/app/assets/icons/facilty-icons/not-found-icon.svg"
 import { MobileTable } from "./mobile-table"
@@ -27,6 +27,7 @@ import { BiSlider } from "react-icons/bi"
 import { useRouter } from "next/navigation"
 import { usePropertyStore } from "@/store/landlord/properties"
 import { PropertyFilterFormData } from "@/schema/landlord"
+import { getNumberRange } from "@/services/date"
 
 export default function Properties() {
     const { control, watch, getValues, reset } = useForm<PropertyFilterFormData>()
@@ -39,6 +40,11 @@ export default function Properties() {
     const [search, setSearch] = useState("")
     const [notFound, setNotFound] = useState(false)
     const router = useRouter()
+    const selectedUnitValue = watchedValues.noOfUnits?.[0]
+    const selectedOccupancyValue = watchedValues.occupancy?.[0]
+    const selectedUnitRange = useMemo(() => getNumberRange(selectedUnitValue), [selectedUnitValue])
+    const selectedOccupancyRange = useMemo(() => getNumberRange(selectedOccupancyValue), [selectedOccupancyValue])
+
 
     const hasActiveFilter = !!(
         search ||
@@ -57,14 +63,22 @@ export default function Properties() {
             () => {
                 fetchProperties({
                     search,
-                    occupancy:
-                        watchedValues.occupancy?.[0] === "all"
+                    minUnits:
+                        selectedUnitValue === "all"
                             ? undefined
-                            : watchedValues.occupancy?.[0],
-                    unitRange:
-                        watchedValues.noOfUnits?.[0] === "all"
+                            : selectedUnitRange?.min,
+                    maxUnits:
+                        selectedUnitValue === "all"
                             ? undefined
-                            : watchedValues.noOfUnits?.[0],
+                            : selectedUnitRange?.max,
+                    minOccupancy:
+                        selectedOccupancyValue === "all"
+                            ? undefined
+                            : selectedOccupancyRange?.min,
+                    maxOccupancy:
+                        selectedOccupancyValue === "all"
+                            ? undefined
+                            : selectedOccupancyRange?.max,
                     type: watchedValues.property?.[0] === "all" ? undefined : watchedValues.property?.[0],
                 })
             },
@@ -76,6 +90,10 @@ export default function Properties() {
         watchedValues.noOfUnits,
         watchedValues.occupancy,
         watchedValues.property,
+        selectedUnitRange,
+        selectedUnitValue,
+        selectedOccupancyRange,
+        selectedOccupancyValue,
         search,
     ])
 
@@ -134,15 +152,22 @@ export default function Properties() {
                             fetchProperties({
                                 search,
                                 // type: formValues.[0],
-                                occupancy:
-                                    watchedValues.occupancy?.[0] === "all"
+                                minUnits:
+                                    selectedUnitValue === "all"
                                         ? undefined
-                                        : watchedValues.occupancy?.[0],
-
-                                unitRange:
-                                    watchedValues.noOfUnits?.[0] === "all"
+                                        : selectedUnitRange?.min,
+                                maxUnits:
+                                    selectedUnitValue === "all"
                                         ? undefined
-                                        : watchedValues.noOfUnits?.[0],
+                                        : selectedUnitRange?.max,
+                                minOccupancy:
+                                    selectedOccupancyValue === "all"
+                                        ? undefined
+                                        : selectedOccupancyRange?.min,
+                                maxOccupancy:
+                                    selectedOccupancyValue === "all"
+                                        ? undefined
+                                        : selectedOccupancyRange?.max,
                                 //propertyId: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
                             })
                         }} placeholder="" width={"full"} />{" "}
@@ -170,15 +195,22 @@ export default function Properties() {
                                     fetchProperties({
                                         search,
                                         // type: formValues.[0],
-                                        occupancy:
-                                            watchedValues.occupancy?.[0] === "all"
+                                        minUnits:
+                                            selectedUnitValue === "all"
                                                 ? undefined
-                                                : watchedValues.occupancy?.[0],
-
-                                        unitRange:
-                                            watchedValues.noOfUnits?.[0] === "all"
+                                                : selectedUnitRange?.min,
+                                        maxUnits:
+                                            selectedUnitValue === "all"
                                                 ? undefined
-                                                : watchedValues.noOfUnits?.[0],
+                                                : selectedUnitRange?.max,
+                                        minOccupancy:
+                                            selectedOccupancyValue === "all"
+                                                ? undefined
+                                                : selectedOccupancyRange?.min,
+                                        maxOccupancy:
+                                            selectedOccupancyValue === "all"
+                                                ? undefined
+                                                : selectedOccupancyRange?.max,
                                         type: watchedValues.property?.[0] === 'all' ? undefined : watchedValues.property?.[0],
                                     })
                                 }}
@@ -291,3 +323,4 @@ const unitFilter = createListCollection({
         { label: "141-150", value: "141-150" },
     ],
 })
+

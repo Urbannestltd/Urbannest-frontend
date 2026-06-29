@@ -53,45 +53,22 @@ export interface Property {
 }
 
 export interface Units {
-	grouped: {
-		units: {
-			complaints: {
-				openPercent: number
-				openCount: number
-				total: number
-			}
-			members: number
-			leaseExpiry: string
-			moveInDate: string
-			tenantProfilePic: string
-			tenantName: string
-			tenantId: string
-			leaseId: string
-			rentAmount: number
-			status: string
-			floor: string
-			name: string
-			id: string
-		}[]
-		floor: string
+	floor: string
+	units: {
+		id: string
+		propertyId: string
+		propertyName: string
+		unitName: string
+		status: string
+		baseRent: number
+		tenantId: string
+		tenantName: string
+		leaseStartDate: string
+		leaseEndDate: string
+		complaintsPercentage: number
+		leaseExpiryPercentage: number
+		members: number
 	}[]
-	totalUnits: number
-}
-
-export interface Unit {
-	id: string
-	propertyId: string
-	propertyName: string
-	unitName: string
-	status: string
-	baseRent: number
-	tenantName: string
-	tenantId: string
-	leaseStartDate: string
-	leaseEndDate: string
-	complaintsPercentage: number
-	leaseExpiryPercentage: number
-	members: number
 }
 
 interface PropertyStore {
@@ -100,15 +77,17 @@ interface PropertyStore {
 	isLoading: boolean
 	isLoadingProperty: boolean
 	isLoadingUnits: boolean
-	units: Unit[] | null
+	units: Units[] | null
 	errorLoadingProperty: boolean
 	errorLoadingProperties: boolean
 	errorLoadingUnits: boolean
 	fetchProperties: (filter?: {
 		search?: string
 		type?: string
-		occupancy?: string
-		unitRange?: string
+		minUnits?: number
+		maxUnits?: number
+		minOccupancy?: number
+		maxOccupancy?: number
 	}) => Promise<void>
 	fetchProperty: (id: string) => Promise<void>
 	fetchUnits: (id: string, search?: string) => Promise<void>

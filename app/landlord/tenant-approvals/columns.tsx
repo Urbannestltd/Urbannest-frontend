@@ -134,7 +134,7 @@ export const ApprovalActions = ({ approval }: { approval: Approvals }) => {
             size={'full'}
             open={openDetails}
             onOpenChange={setOpenDetails}
-            className="w-[94vw] max-w-[760px] max-h-[100vh] overflow-hidden rounded-none md:rounded-[2px]"
+            className="w-[94vw] max-w-[560px] max-h-[100vh] overflow-hidden rounded-none md:rounded-[2px]"
             modalContent={(
                 <TenantApprovalDetailsModal
                     approval={approval}
@@ -217,10 +217,10 @@ const TenantApprovalDetailsModal = ({
                     </Center>
                 </Box>
                 <Box minW={0}>
-                    <Text className="satoshi-bold capitalize" fontSize={{ base: "26px", md: "32px" }} lineHeight="1.1" color="#2E363B">
+                    <Text className="satoshi-bold capitalize" fontSize={{ base: "20px", md: "24px" }} lineHeight="1.1" color="#2E363B">
                         {approval.applicantName || initials || "Applicant"}
                     </Text>
-                    <Flex mt={3} gap={3} align="center" wrap="wrap" color="#566166" fontSize={{ base: "16px", md: "19px" }}>
+                    <Flex mt={3} gap={3} align="center" wrap="wrap" color="#566166" fontSize={{ base: "14px", md: "17px" }}>
                         <Text px={3} py={1} rounded="2px" bg="#E9EDF1" className="satoshi-bold" color="#545F73" lineHeight="1">
                             FORWARDED
                         </Text>
@@ -256,15 +256,15 @@ const TenantApprovalDetailsModal = ({
                     <Box border="1px solid #E8ECEF" rounded="7px" p={{ base: 5, md: 6 }} bg="white">
                         <Flex justify="space-between" align="start" gap={4} wrap="wrap">
                             <Box>
-                                <Text className="satoshi-bold" fontSize="19px" color="#2E363B">Robert Henderson</Text>
-                                <Text mt={1} fontSize="18px" color="#566166">Previous Landlord (2021-2023)</Text>
+                                <Text className="satoshi-bold" fontSize="16px" color="#2E363B">Robert Henderson</Text>
+                                <Text mt={1} fontSize="16px" color="#566166">Previous Landlord (2021-2023)</Text>
                             </Box>
-                            <HStack gap={1} color="#545F73" className="satoshi-bold" fontSize="18px">
-                                <LuPhone size={17} />
+                            <HStack gap={1} color="#545F73" className="satoshi-bold" fontSize="16px">
+                                <LuPhone size={16} />
                                 <Text>+1 (555) 902-1284</Text>
                             </HStack>
                         </Flex>
-                        <Text mt={4} color="#566166" textWrap={'wrap'} fontStyle="italic" fontSize={{ base: "17px", md: "19px" }} lineHeight="1.75">
+                        <Text mt={4} color="#566166" textWrap={'wrap'} fontStyle="italic" fontSize={{ base: "14px", md: "16px" }} lineHeight="1.75">
                             &quot;Eleanor was an exceptional tenant. Reliable payment history and maintained the property to a very high standard.&quot;
                         </Text>
                     </Box>
@@ -315,8 +315,8 @@ const TenantApprovalDetailsModal = ({
 const DetailsSection = ({ icon, title, children }: { icon: React.ReactElement, title: string, children: React.ReactNode }) => (
     <Box>
         <HStack gap={3} mb={5} color="#2B3338">
-            <Box color="#C7D4EF" fontSize="25px">{icon}</Box>
-            <Text fontSize={{ base: "19px", md: "22px" }} className="satoshi-medium">{title}</Text>
+            <Box color="#C7D4EF" fontSize="18px">{icon}</Box>
+            <Text fontSize={{ base: "19px", md: "18px" }} className="satoshi-medium">{title}</Text>
         </HStack>
         {children}
     </Box>
@@ -324,23 +324,23 @@ const DetailsSection = ({ icon, title, children }: { icon: React.ReactElement, t
 
 const InfoBlock = ({ label, value }: { label: string, value: string | number }) => (
     <Box>
-        <Text className="satoshi-bold" fontSize="18px" color="#566166">{label}</Text>
-        <Text mt={2} fontSize="19px" color="#2E363B">{value}</Text>
+        <Text className="satoshi-bold" fontSize="16px" color="#566166">{label}</Text>
+        <Text mt={2} fontSize="17px" color="#2E363B">{value}</Text>
     </Box>
 )
 
 const DocumentRow = ({ icon, name, onView }: { icon: React.ReactElement, name: string, onView: () => void }) => (
     <Flex align="center" justify="space-between" bg="#F1F5F7" rounded="7px" px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }} gap={4}>
         <HStack gap={4} minW={0}>
-            <Box color="#545F73" fontSize="25px" flexShrink={0}>{icon}</Box>
-            <Text fontSize={{ base: "17px", md: "20px" }} color="#2E363B" truncate>{name}</Text>
+            <Box color="#545F73" fontSize="20px" flexShrink={0}>{icon}</Box>
+            <Text fontSize={{ base: "14px", md: "17px" }} color="#2E363B" truncate>{name}</Text>
         </HStack>
         <HStack gap={{ base: 3, md: 6 }} color="#566166" flexShrink={0}>
             <button type="button" aria-label={`View ${name}`} onClick={onView}>
-                <LuEye size={22} />
+                <LuEye size={20} />
             </button>
             <button type="button" aria-label={`Download ${name}`}>
-                <LuDownload size={22} />
+                <LuDownload size={20} />
             </button>
         </HStack>
     </Flex>
@@ -429,10 +429,10 @@ const ApprovalModalHeader = ({ approval, sentLabel }: { approval: Approvals, sen
             </Center>
         </Box>
         <Box minW={0}>
-            <Text className="satoshi-bold capitalize" fontSize={{ base: "34px", md: "42px" }} lineHeight="1.1" color="#2E363B">
+            <Text className="satoshi-bold capitalize" fontSize={{ base: "20px", md: "22px" }} lineHeight="1.1" color="#2E363B">
                 {approval.applicantName || "Applicant"}
             </Text>
-            <Flex mt={4} gap={4} align="center" wrap="wrap" color="#566166" fontSize={{ base: "20px", md: "27px" }}>
+            <Flex mt={4} gap={4} align="center" wrap="wrap" color="#566166" fontSize={{ base: "16px", md: "20px" }}>
                 <Text px={4} py={2} rounded="3px" bg="#E9EDF1" className="satoshi-bold" color="#545F73" lineHeight="1">
                     FORWARDED
                 </Text>
