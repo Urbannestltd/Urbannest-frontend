@@ -155,13 +155,13 @@ export default function Dashboard() {
                 <Box w={{ base: "full", md: "50%" }}>
                     <SectionFlex p={4} align={"center"} mb={4} justifyContent={"space-between"}>
                         <Text className="satoshi-bold">Pending Tenant Approvals</Text>
-                        <div className="w-[30%]">
+                        <div>
                             {isMobile ? (
                                 <Text className="satoshi-bold text-sm text-[#545F73]">
                                     View All
                                 </Text>
                             ) : (
-                                <HStack >
+                                <HStack placeSelf={"end"} w={"full"} >
                                     <CustomSelect
                                         control={control}
                                         name='approvalsProperty'
