@@ -18,6 +18,12 @@ export type RevenueProperty = {
 }
 
 
+type RevenueItem = RevenueProperty & {
+    label: string
+}
+
+
+
 export const RevenueAnalytics = ({ data, selectedProperty = { id: 'all', name: '' } }: { data: RevenueProperty[]; selectedProperty?: { id: string, name: string } }) => {
     const visibleProperties = data
 
@@ -60,14 +66,19 @@ export const RectangleBar = ({ value, color, trackColor }: { value: number, colo
 
 export const RevenuePropertyChart = ({ property, name }: { property: RevenueProperty[], name: string }) => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 500
-    const chartData = property.map((property) => ({
+    const chartData: RevenueItem[] = property.map((property) => ({
         label: property.name,
-        expected: property.expectedRevenue,
-        collected: property.collectedRevenue,
-        total: property.totalAmount
+        name: property.name,
+        expectedRevenue: property.expectedRevenue,
+        collectedAmount: property.collectedAmount,
+        collectedRevenue: property.collectedRevenue,
+        totalAmount: property.totalAmount,
+        id: property.id,
+        value: property.value
+
     }))
     console.log(chartData)
-    const maxValue = Math.max(...chartData.flatMap((item) => [item.expected, item.collected]), 1)
+    const maxValue = Math.max(...chartData.flatMap((item) => [item.expectedRevenue, item.collectedRevenue]), 1)
 
     return <Box rounded={'9px'} p={0}>
         <PageTitle title={name} fontSize={'22px'} spacing={0} subText="Efficiency metric by individual unit ID" />
@@ -91,8 +102,8 @@ export const RevenuePropertyChart = ({ property, name }: { property: RevenueProp
                         <Tooltip cursor={{ fill: 'transparent' }} content={<RevenueTooltip />} />
                         <YAxis tickLine={false} axisLine={false} />
                         <XAxis dataKey='label' axisLine={false} tickLine={false} />
-                        <Bar minPointSize={3} dataKey='expected' fill="#2A334833" radius={[0, 0, 0, 0]} />
-                        <Bar minPointSize={3} dataKey='collected' fill="#2A3348" radius={[0, 0, 0, 0]} />
+                        <Bar minPointSize={3} dataKey='expectedRevenue' name="expectedRevenue" fill="#2A334833" radius={[0, 0, 0, 0]} />
+                        <Bar minPointSize={3} dataKey='collectedRevenue' name="collectedRevenue" fill="#2A3348" radius={[0, 0, 0, 0]} />
                     </BarChart> :
                         <Grid
                             minW={`${Math.max(chartData.length, 4) * 96}px`}
@@ -101,9 +112,17 @@ export const RevenuePropertyChart = ({ property, name }: { property: RevenueProp
                             gap={{ base: 7, md: 10 }}
                             templateColumns={`repeat(${chartData.length}, minmax(20px, 1fr))`}
                         >
-                            {chartData.map((item, index) => (
-                                <RevenueUnitBar key={`${item.label}-${index}`} item={item} maxValue={maxValue} />
-                            ))}
+                            {chartData.map((item, index) => {
+                                const items = {
+                                    label: item.label,
+                                    expected: item.expectedRevenue,
+                                    collected: item.collectedRevenue,
+                                    total: item.totalAmount
+                                }
+                                return (
+                                    <RevenueUnitBar key={`${item.label}-${index}`} item={items} maxValue={maxValue} />
+                                )
+                            })}
                         </Grid>}
                 </ResponsiveContainer>
             </Box>
@@ -201,8 +220,6 @@ const getBarHeight = (value: number | null | undefined, maxValue: number) => {
 
 
 
-type RevenueItem = RevenueProperty
-
 
 type RevenueTooltipProps = {
     active?: boolean
@@ -211,6 +228,7 @@ type RevenueTooltipProps = {
     }[]
     label?: string
 }
+
 
 const RevenueTooltip = ({ active, payload, label }: RevenueTooltipProps) => {
     if (!active || !payload?.length) return null

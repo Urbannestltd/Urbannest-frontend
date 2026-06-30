@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { MainButton } from "@/components/ui/button"
-import { AxiosError } from "axios"
 import { PageTitle } from "@/components/ui/page-title"
 import { SearchInput } from "@/components/ui/search-input"
 import { SectionBox } from "@/components/ui/section-box"
@@ -33,6 +31,7 @@ export const Unit = () => {
 
     const units = usePropertyStore((state) => state.units)
     const property = usePropertyStore((state) => state.property)
+    console.log("property", property?.name)
     const fetchUnits = usePropertyStore((state) => state.fetchUnits)
     const loading = usePropertyStore((state) => state.isLoadingUnits)
     const ref = useRef<HTMLDivElement>(null)
@@ -43,7 +42,7 @@ export const Unit = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            fetchUnits(property?.id ?? "", search || undefined)
+            fetchUnits(property?.id ?? "", search?.trim() || undefined)
         }, 100)
         return () => clearTimeout(timer)
     }, [search])
@@ -54,6 +53,14 @@ export const Unit = () => {
     }
 
     const columns = useUnitColumns(handleTenantClick)
+
+    if (!units && !loading) return <Flex h={'50vh'} justify={'center'} align={'center'}>
+        <Text fontSize={'24px'} className="satoshi-bold">No Units Found</Text>
+    </Flex>
+
+    if (loading) {
+        return <Skeleton h={'20vh'} />
+    }
 
     return (
         <>

@@ -133,6 +133,7 @@ export const ApprovalActions = ({ approval }: { approval: Approvals }) => {
         <Drawers
             size={'full'}
             open={openDetails}
+            placement={{ base: 'bottom', md: 'end' }}
             onOpenChange={setOpenDetails}
             className="w-[94vw] max-w-[560px] max-h-[100vh] overflow-hidden rounded-none md:rounded-[2px]"
             modalContent={(
@@ -191,7 +192,7 @@ const TenantApprovalDetailsModal = ({
         .toUpperCase()
 
     return (
-        <Box bg="white" color="#2B3338" className="satoshi" maxH="100vh" overflow='scroll'>
+        <Box bg="white" color="#2B3338" className="satoshi" maxH="100vh" overflow='hidden'>
             <Flex
                 gap={{ base: 4, md: 7 }}
                 align={{ base: "start", md: "center" }}
@@ -220,7 +221,7 @@ const TenantApprovalDetailsModal = ({
                     <Text className="satoshi-bold capitalize" fontSize={{ base: "20px", md: "24px" }} lineHeight="1.1" color="#2E363B">
                         {approval.applicantName || initials || "Applicant"}
                     </Text>
-                    <Flex mt={3} gap={3} align="center" wrap="wrap" color="#566166" fontSize={{ base: "14px", md: "17px" }}>
+                    <Flex mt={3} gap={3} align="center" wrap="wrap" color="#566166" fontSize={{ base: "14px", md: "15px" }}>
                         <Text px={3} py={1} rounded="2px" bg="#E9EDF1" className="satoshi-bold" color="#545F73" lineHeight="1">
                             FORWARDED
                         </Text>
@@ -288,16 +289,16 @@ const TenantApprovalDetailsModal = ({
                 <button
                     type="button"
                     onClick={onDeny}
-                    className="h-[58px] flex-1 rounded-[7px] border border-[#E11D12] bg-white text-[#C00F0C] text-lg satoshi-bold"
+                    className="h-[50px] flex-1 rounded-[7px] border border-[#E11D12] bg-white text-[#C00F0C] text-lg satoshi-bold"
                 >
                     Deny Application
                 </button>
                 <button
                     type="button"
                     onClick={onApprove}
-                    className="h-[58px] flex-1 rounded-[7px] bg-[#2A3348] text-white text-lg satoshi-bold shadow-[0_12px_24px_rgba(42,51,72,0.2)] inline-flex items-center justify-center gap-3"
+                    className="h-[50px] flex-1 rounded-[7px] bg-[#2A3348] text-white text-lg satoshi-bold shadow-[0_12px_24px_rgba(42,51,72,0.2)] inline-flex items-center justify-center gap-3"
                 >
-                    <LuCircleCheck size={24} fill="white" color="#2A3348" />
+                    <LuCircleCheck size={20} fill="white" color="#2A3348" />
                     Approve Tenant
                 </button>
             </Flex>
@@ -316,7 +317,7 @@ const DetailsSection = ({ icon, title, children }: { icon: React.ReactElement, t
     <Box>
         <HStack gap={3} mb={5} color="#2B3338">
             <Box color="#C7D4EF" fontSize="18px">{icon}</Box>
-            <Text fontSize={{ base: "19px", md: "18px" }} className="satoshi-medium">{title}</Text>
+            <Text fontSize={{ base: "14px", md: "16px" }} className="satoshi-medium">{title}</Text>
         </HStack>
         {children}
     </Box>
@@ -325,7 +326,7 @@ const DetailsSection = ({ icon, title, children }: { icon: React.ReactElement, t
 const InfoBlock = ({ label, value }: { label: string, value: string | number }) => (
     <Box>
         <Text className="satoshi-bold" fontSize="16px" color="#566166">{label}</Text>
-        <Text mt={2} fontSize="17px" color="#2E363B">{value}</Text>
+        <Text mt={2} fontSize="16px" color="#2E363B">{value}</Text>
     </Box>
 )
 
@@ -333,14 +334,14 @@ const DocumentRow = ({ icon, name, onView }: { icon: React.ReactElement, name: s
     <Flex align="center" justify="space-between" bg="#F1F5F7" rounded="7px" px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }} gap={4}>
         <HStack gap={4} minW={0}>
             <Box color="#545F73" fontSize="20px" flexShrink={0}>{icon}</Box>
-            <Text fontSize={{ base: "14px", md: "17px" }} color="#2E363B" truncate>{name}</Text>
+            <Text fontSize={{ base: "14px", md: "16px" }} color="#2E363B" truncate>{name}</Text>
         </HStack>
         <HStack gap={{ base: 3, md: 6 }} color="#566166" flexShrink={0}>
             <button type="button" aria-label={`View ${name}`} onClick={onView}>
-                <LuEye size={20} />
+                <LuEye size={18} />
             </button>
             <button type="button" aria-label={`Download ${name}`}>
-                <LuDownload size={20} />
+                <LuDownload size={18} />
             </button>
         </HStack>
     </Flex>

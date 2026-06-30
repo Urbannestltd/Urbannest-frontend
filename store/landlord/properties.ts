@@ -140,7 +140,12 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
 		}
 	},
 	fetchUnits: async (id, search) => {
-		set({ isLoadingUnits: true, errorLoadingUnits: false, units: null })
+		set({
+			isLoadingUnits: true,
+			errorLoadingUnits: false,
+			units: null,
+		})
+		console.log("empty")
 		try {
 			const units = await http.get(landlordEndpoints.fetchUnits, {
 				params: { propertyId: id, search: search },
