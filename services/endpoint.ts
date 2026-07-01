@@ -217,8 +217,16 @@ const landlordEndpoints = {
 
 	//Settings
 	getSettings: `/landlord/profile`,
+	updateSettings: `/landlord/profile`,
 	changePassword: `/landlord/settings/password`,
 	getNotifPreference: `/landlord/settings/notifications`,
+	updateNotifPreference: `/landlord/settings/notifications`,
+	get2fa: `/landlord/settings/2fa`,
+
+	//Support Center
+	createTicket: `/landlord/support/create`,
+	getTicket: (id: string) => `/landlord/support/${id}`,
+	sendTicketMessage: (id: string) => `/landlord/support/${id}/reply`,
 
 	//Financials
 	fetchFinancialsMetrics: `/landlord/financials/summary`,

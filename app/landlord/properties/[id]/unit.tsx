@@ -86,7 +86,7 @@ export const Unit = () => {
                 <>
                     {" "}
                     <SectionBox mb={4}>
-                        <PageTitle title={`Total ${units?.length ?? 0} Units`} />
+                        <PageTitle title={`Total ${units?.totalUnits ?? 0} Units`} />
                         <HStack mt={2} justify={"space-between"}>
                             <SearchInput
                                 value={search}
@@ -95,9 +95,9 @@ export const Unit = () => {
                             />
                         </HStack>
                     </SectionBox>
-                    {units?.map((floor, index) => (
+                    {units?.floors.map((floor, index) => (
                         <SectionBox key={index} my={4}>
-                            <Box ref={index === units?.length - 1 ? ref : null}>
+                            <Box ref={index === units?.floors.length - 1 ? ref : null}>
                                 <PageTitle
                                     title={floor.floor}
                                     fontSize={{ base: "18px", md: "22px" }}

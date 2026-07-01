@@ -29,6 +29,7 @@ export const Sidebar = ({ activeTab, modules, onClose }: SideBarProps) => {
     const router = useRouter();
     const { logoutUser } = useAuthStore()
     const isSetting = pathname.includes('settings');
+    const settingsPath = modules[0]?.href ? `/${modules[0].href.split('/')[1]}/settings` : '/admin/settings'
 
 
 
@@ -53,7 +54,7 @@ export const Sidebar = ({ activeTab, modules, onClose }: SideBarProps) => {
                     </div>
                     <Box className=" mb-4 mt-4 ">
                         <Text className="satoshi-bold text-[10px] mb-4 tracking-[0.2em] mt-4 uppercase">Settings</Text>
-                        <Button onClick={() => router.push('/admin/settings')} className=" hover:bg-button-hover w-full flex justify-start pl-2">
+                        <Button onClick={() => router.push(settingsPath)} className=" hover:bg-button-hover w-full flex justify-start pl-2">
                             <LuSettings /> Settings
                         </Button>
                         <Modal open={isOpen} onOpenChange={setIsOpen} size={'xs'} triggerElement={<Button className=" hover:bg-button-hover w-full flex justify-start pl-2">

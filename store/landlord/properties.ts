@@ -53,21 +53,24 @@ export interface Property {
 }
 
 export interface Units {
-	floor: string
-	units: {
-		id: string
-		propertyId: string
-		propertyName: string
-		unitName: string
-		status: string
-		baseRent: number
-		tenantId: string
-		tenantName: string
-		leaseStartDate: string
-		leaseEndDate: string
-		complaintsPercentage: number
-		leaseExpiryPercentage: number
-		members: number
+	totalUnits: number
+	floors: {
+		floor: string
+		units: {
+			id: string
+			propertyId: string
+			propertyName: string
+			unitName: string
+			status: string
+			baseRent: number
+			tenantId: string
+			tenantName: string
+			leaseStartDate: string
+			leaseEndDate: string
+			complaintsPercentage: number
+			leaseExpiryPercentage: number
+			members: number
+		}[]
 	}[]
 }
 
@@ -77,7 +80,7 @@ interface PropertyStore {
 	isLoading: boolean
 	isLoadingProperty: boolean
 	isLoadingUnits: boolean
-	units: Units[] | null
+	units: Units | null
 	errorLoadingProperty: boolean
 	errorLoadingProperties: boolean
 	errorLoadingUnits: boolean

@@ -19,7 +19,7 @@ import { MdOutlineMenu } from "react-icons/md"
 import { usePathname, useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { useState } from "react"
-import { AdminSidebar, FMSidebar, TenantSidebar } from "@/components/common/side-bar"
+import { AdminSidebar, FMSidebar, LandlordSidebar, TenantSidebar } from "@/components/common/side-bar"
 import { Drawers } from "../ui/drawer"
 
 export const Nav = ({ role }: { role: "tenant" | "facilitymanager" | "admin" | "landlord" | "agent" }) => {
@@ -57,7 +57,7 @@ export const Nav = ({ role }: { role: "tenant" | "facilitymanager" | "admin" | "
         },
         landlord: {
             path: "/landlord/dashboard",
-            component: <FMSidebar onClose={() => setOpenDrawer(false)} />,
+            component: <LandlordSidebar onClose={() => setOpenDrawer(false)} />,
             settingsPath: '/landlord/settings',
             subtitle: "Here is what's happening across UrbanNest today."
         },
